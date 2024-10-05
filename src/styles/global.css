@@ -3,18 +3,19 @@
 @tailwind utilities;
 
 @layer base {
-    :root {
-        --color-text-main: 23 23 23; /* #171717 */
-        --color-bg-main: 242 241 236; /* #F2F1EC */
-        --color-bg-muted: 234 233 225; /* #EAE9E1 */
-        --color-border-main: 23 23 23; /* #171717 */
+    /* default */
+    /* :root {
+        --color-text-main: 23 23 23;
+        --color-bg-main: 242 241 236;
+        --color-bg-muted: 234 233 225;
+        --color-border-main: 23 23 23;
     }
     html.dark {
-        --color-text-main: 242 241 236; /* #F2F1EC */
-        --color-bg-main: 23 23 23; /* #171717 */
-        --color-bg-muted: 36 36 36; /* #242424 */
-        --color-border-main: 242 241 236; /* #F2F1EC */
-    }
+        --color-text-main: 242 241 236;
+        --color-bg-main: 23 23 23;
+        --color-bg-muted: 36 36 36;
+        --color-border-main: 242 241 236;
+    } */
 
     /* Cyan */
     /*
@@ -33,7 +34,7 @@
     */
 
     /* Green */
-    /*
+
     :root {
         --color-text-main: 58 66 56;
         --color-bg-main: 243 239 230;
@@ -46,5 +47,4 @@
         --color-bg-muted: 89 103 86;
         --color-border-main: 243 239 230;
     }
-    */
 }
