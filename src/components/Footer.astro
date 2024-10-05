@@ -1,5 +1,6 @@
 ---
 import siteConfig from '../data/site-config';
+import NavLink from './NavLink.astro';
 
 const socialLinks = siteConfig.socialLinks || [];
 const navLinks = siteConfig.footerNavLinks || [];
@@ -10,11 +11,13 @@ const navLinks = siteConfig.footerNavLinks || [];
         navLinks.length > 0 && (
             <div class="mb-4 flex flex-wrap gap-x-6 gap-y-1">
                 {navLinks.map((link) => (
-                    <a class="font-serif hover:underline hover:underline-offset-2 leading-9" href={link.href} target={
-                        link.href.startsWith('http') ? '_blank' : '_self'
-                        } download={link.download}>
+                    <NavLink
+                        class="text-xl rounded font-serif text-main hover:underline hover:underline-offset-2 hover:decoration-1 md:text-base px-1"
+                        href={link.href}
+                        download={link.download}
+                    >
                         {link.text}
-                    </a>
+                    </NavLink>
                 ))}
             </div>
         )
@@ -30,7 +33,7 @@ const navLinks = siteConfig.footerNavLinks || [];
                 <div class="flex flex-wrap gap-x-4 gap-y-1">
                     {socialLinks.map((link) => (
                         <a
-                            class="inline-flex items-center justify-center text-sm hover:underline hover:underline-offset-2"
+                            class="inline-flex rounded items-center justify-center text-sm hover:underline hover:underline-offset-2"
                             href={link.href}
                             target="_blank"
                             rel="noopener noreferer"
@@ -42,7 +45,7 @@ const navLinks = siteConfig.footerNavLinks || [];
             )
         }
         <p class="text-sm">
-            &copy; {new Date().getFullYear()}&nbsp;<a class="hover:underline hover:underline-offset-2" href="/">{siteConfig.title}</a>. todos los derechos reservados.
+            &copy; {new Date().getFullYear()}&nbsp;<a class="hover:underline hover:underline-offset-2" href="/">{siteConfig.title}</a>. Todos los derechos reservados.
         </p>
     </div>
 </footer>
