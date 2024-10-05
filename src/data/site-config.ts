@@ -64,12 +64,12 @@ const siteConfig: SiteConfig = {
             text: 'Contacto',
             href: '/contact'
         },
-        {
-            text: 'Curriculum',
-            href: '/00-CV-Allison-peña-desarrollador-fullstack.pdf',
-            download: true,
-            target: '_blank'
-        }
+        // {
+        //     text: 'Curriculum',
+        //     href: '/00-CV-Allison-peña-desarrollador-fullstack.pdf',
+        //     download: true,
+        //     target: '_blank'
+        // }
         // {
         //     text: 'Blog',
         //     href: '/blog'
@@ -96,11 +96,11 @@ const siteConfig: SiteConfig = {
             text: 'Contacto',
             href: '/contact'
         },
-        {
-            text: 'Curriculum',
-            href: '/00-CV-Allison-peña-desarrollador-fullstack.pdf',
-            download: true
-        }
+        // {
+        //     text: 'Curriculum',
+        //     href: '/00-CV-Allison-peña-desarrollador-fullstack.pdf',
+        //     download: true
+        // }
         // {
         //     text: 'Terms',
         //     href: '/terms'
