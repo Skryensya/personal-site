@@ -1,8 +1,9 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro'; 
 import ProjectPreview from '../../components/ProjectPreview.astro';
 import { sortItemsByDateDesc } from '../../utils/data-utils';
+import ImageFramed from '../../components/ImageFramed.astro';
 
 export async function getStaticPaths() {
     const projects = (await getCollection('projects')).sort(sortItemsByDateDesc);
@@ -20,14 +21,16 @@ export async function getStaticPaths() {
 type Props = { project: CollectionEntry<'projects'>; prevProject: CollectionEntry<'projects'>; nextProject: CollectionEntry<'projects'> };
 
 const { project, prevProject, nextProject } = Astro.props;
-const { title, description, seo } = project.data;
+const { title, description, seo, color } = project.data;
+const { src, alt, caption } = seo?.image || {};
 const { Content } = await project.render();
 ---
 
 <BaseLayout title={seo?.title ?? title} description={seo?.description ?? description} image={seo?.image} pageType="article" showHeader={false}>
     <article class="mb-16 sm:mb-24">
         <header class="mb-8">
-            <h1 class="text-3xl leading-tight font-serif font-medium sm:text-5xl sm:leading-tight">{title}</h1>
+            <h1 class="text-3xl leading-tight font-serif font-medium sm:text-5xl sm:leading-tight pb-6">{title}</h1>
+        <ImageFramed src={src} alt={alt} color={color}  size="6px" radius="4px" isCover={true}  caption={caption} client:load transition:persist/>
         </header>
         <div class="max-w-none prose prose-dante sm:prose-lg">
             <Content />
@@ -35,7 +38,7 @@ const { Content } = await project.render();
     </article>
     {
         (prevProject || nextProject) && (
-            <div class="my-16 sm:my-24">
+            <div class="my-16 sm:my-24 ">
                 <h2 class="mb-12 text-xl font-serif italic sm:mb-16 sm:text-2xl">Sigue leyendo</h2>
                 {nextProject && <ProjectPreview project={nextProject} class="mb-10 sm:mb-12" headingLevel="h3" />}
                 {prevProject && <ProjectPreview project={prevProject} class="mb-10 sm:mb-12" headingLevel="h3" />}

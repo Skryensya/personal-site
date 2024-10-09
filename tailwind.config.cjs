@@ -9,6 +9,15 @@ module.exports = {
             // Playfair Display
             serif: ['Georgia', ...defaultTheme.fontFamily.serif]
         },
+        animation: {
+            wave: 'wave 30s linear infinite'
+        },
+        keyframes: {
+            wave: {
+                '0%': { transform: 'translateX(0)' },
+                '100%': { transform: 'translateX(-55%)' }
+            }
+        },
         extend: {
             textColor: {
                 main: 'rgb(var(--color-text-main) / <alpha-value>)'

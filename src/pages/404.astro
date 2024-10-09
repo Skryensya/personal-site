@@ -1,0 +1,16 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import siteConfig from '../data/site-config'; 
+import SectionHeading from '../components/SectionHeading.astro';
+---
+
+<BaseLayout description={siteConfig.description} image={siteConfig.image}
+headerTitle='Oops!' headerSubtitle=' '>
+     
+    <div class="mb-12 group/section">
+        <SectionHeading label="404 Not Found" />
+        <p class="mb-6">
+            Lo sentimos, pero la página que estás buscando no existe. ¡Puedes <a href="/" >volver a la página principal</a> o <a href="/projects">ver los proyectos</a> que he hecho!
+        </p>
+    </div>
+</BaseLayout>

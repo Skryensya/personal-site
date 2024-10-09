@@ -6,7 +6,8 @@ const seoSchema = z.object({
     image: z
         .object({
             src: z.string(),
-            alt: z.string().optional()
+            alt: z.string().optional(),
+            caption: z.string().optional()
         })
         .optional(),
     pageType: z.enum(['website', 'article']).default('website')
@@ -37,7 +38,8 @@ const projects = defineCollection({
         description: z.string().optional(),
         publishDate: z.coerce.date(),
         isFeatured: z.boolean().default(false),
-        seo: seoSchema.optional()
+        seo: seoSchema.optional(),
+        color: z.string().optional()
     })
 });
 
