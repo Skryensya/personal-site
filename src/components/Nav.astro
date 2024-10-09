@@ -2,8 +2,6 @@
 import NavLink from './NavLink.astro';
 import ThemeToggle from './ThemeToggle.astro';
 import siteConfig from '../data/site-config';
-
-
 const navLinks = siteConfig.headerNavLinks || [];
 ---
 
@@ -19,7 +17,7 @@ const navLinks = siteConfig.headerNavLinks || [];
                 >
                     <span class="menu-toggle-icon w-6 h-px relative bg-current" />
                 </button>
-                <ul id="menu-items" class="menu flex gap-6 !pointer-events-auto">
+                <ul id="menu-items" class="menu flex gap-2  ">
                     {navLinks.map((link) => (
                         <li class="py-1">
                             <NavLink
@@ -44,18 +42,18 @@ const navLinks = siteConfig.headerNavLinks || [];
 <style>
     @media (max-width: 767px) {
         .menu {
-            @apply flex-col items-end gap-1 absolute -top-5 -right-6 max-w-44 px-4 pt-20 pb-10 z-20 bg-main border border-dashed border-main invisible opacity-0 rounded-bl-[1rem];
+            @apply flex-col items-end gap-1 absolute top-12 right-0 max-w-32 px-4 pt-20 pb-10 z-20 bg-main/30 backdrop-blur-sm border border-dashed border-main invisible opacity-0 rounded-[1rem];
             width: calc(100% + 1.25rem);
         }
         .menu.is-visible {
             @apply visible opacity-100;
             transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
-
+/* 
             &::before{
                 @apply absolute top-3 right-4 w-24 h-12 bg-main rounded-[.7rem] border border-dashed border-main;
                 background: var(--noise);
                 content: '';
-            }
+            } */
         }
         .menu-toggle-icon {
             transition: width 0.1s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
@@ -109,8 +107,7 @@ const navLinks = siteConfig.headerNavLinks || [];
         menuToggleBtn.setAttribute('aria-label', isMenuExpanded ? 'Open Menu' : 'Close Menu');
         menu?.classList.toggle('is-visible');
   
-        body.style.overflow = isMenuExpanded ? '' : 'hidden';
-        body.style.pointerEvents = isMenuExpanded ? '' : 'none';
+        body.style.overflow = isMenuExpanded ? '' : 'hidden'; 
       });
   
       document.addEventListener('click', (event: MouseEvent) => {
@@ -126,8 +123,7 @@ const navLinks = siteConfig.headerNavLinks || [];
           menuToggleBtn?.setAttribute('aria-expanded', 'false');
           menuToggleBtn?.setAttribute('aria-label', 'Open Menu');
           menu?.classList.remove('is-visible');
-          body.style.overflow = '';
-          body.style.pointerEvents = '';
+          body.style.overflow = ''; 
         }
       });
     }

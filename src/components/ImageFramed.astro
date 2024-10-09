@@ -1,0 +1,59 @@
+---
+const { src, alt, caption, color, captionColor = 'white', size = '20px', radius = '4px', isCover = false } = Astro.props;
+---
+
+<style>
+  .image-container { 
+    --size: 24px;
+    --computed-size: min(var(--size), 2.5dvw);
+    --radius: 4px;
+    display: block;
+    position: relative;
+    width: calc(100% - var(--computed-size));
+    isolation: isolate;
+    margin-bottom: var(--computed-size);
+  }
+  .image {
+    object-fit: cover;
+    object-position: start start;
+    z-index: 1;
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 0.5px solid var(--color);
+  }
+  .backdrop {  
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    background: var(--color);
+    opacity: 0.85;
+    transform: translate(calc(var(--computed-size) / 1.2), var(--computed-size));
+    border-radius:  calc(var(--radius) * 1);
+    border: 1px solid rgb(var(--color-border-main)/ 0.1);
+  }
+  .caption {
+    color: var(--caption-color);
+    position: absolute;
+    z-index: 2;
+    bottom: 0;
+    left: 0;
+    height: var(--computed-size);
+    transform: translateY(var(--computed-size));
+    display: flex;
+    font-size: calc(var(--computed-size) * 0.55);
+    align-items: center;
+    padding-left: calc(var(--computed-size) * 1.5);
+    text-align: start;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+</style>
+
+<div class=`image-container aspect-[16/9] ${isCover ? 'md:aspect-auto' : 'md:aspect-[4/3]'} ${isCover ? 'sm:min-h-[364px]' : 'sm:min-w-[175px] sm:min-h-[131px]'}` style={`--color: ${color}; --caption-color: ${captionColor}; --size: ${size}; --radius: ${radius}`}>
+    <img  class=`image select-none pointer-events-none aspect-[16/9] ${isCover ? 'md:aspect-auto' : 'md:aspect-[4/3]'}` src={src} alt={alt} />
+    <div class=`backdrop`></div>
+    <!-- {caption && <span class="caption !hidden sm:!block ">{caption}</span>} -->
+</div>

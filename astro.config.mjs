@@ -12,5 +12,12 @@ export default defineConfig({
         tailwind({
             applyBaseStyles: false
         })
-    ]
+    ],
+    vite: {
+        resolve: {
+            alias: {
+                '@components': '/src/components' // Example alias
+            }
+        }
+    }
 });

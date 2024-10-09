@@ -2,11 +2,12 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/Button.astro';
-import Hero from '../components/Hero.astro';
-import PostPreview from '../components/PostPreview.astro';
 import ProjectPreview from '../components/ProjectPreview.astro';
 import siteConfig from '../data/site-config';
 import { sortItemsByDateDesc } from '../utils/data-utils';
+import SectionHeading from '../components/SectionHeading.astro';
+import ImageFramed from '../components/ImageFramed.astro';
+import Quote from '../components/Quote.astro';
 
 const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
 const featuredPosts = posts.filter(({ data }) => data.isFeatured);
@@ -16,32 +17,43 @@ const featuredProjects = projects.filter(({ data }) => data.isFeatured);
 ---
 
 <BaseLayout description={siteConfig.description} image={siteConfig.image}>
-    <!-- <Hero /> -->
+        <section class="group/section ">
+            <SectionHeading label="Sobre mí" />
+            <ImageFramed src="/hero.jpeg" isCover={true} size="10px" alt="A person sitting at a desk in front of a computer" color={
+                'rgb(var(--color-bg-main) / 1)'
+            } />
+            <p class="mt-6">
+                soy un desarrollador web oriundo de <strong>Venezuela</strong>. Desde que comencé mi trabajo en el mundo del desarrollo web a principios de <strong>2020</strong>, he estado interesado en crear experiencias digitales únicas. Actualmente trabajo en <strong>Asimov Consultores</strong> y en mis tiempos libres trabajo en mis proyectos de forma independiente. 
+            </p>
+
+ 
+             <!-- <Quote 
+                text='"La accesibilidad es indispensable para algunos y necesaria para todos"'
+                author='Susana Pallero'
+                reference={
+                    {
+                        label: "W3C Invited Expert APA WG | CPWA | Co-founder of DALAT Foundation",
+                        link: "https://www.linkedin.com/in/susanapallero/"
+                    }
+                }
+             /> -->
+
+
+        </section>
     {
         featuredProjects?.length > 0 && (
             <div class="mb-12">
-                <h2 class="mb-12 text-3xl font-serif italic sm:mb-16 sm:text-4xl">Proyectos destacados</h2>
-                {featuredProjects.map((project) => (
-                    <ProjectPreview project={project} class="mb-10 sm:mb-12" headingLevel="h3" />
-                ))}
-                <div class="mt-12 sm:mt-16">
-                    <Button href="/projects">Ver todos los proyectos</Button>
-                </div>
+                <section class="group/section">
+                    <SectionHeading label="Proyectos destacados" />
+                    {featuredProjects.map((project) => (
+                        <ProjectPreview project={project} class="mb-2 sm:mb-4" headingLevel="h3" />
+                    ))}
+                    <div class="mt-4 sm:mt-8 hidden sm:flex w-full  justify-center">
+                        <Button href="/projects">Ver todos los proyectos</Button>
+                    </div>
+                </section>
             </div>
         )
     }
-    <!-- {
-        featuredPosts?.length > 0 && (
-            <div class="mb-16 sm:mb-24">
-                <h2 class="mb-12 text-xl font-serif italic sm:mb-16 sm:text-2xl">Escritos</h2>
-                {featuredPosts.map((post) => (
-                    <PostPreview post={post} class="mb-10 sm:mb-12" headingLevel="h3" />
-                ))}
-                <div class="mt-12 sm:mt-16">
-                    <Button href="/blog">Ver todos los articulos</Button>
-                </div>
-            </div>
-        )
-    } -->
-    
+ 
 </BaseLayout>

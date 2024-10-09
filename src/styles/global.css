@@ -13,7 +13,7 @@
         color: white;
     }
     *:focus {
-        outline: 3px solid #2b90d4 !important;
+        /* outline: 3px solid #2b90d4 !important; */
         outline-offset: 3px;
     }
 
@@ -48,4 +48,12 @@
         --color-selection-bg: 238 233 220;
         --color-selection-text: 58 66 56;
     }
+}
+.wavy {
+    background-color: rgb(var(--color-border-main) / 0.7);
+    --mask: radial-gradient(4.13px at 50% calc(100% + 0.9px), #0000 calc(99% - 2px), #000 calc(101% - 2px) 99%, #0000 101%) calc(50% - 6px)
+            calc(50% - 2.5px + 0.5px) / 12px 5px repeat-x,
+        radial-gradient(4.13px at 50% -0.9px, #0000 calc(99% - 2px), #000 calc(101% - 2px) 99%, #0000 101%) 50% calc(50% + 2.5px) / 12px 5px repeat-x;
+    -webkit-mask: var(--mask);
+    mask: var(--mask);
 }
