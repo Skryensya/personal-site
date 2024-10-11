@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    ::selection {
+        background: rgb(var(--color-selection-bg) / 0.5);
+        color: rgb(var(--color-selection-text) / 1);
+        font-size: 700 !important;
+    }
+
+    .blur {
+        --blur: 64px;
+
+        @for $i from 1 through 20 {
+            &:nth-child(#{$i}) {
+                backdrop-filter: blur((calc(var(--blur) / calc(2 * $i))));
+                scale: calc($i * 1.25);
+                height: calc(var(--blur) / calc(10 * $i));
+            }
+        }
+    }
+
+    a::selection {
+        color: white;
+    }
+    *:focus {
+        /* outline: 3px solid #2b90d4 !important; */
+        outline-offset: 3px;
+    }
+
+    :root {
+        overflow-x: hidden;
+
+        /* --noise: url(/noise-light.svg); */
+        --color-text-main: 58 66 56;
+        --color-bg-main: 243 239 230;
+        --color-bg-muted: 238 233 220;
+        --color-border-main: 58 66 56;
+
+        --color-selection-bg: 94 108 91;
+        --color-selection-text: 243 239 230;
+        /* 
+        .noise-bg {
+            background: var(--noise), linear-gradient(-20deg, rgb(var(--color-bg-muted) / 1) 40%, rgb(var(--color-bg-main) / 1) 80%);
+        } */
+    }
+    html.dark {
+        --noise: url(/noise-dark.svg);
+
+        .noise-bg {
+            background: var(--noise), linear-gradient(-20deg, rgb(var(--color-bg-muted) / 1) 40%, rgb(var(--color-bg-main) / 1) 80%);
+        }
+
+        --color-text-main: 243 239 230;
+        --color-bg-main: 94 108 91;
+        --color-bg-muted: 89 103 86;
+        --color-border-main: 243 239 230;
+
+        --color-selection-bg: 238 233 220;
+        --color-selection-text: 58 66 56;
+    }
+}
+.wavy {
+    background-color: rgb(var(--color-border-main) / 0.7);
+    --mask: radial-gradient(4.13px at 50% calc(100% + 0.9px), #0000 calc(99% - 2px), #000 calc(101% - 2px) 99%, #0000 101%) calc(50% - 6px)
+            calc(50% - 2.5px + 0.5px) / 12px 5px repeat-x,
+        radial-gradient(4.13px at 50% -0.9px, #0000 calc(99% - 2px), #000 calc(101% - 2px) 99%, #0000 101%) 50% calc(50% + 2.5px) / 12px 5px repeat-x;
+    -webkit-mask: var(--mask);
+    mask: var(--mask);
+}
