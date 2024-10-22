@@ -5,7 +5,7 @@ import Button from '../components/Button.astro';
 import ProjectPreview from '../components/ProjectPreview.astro';
 import siteConfig from '../data/site-config';
 import { sortItemsByDateDesc } from '../utils/data-utils';
-import SectionHeading from '../components/SectionHeading.astro'; 
+import SectionHeading from '../components/SectionHeading.astro';
 
 const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
 const featuredPosts = posts.filter(({ data }) => data.isFeatured);
@@ -15,14 +15,26 @@ const featuredProjects = projects.filter(({ data }) => data.isFeatured);
 ---
 
 <BaseLayout description={siteConfig.description} image={siteConfig.image}>
-        <section class="group/section ">
-            <SectionHeading label="Sobre mí" /> 
-            <p class="mt-6">
-                Soy un desarrollador web oriundo de <strong>Venezuela</strong>. Desde que comencé mi trabajo en el mundo del desarrollo web a principios de <strong>2020</strong>, he estado interesado en crear experiencias digitales únicas. Actualmente trabajo en <strong>Asimov Consultores</strong> y en mis tiempos libres trabajo en mis proyectos de forma independiente. 
-            </p>
+    <section class="group/section">
+        <SectionHeading label="Sobre mí" />
+        <p class="mt-6">
+            Soy un desarrollador web enfocado en crear experiencias digitales accesibles y efectivas. Me apasiona aprender sobre las mejores prácticas del
+            sector y estoy comprometido con la mejora continua. He colaborado en proyectos que optimizan la usabilidad y busco contribuir a iniciativas con un
+            impacto positivo en la comunidad. Siempre estoy abierto a nuevas oportunidades y desafíos en el ámbito del desarrollo web.
+        </p>
 
- 
-             <!-- <Quote 
+        <p class="mt-6">
+            Desde que comencé en el desarrollo web a principios de 2020, he estado interesado en crear experiencias digitales únicas. Actualmente trabajo en
+            Asimov Consultores y, en mis tiempos libres, me dedico a proyectos personales o investigo temas relacionados con el desarrollo web para mantenerme
+            al día. Entre mis hobbies se encuentran el ajedrez, la fotografía amateur y aprender idiomas; actualmente, estoy aprendiendo noruego.
+        </p>
+
+        <p class="mt-6">
+            No dudes en ponerte en contacto para discutir proyectos o simplemente compartir tus pensamientos conmigo. escribeme a <a
+                href="mailto:allison.jpb@gmail.com">allison.jpb@gmail.com</a>
+        </p>
+
+        <!-- <Quote 
                 text='"La accesibilidad es indispensable para algunos y necesaria para todos"'
                 author='Susana Pallero'
                 reference={
@@ -32,9 +44,7 @@ const featuredProjects = projects.filter(({ data }) => data.isFeatured);
                     }
                 }
              /> -->
-
-
-        </section>
+    </section>
     {
         featuredProjects?.length > 0 && (
             <div class="mb-12">
@@ -50,5 +60,4 @@ const featuredProjects = projects.filter(({ data }) => data.isFeatured);
             </div>
         )
     }
- 
 </BaseLayout>
