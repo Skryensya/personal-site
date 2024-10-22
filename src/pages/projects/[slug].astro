@@ -30,7 +30,7 @@ const { Content } = await project.render();
     <article class="mb-16 sm:mb-24">
         <header class="mb-8">
             <h1 class="text-3xl leading-tight font-serif font-medium sm:text-5xl sm:leading-tight pb-6">{title}</h1>
-        <ImageFramed src={src} alt={alt} color={color}  size="6px" radius="4px" isCover={true}  caption={caption} client:load transition:persist/>
+        <ImageFramed src={src} alt={alt} color={color}  size="6px" radius="4px" isCover={true}  caption={caption}  />
         </header>
         <div class="max-w-none prose prose-dante sm:prose-lg">
             <Content />

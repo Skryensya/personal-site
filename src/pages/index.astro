@@ -5,9 +5,7 @@ import Button from '../components/Button.astro';
 import ProjectPreview from '../components/ProjectPreview.astro';
 import siteConfig from '../data/site-config';
 import { sortItemsByDateDesc } from '../utils/data-utils';
-import SectionHeading from '../components/SectionHeading.astro';
-import ImageFramed from '../components/ImageFramed.astro';
-import Quote from '../components/Quote.astro';
+import SectionHeading from '../components/SectionHeading.astro'; 
 
 const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
 const featuredPosts = posts.filter(({ data }) => data.isFeatured);
@@ -18,10 +16,7 @@ const featuredProjects = projects.filter(({ data }) => data.isFeatured);
 
 <BaseLayout description={siteConfig.description} image={siteConfig.image}>
         <section class="group/section ">
-            <SectionHeading label="Sobre mí" />
-            <!-- <ImageFramed src="/hero.jpeg" isCover={true} size="10px" alt="A person sitting at a desk in front of a computer" color={
-                'rgb(var(--color-bg-main) / 1)'
-            } /> -->
+            <SectionHeading label="Sobre mí" /> 
             <p class="mt-6">
                 Soy un desarrollador web oriundo de <strong>Venezuela</strong>. Desde que comencé mi trabajo en el mundo del desarrollo web a principios de <strong>2020</strong>, he estado interesado en crear experiencias digitales únicas. Actualmente trabajo en <strong>Asimov Consultores</strong> y en mis tiempos libres trabajo en mis proyectos de forma independiente. 
             </p>
