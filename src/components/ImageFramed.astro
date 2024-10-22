@@ -1,6 +1,7 @@
 ---
 const { src, alt, caption, color, captionColor = 'white', size = '20px', radius = '4px', isCover = false } = Astro.props;
 ---
+
 <!-- 
 <style>
   .image-container { 
@@ -57,4 +58,4 @@ const { src, alt, caption, color, captionColor = 'white', size = '20px', radius 
     <div class=`backdrop`></div> 
 </div> -->
 
-<img  class=` select-none pointer-events-none aspect-[16/9] rounded border shadow-md object-cover ${isCover ? 'md:aspect-auto' : 'md:aspect-[4/3]'}` src={src} alt={alt} />
+<img  class={`select-none pointer-events-none aspect-[16/9] rounded border shadow-md object-cover ${isCover ? "md:aspect-auto" : "md:aspect-[4/3]"}`} src={src} alt={alt} />
