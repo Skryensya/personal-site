@@ -1,9 +1,7 @@
 ---
 import { ViewTransitions } from 'astro:transitions';
 import BaseHead, { type Props as HeadProps } from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import Header from '../components/Header.astro';
-import Nav from '../components/Nav.astro';
+import Navbar from '../components/Navbar.astro';
 
 export type Props = HeadProps & { showHeader?: boolean; headerTitle?: string, headerSubtitle?: string };
 
@@ -21,14 +19,10 @@ const { showHeader = true, headerTitle = null, headerSubtitle = null,  ...head }
         </script>
         <ViewTransitions />
     </head>
-    <body class="bg-main  text-main">
-        <div class="flex flex-col min-h-screen px-4 md:px-8">
-            <Nav />
-            {showHeader && <Header title={headerTitle} subtitle={headerSubtitle} />}
-            <main class="grow w-full max-w-3xl mx-auto bg-white/30 dark:bg-white/10 px-6 pt-5 rounded-lg shadow-sm dark:shadow-lg space-y-8 sm:space-y-10 backdrop-blur-sm pb-20">
-                <slot />
-            </main>
-            <Footer />
-        </div>
+    <body class="bg-main text-main">
+        <Navbar />
+        <main class="pt-16">
+            <slot />
+        </main>
     </body>
 </html>
