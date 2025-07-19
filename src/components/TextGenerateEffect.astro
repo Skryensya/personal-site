@@ -1,0 +1,24 @@
+---
+const { words } = Astro.props;
+---
+
+<div class="text-lg text-main/70 max-w-2xl">
+  {words.split(' ').map((word, idx) => (
+    <span 
+      class="inline-block opacity-0 animate-word pl-[0.3ch]"
+      style={`animation-delay: ${idx * 0.1}s`}
+    >
+      {word}{" "}
+    </span>
+  ))}
+</div>
+
+<style>
+  @keyframes word-appear {
+    to { opacity: 1; }
+  }
+  
+  .animate-word {
+    animation: word-appear 1.4s ease forwards;
+  }
+</style>

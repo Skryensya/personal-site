@@ -2,62 +2,173 @@
 import { getCollection } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Button from '../components/Button.astro';
-import ProjectPreview from '../components/ProjectPreview.astro';
+import TextGenerateEffect from '../components/TextGenerateEffect.astro';
 import siteConfig from '../data/site-config';
 import { sortItemsByDateDesc } from '../utils/data-utils';
-import SectionHeading from '../components/SectionHeading.astro';
-
-const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
-const featuredPosts = posts.filter(({ data }) => data.isFeatured);
 
 const projects = (await getCollection('projects')).sort(sortItemsByDateDesc);
 const featuredProjects = projects.filter(({ data }) => data.isFeatured);
+
+const skills = ["React", "TypeScript", "Node.js", "Astro", "PostgreSQL", "AWS"];
 ---
 
 <BaseLayout description={siteConfig.description} image={siteConfig.image}>
-    <section class="group/section">
-        <SectionHeading label="Sobre mí" />
-        <p class="mt-6">
-            Soy un desarrollador web enfocado en crear experiencias digitales accesibles y efectivas. Me apasiona aprender sobre las mejores prácticas del
-            sector y estoy comprometido con la mejora continua. He colaborado en proyectos que optimizan la usabilidad y busco contribuir a iniciativas con un
-            impacto positivo en la comunidad. Siempre estoy abierto a nuevas oportunidades y desafíos en el ámbito del desarrollo web.
-        </p>
-
-        <p class="mt-6">
-            Desde que comencé en el desarrollo web a principios de 2020, he estado interesado en crear experiencias digitales únicas. Actualmente trabajo en
-            Asimov Consultores y, en mis tiempos libres, me dedico a proyectos personales o investigo temas relacionados con el desarrollo web para mantenerme
-            al día. Entre mis hobbies se encuentran el ajedrez, la fotografía amateur y aprender idiomas; actualmente, estoy aprendiendo noruego.
-        </p>
-
-        <p class="mt-6">
-            No dudes en ponerte en contacto para discutir proyectos o simplemente compartir tus pensamientos conmigo. escribeme a <a
-                href="mailto:allison.jpb@gmail.com">allison.jpb@gmail.com</a>
-        </p>
-
-        <!-- <Quote 
-                text='"La accesibilidad es indispensable para algunos y necesaria para todos"'
-                author='Susana Pallero'
-                reference={
-                    {
-                        label: "W3C Invited Expert APA WG | CPWA | Co-founder of DALAT Foundation",
-                        link: "https://www.linkedin.com/in/susanapallero/"
-                    }
-                }
-             /> -->
-    </section>
-    {
-        featuredProjects?.length > 0 && (
-            <div class="mb-12">
-                <section class="group/section">
-                    <SectionHeading label="Proyectos destacados" />
-                    {featuredProjects.map((project) => (
-                        <ProjectPreview project={project} class="mb-2 sm:mb-4" headingLevel="h3" />
-                    ))}
-                    <div class="mt-4 sm:mt-8 hidden sm:flex w-full  justify-center">
-                        <Button href="/projects">Ver todos los proyectos</Button>
-                    </div>
-                </section>
+    <!-- Hero Section -->
+    <section class="py-20">
+        <div class="max-w-4xl mx-auto px-6">
+            <h1 class="text-4xl md:text-5xl font-bold text-main mb-4">
+                Hola, soy Allison
+            </h1>
+            <div class="mb-8">
+                <TextGenerateEffect words="Me gusta crear sitios web que funcionen bien y sean fáciles de usar. Trabajo principalmente con React y TypeScript." />
             </div>
-        )
-    }
+            <div>
+                <Button href="/projects" type="cta" size="medium">
+                    Ver mis proyectos
+                </Button>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="py-20 border-t border-main/20">
+        <div class="max-w-4xl mx-auto px-6">
+            <h2 class="text-2xl font-semibold text-main mb-6">
+                Un poco sobre mí
+            </h2>
+            <div class="space-y-4 text-main/70">
+                <p>
+                    Llevo unos 4 años haciendo sitios web. Me encanta cuando las cosas funcionan bien 
+                    y son accesibles para todos. Uso mucho React, TypeScript y Node.js.
+                </p>
+                <p>
+                    Ahora trabajo en Asimov Consultores haciendo aplicaciones web. También ayudo 
+                    a otros developers más nuevos cuando puedo.
+                </p>
+                <p>
+                    Cuando no estoy programando me gusta jugar ajedrez, tomar fotos y aprender idiomas. 
+                    Ahora mismo estoy con el noruego (está difícil 😅).
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Skills Section -->
+    <section class="py-20 border-t border-main/20">
+        <div class="max-w-4xl mx-auto px-6">
+            <h2 class="text-2xl font-semibold text-main mb-6">
+                Con qué trabajo
+            </h2>
+            <div class="flex flex-wrap gap-3">
+                {skills.map((skill) => (
+                    <span class="skill-tag px-3 py-1 text-sm bg-muted text-main rounded relative overflow-hidden cursor-pointer">
+                        <span class="relative z-10">{skill}</span>
+                    </span>
+                ))}
+            </div>
+        </div>
+    </section>
+
+    <!-- Experience Section -->
+    <section class="py-20 border-t border-main/20">
+        <div class="max-w-4xl mx-auto px-6">
+            <h2 class="text-2xl font-semibold text-main mb-6">
+                Dónde he trabajado
+            </h2>
+            <div class="space-y-6">
+                <div>
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-1">
+                        <h3 class="text-lg font-medium text-main">Desarrollador Senior</h3>
+                        <span class="text-sm text-main/60">2022 - ahora</span>
+                    </div>
+                    <p class="text-main/60 mb-2">Asimov Consultores</p>
+                    <p class="text-main/70">
+                        Hago aplicaciones web con React y Node.js. También ayudo al equipo 
+                        con código y a veces explico cosas a los developers nuevos.
+                    </p>
+                </div>
+                <div>
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-1">
+                        <h3 class="text-lg font-medium text-main">Freelancer</h3>
+                        <span class="text-sm text-main/60">2020 - 2022</span>
+                    </div>
+                    <p class="text-main/70">
+                        Hacía sitios web para empresas pequeñas. Me gustaba mucho que fueran 
+                        rápidos y que todos los pudieran usar.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Projects -->
+    {featuredProjects?.length > 0 && (
+        <section class="py-20 border-t border-main/20">
+            <div class="max-w-4xl mx-auto px-6">
+                <h2 class="text-2xl font-semibold text-main mb-6">
+                    Algunos proyectos
+                </h2>
+                <div class="space-y-6">
+                    {featuredProjects.map((project) => (
+                        <div class="project-card border border-main/20 rounded-lg p-4 relative overflow-hidden cursor-pointer">
+                            <div class="relative z-10">
+                                <h3 class="text-lg font-medium text-main mb-2">{project.data.title}</h3>
+                                <p class="text-main/70 mb-3">{project.data.description}</p>
+                                <a href={`/projects/${project.slug}`} class="text-main hover:underline text-sm">
+                                    Ver más →
+                                </a>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+                <div class="mt-6">
+                    <Button href="/projects" type="accent" size="small">
+                        Ver todos →
+                    </Button>
+                </div>
+            </div>
+        </section>
+    )}
 </BaseLayout>
+
+<style>
+    /* Skill tags circular expansion */
+    .skill-tag::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgb(var(--color-text-main) / 0.1);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.4s ease, height 0.4s ease;
+        z-index: 1;
+    }
+
+    .skill-tag:hover::before {
+        width: 80px;
+        height: 80px;
+    }
+
+    /* Project cards circular expansion */
+    .project-card::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgb(var(--color-text-main) / 0.05);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.8s ease, height 0.8s ease;
+        z-index: 1;
+    }
+
+    .project-card:hover::before {
+        width: 400px;
+        height: 400px;
+    }
+</style>

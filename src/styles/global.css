@@ -21,13 +21,22 @@
         overflow-x: hidden;
 
         --noise: url(/noise-light.svg);
-        --color-text-main: 58 66 56;
-        --color-bg-main: 243 239 230;
-        --color-bg-muted: 238 233 220;
+        --color-text-main: 45 55 42;
+        --color-text-secondary: 78 88 75;
+        --color-bg-main: 248 245 238;
+        --color-bg-muted: 240 236 227;
+        --color-bg-accent: 235 230 220;
         --color-border-main: 58 66 56;
+        --color-accent: 76 98 68;
+        --color-accent-hover: 62 84 54;
+        
+        --color-button-shadow: 45 55 42;
+        --color-button-glow: 76 98 68;
+        --color-cta: 220 38 127;
+        --color-cta-hover: 190 24 93;
 
         --color-selection-bg: 94 108 91;
-        --color-selection-text: 243 239 230;
+        --color-selection-text: 248 245 238;
 
         .noise-bg {
             background: var(--noise), linear-gradient(-20deg, rgb(var(--color-bg-muted) / 1) 40%, rgb(var(--color-bg-main) / 1) 80%);
@@ -40,13 +49,22 @@
             background: var(--noise), linear-gradient(-20deg, rgb(var(--color-bg-muted) / 1) 40%, rgb(var(--color-bg-main) / 1) 80%);
         }
 
-        --color-text-main: 243 239 230;
-        --color-bg-main: 94 108 91;
-        --color-bg-muted: 89 103 86;
-        --color-border-main: 243 239 230;
+        --color-text-main: 235 230 220;
+        --color-text-secondary: 200 195 185;
+        --color-bg-main: 75 90 70;
+        --color-bg-muted: 85 100 80;
+        --color-bg-accent: 95 110 90;
+        --color-border-main: 200 195 185;
+        --color-accent: 158 178 148;
+        --color-accent-hover: 178 198 168;
+        
+        --color-button-shadow: 235 230 220;
+        --color-button-glow: 158 178 148;
+        --color-cta: 220 38 127;
+        --color-cta-hover: 190 24 93;
 
-        --color-selection-bg: 238 233 220;
-        --color-selection-text: 58 66 56;
+        --color-selection-bg: 200 195 185;
+        --color-selection-text: 45 55 42;
     }
 }
 .wavy {

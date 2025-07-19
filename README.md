@@ -1,21 +1,14 @@
-# Dante - Astro & Tailwind CSS Theme by justgoodui.com
+# Allison Peña - Personal Portfolio
 
-Dante is a single-author blog and portfolio theme for Astro.js. Featuring a minimal, slick, responsive and content-focused design. For more Astro.js themes please check [justgoodui.com](https://justgoodui.com/).
+Personal portfolio and project showcase built with Astro.js and Tailwind CSS. Features a clean, responsive design focused on showcasing development work and projects.
 
-![Dante Astro.js Theme](public/dante-preview.jpg)
-
-[![Deploy to Netlify Button](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/JustGoodUI/dante-astro-theme)
-
-If you click this☝️ button, it will create a new repo for you that looks exactly like this one, and sets that repo up immediately for deployment on Netlify.
-
-## Theme Features:
+## Features:
 
 - ✅ Dark and light color mode
 - ✅ Hero section with bio
 - ✅ Portfolio collection
 - ✅ Pagination support
 - ✅ Post tags support
-- ✅ Subscription form
 - ✅ View transitions
 - ✅ Tailwind CSS
 - ✅ Mobile-first responsive layout
@@ -24,7 +17,7 @@ If you click this☝️ button, it will create a new repo for you that looks exa
 - ✅ RSS Feed support
 - ✅ Markdown & MDX support
 
-## Template Integrations
+## Integrations
 
 - @astrojs/tailwind - https://docs.astro.build/en/guides/integrations-guide/tailwind/
 - @astrojs/sitemap - https://docs.astro.build/en/guides/integrations-guide/sitemap/
@@ -33,7 +26,7 @@ If you click this☝️ button, it will create a new repo for you that looks exa
 
 ## Project Structure
 
-Inside of Dante Astro theme, you'll see the following folders and files:
+The project is organized as follows:
 
 ```text
 ├── public/
@@ -78,15 +71,8 @@ All commands are run from the root of the project, from a terminal:
 
 Check out [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
 
-## Credits
+## Built With
 
-- Demo content generate with [Chat GPT](https://chat.openai.com/)
-- Images for demo content from [Unsplash](https://unsplash.com/)
-
-## Astro Themes by Just Good UI
-
-- [Ovidius](https://github.com/JustGoodUI/ovidius-astro-theme) is a free single author blog theme.
-
-## License
-
-Licensed under the [GPL-3.0](https://github.com/JustGoodUI/dante-astro-theme/blob/main/LICENSE) license.
+- [Astro.js](https://astro.build) - The web framework for content-driven websites
+- [Tailwind CSS](https://tailwindcss.com) - A utility-first CSS framework
+- Based on the Dante theme by [Just Good UI](https://justgoodui.com)
