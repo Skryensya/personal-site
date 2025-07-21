@@ -143,6 +143,9 @@ const navItems = [
     // Load saved settings
     const savedTheme = localStorage.getItem('theme') || 'void';
     const savedMode = localStorage.getItem('mode') || 'light';
+    // Audio elements
+    const crtOnSound = new Audio('/crt-on.wav');
+    const crtOffSound = new Audio('/crt-off.wav');
     const savedCrt = localStorage.getItem('crt') === 'true';
     
     let lastThemeChange = 0;
@@ -190,11 +193,12 @@ const navItems = [
     crtToggle?.addEventListener('click', () => {
       const hasCrt = document.documentElement.classList.contains('crt-effect');
       const newCrt = !hasCrt;
-      applyCrt(newCrt);
       localStorage.setItem('crt', newCrt.toString());
       if (newCrt) {
         crtOnSound.play();
+        applyCrt(newCrt);
       } else {
+        applyCrt(newCrt);
         crtOffSound.play();
       }
     });
