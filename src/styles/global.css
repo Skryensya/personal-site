@@ -195,13 +195,13 @@
 
     /* Gold theme */
     :root[data-theme='gold'] {
-        --color-main: #1c1c1c;
-        --color-secondary: #ffd700;
+        --color-main: #ffd700;
+        --color-secondary: #1c1c1c;
     }
 
     html.dark[data-theme='gold'] {
-        --color-main: #ffd700;
-        --color-secondary: #1c1c1c;
+        --color-main: #1c1c1c;
+        --color-secondary: #ffd700;
     }
 
     /* Mint theme */
@@ -239,57 +239,57 @@
 
     /* Sky theme */
     :root[data-theme='sky'] {
-        --color-main: #000000;
-        --color-secondary: #87ceeb;
-    }
-
-    html.dark[data-theme='sky'] {
         --color-main: #87ceeb;
         --color-secondary: #000000;
     }
 
-    /* Sand theme */
-    :root[data-theme='sand'] {
-        --color-main: #4a2c2a;
-        --color-secondary: #f4a460;
+    html.dark[data-theme='sky'] {
+        --color-main: #000000;
+        --color-secondary: #87ceeb;
     }
 
-    html.dark[data-theme='sand'] {
+    /* Sand theme */
+    :root[data-theme='sand'] {
         --color-main: #f4a460;
         --color-secondary: #4a2c2a;
     }
 
-    /* Plum theme */
-    :root[data-theme='plum'] {
-        --color-main: #3b1e3b;
-        --color-secondary: #dda0dd;
+    html.dark[data-theme='sand'] {
+        --color-main: #4a2c2a;
+        --color-secondary: #f4a460;
     }
 
-    html.dark[data-theme='plum'] {
+    /* Plum theme */
+    :root[data-theme='plum'] {
         --color-main: #dda0dd;
         --color-secondary: #3b1e3b;
     }
 
-    /* Peach theme */
-    :root[data-theme='peach'] {
-        --color-main: #5a3e36;
-        --color-secondary: #ffdab9;
+    html.dark[data-theme='plum'] {
+        --color-main: #3b1e3b;
+        --color-secondary: #dda0dd;
     }
 
-    html.dark[data-theme='peach'] {
+    /* Peach theme */
+    :root[data-theme='peach'] {
         --color-main: #ffdab9;
         --color-secondary: #5a3e36;
     }
 
+    html.dark[data-theme='peach'] {
+        --color-main: #5a3e36;
+        --color-secondary: #ffdab9;
+    }
+
     /* Olive theme */
     :root[data-theme='olive'] {
-        --color-main: #f5f5dc;
-        --color-secondary: #808000;
+        --color-main: #808000;
+        --color-secondary: #f5f5dc;
     }
 
     html.dark[data-theme='olive'] {
-        --color-main: #808000;
-        --color-secondary: #f5f5dc;
+        --color-main: #f5f5dc;
+        --color-secondary: #808000;
     }
 
     /* Navy theme */
@@ -305,79 +305,79 @@
 
     /* Mocha theme */
     :root[data-theme='mocha'] {
-        --color-main: #3e2723;
-        --color-secondary: #d2b48c;
-    }
-
-    html.dark[data-theme='mocha'] {
         --color-main: #d2b48c;
         --color-secondary: #3e2723;
     }
 
-    /* Lilac theme */
-    :root[data-theme='lilac'] {
-        --color-main: #4b0082;
-        --color-secondary: #c8a2c8;
+    html.dark[data-theme='mocha'] {
+        --color-main: #3e2723;
+        --color-secondary: #d2b48c;
     }
 
-    html.dark[data-theme='lilac'] {
+    /* Lilac theme */
+    :root[data-theme='lilac'] {
         --color-main: #c8a2c8;
         --color-secondary: #4b0082;
     }
 
-    /* Honey theme */
-    :root[data-theme='honey'] {
-        --color-main: #4e342e;
-        --color-secondary: #ffb300;
+    html.dark[data-theme='lilac'] {
+        --color-main: #4b0082;
+        --color-secondary: #c8a2c8;
     }
 
-    html.dark[data-theme='honey'] {
+    /* Honey theme */
+    :root[data-theme='honey'] {
         --color-main: #ffb300;
         --color-secondary: #4e342e;
     }
 
-    /* Grape theme */
-    :root[data-theme='grape'] {
-        --color-main: #f0e6f2;
-        --color-secondary: #6f2da8;
+    html.dark[data-theme='honey'] {
+        --color-main: #4e342e;
+        --color-secondary: #ffb300;
     }
 
-    html.dark[data-theme='grape'] {
+    /* Grape theme */
+    :root[data-theme='grape'] {
         --color-main: #6f2da8;
         --color-secondary: #f0e6f2;
     }
 
-    /* Emerald theme */
-    :root[data-theme='emerald'] {
-        --color-main: #000000;
-        --color-secondary: #50c878;
+    html.dark[data-theme='grape'] {
+        --color-main: #f0e6f2;
+        --color-secondary: #6f2da8;
     }
 
-    html.dark[data-theme='emerald'] {
+    /* Emerald theme */
+    :root[data-theme='emerald'] {
         --color-main: #50c878;
         --color-secondary: #000000;
     }
 
-    /* Denim theme */
-    :root[data-theme='denim'] {
-        --color-main: #ffffff;
-        --color-secondary: #1560bd;
+    html.dark[data-theme='emerald'] {
+        --color-main: #000000;
+        --color-secondary: #50c878;
     }
 
-    html.dark[data-theme='denim'] {
+    /* Denim theme */
+    :root[data-theme='denim'] {
         --color-main: #1560bd;
         --color-secondary: #ffffff;
     }
 
+    html.dark[data-theme='denim'] {
+        --color-main: #ffffff;
+        --color-secondary: #1560bd;
+    }
+
     /* Cherry theme */
     :root[data-theme='cherry'] {
-        --color-main: #fffafa;
-        --color-secondary: #d2042d;
+        --color-main: #d2042d;
+        --color-secondary: #fffafa;
     }
 
     html.dark[data-theme='cherry'] {
-        --color-main: #d2042d;
-        --color-secondary: #fffafa;
+        --color-main: #fffafa;
+        --color-secondary: #d2042d;
     }
 
     /* Charcoal theme */
