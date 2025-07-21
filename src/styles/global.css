@@ -79,7 +79,7 @@
     :root {
         --theme-colorful: #f8f9fa;
         --theme-contrasty: #0d1117;
-        
+
         /* Light mode: contrasty text on colorful background (light bg) */
         --color-main: var(--theme-contrasty);
         --color-secondary: var(--theme-colorful);
@@ -93,97 +93,97 @@
 
     /* Void theme */
     :root[data-theme='void'] {
-        --theme-colorful: #f8f9fa;  /* Subtle off-white */
+        --theme-colorful: #f8f9fa; /* Subtle off-white */
         --theme-contrasty: #0d1117; /* GitHub dark */
     }
 
     /* Phantom theme */
     :root[data-theme='phantom'] {
-        --theme-colorful: #39ff14;  /* Matrix green (INTENSE) */
+        --theme-colorful: #39ff14; /* Matrix green (INTENSE) */
         --theme-contrasty: #0a1a0a; /* Very dark green */
     }
 
     /* Bloom theme */
     :root[data-theme='bloom'] {
-        --theme-colorful: #ff6b9d;  /* Cherry blossom pink */
+        --theme-colorful: #ff6b9d; /* Cherry blossom pink */
         --theme-contrasty: #2d1b20; /* Dark rose */
     }
 
     /* Crimson theme */
     :root[data-theme='crimson'] {
-        --theme-colorful: #ff073a;  /* Blood red (INTENSE) */
+        --theme-colorful: #ff073a; /* Blood red (INTENSE) */
         --theme-contrasty: #220a0a; /* Very dark red */
     }
 
     /* Azure theme */
     :root[data-theme='azure'] {
-        --theme-colorful: #007fff;  /* Azure blue */
+        --theme-colorful: #007fff; /* Azure blue */
         --theme-contrasty: #0a1a2e; /* Dark navy */
     }
 
     /* Volt theme */
     :root[data-theme='volt'] {
-        --theme-colorful: #ffff00;  /* Electric yellow (INTENSE) */
+        --theme-colorful: #ffff00; /* Electric yellow (INTENSE) */
         --theme-contrasty: #2e2e0a; /* Dark olive */
     }
 
     /* Forest theme */
     :root[data-theme='forest'] {
-        --theme-colorful: #228b22;  /* Forest green */
+        --theme-colorful: #228b22; /* Forest green */
         --theme-contrasty: #0f1f0f; /* Dark forest */
     }
 
     /* Ember theme */
     :root[data-theme='ember'] {
-        --theme-colorful: #ff6347;  /* Tomato ember */
+        --theme-colorful: #ff6347; /* Tomato ember */
         --theme-contrasty: #2e1a0f; /* Dark ember */
     }
 
     /* Flame theme */
     :root[data-theme='flame'] {
-        --theme-colorful: #ff4500;  /* Orange flame */
+        --theme-colorful: #ff4500; /* Orange flame */
         --theme-contrasty: #2e1500; /* Dark flame */
     }
 
     /* Violet theme */
     :root[data-theme='violet'] {
-        --theme-colorful: #9932cc;  /* Dark orchid */
+        --theme-colorful: #9932cc; /* Dark orchid */
         --theme-contrasty: #1a0f2e; /* Dark purple */
     }
 
     /* Plasma theme */
     :root[data-theme='plasma'] {
-        --theme-colorful: #00ffff;  /* Electric cyan (INTENSE) */
+        --theme-colorful: #00ffff; /* Electric cyan (INTENSE) */
         --theme-contrasty: #0a2e2e; /* Dark teal */
     }
 
     /* Solar theme */
     :root[data-theme='solar'] {
-        --theme-colorful: #ffa500;  /* Golden orange */
+        --theme-colorful: #ffa500; /* Golden orange */
         --theme-contrasty: #2e1f0a; /* Dark gold */
     }
 
     /* Frost theme */
     :root[data-theme='frost'] {
-        --theme-colorful: #4fbdba;  /* Ice blue */
+        --theme-colorful: #4fbdba; /* Ice blue */
         --theme-contrasty: #0f2e2d; /* Dark frost */
     }
 
     /* Neon theme */
     :root[data-theme='neon'] {
-        --theme-colorful: #ff00ff;  /* Pure magenta (INTENSE) */
+        --theme-colorful: #ff00ff; /* Pure magenta (INTENSE) */
         --theme-contrasty: #2e0a2e; /* Dark magenta */
     }
 
     /* Pulse theme */
     :root[data-theme='pulse'] {
-        --theme-colorful: #ff1493;  /* Deep pink */
+        --theme-colorful: #ff1493; /* Deep pink */
         --theme-contrasty: #2e0f1f; /* Dark pink */
     }
 
     /* Prism theme - Uses user selection color */
     :root[data-theme='prism'] {
-        --theme-colorful: var(--user-selection-color);  /* Dynamic user selection color */
+        --theme-colorful: var(--user-selection-color); /* Dynamic user selection color */
         --theme-contrasty: #1a1a1a; /* Dark gray */
     }
 
@@ -197,16 +197,9 @@
         height: 100vh;
         pointer-events: none;
         z-index: 9999;
-        
+
         /* Scanlines suaves y estables */
-        background: 
-            repeating-linear-gradient(
-                0deg,
-                rgba(0, 0, 0, 0.12) 0px,
-                rgba(0, 0, 0, 0.12) 1px,
-                transparent 1px,
-                transparent 3px
-            );
+        background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.12) 0px, rgba(0, 0, 0, 0.12) 1px, transparent 1px, transparent 3px);
         animation: crt-scanlines 1.2s linear infinite;
     }
 
@@ -219,7 +212,7 @@
         height: 100vh;
         pointer-events: none;
         z-index: 9998;
-        
+
         /* CRT shadows mejoradas - no tapan contenido */
         background: 
             /* Vignette principal más sutil */
@@ -233,67 +226,42 @@
                 rgba(0, 0, 0, 0.6) 100%
             ),
             /* Sombras laterales finas */
-            linear-gradient(
-                90deg,
-                rgba(0, 0, 0, 0.5) 0%,
-                rgba(0, 0, 0, 0.3) 2%,
-                rgba(0, 0, 0, 0.1) 4%,
-                transparent 6%,
-                transparent 94%,
-                rgba(0, 0, 0, 0.1) 96%,
-                rgba(0, 0, 0, 0.3) 98%,
-                rgba(0, 0, 0, 0.5) 100%
-            ),
+                linear-gradient(
+                    90deg,
+                    rgba(0, 0, 0, 0.5) 0%,
+                    rgba(0, 0, 0, 0.3) 2%,
+                    rgba(0, 0, 0, 0.1) 4%,
+                    transparent 6%,
+                    transparent 94%,
+                    rgba(0, 0, 0, 0.1) 96%,
+                    rgba(0, 0, 0, 0.3) 98%,
+                    rgba(0, 0, 0, 0.5) 100%
+                ),
             /* Sombras verticales finas */
-            linear-gradient(
-                0deg,
-                rgba(0, 0, 0, 0.4) 0%,
-                rgba(0, 0, 0, 0.2) 1%,
-                rgba(0, 0, 0, 0.1) 2%,
-                transparent 4%,
-                transparent 96%,
-                rgba(0, 0, 0, 0.1) 98%,
-                rgba(0, 0, 0, 0.2) 99%,
-                rgba(0, 0, 0, 0.4) 100%
-            ),
-            /* Esquinas sutiles para profundidad */
-            radial-gradient(
-                ellipse 60px 40px at 0% 0%,
-                rgba(0, 0, 0, 0.2) 0%,
-                rgba(0, 0, 0, 0.1) 50%,
-                transparent 100%
-            ),
-            radial-gradient(
-                ellipse 60px 40px at 100% 0%,
-                rgba(0, 0, 0, 0.2) 0%,
-                rgba(0, 0, 0, 0.1) 50%,
-                transparent 100%
-            ),
-            radial-gradient(
-                ellipse 60px 40px at 0% 100%,
-                rgba(0, 0, 0, 0.2) 0%,
-                rgba(0, 0, 0, 0.1) 50%,
-                transparent 100%
-            ),
-            radial-gradient(
-                ellipse 60px 40px at 100% 100%,
-                rgba(0, 0, 0, 0.2) 0%,
-                rgba(0, 0, 0, 0.1) 50%,
-                transparent 100%
-            );
-        
+                linear-gradient(
+                    0deg,
+                    rgba(0, 0, 0, 0.4) 0%,
+                    rgba(0, 0, 0, 0.2) 1%,
+                    rgba(0, 0, 0, 0.1) 2%,
+                    transparent 4%,
+                    transparent 96%,
+                    rgba(0, 0, 0, 0.1) 98%,
+                    rgba(0, 0, 0, 0.2) 99%,
+                    rgba(0, 0, 0, 0.4) 100%
+                ),
+            /* Esquinas sutiles para profundidad */ radial-gradient(ellipse 60px 40px at 0% 0%, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 50%, transparent 100%),
+            radial-gradient(ellipse 60px 40px at 100% 0%, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 50%, transparent 100%),
+            radial-gradient(ellipse 60px 40px at 0% 100%, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 50%, transparent 100%),
+            radial-gradient(ellipse 60px 40px at 100% 100%, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.1) 50%, transparent 100%);
     }
 
     /* Phosphor glow effect sutil */
     .crt-effect {
-        filter: 
-            contrast(1.1) 
-            brightness(1.05) 
-            saturate(1.1);
+        filter: contrast(1.1) brightness(1.05) saturate(1.5);
     }
 
     .crt-effect * {
-        text-shadow: 
+        text-shadow:
             0 0 1px currentColor,
             0 0 2px rgba(255, 255, 255, 0.1);
     }
@@ -305,8 +273,12 @@
 
     /* Animaciones suaves para CRT */
     @keyframes crt-scanlines {
-        0% { transform: translateY(0); }
-        100% { transform: translateY(3px); }
+        0% {
+            transform: translateY(0);
+        }
+        100% {
+            transform: translateY(3px);
+        }
     }
 }
 .wavy {
