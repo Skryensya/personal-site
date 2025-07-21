@@ -1,0 +1,9 @@
+@import 'tailwindcss';
+
+@theme {
+    --font-family-grotesk: 'Space Grotesk', sans-serif;
+    --font-family-mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+
+    --color-main: var(--color-main);
+    --color-secondary: var(--color-secondary);
+}

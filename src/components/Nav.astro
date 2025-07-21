@@ -1,6 +1,6 @@
 ---
 import NavLink from './NavLink.astro';
-import ThemeToggle from './ThemeToggle.astro';
+import ThemeControl from './ThemeControl.astro';
 import siteConfig from '../data/site-config';
 const navLinks = siteConfig.headerNavLinks || [];
 ---
@@ -24,7 +24,7 @@ const navLinks = siteConfig.headerNavLinks || [];
                         </NavLink>
                     ))}
                 </div>
-                <ThemeToggle />
+                <ThemeControl />
                 {navLinks.length > 0 && (
                     <button
                         class="menu-toggle md:hidden"
