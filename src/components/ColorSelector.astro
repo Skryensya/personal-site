@@ -1,0 +1,198 @@
+---
+---
+
+<div class="color-selector">
+  <button class="color-selector-trigger" aria-label="Seleccionar esquema de color">
+    <div class="color-preview"></div>
+  </button>
+  
+  <div class="color-selector-dropdown">
+    <div class="color-options">
+      <button class="color-option" data-scheme="classic" aria-label="Esquema clásico">
+        <div class="color-sample classic"></div>
+        <span>Clásico</span>
+      </button>
+      
+      <button class="color-option" data-scheme="terminal" aria-label="Esquema terminal">
+        <div class="color-sample terminal"></div>
+        <span>Terminal</span>
+      </button>
+      
+      <button class="color-option" data-scheme="blue" aria-label="Esquema azul">
+        <div class="color-sample blue"></div>
+        <span>Azul</span>
+      </button>
+      
+      <button class="color-option" data-scheme="red" aria-label="Esquema rojo">
+        <div class="color-sample red"></div>
+        <span>Rojo</span>
+      </button>
+      
+      <button class="color-option" data-scheme="orange" aria-label="Esquema naranja">
+        <div class="color-sample orange"></div>
+        <span>Naranja</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .color-selector {
+    position: relative;
+    display: inline-block;
+  }
+
+  .color-selector-trigger {
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 2px solid rgb(var(--color-border-main));
+    background: rgb(var(--color-bg-main));
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+
+  .color-preview {
+    width: 100%;
+    height: 100%;
+    background: rgb(var(--color-text-main));
+  }
+
+  .color-selector-dropdown {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    background: rgb(var(--color-bg-main));
+    border: 2px solid rgb(var(--color-border-main));
+    padding: 0.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 50;
+    min-width: 8rem;
+  }
+
+  .color-selector.open .color-selector-dropdown {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .color-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .color-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    border: 1px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    color: rgb(var(--color-text-main));
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+
+  .color-option:hover {
+    border-color: rgb(var(--color-border-main));
+    background: rgb(var(--color-text-main) / 0.05);
+  }
+
+  .color-option.active {
+    border-color: rgb(var(--color-border-main));
+    background: rgb(var(--color-text-main) / 0.1);
+  }
+
+  .color-sample {
+    width: 1rem;
+    height: 1rem;
+    border: 1px solid rgb(var(--color-border-main) / 0.3);
+    flex-shrink: 0;
+  }
+
+  /* Color samples */
+  .color-sample.classic {
+    background: linear-gradient(45deg, rgb(30, 30, 30) 50%, rgb(250, 250, 250) 50%);
+  }
+
+  .color-sample.terminal {
+    background: linear-gradient(45deg, rgb(15, 23, 42) 50%, rgb(34, 197, 94) 50%);
+  }
+
+  .color-sample.blue {
+    background: linear-gradient(45deg, rgb(248, 250, 252) 50%, rgb(59, 130, 246) 50%);
+  }
+
+  .color-sample.red {
+    background: linear-gradient(45deg, rgb(254, 249, 249) 50%, rgb(239, 68, 68) 50%);
+  }
+
+  .color-sample.orange {
+    background: linear-gradient(45deg, rgb(255, 251, 235) 50%, rgb(249, 115, 22) 50%);
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const colorSelector = document.querySelector('.color-selector');
+    const trigger = document.querySelector('.color-selector-trigger');
+    const dropdown = document.querySelector('.color-selector-dropdown');
+    const options = document.querySelectorAll('.color-option');
+
+    if (!colorSelector || !trigger || !dropdown) return;
+
+    // Load saved color scheme
+    const savedScheme = localStorage.getItem('color-scheme') || 'classic';
+    applyColorScheme(savedScheme);
+    updateActiveOption(savedScheme);
+
+    // Toggle dropdown
+    trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      colorSelector.classList.toggle('open');
+    });
+
+    // Handle option selection
+    options.forEach(option => {
+      option.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const scheme = option.dataset.scheme;
+        if (scheme) {
+          applyColorScheme(scheme);
+          localStorage.setItem('color-scheme', scheme);
+          updateActiveOption(scheme);
+          colorSelector.classList.remove('open');
+        }
+      });
+    });
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!colorSelector.contains(e.target)) {
+        colorSelector.classList.remove('open');
+      }
+    });
+
+    // Close dropdown on escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        colorSelector.classList.remove('open');
+      }
+    });
+
+    function applyColorScheme(scheme) {
+      document.documentElement.setAttribute('data-color-scheme', scheme);
+    }
+
+    function updateActiveOption(scheme) {
+      options.forEach(option => {
+        option.classList.toggle('active', option.dataset.scheme === scheme);
+      });
+    }
+  });
+</script>

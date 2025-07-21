@@ -1,7 +1,7 @@
 ---
 import { ViewTransitions } from 'astro:transitions';
 import BaseHead, { type Props as HeadProps } from '../components/BaseHead.astro';
-import Navbar from '../components/Navbar.astro';
+import Header from '../components/Header.astro';
 
 export type Props = HeadProps & { showHeader?: boolean; headerTitle?: string, headerSubtitle?: string };
 
@@ -13,15 +13,39 @@ const { showHeader = true, headerTitle = null, headerSubtitle = null,  ...head }
     <head>
         <BaseHead {...head} />
         <script>
-            if (localStorage.theme === 'dark') {
+            // Load saved mode and theme
+            const savedMode = localStorage.getItem('mode');
+            const savedTheme = localStorage.getItem('theme') || 'classic';
+            
+            if (savedMode === 'dark') {
                 document.documentElement.classList.add('dark');
             }
+            
+            document.documentElement.setAttribute('data-theme', savedTheme);
+
+            // Smooth color animation - faster changes
+            let mainHue = 0;
+            const colorChangeSpeed = 0.5; // Faster change per frame (about 30 degrees per second at 60fps)
+            
+            function updateColorSystem() {
+                // Increment hue by a very small amount each frame
+                mainHue = (mainHue + colorChangeSpeed) % 360;
+                
+                // Update CSS variable
+                document.documentElement.style.setProperty('--main-hue', mainHue.toFixed(2));
+                
+                // Continue animation
+                requestAnimationFrame(updateColorSystem);
+            }
+            
+            // Start the smooth animation
+            updateColorSystem();
         </script>
         <ViewTransitions />
     </head>
-    <body class="bg-main text-main">
-        <Navbar />
-        <main class="pt-16">
+    <body class="bg-secondary text-main">
+        <Header />
+        <main class="max-w-none text-left px-4">
             <slot />
         </main>
     </body>

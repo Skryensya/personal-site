@@ -1,0 +1,12 @@
+---
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+const slug = text.toLowerCase().replace(/\s+/g, '-');
+---
+
+<a href={`/tags/${slug}`} class="inline-block bg-transparent border-2 border-main px-3 py-1 text-sm font-mono font-bold text-main shadow-[2px_2px_0px_var(--color-main)] transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_var(--color-secondary)]">
+  #{text}
+</a>

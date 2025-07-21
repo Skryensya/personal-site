@@ -45,12 +45,49 @@ Centralized configuration including:
 - Social links (LinkedIn: skryensya)
 - Pagination settings (5 items per page)
 
-### Theming System
+### Visual Design System
 
-- **Dark/Light mode** with CSS custom properties
-- **Typography-focused** design using Inter (sans) and Georgia (serif)
-- **Custom Tailwind config** with noise textures and glassmorphism effects
-- Theme toggle persists to localStorage
+**Design Philosophy**: Minimalist brutalist aesthetic inspired by stripe.dev - tech-oriented, clean, and functional.
+
+**Core Principles**:
+- **Brutalist minimalism**: Bold typography, stark contrasts, geometric layouts
+- **Tech-focused**: Code-like aesthetics, monospace fonts for technical elements
+- **stripe.dev inspiration**: Clean information hierarchy, subtle interactions
+- **Functionality over decoration**: Every element serves a purpose
+
+**Typography**:
+- **Primary**: Space Grotesk (sans-serif) for UI, headings, and body text  
+- **Code/Technical**: JetBrains Mono and IBM Plex Mono for technical content and code blocks
+- **Bold hierarchy**: Strong font weights (600) for headings and emphasis
+- **Limited font sizes**: Consistent type scale with clear hierarchy
+- **OpenType features**: Font feature settings enabled for better rendering
+- **Tabular numbers**: Numeric alignment for technical data
+
+**Color Palette**:
+- **Bi-color system**: Only two colors throughout the entire site
+- **High contrast pair**: Pure black (#000000) and pure white (#FFFFFF)
+- **Background/Foreground**: One color for background, the other for all text and UI elements
+- **No gray tones**: Eliminate all intermediate grays - strict black/white only
+- **Theme switching**: Dark mode (black bg/white text) and light mode (white bg/black text)
+- **No accent colors**: Remove all other colors (greens, reds, blues) for pure minimalism
+
+**Layout & Spacing**:
+- **Grid-based**: Strict geometric layouts
+- **Generous whitespace**: Breathing room between sections
+- **Sharp edges**: Minimal border radius, prefer rectangles
+- **Technical spacing**: Consistent spacing scale (8px, 16px, 24px, 32px, etc.)
+
+**Interactive Elements**:
+- **Minimal hover states**: Subtle color changes or underlines
+- **No fancy animations**: Simple, fast transitions
+- **Focus on usability**: Clear click targets and feedback
+- **Technical aesthetics**: Button styles that feel like UI elements
+
+**Components Style**:
+- **Cards**: Simple borders, no shadows, clean rectangles
+- **Buttons**: Minimal styling, clear hierarchy (primary/secondary)
+- **Navigation**: Clean, horizontal layout inspired by developer tools
+- **Code blocks**: Terminal-like appearance with proper syntax highlighting
 
 ### Key Components
 
@@ -79,7 +116,9 @@ Centralized configuration including:
 
 - **Global styles** in `src/styles/global.css` with CSS custom properties
 - **Tailwind customization** in `tailwind.config.cjs` with custom colors and animations
-- **Typography plugin** with custom "dante" prose styles
+- **Typography plugin** with custom "dante" prose styles and tech fonts
+- **Tech font stack** with Space Grotesk, JetBrains Mono, and IBM Plex Mono
+- **OpenType features** enabled for enhanced typography rendering
 - **Mobile-first responsive design**
 
 ### Content Management
