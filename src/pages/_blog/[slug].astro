@@ -56,6 +56,10 @@ const { Content } = await post.render();
                         {tags.map((tag: any) => (
                             <Tag text={tag} />
                         ))}
+                    </div>
+                )
+            }
+        </div>
     </article>
     {
         (prevPost || nextPost) && (

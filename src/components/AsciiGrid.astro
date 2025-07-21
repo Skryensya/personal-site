@@ -57,6 +57,13 @@ const {
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
+    /* Hide controls on mobile devices */
+    @media (max-width: 768px) {
+        .color-controls {
+            display: none;
+        }
+    }
+
     .color-controls label {
         display: block;
         margin-bottom: 8px;
@@ -82,9 +89,9 @@ const {
 
         // Configuración de la cuadrícula técnica
         const GRID_CONFIG = {
-            baseSpacing: 12,
-            baseSize: 10,
-            maxSizeMultiplier: 2.2,  // Crecimiento moderado
+            baseSpacing: 8,           // Más denso
+            baseSize: 6,              // Letras más pequeñas
+            maxSizeMultiplier: 2.2,   // Crecimiento moderado
             influenceRadius: 200,     // Radio de influencia balanceado
             pushDistance: 50,         // Empuje más suave
             smoothing: 0.25,          // Transiciones más rápidas para respuesta inmediata
@@ -125,6 +132,13 @@ const {
         let mouseY: number = 0;
         let lastFrameTime: number = 0;
         let animationId: number = 0;
+        let isMouseHovering: boolean = false;
+        let animationTime: number = 0;
+        let currentPattern: number = 0;
+        let nextPattern: number = 1;
+        let patternSwitchTime: number = 0;
+        let transitionProgress: number = 0;
+        let isTransitioning: boolean = false;
 
         // Cache para colores del tema
         let cachedTextColor: string = '#000000';
@@ -152,6 +166,8 @@ const {
         }
 
         function resizeCanvas(): void {
+            if (!ctx) return;
+            
             const rect = canvas.getBoundingClientRect();
             const devicePixelRatio = window.devicePixelRatio || 1;
             
@@ -213,34 +229,44 @@ const {
         }
 
         function setupEventListeners(): void {
-            // Optimizar eventos de mouse usando throttling
-            let isMouseMoving = false;
+            // Check if device is mobile
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+                           ('ontouchstart' in window) ||
+                           (navigator.maxTouchPoints > 0);
             
-            canvas.addEventListener('mousemove', (e: MouseEvent) => {
-                if (!isMouseMoving) {
-                    isMouseMoving = true;
-                    requestAnimationFrame(() => {
-                        const rect = canvas.getBoundingClientRect();
-                        mouseX = e.clientX - rect.left;
-                        mouseY = e.clientY - rect.top;
-                        isMouseMoving = false;
-                    });
-                }
-            });
+            // Only add mouse event listeners on desktop
+            if (!isMobile) {
+                // Optimizar eventos de mouse usando throttling
+                let isMouseMoving = false;
+                
+                canvas.addEventListener('mousemove', (e: MouseEvent) => {
+                    if (!isMouseMoving) {
+                        isMouseMoving = true;
+                        requestAnimationFrame(() => {
+                            const rect = canvas.getBoundingClientRect();
+                            mouseX = e.clientX - rect.left;
+                            mouseY = e.clientY - rect.top;
+                            isMouseMoving = false;
+                        });
+                    }
+                });
 
-            canvas.addEventListener('mouseleave', () => {
-                mouseX = -1000;
-                mouseY = -1000;
-            });
+                canvas.addEventListener('mouseleave', () => {
+                    mouseX = -1000;
+                    mouseY = -1000;
+                    isMouseHovering = false;
+                });
 
-            canvas.addEventListener('mouseenter', (e: MouseEvent) => {
-                const rect = canvas.getBoundingClientRect();
-                mouseX = e.clientX - rect.left;
-                mouseY = e.clientY - rect.top;
-            });
+                canvas.addEventListener('mouseenter', (e: MouseEvent) => {
+                    const rect = canvas.getBoundingClientRect();
+                    mouseX = e.clientX - rect.left;
+                    mouseY = e.clientY - rect.top;
+                    isMouseHovering = true;
+                });
+            }
 
             // Debounce resize events
-            let resizeTimeout: number;
+            let resizeTimeout: ReturnType<typeof setTimeout>;
             window.addEventListener('resize', () => {
                 clearTimeout(resizeTimeout);
                 resizeTimeout = setTimeout(() => {
@@ -262,9 +288,158 @@ const {
         }
 
         function renderFrame(currentTime: number): void {
+            if (!ctx) return;
+            
             // Calcular delta time para animaciones consistentes
             const deltaTime = currentTime - lastFrameTime;
             lastFrameTime = currentTime;
+            
+            // Multiple animation patterns
+            if (!isMouseHovering) {
+                const rect = canvas.getBoundingClientRect();
+                animationTime += deltaTime * 0.0008; // Slow animation speed
+                patternSwitchTime += deltaTime;
+                
+                // Switch pattern every 10 seconds with 1 second transition
+                if (patternSwitchTime > 9000 && !isTransitioning) {
+                    // Start transition
+                    isTransitioning = true;
+                    transitionProgress = 0;
+                    
+                    // Pick random next pattern (different from current)
+                    do {
+                        nextPattern = Math.floor(Math.random() * 5);
+                    } while (nextPattern === currentPattern);
+                }
+                
+                if (isTransitioning) {
+                    transitionProgress += deltaTime / 1000; // 1 second transition
+                    
+                    if (transitionProgress >= 1) {
+                        // Transition complete
+                        currentPattern = nextPattern;
+                        isTransitioning = false;
+                        patternSwitchTime = 0;
+                        transitionProgress = 0;
+                    }
+                }
+                
+                const centerX = rect.width / 2;
+                const centerY = rect.height / 2;
+                const scale = 100; // Base scale for all patterns
+                
+                // Helper function to get pattern position
+                const getPatternPosition = (pattern: number): {x: number, y: number} => {
+                    switch (pattern) {
+                        case 0: // Figure-8 (Infinity)
+                            return {
+                                x: centerX + scale * 1.2 * Math.sin(animationTime),
+                                y: centerY + scale * 0.8 * Math.sin(animationTime * 2) / 2
+                            };
+                        
+                        case 1: // Circle
+                            return {
+                                x: centerX + scale * Math.cos(animationTime),
+                                y: centerY + scale * Math.sin(animationTime)
+                            };
+                        
+                        case 2: // Triangle
+                            const trianglePhase = (animationTime % (Math.PI * 2)) / (Math.PI * 2);
+                            if (trianglePhase < 1/3) {
+                                const t = trianglePhase * 3;
+                                return {
+                                    x: centerX + scale * (-0.5 + t),
+                                    y: centerY + scale * (0.5 - t * 1.5)
+                                };
+                            } else if (trianglePhase < 2/3) {
+                                const t = (trianglePhase - 1/3) * 3;
+                                return {
+                                    x: centerX + scale * (0.5 - t),
+                                    y: centerY + scale * (-1)
+                                };
+                            } else {
+                                const t = (trianglePhase - 2/3) * 3;
+                                return {
+                                    x: centerX + scale * (-0.5),
+                                    y: centerY + scale * (-1 + t * 1.5)
+                                };
+                            }
+                        
+                        case 3: // Star (5-pointed)
+                            const starPoints = 5;
+                            const outerRadius = scale;
+                            const innerRadius = scale * 0.4;
+                            const starPhase = (animationTime % (Math.PI * 2)) / (Math.PI * 2);
+                            const starSegment = Math.floor(starPhase * starPoints * 2);
+                            const segmentProgress = (starPhase * starPoints * 2) % 1;
+                            
+                            let starRadius, starAngle;
+                            if (starSegment % 2 === 0) {
+                                starRadius = outerRadius + (innerRadius - outerRadius) * segmentProgress;
+                                starAngle = (starSegment / 2) * (Math.PI * 2 / starPoints) - Math.PI / 2;
+                            } else {
+                                starRadius = innerRadius + (outerRadius - innerRadius) * segmentProgress;
+                                starAngle = ((starSegment - 1) / 2 + 0.5) * (Math.PI * 2 / starPoints) - Math.PI / 2;
+                            }
+                            
+                            return {
+                                x: centerX + starRadius * Math.cos(starAngle),
+                                y: centerY + starRadius * Math.sin(starAngle)
+                            };
+                        
+                        case 4: // Letter A
+                            const aPhase = (animationTime % (Math.PI * 2)) / (Math.PI * 2);
+                            const aScale = scale * 0.8;
+                            
+                            if (aPhase < 0.25) {
+                                const t = aPhase * 4;
+                                return {
+                                    x: centerX + aScale * (-0.5 + t * 0.5),
+                                    y: centerY + aScale * (1 - t * 2)
+                                };
+                            } else if (aPhase < 0.5) {
+                                const t = (aPhase - 0.25) * 4;
+                                return {
+                                    x: centerX + aScale * (0 + t * 0.5),
+                                    y: centerY + aScale * (-1 + t * 2)
+                                };
+                            } else if (aPhase < 0.75) {
+                                const t = (aPhase - 0.5) * 4;
+                                return {
+                                    x: centerX + aScale * (0.5 - t * 1),
+                                    y: centerY + aScale * (0)
+                                };
+                            } else {
+                                const t = (aPhase - 0.75) * 4;
+                                return {
+                                    x: centerX + aScale * (-0.5),
+                                    y: centerY + aScale * (0 + t * 1)
+                                };
+                            }
+                        
+                        default:
+                            return {x: centerX, y: centerY};
+                    }
+                };
+                
+                if (isTransitioning) {
+                    // Smooth transition between patterns using easing
+                    const easeProgress = transitionProgress < 0.5 
+                        ? 2 * transitionProgress * transitionProgress 
+                        : 1 - Math.pow(-2 * transitionProgress + 2, 3) / 2; // Ease-in-out cubic
+                    
+                    const currentPos = getPatternPosition(currentPattern);
+                    const nextPos = getPatternPosition(nextPattern);
+                    
+                    mouseX = currentPos.x + (nextPos.x - currentPos.x) * easeProgress;
+                    mouseY = currentPos.y + (nextPos.y - currentPos.y) * easeProgress;
+                } else {
+                    // Normal pattern execution
+                    const pos = getPatternPosition(currentPattern);
+                    mouseX = pos.x;
+                    mouseY = pos.y;
+                }
+            }
             
             const textColor = getThemeColors();
             const rect = canvas.getBoundingClientRect();
@@ -347,17 +522,27 @@ const {
             // Restaurar alpha
             ctx.globalAlpha = 1;
 
-            // Indicador circular del cursor (solo si está dentro del canvas)
-            const rect2 = canvas.getBoundingClientRect();
-            if (mouseX >= 0 && mouseY >= 0 && mouseX <= rect2.width && mouseY <= rect2.height) {
-                ctx.strokeStyle = textColor;
-                ctx.globalAlpha = 0.5;
+            // Indicador circular del cursor - ALWAYS visible
+            ctx.strokeStyle = textColor;
+            
+            if (isMouseHovering) {
+                // Cursor sólido cuando sigue al mouse
+                ctx.globalAlpha = 0.8;
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.arc(mouseX, mouseY, 8, 0, Math.PI * 2);
                 ctx.stroke();
-                ctx.globalAlpha = 1;
+            } else {
+                // Cursor suave durante la animación automática - siempre visible
+                const pulseAlpha = 0.5 + Math.sin(currentTime * 0.002) * 0.2;
+                ctx.globalAlpha = pulseAlpha;
+                ctx.lineWidth = 1.5 + Math.sin(currentTime * 0.003) * 0.5;
+                ctx.beginPath();
+                ctx.arc(mouseX, mouseY, 6 + Math.sin(currentTime * 0.0025) * 1.5, 0, Math.PI * 2);
+                ctx.stroke();
             }
+            
+            ctx.globalAlpha = 1;
 
             animationId = requestAnimationFrame(renderFrame);
         }

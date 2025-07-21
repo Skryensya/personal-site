@@ -7,6 +7,8 @@ import Marquee from '../components/Marquee.astro';
 import BigSectionContainer from '../components/BigSectionContainer.astro';
 import GridCards from '../components/GridCards.astro';
 import AsciiGrid from '@/components/AsciiGrid.astro';
+import IsometricTextCard from '../components/IsometricTextCard.astro';
+// import Strudel from '../components/Strudel.astro';
 
 
 const skills = ['React', 'TypeScript', 'Node.js', 'Astro', 'PostgreSQL', 'AWS'];
@@ -28,7 +30,7 @@ const skills = ['React', 'TypeScript', 'Node.js', 'Astro', 'PostgreSQL', 'AWS'];
                 <Button href="/projects" size="md" filled elevated> Ver mis proyectos </Button>
             </div>
         </div>
-        <div><AsciiGrid   /></div>
+        <div><AsciiGrid/></div>
     </section>
 
     <Marquee
@@ -117,6 +119,16 @@ const skills = ['React', 'TypeScript', 'Node.js', 'Astro', 'PostgreSQL', 'AWS'];
         </div>
     </section>
 
+    <!-- Isometric Cards Section -->
+    <section class="py-20 border-main/20">
+        <h2 class="text-2xl font-semibold text-main mb-12">Nuestros servicios</h2>
+        <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
+            <IsometricTextCard text="01" size="lg" />
+            <IsometricTextCard text="02" size="lg" />
+            <IsometricTextCard text="03" size="lg" />
+        </div>
+    </section>
+
     <!-- Featured Projects -->
     <section class="py-20 border-main/20">
         <h2 class="text-2xl font-semibold text-main mb-6">Algunos proyectos</h2>
@@ -127,6 +139,8 @@ const skills = ['React', 'TypeScript', 'Node.js', 'Astro', 'PostgreSQL', 'AWS'];
             </Button>
         </div>
     </section>
+
+    <!-- <Strudel /> -->
 </BaseLayout>
 
 <style>

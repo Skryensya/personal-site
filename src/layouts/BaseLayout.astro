@@ -43,10 +43,12 @@ const { showHeader = true, headerTitle = null, headerSubtitle = null,  ...head }
         </script>
         <ViewTransitions />
     </head>
-    <body class="bg-secondary text-main md:px-10">
+    <body class="bg-secondary text-main md:px-10 (--max-w-size:1280px) max-w-[var(--max-w-size)] mx-auto relative">
         <Header />
-        <main class="text-left px-4">
-            <slot />
-        </main>
+        <div  >
+            <main class="text-left px-4">
+                <slot />
+            </main>
+        </div>
     </body>
 </html>
