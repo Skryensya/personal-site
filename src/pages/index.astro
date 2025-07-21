@@ -12,11 +12,16 @@ import AsciiGrid from '@/components/AsciiGrid.astro';
 const skills = ['React', 'TypeScript', 'Node.js', 'Astro', 'PostgreSQL', 'AWS'];
 ---
 
+<!-- Google Font for distinctive name styling -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Righteous&display=swap" rel="stylesheet">
+
 <BaseLayout description={siteConfig.description} image={siteConfig.image}>
     <!-- Hero Section -->
     <section class="grid grid-cols-1 md:grid-cols-2 pt-10 pb-20">
         <div>
-            <h1 class="text-4xl md:text-8xl font-bold text-main mb-4 text-balance">Hola, soy Allison Bienvenido a mi sitio</h1>
+            <h1 class="text-4xl md:text-8xl font-bold text-main mb-4 text-balance">Hola, soy <span class="disruptive-name">Allison</span> Bienvenido a mi sitio</h1>
             <div class="mb-8">
                 <TextGenerateEffect
                     words="Me gusta crear sitios web que funcionen bien y sean fáciles de usar. Trabajo principalmente con React y TypeScript."
@@ -129,6 +134,16 @@ const skills = ['React', 'TypeScript', 'Node.js', 'Astro', 'PostgreSQL', 'AWS'];
 </BaseLayout>
 
 <style>
+    /* Distinctive display font for name */
+    .disruptive-name {
+        font-family: 'Righteous', sans-serif;
+        font-weight: 400;
+        font-size: 1.1em;
+        color: var(--color-main);
+        position: relative;
+        display: inline-block;
+    }
+
     /* Skill tags circular expansion */
     .skill-tag::before {
         content: '';
