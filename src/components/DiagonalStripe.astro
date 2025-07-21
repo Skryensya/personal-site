@@ -1,0 +1,38 @@
+---
+export interface Props {
+  height?: string;
+  margin?: string;
+}
+
+const { 
+  height = '50px',
+  margin = '0'
+} = Astro.props;
+---
+
+<div style={`margin: ${margin}px`} class="relative">
+  <div class="diagonal-stripe" style={`height: ${height}`}></div>
+</div>
+
+<style>
+  .diagonal-stripe {
+    display: block;
+    width: 100%;
+    background-image: repeating-linear-gradient(
+      315deg,
+      var(--color-main) 0,
+      var(--color-main) 1px,
+      transparent 0,
+      transparent 50%
+    );
+    background-size: 10px 10px;
+    background-attachment: fixed;
+    border: 1px solid var(--color-main);
+    opacity: 0.5;
+  }
+
+  /* Dark mode - more visible */
+  html.dark .diagonal-stripe {
+    opacity: 0.8;
+  }
+</style>

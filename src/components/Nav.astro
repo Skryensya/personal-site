@@ -63,20 +63,13 @@ const navLinks = siteConfig.headerNavLinks || [];
     .menu.is-visible {
         @apply block;
     }
-    .menu-toggle-icon {
-        transition: width 0.1s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
-    }
     .menu-toggle.is-active .menu-toggle-icon {
         @apply w-0;
-        transition: width 0.1s cubic-bezier(0.4, 0, 0.2, 1);
     }
     .menu-toggle-icon:before,
     .menu-toggle-icon:after {
         @apply w-6 h-px absolute left-1/2 top-0 origin-center -translate-x-1/2 bg-current;
         content: '';
-        transition:
-            transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-            margin 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
     }
     .menu-toggle-icon:before {
         @apply -mt-1.5;
@@ -87,9 +80,6 @@ const navLinks = siteConfig.headerNavLinks || [];
     .menu-toggle.is-active .menu-toggle-icon:before,
     .menu-toggle.is-active .menu-toggle-icon:after {
         @apply mt-0;
-        transition:
-            margin 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.1s,
-            transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
     }
     .menu-toggle.is-active .menu-toggle-icon:before {
         @apply rotate-45;

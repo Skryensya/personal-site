@@ -1,94 +1,114 @@
 ---
 export interface Props {
   href?: string;
-  type?: 'primary' | 'secondary' | 'cta';
+  variant?: 'filled' | 'outline';
   size?: 'small' | 'medium' | 'large';
+  elevated?: boolean;
   class?: string;
 }
 
 const { 
   href, 
-  type = 'primary', 
+  variant = 'filled', 
   size = 'medium',
+  elevated = true,
   class: className = ''
 } = Astro.props;
 
 const Tag = href ? 'a' : 'button';
 ---
 
-<Tag 
-  class={`btn btn--${type} btn--${size} ${className}`}
-  href={href}
->
-  <slot />
-</Tag>
+<div class={`btn-group relative isolate ${elevated ? 'btn-group--elevated' : 'btn-group--flat'}`}>
+  <!-- Moving button -->
+  <Tag 
+    class={`btn btn--${variant} btn--${size} ${elevated ? 'btn--elevated' : 'btn--flat'} ${className}`}
+    href={href}
+  >
+    <slot />
+  </Tag>
+  
+  {elevated && (
+    <!-- Fixed shadow with same content (invisible) -->
+    <div class={`btn-shadow btn-shadow--${size}`} aria-hidden="true">
+      <span class="invisible">
+        <slot />
+      </span>
+    </div>
+  )}
+</div>
 
 <style>
+  .btn-group {
+    @apply relative inline-block w-fit;
+  }
+
   .btn {
-    @apply relative inline-block font-bold uppercase tracking-wide cursor-pointer;
-    border: 4px solid rgb(var(--color-button-shadow));
+    @apply font-bold uppercase tracking-wide cursor-pointer border-2 transition-all duration-100 ease-in-out whitespace-nowrap;
     text-decoration: none;
-    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-    transform: translate(0, 0);
-    box-shadow: 
-      8px 8px 0px rgb(var(--color-button-shadow)),
-      0 0 0 0 rgb(var(--color-button-glow) / 0.2);
-    overflow: hidden;
+    font-family: inherit;
+    z-index: 2;
   }
 
-  .btn:hover {
-    box-shadow: 
-      12px 12px 0px rgb(var(--color-button-shadow)),
-      0 0 20px 0 rgb(var(--color-button-glow) / 0.5);
+  /* Elevated buttons */
+  .btn--elevated {
+    @apply absolute;
+    top: -12px;
+    left: -12px;
   }
 
-  .btn:active {
-    transform: translate(8px, 8px);
-    box-shadow: 
-      0px 0px 0px rgb(var(--color-button-shadow)),
-      0 0 5px 0 rgb(var(--color-button-glow) / 0.8);
+  /* Flat buttons */
+  .btn--flat {
+    @apply relative;
+    top: 0;
+    left: 0;
   }
 
-  /* Primary Button */
-  .btn--primary {
-    background: rgb(var(--color-accent));
-    color: rgb(var(--color-bg-main));
+  .btn-shadow {
+    @apply relative border whitespace-nowrap pointer-events-none font-bold uppercase tracking-wide;
+    background-image: repeating-linear-gradient(
+      315deg,
+      var(--color-main) 0,
+      var(--color-main) 1px,
+      transparent 0,
+      transparent 50%
+    );
+    background-size: 8px 8px;
+    border-color: var(--color-main);
+    font-family: inherit;
+    z-index: 1;
+    /* Shadow has exact same dimensions as button with same text content */
   }
 
-  /* Secondary Button */
-  .btn--secondary {
+  /* Hover and Active states - only for elevated buttons */
+  .btn-group--elevated:active .btn--elevated {
+    top: 0;
+    left: 0;
+  }
+
+  /* Flat buttons don't have special active states */
+  .btn-group--flat .btn--flat:active {
+    transform: scale(0.98);
+  }
+
+  /* Button Variants using simplified colors */
+  .btn--filled {
+    background: var(--color-main);
+    color: var(--color-secondary);
+    border-color: var(--color-main);
+  }
+
+  .btn--outline {
     background: transparent;
-    color: rgb(var(--color-text-main));
+    color: var(--color-main);
+    border-color: var(--color-main);
   }
 
-  .btn--secondary:hover {
-    background: rgb(var(--color-bg-muted));
+  .btn--outline:hover {
+    background: var(--color-main);
+    color: var(--color-secondary);
   }
 
-  /* CTA Button */
-  .btn--cta {
-    background: rgb(var(--color-cta));
-    color: white;
-    border-color: rgb(var(--color-button-shadow));
-    box-shadow: 
-      8px 8px 0px rgb(var(--color-button-shadow)),
-      0 0 0 0 rgb(var(--color-cta) / 0.3);
-  }
-
-  .btn--cta:hover {
-    background: rgb(var(--color-cta-hover));
-    box-shadow: 
-      12px 12px 0px rgb(var(--color-button-shadow)),
-      0 0 25px 0 rgb(var(--color-cta) / 0.6);
-  }
-
-  .btn--cta:active {
-    box-shadow: 
-      0px 0px 0px rgb(var(--color-button-shadow)),
-      0 0 10px 0 rgb(var(--color-cta) / 0.9);
-  }
-
-  /* Sizes */
+  /* Button Sizes */
   .btn--small {
     @apply px-3 py-2 text-xs;
   }
@@ -100,28 +120,18 @@ const Tag = href ? 'a' : 'button';
   .btn--large {
     @apply px-8 py-4 text-base;
   }
+
+  /* Shadow Sizes (exact match to button dimensions) */
+  .btn-shadow--small {
+    @apply px-3 py-2 text-xs;
+  }
+
+  .btn-shadow--medium {
+    @apply px-6 py-3 text-sm;
+  }
+
+  .btn-shadow--large {
+    @apply px-8 py-4 text-base;
+  }
 </style>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const buttons = document.querySelectorAll('.btn');
-    
-    buttons.forEach(button => {
-      button.addEventListener('click', (e) => {
-        e.preventDefault();
-        
-        // Wait for the press animation to complete before navigating
-        setTimeout(() => {
-          const href = button.getAttribute('href');
-          if (href) {
-            if (href.startsWith('mailto:')) {
-              window.location.href = href;
-            } else {
-              window.location.href = href;
-            }
-          }
-        }, 300);
-      });
-    });
-  });
-</script>

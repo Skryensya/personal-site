@@ -5,49 +5,52 @@ module.exports = {
     darkMode: 'class',
     theme: {
         fontFamily: {
-            sans: ['Inter', ...defaultTheme.fontFamily.sans],
-            // Playfair Display
-            serif: ['Georgia', ...defaultTheme.fontFamily.serif]
-        },
-        animation: {
-            wave: 'wave 30s linear infinite'
-        },
-        keyframes: {
-            wave: {
-                '0%': { transform: 'translateX(0)' },
-                '100%': { transform: 'translateX(-55%)' }
-            }
+            sans: ['Space Grotesk', ...defaultTheme.fontFamily.sans],
+            mono: ['JetBrains Mono', 'IBM Plex Mono', ...defaultTheme.fontFamily.mono],
+            code: ['JetBrains Mono', 'IBM Plex Mono', ...defaultTheme.fontFamily.mono],
+            serif: ['Space Grotesk', ...defaultTheme.fontFamily.sans]
         },
         extend: {
+            animation: {
+                scroll: 'scroll 60s linear infinite'
+            },
+            keyframes: {
+                scroll: {
+                    '0%': { transform: 'translateX(0)' },
+                    '100%': { transform: 'translateX(-50%)' }
+                }
+            },
             textColor: {
-                main: 'rgb(var(--color-text-main) / <alpha-value>)'
+                main: 'var(--color-main)',
+                secondary: 'var(--color-secondary)'
             },
             backgroundColor: {
-                main: 'rgb(var(--color-bg-main) / <alpha-value>)',
-                muted: 'rgb(var(--color-bg-muted) / <alpha-value>)'
+                main: 'var(--color-main)',
+                secondary: 'var(--color-secondary)'
             },
             borderColor: {
-                main: 'rgb(var(--color-border-main) / <alpha-value>)'
+                main: 'var(--color-main)',
+                secondary: 'var(--color-secondary)'
             },
             typography: (theme) => ({
                 dante: {
                     css: {
-                        '--tw-prose-body': theme('textColor.main / 100%'),
-                        '--tw-prose-headings': theme('textColor.main / 100%'),
-                        '--tw-prose-lead': theme('textColor.main / 100%'),
-                        '--tw-prose-links': theme('textColor.main / 100%'),
-                        '--tw-prose-bold': theme('textColor.main / 100%'),
-                        '--tw-prose-counters': theme('textColor.main / 100%'),
-                        '--tw-prose-bullets': theme('textColor.main / 100%'),
-                        '--tw-prose-hr': theme('borderColor.main / 100%'),
-                        '--tw-prose-quotes': theme('textColor.main / 100%'),
-                        '--tw-prose-quote-borders': theme('borderColor.main / 100%'),
-                        '--tw-prose-captions': theme('textColor.main / 100%'),
-                        '--tw-prose-code': theme('textColor.main / 100%'),
-                        '--tw-prose-pre-code': theme('colors.zinc.100'),
-                        '--tw-prose-pre-bg': theme('colors.zinc.800'),
-                        '--tw-prose-th-borders': theme('borderColor.main / 100%'),
-                        '--tw-prose-td-borders': theme('borderColor.main / 100%')
+                        '--tw-prose-body': 'var(--color-main)',
+                        '--tw-prose-headings': 'var(--color-main)',
+                        '--tw-prose-lead': 'var(--color-main)',
+                        '--tw-prose-links': 'var(--color-secondary)',
+                        '--tw-prose-bold': 'var(--color-main)',
+                        '--tw-prose-counters': 'var(--color-secondary)',
+                        '--tw-prose-bullets': 'var(--color-secondary)',
+                        '--tw-prose-hr': 'var(--color-main)',
+                        '--tw-prose-quotes': 'var(--color-main)',
+                        '--tw-prose-quote-borders': 'var(--color-main)',
+                        '--tw-prose-captions': 'var(--color-secondary)',
+                        '--tw-prose-code': 'var(--color-secondary)',
+                        '--tw-prose-pre-code': 'var(--color-main)',
+                        '--tw-prose-pre-bg': 'var(--color-secondary)',
+                        '--tw-prose-th-borders': 'var(--color-main)',
+                        '--tw-prose-td-borders': 'var(--color-main)'
                     }
                 },
                 DEFAULT: {
@@ -63,15 +66,22 @@ module.exports = {
                             }
                         },
                         'h1,h2,h3,h4,h5,h6': {
-                            fontFamily: theme('fontFamily.serif'),
+                            fontFamily: theme('fontFamily.sans'),
+                            fontWeight: 600
+                        },
+                        'code': {
+                            fontFamily: theme('fontFamily.mono'),
                             fontWeight: 500
+                        },
+                        'pre': {
+                            fontFamily: theme('fontFamily.mono')
                         },
                         blockquote: {
                             border: 0,
-                            fontFamily: theme('fontFamily.serif'),
+                            fontFamily: theme('fontFamily.mono'),
                             fontSize: '1.3125em',
-                            fontStyle: 'italic',
-                            fontWeight: 'normal',
+                            fontStyle: 'normal',
+                            fontWeight: '400',
                             lineHeight: 1.4,
                             paddingLeft: 0,
                             '@media (min-width: theme("screens.sm"))': {
