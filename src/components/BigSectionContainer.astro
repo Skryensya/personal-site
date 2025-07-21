@@ -1,0 +1,22 @@
+---
+export interface Props {
+  title: string;
+  class?: string;
+}
+
+const { title, class: className } = Astro.props;
+---
+
+<section class:list={["flex items-stretch gap-4 md:gap-8", className]}>
+  <div class="flex w-[100px] items-end justify-end bg-main py-2 text-secondary">
+    <h2
+      class="transform-gpu whitespace-nowrap text-2xl font-bold uppercase tracking-tight [writing-mode:vertical-rl] text-secondary md:text-4xl"
+      style="transform: rotate(180deg);"
+    >
+      {title}
+    </h2>
+  </div>
+  <div>
+    <slot />
+  </div>
+</section>

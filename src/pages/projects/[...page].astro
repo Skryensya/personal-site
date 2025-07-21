@@ -3,7 +3,7 @@ import type { GetStaticPathsOptions, Page } from 'astro';
 import { type CollectionEntry, getCollection } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Pagination from '../../components/Pagination.astro';
-import ProjectPreview from '../../components/ProjectPreview.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
 import siteConfig from '../../data/site-config';
 import { sortItemsByDateDesc } from '../../utils/data-utils';
 
@@ -26,6 +26,8 @@ const portfolio = page.data;
     headerSubtitle='En lo que he Colaborado'
 >
     <h1 class="mb-12 text-2xl leading-tight font-serif italic sm:mb-16 sm:text-4xl">Proyectos</h1>
-    {portfolio.map((project) => <ProjectPreview project={project} class="mb-2 sm:mb-4" />)}
-    <Pagination page={page} class="my-4 sm:my-8" />
+    <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+        {portfolio.map((project) => <ProjectCard project={project} />)}
+    </div>
+    <Pagination page={page} class="my-8 sm:my-12" />
 </BaseLayout>

@@ -1,0 +1,381 @@
+---
+export interface Props {
+    class?: string;
+    showControls?: boolean;
+}
+
+const { 
+    class: className, 
+    showControls = false
+} = Astro.props;
+---
+
+<div class:list={['ascii-grid-wrapper', className]}>
+    {showControls && (
+        <div class="color-controls">
+            <label>
+                Color Principal:
+                <input type="color" id="primaryColorPicker" value="#000000" />
+            </label>
+            <label>
+                Color Secundario:
+                <input type="color" id="secondaryColorPicker" value="#ffffff" />
+            </label>
+        </div>
+    )}
+    <canvas id="techGridCanvas"></canvas>
+</div>
+
+<style>
+    .ascii-grid-wrapper {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: transparent;
+    }
+
+    #techGridCanvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+        background: transparent;
+    }
+
+    .color-controls {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        z-index: 10;
+        background: rgb(var(--color-bg));
+        color: rgb(var(--color-text-main));
+        padding: 12px;
+        border: 1px solid rgb(var(--color-text-main));
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 11px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .color-controls label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+    }
+
+    .color-controls input[type="color"] {
+        width: 40px;
+        height: 20px;
+        border: none;
+        margin-left: 8px;
+        cursor: pointer;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const canvas = document.getElementById('techGridCanvas') as HTMLCanvasElement;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Configuración de la cuadrícula técnica
+        const GRID_CONFIG = {
+            baseSpacing: 12,
+            baseSize: 10,
+            maxSizeMultiplier: 2.2,  // Crecimiento moderado
+            influenceRadius: 200,     // Radio de influencia balanceado
+            pushDistance: 50,         // Empuje más suave
+            smoothing: 0.25,          // Transiciones más rápidas para respuesta inmediata
+            falloffPower: 1.4         // Falloff más definido
+        };
+
+        // Caracteres ASCII para malla técnica
+        const ASCII_MESH = {
+            MAIN_INTERSECTION: '+',
+            HORIZONTAL_LINE: '─',
+            VERTICAL_LINE: '│',
+            MINOR_DOT: '·'
+        };
+
+        // Pesos visuales jerárquicos
+        const VISUAL_WEIGHTS = {
+            MAIN_INTERSECTION: 1.2,
+            HORIZONTAL_LINE: 0.8,
+            VERTICAL_LINE: 0.8,
+            MINOR_DOT: 0.6
+        };
+
+        // Tipos
+        interface GridElement {
+            baseX: number;
+            baseY: number;
+            x: number;
+            y: number;
+            char: string;
+            weight: number;
+            size: number;
+            influence: number;
+        }
+
+        // Estado del grid
+        let gridElements: GridElement[] = [];
+        let mouseX: number = 0;
+        let mouseY: number = 0;
+        let lastFrameTime: number = 0;
+        let animationId: number = 0;
+
+        // Cache para colores del tema
+        let cachedTextColor: string = '#000000';
+        let lastColorCheck: number = 0;
+        const COLOR_CHECK_INTERVAL = 100; // Check every 100ms
+
+        function getThemeColors(): string {
+            const now = performance.now();
+            
+            // Solo actualizar colores cada cierto tiempo para mejor rendimiento
+            if (now - lastColorCheck > COLOR_CHECK_INTERVAL) {
+                const style = getComputedStyle(document.documentElement);
+                const colorMain = style.getPropertyValue('--color-main').trim();
+                
+                if (colorMain) {
+                    cachedTextColor = colorMain;
+                } else {
+                    cachedTextColor = '#000000';
+                }
+                
+                lastColorCheck = now;
+            }
+            
+            return cachedTextColor;
+        }
+
+        function resizeCanvas(): void {
+            const rect = canvas.getBoundingClientRect();
+            const devicePixelRatio = window.devicePixelRatio || 1;
+            
+            // Ajustar para alta densidad de píxeles
+            canvas.width = rect.width * devicePixelRatio;
+            canvas.height = rect.height * devicePixelRatio;
+            canvas.style.width = rect.width + 'px';
+            canvas.style.height = rect.height + 'px';
+            
+            // Escalar el contexto para alta densidad
+            ctx.scale(devicePixelRatio, devicePixelRatio);
+            
+            mouseX = rect.width / 2;
+            mouseY = rect.height / 2;
+        }
+
+        function generateTechGrid(): void {
+            gridElements = [];
+            const rect = canvas.getBoundingClientRect();
+            const cols = Math.floor(rect.width / GRID_CONFIG.baseSpacing);
+            const rows = Math.floor(rect.height / GRID_CONFIG.baseSpacing);
+
+            for (let col = 0; col <= cols; col++) {
+                for (let row = 0; row <= rows; row++) {
+                    const x = col * GRID_CONFIG.baseSpacing;
+                    const y = row * GRID_CONFIG.baseSpacing;
+
+                    let char;
+                    let weight = 1;
+
+                    if (col % 4 === 0 && row % 4 === 0) {
+                        char = ASCII_MESH.MAIN_INTERSECTION;
+                        weight = VISUAL_WEIGHTS.MAIN_INTERSECTION;
+                    } else if (col % 4 === 0) {
+                        char = ASCII_MESH.VERTICAL_LINE;
+                        weight = VISUAL_WEIGHTS.VERTICAL_LINE;
+                    } else if (row % 4 === 0) {
+                        char = ASCII_MESH.HORIZONTAL_LINE;
+                        weight = VISUAL_WEIGHTS.HORIZONTAL_LINE;
+                    } else if (col % 2 === 0 && row % 2 === 0) {
+                        char = ASCII_MESH.MINOR_DOT;
+                        weight = VISUAL_WEIGHTS.MINOR_DOT;
+                    } else {
+                        continue;
+                    }
+
+                    gridElements.push({
+                        baseX: x,
+                        baseY: y,
+                        x: x,
+                        y: y,
+                        char: char,
+                        weight: weight,
+                        size: GRID_CONFIG.baseSize * weight,
+                        influence: 0
+                    });
+                }
+            }
+        }
+
+        function setupEventListeners(): void {
+            // Optimizar eventos de mouse usando throttling
+            let isMouseMoving = false;
+            
+            canvas.addEventListener('mousemove', (e: MouseEvent) => {
+                if (!isMouseMoving) {
+                    isMouseMoving = true;
+                    requestAnimationFrame(() => {
+                        const rect = canvas.getBoundingClientRect();
+                        mouseX = e.clientX - rect.left;
+                        mouseY = e.clientY - rect.top;
+                        isMouseMoving = false;
+                    });
+                }
+            });
+
+            canvas.addEventListener('mouseleave', () => {
+                mouseX = -1000;
+                mouseY = -1000;
+            });
+
+            canvas.addEventListener('mouseenter', (e: MouseEvent) => {
+                const rect = canvas.getBoundingClientRect();
+                mouseX = e.clientX - rect.left;
+                mouseY = e.clientY - rect.top;
+            });
+
+            // Debounce resize events
+            let resizeTimeout: number;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(() => {
+                    resizeCanvas();
+                    generateTechGrid();
+                }, 150);
+            });
+
+            // Detectar cambios de tema con menos frecuencia
+            const observer = new MutationObserver(() => {
+                // Reset color cache cuando cambie el tema
+                lastColorCheck = 0;
+            });
+
+            observer.observe(document.documentElement, {
+                attributes: true,
+                attributeFilter: ['class', 'data-theme']
+            });
+        }
+
+        function renderFrame(currentTime: number): void {
+            // Calcular delta time para animaciones consistentes
+            const deltaTime = currentTime - lastFrameTime;
+            lastFrameTime = currentTime;
+            
+            const textColor = getThemeColors();
+            const rect = canvas.getBoundingClientRect();
+            
+            // Clear canvas (transparent background)
+            ctx.clearRect(0, 0, rect.width, rect.height);
+
+            // Optimizar: solo procesar elementos visibles
+            const visibleElements = gridElements.filter(element => {
+                return element.x >= -50 && element.x <= rect.width + 50 && 
+                       element.y >= -50 && element.y <= rect.height + 50;
+            });
+
+            // Batch operations para mejor rendimiento
+            ctx.fillStyle = textColor;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            visibleElements.forEach((element) => {
+                const dx = mouseX - element.baseX;
+                const dy = mouseY - element.baseY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                const maxInfluence = GRID_CONFIG.influenceRadius;
+                let influence = Math.max(0, 1 - distance / maxInfluence);
+                influence = Math.pow(influence, GRID_CONFIG.falloffPower);
+
+                // Transición suave con diferentes velocidades para entrada y salida
+                const targetInfluence = influence;
+                const currentInfluence = element.influence;
+                
+                let smoothingFactor = GRID_CONFIG.smoothing;
+                
+                // Si la influencia está disminuyendo (mouse alejándose), hacer la transición rápida también
+                if (targetInfluence < currentInfluence) {
+                    smoothingFactor *= 0.8; // Transición ligeramente más lenta al volver, pero aún rápida
+                }
+                
+                element.influence += (targetInfluence - currentInfluence) * smoothingFactor;
+
+                const sizeMultiplier = 1 + (element.influence * GRID_CONFIG.maxSizeMultiplier);
+                element.size = (GRID_CONFIG.baseSize * element.weight) * sizeMultiplier;
+
+                // Efecto de empuje con gravedad más pesada
+                const pushStrength = GRID_CONFIG.pushDistance * element.influence;
+                
+                // Calcular dirección base del empuje
+                const pushX = distance > 0 ? (dx / distance) * pushStrength : 0;
+                const pushY = distance > 0 ? (dy / distance) * pushStrength : 0;
+                
+                // Agregar efecto de "gravedad" adicional - más sutil
+                const gravityFactor = element.influence * element.influence; // Efecto cuadrático
+                const extraPushX = pushX * gravityFactor * 0.8; // Reducido para menos dramatismo
+                const extraPushY = pushY * gravityFactor * 0.8;
+                
+                // Calcular posiciones objetivo
+                const targetX = element.baseX + pushX + extraPushX;
+                const targetY = element.baseY + pushY + extraPushY;
+                
+                // Transición suave para las posiciones también - más rápida
+                const positionSmoothing = smoothingFactor * 1.5; // Posiciones más responsivas
+                element.x += (targetX - element.x) * positionSmoothing;
+                element.y += (targetY - element.y) * positionSmoothing;
+
+                const opacity = 0.6 + (element.influence * 0.4);
+
+                // Solo cambiar propiedades si es necesario
+                if (Math.abs(ctx.globalAlpha - opacity) > 0.01) {
+                    ctx.globalAlpha = opacity;
+                }
+                
+                const fontSize = `${Math.round(element.size)}px 'Courier New', monospace`;
+                if (ctx.font !== fontSize) {
+                    ctx.font = fontSize;
+                }
+                
+                ctx.fillText(element.char, Math.round(element.x), Math.round(element.y));
+            });
+
+            // Restaurar alpha
+            ctx.globalAlpha = 1;
+
+            // Indicador circular del cursor (solo si está dentro del canvas)
+            const rect2 = canvas.getBoundingClientRect();
+            if (mouseX >= 0 && mouseY >= 0 && mouseX <= rect2.width && mouseY <= rect2.height) {
+                ctx.strokeStyle = textColor;
+                ctx.globalAlpha = 0.5;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(mouseX, mouseY, 8, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.globalAlpha = 1;
+            }
+
+            animationId = requestAnimationFrame(renderFrame);
+        }
+
+        // Inicialización
+        resizeCanvas();
+        generateTechGrid();
+        setupEventListeners();
+        
+        // Iniciar loop de animación
+        lastFrameTime = performance.now();
+        animationId = requestAnimationFrame(renderFrame);
+        
+        // Cleanup en caso de que el componente se desmonte
+        return () => {
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+            }
+        };
+    });
+</script>

@@ -1,35 +1,67 @@
 ---
+import { cn } from '@/lib/utils';
+
 export interface Props {
   href?: string;
-  variant?: 'filled' | 'outline';
-  size?: 'small' | 'medium' | 'large';
+  filled?: boolean;
+  size?: 'sm' | 'md' | 'lg';
   elevated?: boolean;
   class?: string;
 }
 
-const { 
-  href, 
-  variant = 'filled', 
-  size = 'medium',
-  elevated = true,
-  class: className = ''
+const {
+  href,
+  filled = false,
+  size: rawSize = 'md',
+  elevated = false,
+  class: className,
 } = Astro.props;
 
+const size = ['sm', 'md', 'lg'].includes(rawSize) ? rawSize : 'md';
+const variant = filled ? 'filled' : 'outline';
+
 const Tag = href ? 'a' : 'button';
+
+const sizeClasses = {
+  sm: 'px-3 text-xs h-8',
+  md: 'px-6 text-sm h-12',
+  lg: 'px-8 text-base h-16',
+};
+
+const buttonClasses = cn(
+  'font-bold uppercase tracking-wide cursor-pointer border-2 transition-all duration-100 ease-in-out whitespace-nowrap flex items-center justify-center',
+  'no-underline',
+  {
+    'absolute -top-3 -left-3 active:top-0 active:left-0 z-30': elevated,
+    'relative top-0 left-0 active:scale-98 z-20': !elevated,
+    'bg-main text-secondary border-main shadow-[inset_0_0_0_2px_var(--color-secondary)]': variant === 'filled',
+    'bg-transparent text-main border-main shadow-[inset_0_0_0_2px_var(--color-secondary)] hover:bg-main hover:text-secondary': variant === 'outline',
+  },
+  sizeClasses[size],
+  className
+);
+
+const shadowClasses = cn(
+  'relative border-2 whitespace-nowrap pointer-events-none font-bold uppercase tracking-wide flex items-center justify-center',
+  'border-main z-10',
+  sizeClasses[size]
+);
 ---
 
-<div class={`btn-group relative isolate ${elevated ? 'btn-group--elevated' : 'btn-group--flat'}`}>
-  <!-- Moving button -->
-  <Tag 
-    class={`btn btn--${variant} btn--${size} ${elevated ? 'btn--elevated' : 'btn--flat'} ${className}`}
-    href={href}
-  >
+<div class={cn('relative inline-block w-fit', { 
+  'isolate z-30': elevated,
+  'z-20': !elevated 
+})}>
+  <Tag class={cn(buttonClasses, { 'button-with-sound': elevated })} href={href}>
     <slot />
   </Tag>
-  
+
   {elevated && (
-    <!-- Fixed shadow with same content (invisible) -->
-    <div class={`btn-shadow btn-shadow--${size}`} aria-hidden="true">
+    <div
+      class={shadowClasses}
+      style="background-image: repeating-linear-gradient(315deg, var(--color-main) 0, var(--color-main) 1px, transparent 0, transparent 50%); background-size: 8px 8px;"
+      aria-hidden="true"
+    >
       <span class="invisible">
         <slot />
       </span>
@@ -37,101 +69,32 @@ const Tag = href ? 'a' : 'button';
   )}
 </div>
 
-<style>
-  .btn-group {
-    @apply relative inline-block w-fit;
-  }
-
-  .btn {
-    @apply font-bold uppercase tracking-wide cursor-pointer border-2 transition-all duration-100 ease-in-out whitespace-nowrap;
-    text-decoration: none;
-    font-family: inherit;
-    z-index: 2;
-  }
-
-  /* Elevated buttons */
-  .btn--elevated {
-    @apply absolute;
-    top: -12px;
-    left: -12px;
-  }
-
-  /* Flat buttons */
-  .btn--flat {
-    @apply relative;
-    top: 0;
-    left: 0;
-  }
-
-  .btn-shadow {
-    @apply relative border whitespace-nowrap pointer-events-none font-bold uppercase tracking-wide;
-    background-image: repeating-linear-gradient(
-      315deg,
-      var(--color-main) 0,
-      var(--color-main) 1px,
-      transparent 0,
-      transparent 50%
-    );
-    background-size: 8px 8px;
-    border-color: var(--color-main);
-    font-family: inherit;
-    z-index: 1;
-    /* Shadow has exact same dimensions as button with same text content */
-  }
-
-  /* Hover and Active states - only for elevated buttons */
-  .btn-group--elevated:active .btn--elevated {
-    top: 0;
-    left: 0;
-  }
-
-  /* Flat buttons don't have special active states */
-  .btn-group--flat .btn--flat:active {
-    transform: scale(0.98);
-  }
-
-  /* Button Variants using simplified colors */
-  .btn--filled {
-    background: var(--color-main);
-    color: var(--color-secondary);
-    border-color: var(--color-main);
-  }
-
-  .btn--outline {
-    background: transparent;
-    color: var(--color-main);
-    border-color: var(--color-main);
-  }
-
-  .btn--outline:hover {
-    background: var(--color-main);
-    color: var(--color-secondary);
-  }
-
-  /* Button Sizes */
-  .btn--small {
-    @apply px-3 py-2 text-xs;
-  }
-
-  .btn--medium {
-    @apply px-6 py-3 text-sm;
-  }
-
-  .btn--large {
-    @apply px-8 py-4 text-base;
-  }
-
-  /* Shadow Sizes (exact match to button dimensions) */
-  .btn-shadow--small {
-    @apply px-3 py-2 text-xs;
-  }
-
-  .btn-shadow--medium {
-    @apply px-6 py-3 text-sm;
-  }
-
-  .btn-shadow--large {
-    @apply px-8 py-4 text-base;
-  }
-</style>
+<script>
+  document.addEventListener('astro:page-load', () => {
+    // Create audio element for button click sound
+    const clickAudio = new Audio('/buttonPress.wav');
+    clickAudio.volume = 0.3;
+    clickAudio.preload = 'auto';
+    
+    // Play click sound
+    function playClickSound() {
+      try {
+        clickAudio.currentTime = 0; // Reset to start
+        clickAudio.play().catch(() => {
+          // Silently handle autoplay restrictions
+        });
+      } catch (error) {
+        // Silently handle any audio errors
+      }
+    }
+    
+    // Add click sound to all buttons
+    const buttons = document.querySelectorAll('.button-with-sound');
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        playClickSound();
+      });
+    });
+  });
+</script>
 
