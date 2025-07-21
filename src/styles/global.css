@@ -61,356 +61,130 @@
         overflow-x: hidden;
     }
 
-    /* Default theme - Classic black/white */
+    /* 
+     * Theme Color Abstraction System
+     * 
+     * Each theme defines:
+     * - --theme-colorful: The vibrant brand/theme color
+     * - --theme-contrasty: The neutral contrasting color
+     * 
+     * The system automatically assigns:
+     * Light mode: colorful text on contrasty background (more readable)
+     * Dark mode: contrasty text on colorful background (more vivid)
+     * 
+     * This makes it intuitive to choose which color should be prominent in each mode
+     */
+
+    /* Default theme - Void subtle */
     :root {
-        --color-main: #000000;
-        --color-secondary: #ffffff;
+        --theme-colorful: #f8f9fa;
+        --theme-contrasty: #0d1117;
+        
+        /* Light mode: contrasty text on colorful background (light bg) */
+        --color-main: var(--theme-contrasty);
+        --color-secondary: var(--theme-colorful);
     }
 
     html.dark {
-        --color-main: #ffffff;
-        --color-secondary: #000000;
+        /* Dark mode: colorful text on contrasty background (dark bg) */
+        --color-main: var(--theme-colorful);
+        --color-secondary: var(--theme-contrasty);
     }
 
-    /* Terminal theme - Classic green terminal */
-    :root[data-theme='terminal'] {
-        --color-main: #00ff41;
-        --color-secondary: #0d1117;
+    /* Void theme */
+    :root[data-theme='void'] {
+        --theme-colorful: #f8f9fa;  /* Subtle off-white */
+        --theme-contrasty: #0d1117; /* GitHub dark */
     }
 
-    html.dark[data-theme='terminal'] {
-        --color-main: #0d1117;
-        --color-secondary: #00ff41;
+    /* Phantom theme */
+    :root[data-theme='phantom'] {
+        --theme-colorful: #39ff14;  /* Matrix green (INTENSE) */
+        --theme-contrasty: #0a1a0a; /* Very dark green */
     }
 
-    /* Matrix theme - Matrix green */
-    :root[data-theme='matrix'] {
-        --color-main: #65ff00;
-        --color-secondary: #000000;
-    }
-
-    html.dark[data-theme='matrix'] {
-        --color-main: #000000;
-        --color-secondary: #65ff00;
-    }
-
-    /* VSCode theme - VS Code blue */
-    :root[data-theme='vscode'] {
-        --color-main: #007acc;
-        --color-secondary: #1e1e1e;
-    }
-
-    html.dark[data-theme='vscode'] {
-        --color-main: #1e1e1e;
-        --color-secondary: #007acc;
-    }
-
-    /* Hacker theme - Hacker orange */
-    :root[data-theme='hacker'] {
-        --color-main: #ff6600;
-        --color-secondary: #000000;
-    }
-
-    html.dark[data-theme='hacker'] {
-        --color-main: #000000;
-        --color-secondary: #ff6600;
-    }
-
-    /* Cyber theme - Neon cyan */
-    :root[data-theme='cyber'] {
-        --color-main: #00ffff;
-        --color-secondary: #0a0a0a;
-    }
-
-    html.dark[data-theme='cyber'] {
-        --color-main: #0a0a0a;
-        --color-secondary: #00ffff;
-    }
-
-    /* Retro theme - Retro amber */
-    :root[data-theme='retro'] {
-        --color-main: #ffb000;
-        --color-secondary: #1a1a1a;
-    }
-
-    html.dark[data-theme='retro'] {
-        --color-main: #1a1a1a;
-        --color-secondary: #ffb000;
-    }
-
-    /* Sunset theme */
-    :root[data-theme='sunset'] {
-        --color-main: #f97721;
-        --color-secondary: #1e1e1e;
-    }
-
-    html.dark[data-theme='sunset'] {
-        --color-main: #1e1e1e;
-        --color-secondary: #f97721;
-    }
-
-    /* Ocean theme */
-    :root[data-theme='ocean'] {
-        --color-main: #0077be;
-        --color-secondary: #ffffff;
-    }
-
-    html.dark[data-theme='ocean'] {
-        --color-main: #ffffff;
-        --color-secondary: #0077be;
-    }
-
-    /* Forest theme */
-    :root[data-theme='forest'] {
-        --color-main: #228b22;
-        --color-secondary: #f5f5f5;
-    }
-
-    html.dark[data-theme='forest'] {
-        --color-main: #f5f5f5;
-        --color-secondary: #228b22;
-    }
-
-    /* Lavender theme */
-    :root[data-theme='lavender'] {
-        --color-main: #86608e;
-        --color-secondary: #e6e6fa;
-    }
-
-    html.dark[data-theme='lavender'] {
-        --color-main: #e6e6fa;
-        --color-secondary: #86608e;
+    /* Bloom theme */
+    :root[data-theme='bloom'] {
+        --theme-colorful: #ff6b9d;  /* Cherry blossom pink */
+        --theme-contrasty: #2d1b20; /* Dark rose */
     }
 
     /* Crimson theme */
     :root[data-theme='crimson'] {
-        --color-main: #dc143c;
-        --color-secondary: #ffffff;
+        --theme-colorful: #ff073a;  /* Blood red (INTENSE) */
+        --theme-contrasty: #220a0a; /* Very dark red */
     }
 
-    html.dark[data-theme='crimson'] {
-        --color-main: #ffffff;
-        --color-secondary: #dc143c;
+    /* Azure theme */
+    :root[data-theme='azure'] {
+        --theme-colorful: #007fff;  /* Azure blue */
+        --theme-contrasty: #0a1a2e; /* Dark navy */
     }
 
-    /* Gold theme */
-    :root[data-theme='gold'] {
-        --color-main: #ffd700;
-        --color-secondary: #1c1c1c;
+    /* Volt theme */
+    :root[data-theme='volt'] {
+        --theme-colorful: #ffff00;  /* Electric yellow (INTENSE) */
+        --theme-contrasty: #2e2e0a; /* Dark olive */
     }
 
-    html.dark[data-theme='gold'] {
-        --color-main: #1c1c1c;
-        --color-secondary: #ffd700;
+    /* Forest theme */
+    :root[data-theme='forest'] {
+        --theme-colorful: #228b22;  /* Forest green */
+        --theme-contrasty: #0f1f0f; /* Dark forest */
     }
 
-    /* Mint theme */
-    :root[data-theme='mint'] {
-        --color-main: #3eb489;
-        --color-secondary: #f5fffa;
+    /* Ember theme */
+    :root[data-theme='ember'] {
+        --theme-colorful: #ff6347;  /* Tomato ember */
+        --theme-contrasty: #2e1a0f; /* Dark ember */
     }
 
-    html.dark[data-theme='mint'] {
-        --color-main: #f5fffa;
-        --color-secondary: #3eb489;
+    /* Flame theme */
+    :root[data-theme='flame'] {
+        --theme-colorful: #ff4500;  /* Orange flame */
+        --theme-contrasty: #2e1500; /* Dark flame */
     }
 
-    /* Royal theme */
-    :root[data-theme='royal'] {
-        --color-main: #4169e1;
-        --color-secondary: #ffffff;
+    /* Violet theme */
+    :root[data-theme='violet'] {
+        --theme-colorful: #9932cc;  /* Dark orchid */
+        --theme-contrasty: #1a0f2e; /* Dark purple */
     }
 
-    html.dark[data-theme='royal'] {
-        --color-main: #ffffff;
-        --color-secondary: #4169e1;
+    /* Plasma theme */
+    :root[data-theme='plasma'] {
+        --theme-colorful: #00ffff;  /* Electric cyan (INTENSE) */
+        --theme-contrasty: #0a2e2e; /* Dark teal */
     }
 
-    /* Rose theme */
-    :root[data-theme='rose'] {
-        --color-main: #8b4513;
-        --color-secondary: #ffe4e1;
+    /* Solar theme */
+    :root[data-theme='solar'] {
+        --theme-colorful: #ffa500;  /* Golden orange */
+        --theme-contrasty: #2e1f0a; /* Dark gold */
     }
 
-    html.dark[data-theme='rose'] {
-        --color-main: #ffe4e1;
-        --color-secondary: #8b4513;
+    /* Frost theme */
+    :root[data-theme='frost'] {
+        --theme-colorful: #4fbdba;  /* Ice blue */
+        --theme-contrasty: #0f2e2d; /* Dark frost */
     }
 
-    /* Sky theme */
-    :root[data-theme='sky'] {
-        --color-main: #87ceeb;
-        --color-secondary: #000000;
+    /* Neon theme */
+    :root[data-theme='neon'] {
+        --theme-colorful: #ff00ff;  /* Pure magenta (INTENSE) */
+        --theme-contrasty: #2e0a2e; /* Dark magenta */
     }
 
-    html.dark[data-theme='sky'] {
-        --color-main: #000000;
-        --color-secondary: #87ceeb;
+    /* Pulse theme */
+    :root[data-theme='pulse'] {
+        --theme-colorful: #ff1493;  /* Deep pink */
+        --theme-contrasty: #2e0f1f; /* Dark pink */
     }
 
-    /* Sand theme */
-    :root[data-theme='sand'] {
-        --color-main: #f4a460;
-        --color-secondary: #4a2c2a;
-    }
-
-    html.dark[data-theme='sand'] {
-        --color-main: #4a2c2a;
-        --color-secondary: #f4a460;
-    }
-
-    /* Plum theme */
-    :root[data-theme='plum'] {
-        --color-main: #dda0dd;
-        --color-secondary: #3b1e3b;
-    }
-
-    html.dark[data-theme='plum'] {
-        --color-main: #3b1e3b;
-        --color-secondary: #dda0dd;
-    }
-
-    /* Peach theme */
-    :root[data-theme='peach'] {
-        --color-main: #ffdab9;
-        --color-secondary: #5a3e36;
-    }
-
-    html.dark[data-theme='peach'] {
-        --color-main: #5a3e36;
-        --color-secondary: #ffdab9;
-    }
-
-    /* Olive theme */
-    :root[data-theme='olive'] {
-        --color-main: #808000;
-        --color-secondary: #f5f5dc;
-    }
-
-    html.dark[data-theme='olive'] {
-        --color-main: #f5f5dc;
-        --color-secondary: #808000;
-    }
-
-    /* Navy theme */
-    :root[data-theme='navy'] {
-        --color-main: #000080;
-        --color-secondary: #ffffff;
-    }
-
-    html.dark[data-theme='navy'] {
-        --color-main: #ffffff;
-        --color-secondary: #000080;
-    }
-
-    /* Mocha theme */
-    :root[data-theme='mocha'] {
-        --color-main: #d2b48c;
-        --color-secondary: #3e2723;
-    }
-
-    html.dark[data-theme='mocha'] {
-        --color-main: #3e2723;
-        --color-secondary: #d2b48c;
-    }
-
-    /* Lilac theme */
-    :root[data-theme='lilac'] {
-        --color-main: #c8a2c8;
-        --color-secondary: #4b0082;
-    }
-
-    html.dark[data-theme='lilac'] {
-        --color-main: #4b0082;
-        --color-secondary: #c8a2c8;
-    }
-
-    /* Honey theme */
-    :root[data-theme='honey'] {
-        --color-main: #ffb300;
-        --color-secondary: #4e342e;
-    }
-
-    html.dark[data-theme='honey'] {
-        --color-main: #4e342e;
-        --color-secondary: #ffb300;
-    }
-
-    /* Grape theme */
-    :root[data-theme='grape'] {
-        --color-main: #6f2da8;
-        --color-secondary: #f0e6f2;
-    }
-
-    html.dark[data-theme='grape'] {
-        --color-main: #f0e6f2;
-        --color-secondary: #6f2da8;
-    }
-
-    /* Emerald theme */
-    :root[data-theme='emerald'] {
-        --color-main: #50c878;
-        --color-secondary: #000000;
-    }
-
-    html.dark[data-theme='emerald'] {
-        --color-main: #000000;
-        --color-secondary: #50c878;
-    }
-
-    /* Denim theme */
-    :root[data-theme='denim'] {
-        --color-main: #1560bd;
-        --color-secondary: #ffffff;
-    }
-
-    html.dark[data-theme='denim'] {
-        --color-main: #ffffff;
-        --color-secondary: #1560bd;
-    }
-
-    /* Cherry theme */
-    :root[data-theme='cherry'] {
-        --color-main: #d2042d;
-        --color-secondary: #fffafa;
-    }
-
-    html.dark[data-theme='cherry'] {
-        --color-main: #fffafa;
-        --color-secondary: #d2042d;
-    }
-
-    /* Charcoal theme */
-    :root[data-theme='charcoal'] {
-        --color-main: #36454f;
-        --color-secondary: #f5f5f5;
-    }
-
-    html.dark[data-theme='charcoal'] {
-        --color-main: #f5f5f5;
-        --color-secondary: #36454f;
-    }
-
-    /* Rainbow theme */
-    :root[data-theme='rainbow'] {
-        --color-main: hsl(var(--main-hue), 80%, 70%);
-        --color-secondary: #f5f5f5; /* Light secondary for light mode */
-    }
-
-    html.dark[data-theme='rainbow'] {
-        --color-main: hsl(var(--main-hue), 80%, 50%);
-        --color-secondary: #1a1a1a; /* Dark secondary for dark mode */
-    }
-
-    /* Charcoal theme */
-    :root[data-theme='charcoal'] {
-        --color-main: #36454f;
-        --color-secondary: #f5f5f5;
-    }
-
-    html.dark[data-theme='charcoal'] {
-        --color-main: #f5f5f5;
-        --color-secondary: #36454f;
+    /* Prism theme - Uses user selection color */
+    :root[data-theme='prism'] {
+        --theme-colorful: var(--user-selection-color);  /* Dynamic user selection color */
+        --theme-contrasty: #1a1a1a; /* Dark gray */
     }
 
     /* Enhanced CRT Effect - Pure Overlay */
