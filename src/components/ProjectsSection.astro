@@ -1,0 +1,90 @@
+---
+import BigSectionContainer from './BigSectionContainer.astro';
+import Button from './Button.astro';
+
+interface Project {
+    title: string;
+    description: string;
+    tech: string[];
+    href?: string;
+    featured?: boolean;
+}
+
+interface Props {
+    projects?: Project[];
+    showAll?: boolean;
+}
+
+const defaultProjects: Project[] = [
+    {
+        title: "E-commerce Platform",
+        description: "Plataforma completa de comercio electrónico con React, Node.js y PostgreSQL. Incluye panel de admin, pasarela de pagos y gestión de inventario.",
+        tech: ["React", "Node.js", "PostgreSQL", "Stripe"],
+        href: "/projects/ecommerce",
+        featured: true
+    },
+    {
+        title: "Task Management App",
+        description: "Aplicación de gestión de tareas con colaboración en tiempo real usando WebSockets. Interface intuitiva y sistema de notificaciones.",
+        tech: ["TypeScript", "Socket.io", "MongoDB", "React"],
+        href: "/projects/task-manager",
+        featured: true
+    },
+    {
+        title: "Portfolio Website",
+        description: "Sitio web personal construido con Astro, enfocado en performance y accesibilidad. Incluye blog y sistema de temas dinámicos.",
+        tech: ["Astro", "TypeScript", "Tailwind"],
+        href: "/projects/portfolio",
+        featured: false
+    }
+];
+
+const { projects = defaultProjects, showAll = false } = Astro.props;
+const displayProjects = showAll ? projects : projects.filter(p => p.featured);
+---
+
+<BigSectionContainer title="Projects">
+    <div class="space-y-6">
+        <p class="text-main/70">
+            Algunos proyectos en los que he trabajado, desde aplicaciones web complejas hasta sitios estáticos optimizados.
+        </p>
+        
+        <div class="grid gap-6 md:gap-8">
+            {displayProjects.map((project) => (
+                <div class="border border-main/20 p-6 hover:border-main/40 transition-colors group">
+                    <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                        <div class="flex-1">
+                            <h3 class="text-xl font-semibold text-main mb-2 group-hover:text-main/80">
+                                {project.title}
+                            </h3>
+                            <p class="text-main/70 mb-4 leading-relaxed">
+                                {project.description}
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                {project.tech.map((tech) => (
+                                    <span class="px-2 py-1 text-xs font-mono bg-main/10 text-main border border-main/20 rounded-sm">
+                                        {tech}
+                                    </span>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        {project.href && (
+                            <div class="flex-shrink-0">
+                                <Button href={project.href} size="sm">
+                                    Ver proyecto →
+                                </Button>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            ))}
+        </div>
+        
+        <div class="pt-4">
+            <Button href="/projects" size="md">
+                Ver todos los proyectos
+            </Button>
+        </div>
+    </div>
+</BigSectionContainer>

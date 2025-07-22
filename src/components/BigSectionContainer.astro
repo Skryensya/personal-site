@@ -1,22 +1,106 @@
 ---
 export interface Props {
+  /** El título que se mostrará verticalmente en la barra. */
   title: string;
+  /** Un ID único para la sección, importante para la navegación y accesibilidad. */
+  id: string;
+  /** El estado inicial de la barra ('filled' o 'outline'). El estado cambiará automáticamente con el scroll. */
+  initialVariant?: "filled" | "outline";
+  /** Clases CSS adicionales para el contenedor principal de la sección. */
   class?: string;
 }
 
-const { title, class: className } = Astro.props;
+const {
+  title,
+  id,
+  initialVariant = "outline",
+  class: className,
+} = Astro.props;
 ---
 
-<section class:list={["flex items-stretch gap-4 md:gap-8", className]}>
-  <div class="flex w-[100px] items-end justify-end bg-main py-2 text-secondary">
-    <h2
-      class="transform-gpu whitespace-nowrap text-2xl font-bold uppercase tracking-tight [writing-mode:vertical-rl] text-secondary md:text-4xl"
-      style="transform: rotate(180deg);"
+<section
+  id={id}
+  class:list={[
+    "section-container flex items-stretch gap-x-4 md:gap-x-8 relative",
+    className,
+  ]}
+  data-section-observer
+  data-state={initialVariant}
+>
+  <div
+    class:list={[
+      "section-bar flex-shrink-0 relative transition-all duration-400 ease-in-out border-r-2 border-foreground",
+      initialVariant === "outline" ? "bg-stripe-diagonal" : "bg-foreground"
+    ]}
+    style="width: clamp(50px, 8vw, 100px);"
+  >
+    <h2 
+      class:list={[
+        "sticky text-xl md:text-4xl font-bold uppercase tracking-tight transition-colors duration-400 ease-in-out whitespace-nowrap",
+        "transform rotate-180 [writing-mode:vertical-rl]",
+        initialVariant === "outline" ? "text-foreground" : "text-background"
+      ]}
+      style="bottom: 4px; right: 8px;"
     >
       {title}
     </h2>
   </div>
-  <div>
+
+  <div class="content-area flex-1 py-12 md:py-20">
     <slot />
   </div>
 </section>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const sections = document.querySelectorAll<HTMLElement>("[data-section-observer]");
+    if (sections.length === 0) return;
+
+    const intersectingStatus = new Map<Element, boolean>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          intersectingStatus.set(entry.target, entry.isIntersecting);
+        });
+
+        let firstVisibleSection: Element | null = null;
+        for (const section of sections) {
+          if (intersectingStatus.get(section)) {
+            firstVisibleSection = section;
+            break;
+          }
+        }
+
+        sections.forEach((section) => {
+          const newState = section === firstVisibleSection ? "filled" : "outline";
+          const bar = section.querySelector('.section-bar');
+          const title = section.querySelector('h2');
+          
+          if (section.dataset.state !== newState) {
+            section.dataset.state = newState;
+            
+            if (bar && title) {
+              if (newState === "filled") {
+                bar.classList.remove('bg-stripe-diagonal');
+                bar.classList.add('bg-foreground');
+                title.classList.remove('text-foreground');
+                title.classList.add('text-background');
+              } else {
+                bar.classList.remove('bg-foreground');
+                bar.classList.add('bg-stripe-diagonal');
+                title.classList.remove('text-background');
+                title.classList.add('text-foreground');
+              }
+            }
+          }
+        });
+      },
+      {
+        rootMargin: "-30% 0px -10% 0px",
+      }
+    );
+
+    sections.forEach((section) => observer.observe(section));
+  });
+</script>

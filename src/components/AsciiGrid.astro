@@ -287,6 +287,17 @@ const {
             });
         }
 
+        // Pre-calcular valores para optimización
+        let cachedRect = { width: 0, height: 0 };
+        let rectUpdateTime = 0;
+        let lastMouseX = -1000;
+        let lastMouseY = -1000;
+        let frameSkipCounter = 0;
+        
+        // Cache para efectos de compresión
+        const compressionCache = new Map();
+        let compressionCacheTime = 0;
+
         function renderFrame(currentTime: number): void {
             if (!ctx) return;
             
@@ -294,29 +305,42 @@ const {
             const deltaTime = currentTime - lastFrameTime;
             lastFrameTime = currentTime;
             
+            // Skip frames if performance is poor (adaptive FPS)
+            frameSkipCounter++;
+            if (frameSkipCounter % 2 === 0 && deltaTime < 8) { // Skip every other frame if running too fast
+                animationId = requestAnimationFrame(renderFrame);
+                return;
+            }
+            frameSkipCounter = 0;
+            
+            // Cache rect updates
+            if (currentTime - rectUpdateTime > 100) { // Update rect every 100ms max
+                const rect = canvas.getBoundingClientRect();
+                cachedRect.width = rect.width;
+                cachedRect.height = rect.height;
+                rectUpdateTime = currentTime;
+            }
+            
             // Multiple animation patterns
             if (!isMouseHovering) {
-                const rect = canvas.getBoundingClientRect();
                 animationTime += deltaTime * 0.0008; // Slow animation speed
                 patternSwitchTime += deltaTime;
                 
                 // Switch pattern every 10 seconds with 1 second transition
                 if (patternSwitchTime > 9000 && !isTransitioning) {
-                    // Start transition
                     isTransitioning = true;
                     transitionProgress = 0;
                     
                     // Pick random next pattern (different from current)
                     do {
                         nextPattern = Math.floor(Math.random() * 5);
-                    } while (nextPattern === currentPattern);
+                    } while (nextPattern === currentPattern && currentPattern !== 0); // Prevent infinite loop
                 }
                 
                 if (isTransitioning) {
                     transitionProgress += deltaTime / 1000; // 1 second transition
                     
                     if (transitionProgress >= 1) {
-                        // Transition complete
                         currentPattern = nextPattern;
                         isTransitioning = false;
                         patternSwitchTime = 0;
@@ -324,216 +348,162 @@ const {
                     }
                 }
                 
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const scale = 100; // Base scale for all patterns
+                const centerX = cachedRect.width * 0.5;
+                const centerY = cachedRect.height * 0.5;
+                const scale = 100;
                 
-                // Helper function to get pattern position
-                const getPatternPosition = (pattern: number): {x: number, y: number} => {
-                    switch (pattern) {
-                        case 0: // Figure-8 (Infinity)
-                            return {
-                                x: centerX + scale * 1.2 * Math.sin(animationTime),
-                                y: centerY + scale * 0.8 * Math.sin(animationTime * 2) / 2
-                            };
-                        
-                        case 1: // Circle
-                            return {
-                                x: centerX + scale * Math.cos(animationTime),
-                                y: centerY + scale * Math.sin(animationTime)
-                            };
-                        
-                        case 2: // Triangle
-                            const trianglePhase = (animationTime % (Math.PI * 2)) / (Math.PI * 2);
-                            if (trianglePhase < 1/3) {
-                                const t = trianglePhase * 3;
-                                return {
-                                    x: centerX + scale * (-0.5 + t),
-                                    y: centerY + scale * (0.5 - t * 1.5)
-                                };
-                            } else if (trianglePhase < 2/3) {
-                                const t = (trianglePhase - 1/3) * 3;
-                                return {
-                                    x: centerX + scale * (0.5 - t),
-                                    y: centerY + scale * (-1)
-                                };
-                            } else {
-                                const t = (trianglePhase - 2/3) * 3;
-                                return {
-                                    x: centerX + scale * (-0.5),
-                                    y: centerY + scale * (-1 + t * 1.5)
-                                };
-                            }
-                        
-                        case 3: // Star (5-pointed)
-                            const starPoints = 5;
-                            const outerRadius = scale;
-                            const innerRadius = scale * 0.4;
-                            const starPhase = (animationTime % (Math.PI * 2)) / (Math.PI * 2);
-                            const starSegment = Math.floor(starPhase * starPoints * 2);
-                            const segmentProgress = (starPhase * starPoints * 2) % 1;
-                            
-                            let starRadius, starAngle;
-                            if (starSegment % 2 === 0) {
-                                starRadius = outerRadius + (innerRadius - outerRadius) * segmentProgress;
-                                starAngle = (starSegment / 2) * (Math.PI * 2 / starPoints) - Math.PI / 2;
-                            } else {
-                                starRadius = innerRadius + (outerRadius - innerRadius) * segmentProgress;
-                                starAngle = ((starSegment - 1) / 2 + 0.5) * (Math.PI * 2 / starPoints) - Math.PI / 2;
-                            }
-                            
-                            return {
-                                x: centerX + starRadius * Math.cos(starAngle),
-                                y: centerY + starRadius * Math.sin(starAngle)
-                            };
-                        
-                        case 4: // Letter A
-                            const aPhase = (animationTime % (Math.PI * 2)) / (Math.PI * 2);
-                            const aScale = scale * 0.8;
-                            
-                            if (aPhase < 0.25) {
-                                const t = aPhase * 4;
-                                return {
-                                    x: centerX + aScale * (-0.5 + t * 0.5),
-                                    y: centerY + aScale * (1 - t * 2)
-                                };
-                            } else if (aPhase < 0.5) {
-                                const t = (aPhase - 0.25) * 4;
-                                return {
-                                    x: centerX + aScale * (0 + t * 0.5),
-                                    y: centerY + aScale * (-1 + t * 2)
-                                };
-                            } else if (aPhase < 0.75) {
-                                const t = (aPhase - 0.5) * 4;
-                                return {
-                                    x: centerX + aScale * (0.5 - t * 1),
-                                    y: centerY + aScale * (0)
-                                };
-                            } else {
-                                const t = (aPhase - 0.75) * 4;
-                                return {
-                                    x: centerX + aScale * (-0.5),
-                                    y: centerY + aScale * (0 + t * 1)
-                                };
-                            }
-                        
-                        default:
-                            return {x: centerX, y: centerY};
-                    }
-                };
+                // Optimized pattern position calculation
+                let newMouseX, newMouseY;
                 
                 if (isTransitioning) {
-                    // Smooth transition between patterns using easing
-                    const easeProgress = transitionProgress < 0.5 
-                        ? 2 * transitionProgress * transitionProgress 
-                        : 1 - Math.pow(-2 * transitionProgress + 2, 3) / 2; // Ease-in-out cubic
+                    // Smooth transition using pre-calculated easing
+                    const t = transitionProgress;
+                    const easeProgress = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 3) * 0.5;
                     
-                    const currentPos = getPatternPosition(currentPattern);
-                    const nextPos = getPatternPosition(nextPattern);
+                    // Pre-calculate both positions
+                    const [currentPos, nextPos] = getPatternPositions(currentPattern, nextPattern, centerX, centerY, scale, animationTime);
                     
-                    mouseX = currentPos.x + (nextPos.x - currentPos.x) * easeProgress;
-                    mouseY = currentPos.y + (nextPos.y - currentPos.y) * easeProgress;
+                    newMouseX = currentPos.x + (nextPos.x - currentPos.x) * easeProgress;
+                    newMouseY = currentPos.y + (nextPos.y - currentPos.y) * easeProgress;
                 } else {
-                    // Normal pattern execution
-                    const pos = getPatternPosition(currentPattern);
-                    mouseX = pos.x;
-                    mouseY = pos.y;
+                    const pos = getPatternPosition(currentPattern, centerX, centerY, scale, animationTime);
+                    newMouseX = pos.x;
+                    newMouseY = pos.y;
                 }
+                
+                mouseX = newMouseX;
+                mouseY = newMouseY;
             }
             
-            const textColor = getThemeColors();
-            const rect = canvas.getBoundingClientRect();
+            // Only update if mouse moved significantly
+            const mouseMoved = Math.abs(mouseX - lastMouseX) > 1 || Math.abs(mouseY - lastMouseY) > 1;
+            if (!mouseMoved && isMouseHovering) {
+                animationId = requestAnimationFrame(renderFrame);
+                return;
+            }
+            lastMouseX = mouseX;
+            lastMouseY = mouseY;
             
-            // Clear canvas (transparent background)
-            ctx.clearRect(0, 0, rect.width, rect.height);
+            const textColor = getThemeColors();
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, cachedRect.width, cachedRect.height);
 
-            // Optimizar: solo procesar elementos visibles
-            const visibleElements = gridElements.filter(element => {
-                return element.x >= -50 && element.x <= rect.width + 50 && 
-                       element.y >= -50 && element.y <= rect.height + 50;
-            });
+            // Pre-filter visible elements más eficientemente
+            const margin = 50;
+            const visibleElements = gridElements.filter(element => 
+                element.x > -margin && element.x < cachedRect.width + margin && 
+                element.y > -margin && element.y < cachedRect.height + margin
+            );
 
-            // Batch operations para mejor rendimiento
+            // Batch canvas operations
             ctx.fillStyle = textColor;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
-            visibleElements.forEach((element) => {
+            // Pre-calculate mouse distance and influence for all elements
+            const mouseInfluences = new Float32Array(visibleElements.length);
+            const maxInfluence = GRID_CONFIG.influenceRadius;
+            const maxInfluenceSq = maxInfluence * maxInfluence; // Evitar sqrt cuando sea posible
+            
+            for (let i = 0; i < visibleElements.length; i++) {
+                const element = visibleElements[i];
                 const dx = mouseX - element.baseX;
                 const dy = mouseY - element.baseY;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-
-                const maxInfluence = GRID_CONFIG.influenceRadius;
-                let influence = Math.max(0, 1 - distance / maxInfluence);
-                influence = Math.pow(influence, GRID_CONFIG.falloffPower);
-
-                // Transición suave con diferentes velocidades para entrada y salida
-                const targetInfluence = influence;
-                const currentInfluence = element.influence;
+                const distanceSq = dx * dx + dy * dy;
                 
+                if (distanceSq > maxInfluenceSq) {
+                    mouseInfluences[i] = 0;
+                } else {
+                    const distance = Math.sqrt(distanceSq);
+                    let influence = Math.max(0, 1 - distance / maxInfluence);
+                    influence = Math.pow(influence, GRID_CONFIG.falloffPower);
+                    mouseInfluences[i] = influence;
+                }
+            }
+
+            // Update compression cache periodically
+            if (currentTime - compressionCacheTime > 50) { // Update every 50ms
+                compressionCache.clear();
+                compressionCacheTime = currentTime;
+            }
+
+            // Process visible elements
+            for (let i = 0; i < visibleElements.length; i++) {
+                const element = visibleElements[i];
+                const targetInfluence = mouseInfluences[i];
+                
+                // Smooth influence transition
                 let smoothingFactor = GRID_CONFIG.smoothing;
-                
-                // Si la influencia está disminuyendo (mouse alejándose), hacer la transición rápida también
-                if (targetInfluence < currentInfluence) {
-                    smoothingFactor *= 0.8; // Transición ligeramente más lenta al volver, pero aún rápida
+                if (targetInfluence < element.influence) {
+                    smoothingFactor *= 0.8;
                 }
                 
-                element.influence += (targetInfluence - currentInfluence) * smoothingFactor;
+                element.influence += (targetInfluence - element.influence) * smoothingFactor;
 
+                // Update size
                 const sizeMultiplier = 1 + (element.influence * GRID_CONFIG.maxSizeMultiplier);
                 element.size = (GRID_CONFIG.baseSize * element.weight) * sizeMultiplier;
 
-                // Efecto de empuje con gravedad más pesada
-                const pushStrength = GRID_CONFIG.pushDistance * element.influence;
-                
-                // Calcular dirección base del empuje
-                const pushX = distance > 0 ? (dx / distance) * pushStrength : 0;
-                const pushY = distance > 0 ? (dy / distance) * pushStrength : 0;
-                
-                // Agregar efecto de "gravedad" adicional - más sutil
-                const gravityFactor = element.influence * element.influence; // Efecto cuadrático
-                const extraPushX = pushX * gravityFactor * 0.8; // Reducido para menos dramatismo
-                const extraPushY = pushY * gravityFactor * 0.8;
-                
-                // Calcular posiciones objetivo
-                const targetX = element.baseX + pushX + extraPushX;
-                const targetY = element.baseY + pushY + extraPushY;
-                
-                // Transición suave para las posiciones también - más rápida
-                const positionSmoothing = smoothingFactor * 1.5; // Posiciones más responsivas
-                element.x += (targetX - element.x) * positionSmoothing;
-                element.y += (targetY - element.y) * positionSmoothing;
+                // Position updates only if significant influence
+                if (element.influence > 0.01) {
+                    const dx = mouseX - element.baseX;
+                    const dy = mouseY - element.baseY;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    const pushStrength = GRID_CONFIG.pushDistance * element.influence;
+                    const pushX = distance > 0 ? (dx / distance) * pushStrength : 0;
+                    const pushY = distance > 0 ? (dy / distance) * pushStrength : 0;
+                    
+                    const gravityFactor = element.influence * element.influence;
+                    const extraPushX = pushX * gravityFactor * 0.8;
+                    const extraPushY = pushY * gravityFactor * 0.8;
+                    
+                    const targetX = element.baseX + pushX + extraPushX;
+                    const targetY = element.baseY + pushY + extraPushY;
+                    
+                    const positionSmoothing = smoothingFactor * 1.5;
+                    element.x += (targetX - element.x) * positionSmoothing;
+                    element.y += (targetY - element.y) * positionSmoothing;
+                }
 
-                const opacity = 0.6 + (element.influence * 0.4);
-
-                // Solo cambiar propiedades si es necesario
-                if (Math.abs(ctx.globalAlpha - opacity) > 0.01) {
-                    ctx.globalAlpha = opacity;
+                // Optimized compression effect with caching
+                const cacheKey = `${Math.floor(element.baseX / 10)}_${Math.floor(element.baseY / 10)}`;
+                let compressionNoise, compression;
+                
+                if (compressionCache.has(cacheKey)) {
+                    const cached = compressionCache.get(cacheKey);
+                    compressionNoise = cached.noise;
+                    compression = cached.compression;
+                } else {
+                    compressionNoise = (Math.random() - 0.5) * 0.3;
+                    compression = Math.sin(element.baseX * 0.01 + element.baseY * 0.01 + animationTime * 0.002) * 0.2;
+                    compressionCache.set(cacheKey, { noise: compressionNoise, compression });
                 }
                 
-                const fontSize = `${Math.round(element.size)}px 'Courier New', monospace`;
-                if (ctx.font !== fontSize) {
-                    ctx.font = fontSize;
-                }
-                
+                const baseOpacity = 0.3 + (element.influence * 0.6);
+                const glitchEffect = Math.random() < 0.05 ? (Math.random() - 0.5) * 0.4 : 0;
+                const opacity = Math.max(0.1, Math.min(1, baseOpacity + compressionNoise + compression + glitchEffect));
+
+                // Minimize canvas state changes
+                ctx.globalAlpha = opacity;
+                ctx.font = `${Math.round(element.size)}px 'Courier New', monospace`;
                 ctx.fillText(element.char, Math.round(element.x), Math.round(element.y));
-            });
+            }
 
-            // Restaurar alpha
+            // Restore alpha
             ctx.globalAlpha = 1;
 
-            // Indicador circular del cursor - ALWAYS visible
+            // Optimized cursor rendering
             ctx.strokeStyle = textColor;
             
             if (isMouseHovering) {
-                // Cursor sólido cuando sigue al mouse
                 ctx.globalAlpha = 0.8;
                 ctx.lineWidth = 2;
                 ctx.beginPath();
                 ctx.arc(mouseX, mouseY, 8, 0, Math.PI * 2);
                 ctx.stroke();
             } else {
-                // Cursor suave durante la animación automática - siempre visible
                 const pulseAlpha = 0.5 + Math.sin(currentTime * 0.002) * 0.2;
                 ctx.globalAlpha = pulseAlpha;
                 ctx.lineWidth = 1.5 + Math.sin(currentTime * 0.003) * 0.5;
@@ -545,6 +515,52 @@ const {
             ctx.globalAlpha = 1;
 
             animationId = requestAnimationFrame(renderFrame);
+        }
+
+        // Optimized pattern position functions
+        function getPatternPosition(pattern: number, centerX: number, centerY: number, scale: number, time: number): {x: number, y: number} {
+            switch (pattern) {
+                case 0: // Figure-8
+                    return {
+                        x: centerX + scale * 1.2 * Math.sin(time),
+                        y: centerY + scale * 0.4 * Math.sin(time * 2)
+                    };
+                case 1: // Circle
+                    return {
+                        x: centerX + scale * Math.cos(time),
+                        y: centerY + scale * Math.sin(time)
+                    };
+                case 2: // Triangle
+                    const phase = (time % (Math.PI * 2)) / (Math.PI * 2);
+                    const t = (phase % (1/3)) * 3;
+                    if (phase < 1/3) return { x: centerX + scale * (-0.5 + t), y: centerY + scale * (0.5 - t * 1.5) };
+                    if (phase < 2/3) return { x: centerX + scale * (0.5 - t), y: centerY + scale * (-1) };
+                    return { x: centerX + scale * (-0.5), y: centerY + scale * (-1 + t * 1.5) };
+                case 3: // Star
+                    const starPhase = (time % (Math.PI * 2)) / (Math.PI * 2);
+                    const segment = Math.floor(starPhase * 10) % 10;
+                    const segmentT = (starPhase * 10) % 1;
+                    const radius = (segment % 2 === 0) ? scale + (scale * 0.4 - scale) * segmentT : scale * 0.4 + (scale - scale * 0.4) * segmentT;
+                    const angle = (segment * 0.1 + (segment % 2 === 0 ? 0 : 0.05)) * Math.PI * 2 - Math.PI * 0.5;
+                    return { x: centerX + radius * Math.cos(angle), y: centerY + radius * Math.sin(angle) };
+                case 4: // Letter A
+                    const aPhase = (time % (Math.PI * 2)) / (Math.PI * 2);
+                    const aScale = scale * 0.8;
+                    const at = (aPhase % 0.25) * 4;
+                    if (aPhase < 0.25) return { x: centerX + aScale * (-0.5 + at * 0.5), y: centerY + aScale * (1 - at * 2) };
+                    if (aPhase < 0.5) return { x: centerX + aScale * (at * 0.5), y: centerY + aScale * (-1 + at * 2) };
+                    if (aPhase < 0.75) return { x: centerX + aScale * (0.5 - at), y: centerY };
+                    return { x: centerX + aScale * (-0.5), y: centerY + aScale * (at) };
+                default:
+                    return {x: centerX, y: centerY};
+            }
+        }
+
+        function getPatternPositions(pattern1: number, pattern2: number, centerX: number, centerY: number, scale: number, time: number): [{x: number, y: number}, {x: number, y: number}] {
+            return [
+                getPatternPosition(pattern1, centerX, centerY, scale, time),
+                getPatternPosition(pattern2, centerX, centerY, scale, time)
+            ];
         }
 
         // Inicialización

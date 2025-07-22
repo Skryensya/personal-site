@@ -1,4 +1,5 @@
-@import "./tailwind.config.css";
+@import './tailwind.config.css';
+@import './themes.css';
 
 @layer base {
     :root {
@@ -12,6 +13,26 @@
     * {
         font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
         border-color: var(--color-main);
+    }
+
+    /* Universal color transitions for theme changes - applies to all elements */
+    *,
+    *::before,
+    *::after {
+        transition: 
+            color 600ms ease-out,
+            background-color 600ms ease-out,
+            border-color 600ms ease-out,
+            fill 600ms ease-out,
+            stroke 600ms ease-out,
+            background-image 600ms ease-out;
+    }
+
+    /* Instant hover effects - override transitions on hover */
+    *:hover,
+    *:hover::before,
+    *:hover::after {
+        transition: none !important;
     }
 
     body {
@@ -61,130 +82,19 @@
     }
 
     /* 
-     * Theme Color Abstraction System
+     * Theme Color System
      * 
-     * Each theme defines:
+     * Themes are now managed by themes.js and injected dynamically.
+     * Only base theme structure remains here.
+     * 
+     * Theme variables:
      * - --theme-colorful: The vibrant brand/theme color
      * - --theme-contrasty: The neutral contrasting color
      * 
-     * The system automatically assigns:
-     * Light mode: colorful text on contrasty background (more readable)
-     * Dark mode: contrasty text on colorful background (more vivid)
-     * 
-     * This makes it intuitive to choose which color should be prominent in each mode
+     * Mode assignment:
+     * - Light mode: contrasty text on colorful background
+     * - Dark mode: colorful text on contrasty background
      */
-
-    /* Default theme - Void enhanced */
-    :root {
-        --theme-colorful: #f5f7fa;
-        --theme-contrasty: #0a0c10;
-
-        /* Light mode: contrasty text on colorful background (light bg) */
-        --color-main: var(--theme-contrasty);
-        --color-secondary: var(--theme-colorful);
-    }
-
-    html.dark {
-        /* Dark mode: colorful text on contrasty background (dark bg) */
-        --color-main: var(--theme-colorful);
-        --color-secondary: var(--theme-contrasty);
-    }
-
-    /* Void theme */
-    :root[data-theme='void'] {
-        --theme-colorful: #f5f7fa; /* Pure crisp white with slight blue undertone */
-        --theme-contrasty: #0a0c10; /* Deep space black with blue hint */
-    }
-
-    /* Phantom theme */
-    :root[data-theme='phantom'] {
-        --theme-colorful: #00ff41; /* Pure matrix green - iconic and sharp */
-        --theme-contrasty: #0d1b0f; /* Rich dark green with depth */
-    }
-
-    /* Bloom theme */
-    :root[data-theme='bloom'] {
-        --theme-colorful: #ff4d87; /* Vibrant cherry blossom - more saturated */
-        --theme-contrasty: #1f0e16; /* Deep burgundy black */
-    }
-
-    /* Crimson theme */
-    :root[data-theme='crimson'] {
-        --theme-colorful: #dc143c; /* Classic crimson - rich and powerful */
-        --theme-contrasty: #1a0408; /* Almost black with red undertone */
-    }
-
-    /* Azure theme */
-    :root[data-theme='azure'] {
-        --theme-colorful: #0080ff; /* Perfect azure - bright but not harsh */
-        --theme-contrasty: #060f1c; /* Deep midnight blue */
-    }
-
-    /* Volt theme */
-    :root[data-theme='volt'] {
-        --theme-colorful: #f0ff00; /* Electric lime - more energetic than pure yellow */
-        --theme-contrasty: #1c1f06; /* Dark olive with yellow undertone */
-    }
-
-    /* Forest theme */
-    :root[data-theme='forest'] {
-        --theme-colorful: #2d5a2d; /* Rich forest green - more sophisticated */
-        --theme-contrasty: #0b1a0b; /* Deep forest night */
-    }
-
-    /* Ember theme */
-    :root[data-theme='ember'] {
-        --theme-colorful: #ff5722; /* Perfect ember orange - warm and glowing */
-        --theme-contrasty: #1a0e06; /* Deep amber black */
-    }
-
-    /* Flame theme */
-    :root[data-theme='flame'] {
-        --theme-colorful: #ff6600; /* Pure flame orange - intense heat */
-        --theme-contrasty: #1f1100; /* Dark flame base */
-    }
-
-    /* Violet theme */
-    :root[data-theme='violet'] {
-        --theme-colorful: #8a2be2; /* Blue violet - more refined than orchid */
-        --theme-contrasty: #14081f; /* Deep violet black */
-    }
-
-    /* Plasma theme */
-    :root[data-theme='plasma'] {
-        --theme-colorful: #00e5ff; /* Electric cyan - bright plasma blue */
-        --theme-contrasty: #051f1f; /* Deep teal black */
-    }
-
-    /* Solar theme */
-    :root[data-theme='solar'] {
-        --theme-colorful: #ffb347; /* Warm solar peach - softer than pure orange */
-        --theme-contrasty: #1f1608; /* Rich golden black */
-    }
-
-    /* Frost theme */
-    :root[data-theme='frost'] {
-        --theme-colorful: #87ceeb; /* Sky blue - cooler and more icy */
-        --theme-contrasty: #0c1b1e; /* Deep frost black */
-    }
-
-    /* Neon theme */
-    :root[data-theme='neon'] {
-        --theme-colorful: #ff0080; /* Hot magenta - more electric than pure magenta */
-        --theme-contrasty: #1f051a; /* Deep magenta black */
-    }
-
-    /* Pulse theme */
-    :root[data-theme='pulse'] {
-        --theme-colorful: #ff3366; /* Bright coral pink - more energetic */
-        --theme-contrasty: #1a0810; /* Deep rose black */
-    }
-
-    /* Prism theme - Uses user selection color */
-    :root[data-theme='prism'] {
-        --theme-colorful: var(--user-selection-color); /* Dynamic user selection color */
-        --theme-contrasty: #0f0f0f; /* Pure neutral dark */
-    }
 
     /* Enhanced CRT Effect - Pure Overlay */
     .crt-effect::before {
@@ -282,7 +192,8 @@
 }
 .wavy {
     background-color: var(--color-main);
-    --mask: radial-gradient(4.13px at 50% calc(100% + 0.9px), #0000 calc(99% - 2px), var(--color-main) calc(101% - 2px) 99%, #0000 101%) calc(50% - 6px)
+    --mask:
+        radial-gradient(4.13px at 50% calc(100% + 0.9px), #0000 calc(99% - 2px), var(--color-main) calc(101% - 2px) 99%, #0000 101%) calc(50% - 6px)
             calc(50% - 2.5px + 0.5px) / 12px 5px repeat-x,
         radial-gradient(4.13px at 50% -0.9px, #0000 calc(99% - 2px), var(--color-main) calc(101% - 2px) 99%, #0000 101%) 50% calc(50% + 2.5px) / 12px 5px
             repeat-x;
@@ -308,21 +219,25 @@
 .corner-crosses::before {
     top: -0.5px;
     left: -0.5px;
-    background-image: 
-        linear-gradient(to right, var(--color-main) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--color-main) 1px, transparent 1px);
-    background-position: 0 3.5px, 3.5px 0;
-    background-size: 8px 1px, 1px 8px;
+    background-image: linear-gradient(to right, var(--color-main) 1px, transparent 1px), linear-gradient(to bottom, var(--color-main) 1px, transparent 1px);
+    background-position:
+        0 3.5px,
+        3.5px 0;
+    background-size:
+        8px 1px,
+        1px 8px;
     background-repeat: no-repeat;
 }
 
 .corner-crosses::after {
     top: -0.5px;
     right: -0.5px;
-    background-image:
-        linear-gradient(to left, var(--color-main) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--color-main) 1px, transparent 1px);
-    background-position: 0 3.5px, 4.5px 0;
-    background-size: 8px 1px, 1px 8px;
+    background-image: linear-gradient(to left, var(--color-main) 1px, transparent 1px), linear-gradient(to bottom, var(--color-main) 1px, transparent 1px);
+    background-position:
+        0 3.5px,
+        4.5px 0;
+    background-size:
+        8px 1px,
+        1px 8px;
     background-repeat: no-repeat;
 }
