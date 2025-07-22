@@ -1,199 +1,86 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Button from '../components/Button.astro';
-import TextGenerateEffect from '../components/TextGenerateEffect.astro';
 import siteConfig from '../data/site-config';
-import Marquee from '../components/Marquee.astro';
-import BigSectionContainer from '../components/BigSectionContainer.astro'; 
-import AsciiGrid from '../components/AsciiGrid.astro'; 
-import IsometricTextCard from '../components/IsometricTextCard.astro';
-// import Strudel from '../components/Strudel.astro';
-
-
-const skills = ['React', 'TypeScript', 'Node.js', 'Astro', 'PostgreSQL', 'AWS'];
+import MarqueeSection from '../components/MarqueeSection.astro';
+import Hero from '../components/Hero.astro';
+import BigSectionContainer from '../components/BigSectionContainer.astro';
+import AboutMeSection from '../components/AboutMeSection.astro';
+import SkillsSection from '../components/SkillsSection.astro';
+import ExperienceSection from '../components/ExperienceSection.astro';
+import FeaturedProjectsSection from '../components/FeaturedProjectsSection.astro';
+import ServicesSection from '../components/ServicesSection.astro';
+import CornersWithCrosses from '../components/CornersWithCrosses.astro';
 ---
 
-
 <BaseLayout description={siteConfig.description} image={siteConfig.image}>
-    <!-- Hero Section -->
-    <section class="hero-section pt-10 pb-20 min-h-screen">
-        <div class="grid grid-cols-1 md:grid-cols-2  ">
-            <!-- Text Content -->
-            <div class="flex flex-col justify-center mr-10 corner-crosses ">
-                <h1 class="text-4xl md:text-8xl font-bold text-main mb-4 text-balance">Hola, soy Allison Bienvenido a mi sitio</h1>
-                <div class="mb-8">
-                    <TextGenerateEffect
-                        words="Me gusta crear sitios web que funcionen bien y sean fáciles de usar. Trabajo principalmente con React y TypeScript."
-                    />
-                </div>
-                <div class="flex gap-4">
-                    <Button href="/projects" size="md"> Ver mis proyectos </Button>
-                    <Button href="/projects" size="md" filled elevated> Ver mis proyectos </Button>
-                </div>
-            </div>
-            
-            <!-- ASCII Grid -->
-            <div class="flex items-center justify-center border border-dashed border-main/20 corner-crosses">
-                <div class="w-full h-96 md:h-full">
-                    <AsciiGrid />
-                </div>
-            </div>
-        </div>
-    </section>
+    <Hero />
 
-    <Marquee
-        links={[
-            { href: 'https://react.dev/', text: 'React' },
-            { href: 'https://www.typescriptlang.org/', text: 'TypeScript' },
-            { href: 'https://nodejs.org/', text: 'Node.js' },
-            { href: 'https://astro.build/', text: 'Astro' },
-            { href: 'https://www.postgresql.org/', text: 'PostgreSQL' },
-            { href: 'https://aws.amazon.com/', text: 'AWS' },
-            { href: 'https://tailwindcss.com/', text: 'Tailwind CSS' },
-            { href: 'https://www.figma.com/', text: 'Figma' },
-            { href: 'https://www.framer.com/', text: 'Framer' },
-            { href: 'https://vercel.com/', text: 'Vercel' },
-            { href: 'https://www.docker.com/', text: 'Docker' },
-            { href: 'https://kubernetes.io/', text: 'Kubernetes' },
-            { href: 'https://www.jenkins.io/', text: 'Jenkins' },
-            { href: 'https://www.ansible.com/', text: 'Ansible' },
-            { href: 'https://www.terraform.io/', text: 'Terraform' },
-            { href: 'https://www.elastic.co/', text: 'Elasticsearch' },
-            { href: 'https://redis.io/', text: 'Redis' },
-            { href: 'https://graphql.org/', text: 'GraphQL' },
-            { href: 'https://www.apollographql.com/', text: 'Apollo' },
-            { href: 'https://www.prisma.io/', text: 'Prisma' },
-            { href: 'https://nextjs.org/', text: 'Next.js' },
-            { href: 'https://vitejs.dev/', text: 'Vite' },
-            { href: 'https://jestjs.io/', text: 'Jest' },
-            { href: 'https://testing-library.com/', text: 'Testing Library' },
-            { href: 'https://playwright.dev/', text: 'Playwright' },
-            { href: 'https://storybook.js.org/', text: 'Storybook' },
-            { href: 'https://www.gatsbyjs.com/', text: 'Gatsby' },
-            { href: 'https://www.electronjs.org/', text: 'Electron' },
-            { href: 'https://www.djangoproject.com/', text: 'Django' },
-            { href: 'https://rubyonrails.org/', text: 'Ruby on Rails' }
-        ]}
-    />
+    <CornersWithCrosses class="my-8 max-w-full overflow-hidden">
+        <MarqueeSection
+            links={[
+                { href: 'https://react.dev/', text: 'React' },
+                { href: 'https://www.typescriptlang.org/', text: 'TypeScript' },
+                { href: 'https://nodejs.org/', text: 'Node.js' },
+                { href: 'https://astro.build/', text: 'Astro' },
+                { href: 'https://www.postgresql.org/', text: 'PostgreSQL' },
+                { href: 'https://aws.amazon.com/', text: 'AWS' },
+                { href: 'https://tailwindcss.com/', text: 'Tailwind CSS' },
+                { href: 'https://www.figma.com/', text: 'Figma' },
+                { href: 'https://www.framer.com/', text: 'Framer' },
+                { href: 'https://vercel.com/', text: 'Vercel' },
+                { href: 'https://www.docker.com/', text: 'Docker' },
+                { href: 'https://kubernetes.io/', text: 'Kubernetes' },
+                { href: 'https://www.jenkins.io/', text: 'Jenkins' },
+                { href: 'https://www.ansible.com/', text: 'Ansible' },
+                { href: 'https://www.terraform.io/', text: 'Terraform' },
+                { href: 'https://www.elastic.co/', text: 'Elasticsearch' },
+                { href: 'https://redis.io/', text: 'Redis' },
+                { href: 'https://graphql.org/', text: 'GraphQL' },
+                { href: 'https://www.apollographql.com/', text: 'Apollo' },
+                { href: 'https://www.prisma.io/', text: 'Prisma' },
+                { href: 'https://nextjs.org/', text: 'Next.js' },
+                { href: 'https://vitejs.dev/', text: 'Vite' },
+                { href: 'https://jestjs.io/', text: 'Jest' },
+                { href: 'https://testing-library.com/', text: 'Testing Library' },
+                { href: 'https://playwright.dev/', text: 'Playwright' },
+                { href: 'https://storybook.js.org/', text: 'Storybook' },
+                { href: 'https://www.gatsbyjs.com/', text: 'Gatsby' },
+                { href: 'https://www.electronjs.org/', text: 'Electron' },
+                { href: 'https://www.djangoproject.com/', text: 'Django' },
+                { href: 'https://rubyonrails.org/', text: 'Ruby on Rails' }
+            ]}
+        />
+    </CornersWithCrosses>
 
-    <!-- About Section -->
-    <BigSectionContainer title="About">
-        <h2 class="text-2xl font-semibold text-main mb-6">Un poco sobre mí</h2>
-        <div class="space-y-4 text-main/70">
-            <p>
-                Llevo unos 4 años haciendo sitios web. Me encanta cuando las cosas funcionan bien y son accesibles para todos. Uso mucho React, TypeScript y
-                Node.js.
-            </p>
-            <p>Ahora trabajo en Asimov Consultores haciendo aplicaciones web. También ayudo a otros developers más nuevos cuando puedo.</p>
-            <p>Cuando no estoy programando me gusta jugar ajedrez, tomar fotos y aprender idiomas. Ahora mismo estoy con el noruego (está difícil 😅).</p>
-        </div>
+    <BigSectionContainer title="Sobre mí" id="about" initialVariant="outline">
+        <AboutMeSection />
     </BigSectionContainer>
 
-    <!-- Skills Section -->
-    <section class="py-20 border-main/20">
-        <h2 class="text-2xl font-semibold text-main mb-6">Con qué trabajo</h2>
-        <div class="flex flex-wrap gap-3">
-            {
-                skills.map((skill) => (
-                    <span class="skill-tag px-3 py-1 text-sm bg-muted text-main relative overflow-hidden cursor-pointer font-mono">
-                        <span class="relative z-10">{skill}</span>
-                    </span>
-                ))
-            }
-        </div>
-    </section>
+    <BigSectionContainer title="Habilidades" id="skills" initialVariant="outline">
+        <SkillsSection />
+    </BigSectionContainer>
 
-    <!-- Experience Section -->
-    <section class="py-20 border-main/20">
-        <h2 class="text-2xl font-semibold text-main mb-6">Dónde he trabajado</h2>
-        <div class="space-y-6">
-            <div>
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-1">
-                    <h3 class="text-lg font-medium text-main">Desarrollador Senior</h3>
-                    <span class="text-sm text-main/60">2022 - ahora</span>
-                </div>
-                <p class="text-main/60 mb-2">Asimov Consultores</p>
-                <p class="text-main/70">
-                    Hago aplicaciones web con React y Node.js. También ayudo al equipo con código y a veces explico cosas a los developers nuevos.
-                </p>
-            </div>
-            <div>
-                <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-1">
-                    <h3 class="text-lg font-medium text-main">Freelancer</h3>
-                    <span class="text-sm text-main/60">2020 - 2022</span>
-                </div>
-                <p class="text-main/70">Hacía sitios web para empresas pequeñas. Me gustaba mucho que fueran rápidos y que todos los pudieran usar.</p>
-            </div>
-        </div>
-    </section>
+    <BigSectionContainer title="Experiencia" id="experience" initialVariant="outline">
+        <ExperienceSection />
+    </BigSectionContainer>
 
-    <!-- Isometric Cards Section -->
-    <section class="py-20 border-main/20">
-        <h2 class="text-2xl font-semibold text-main mb-12">Nuestros servicios</h2>
-        <div class="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12">
-            <IsometricTextCard text="01" size="lg" />
-            <IsometricTextCard text="02" size="lg" />
-            <IsometricTextCard text="03" size="lg" />
-        </div>
-    </section>
+    <BigSectionContainer title="Servicios" id="services" initialVariant="outline">
+        <ServicesSection 
+            title="Qué ofrezco"
+            services={[
+                { id: "01", title: "Desarrollo Web" },
+                { id: "02", title: "Consultoría Técnica" },
+                { id: "03", title: "Mentoring" }
+            ]}
+        />
+    </BigSectionContainer>
 
-    <!-- Featured Projects -->
-    <section class="py-20 border-main/20">
-        <h2 class="text-2xl font-semibold text-main mb-6">Algunos proyectos</h2>
- 
-        <div class="mt-6">
-            <Button href="/projects" size="sm">
-                Ver todos →
-            </Button>
-        </div>
-    </section>
-
-    <!-- <Strudel /> -->
+    <BigSectionContainer title="Proyectos" id="projects" initialVariant="outline">
+        <FeaturedProjectsSection 
+            title="Proyectos destacados"
+            buttonText="Ver todos los proyectos →"
+            buttonHref="/projects"
+            showProjects={true}
+        />
+    </BigSectionContainer>
 </BaseLayout>
-
-<style>
-
-    /* Skill tags circular expansion */
-    .skill-tag::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        background: rgb(var(--color-text-main) / 0.1);
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        transition:
-            width 0.4s ease,
-            height 0.4s ease;
-        z-index: 1;
-    }
-
-    .skill-tag:hover::before {
-        width: 80px;
-        height: 80px;
-    }
-
-    /* Project cards circular expansion */
-    .project-card::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        background: rgb(var(--color-text-main) / 0.05);
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        transition:
-            width 0.8s ease,
-            height 0.8s ease;
-        z-index: 1;
-    }
-
-    .project-card:hover::before {
-        width: 400px;
-        height: 400px;
-    }
-</style>

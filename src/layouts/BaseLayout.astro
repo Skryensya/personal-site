@@ -13,32 +13,25 @@ const { showHeader = true, headerTitle = null, headerSubtitle = null,  ...head }
     <head>
         <BaseHead {...head} />
         <script>
-            // Load saved mode and theme
-            const savedMode = localStorage.getItem('mode');
-            const savedTheme = localStorage.getItem('theme') || 'classic';
-            
-            if (savedMode === 'dark') {
-                document.documentElement.classList.add('dark');
+            // Fast theme initialization - CSS handles all styling
+            function applyTheme(themeId, isDark) {
+                document.documentElement.setAttribute('data-theme', themeId);
+                document.documentElement.classList.toggle('dark', isDark);
             }
-            
-            document.documentElement.setAttribute('data-theme', savedTheme);
 
-            // Smooth color animation - faster changes
-            let mainHue = 0;
-            const colorChangeSpeed = 0.5; // Faster change per frame (about 30 degrees per second at 60fps)
+            // Load and apply saved theme immediately
+            const savedMode = localStorage.getItem('theme-mode') || 'light';
+            const savedTheme = localStorage.getItem('theme-id') || 'void';
             
+            applyTheme(savedTheme, savedMode === 'dark');
+
+            // Color animation for Prism theme
+            let mainHue = 0;
             function updateColorSystem() {
-                // Increment hue by a very small amount each frame
-                mainHue = (mainHue + colorChangeSpeed) % 360;
-                
-                // Update CSS variable
+                mainHue = (mainHue + 0.5) % 360;
                 document.documentElement.style.setProperty('--main-hue', mainHue.toFixed(2));
-                
-                // Continue animation
                 requestAnimationFrame(updateColorSystem);
             }
-            
-            // Start the smooth animation
             updateColorSystem();
         </script>
         <ViewTransitions />

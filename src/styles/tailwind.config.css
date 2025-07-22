@@ -7,3 +7,15 @@
     --color-main: var(--color-main);
     --color-secondary: var(--color-secondary);
 }
+
+@layer utilities {
+    .bg-stripe-diagonal {
+        background-image: repeating-linear-gradient(
+            315deg,
+            currentColor,
+            currentColor 2px,
+            transparent 2px,
+            transparent 10px
+        );
+    }
+}

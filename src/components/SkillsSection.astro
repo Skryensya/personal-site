@@ -1,0 +1,44 @@
+---
+interface Props {
+    skills?: string[];
+}
+
+const { skills = ['React', 'TypeScript', 'Node.js', 'Astro', 'PostgreSQL', 'AWS'] } = Astro.props;
+---
+
+<section class="py-20 border-main/20">
+    <h2 class="text-2xl font-semibold text-main mb-6">Con qué trabajo</h2>
+    <div class="flex flex-wrap gap-3">
+        {
+            skills.map((skill) => (
+                <span class="skill-tag px-3 py-1 text-sm bg-muted text-main relative overflow-hidden cursor-pointer font-mono">
+                    <span class="relative z-10">{skill}</span>
+                </span>
+            ))
+        }
+    </div>
+</section>
+
+<style>
+    /* Skill tags circular expansion */
+    .skill-tag::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgb(var(--color-text-main) / 0.1);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition:
+            width 0.4s ease,
+            height 0.4s ease;
+        z-index: 1;
+    }
+
+    .skill-tag:hover::before {
+        width: 80px;
+        height: 80px;
+    }
+</style>
