@@ -74,10 +74,10 @@
      * This makes it intuitive to choose which color should be prominent in each mode
      */
 
-    /* Default theme - Void subtle */
+    /* Default theme - Void enhanced */
     :root {
-        --theme-colorful: #f8f9fa;
-        --theme-contrasty: #0d1117;
+        --theme-colorful: #f5f7fa;
+        --theme-contrasty: #0a0c10;
 
         /* Light mode: contrasty text on colorful background (light bg) */
         --color-main: var(--theme-contrasty);
@@ -92,98 +92,98 @@
 
     /* Void theme */
     :root[data-theme='void'] {
-        --theme-colorful: #f8f9fa; /* Subtle off-white */
-        --theme-contrasty: #0d1117; /* GitHub dark */
+        --theme-colorful: #f5f7fa; /* Pure crisp white with slight blue undertone */
+        --theme-contrasty: #0a0c10; /* Deep space black with blue hint */
     }
 
     /* Phantom theme */
     :root[data-theme='phantom'] {
-        --theme-colorful: #39ff14; /* Matrix green (INTENSE) */
-        --theme-contrasty: #0a1a0a; /* Very dark green */
+        --theme-colorful: #00ff41; /* Pure matrix green - iconic and sharp */
+        --theme-contrasty: #0d1b0f; /* Rich dark green with depth */
     }
 
     /* Bloom theme */
     :root[data-theme='bloom'] {
-        --theme-colorful: #ff6b9d; /* Cherry blossom pink */
-        --theme-contrasty: #2d1b20; /* Dark rose */
+        --theme-colorful: #ff4d87; /* Vibrant cherry blossom - more saturated */
+        --theme-contrasty: #1f0e16; /* Deep burgundy black */
     }
 
     /* Crimson theme */
     :root[data-theme='crimson'] {
-        --theme-colorful: #ff073a; /* Blood red (INTENSE) */
-        --theme-contrasty: #220a0a; /* Very dark red */
+        --theme-colorful: #dc143c; /* Classic crimson - rich and powerful */
+        --theme-contrasty: #1a0408; /* Almost black with red undertone */
     }
 
     /* Azure theme */
     :root[data-theme='azure'] {
-        --theme-colorful: #007fff; /* Azure blue */
-        --theme-contrasty: #0a1a2e; /* Dark navy */
+        --theme-colorful: #0080ff; /* Perfect azure - bright but not harsh */
+        --theme-contrasty: #060f1c; /* Deep midnight blue */
     }
 
     /* Volt theme */
     :root[data-theme='volt'] {
-        --theme-colorful: #ffff00; /* Electric yellow (INTENSE) */
-        --theme-contrasty: #2e2e0a; /* Dark olive */
+        --theme-colorful: #f0ff00; /* Electric lime - more energetic than pure yellow */
+        --theme-contrasty: #1c1f06; /* Dark olive with yellow undertone */
     }
 
     /* Forest theme */
     :root[data-theme='forest'] {
-        --theme-colorful: #228b22; /* Forest green */
-        --theme-contrasty: #0f1f0f; /* Dark forest */
+        --theme-colorful: #2d5a2d; /* Rich forest green - more sophisticated */
+        --theme-contrasty: #0b1a0b; /* Deep forest night */
     }
 
     /* Ember theme */
     :root[data-theme='ember'] {
-        --theme-colorful: #ff6347; /* Tomato ember */
-        --theme-contrasty: #2e1a0f; /* Dark ember */
+        --theme-colorful: #ff5722; /* Perfect ember orange - warm and glowing */
+        --theme-contrasty: #1a0e06; /* Deep amber black */
     }
 
     /* Flame theme */
     :root[data-theme='flame'] {
-        --theme-colorful: #ff4500; /* Orange flame */
-        --theme-contrasty: #2e1500; /* Dark flame */
+        --theme-colorful: #ff6600; /* Pure flame orange - intense heat */
+        --theme-contrasty: #1f1100; /* Dark flame base */
     }
 
     /* Violet theme */
     :root[data-theme='violet'] {
-        --theme-colorful: #9932cc; /* Dark orchid */
-        --theme-contrasty: #1a0f2e; /* Dark purple */
+        --theme-colorful: #8a2be2; /* Blue violet - more refined than orchid */
+        --theme-contrasty: #14081f; /* Deep violet black */
     }
 
     /* Plasma theme */
     :root[data-theme='plasma'] {
-        --theme-colorful: #00ffff; /* Electric cyan (INTENSE) */
-        --theme-contrasty: #0a2e2e; /* Dark teal */
+        --theme-colorful: #00e5ff; /* Electric cyan - bright plasma blue */
+        --theme-contrasty: #051f1f; /* Deep teal black */
     }
 
     /* Solar theme */
     :root[data-theme='solar'] {
-        --theme-colorful: #ffa500; /* Golden orange */
-        --theme-contrasty: #2e1f0a; /* Dark gold */
+        --theme-colorful: #ffb347; /* Warm solar peach - softer than pure orange */
+        --theme-contrasty: #1f1608; /* Rich golden black */
     }
 
     /* Frost theme */
     :root[data-theme='frost'] {
-        --theme-colorful: #4fbdba; /* Ice blue */
-        --theme-contrasty: #0f2e2d; /* Dark frost */
+        --theme-colorful: #87ceeb; /* Sky blue - cooler and more icy */
+        --theme-contrasty: #0c1b1e; /* Deep frost black */
     }
 
     /* Neon theme */
     :root[data-theme='neon'] {
-        --theme-colorful: #ff00ff; /* Pure magenta (INTENSE) */
-        --theme-contrasty: #2e0a2e; /* Dark magenta */
+        --theme-colorful: #ff0080; /* Hot magenta - more electric than pure magenta */
+        --theme-contrasty: #1f051a; /* Deep magenta black */
     }
 
     /* Pulse theme */
     :root[data-theme='pulse'] {
-        --theme-colorful: #ff1493; /* Deep pink */
-        --theme-contrasty: #2e0f1f; /* Dark pink */
+        --theme-colorful: #ff3366; /* Bright coral pink - more energetic */
+        --theme-contrasty: #1a0810; /* Deep rose black */
     }
 
     /* Prism theme - Uses user selection color */
     :root[data-theme='prism'] {
         --theme-colorful: var(--user-selection-color); /* Dynamic user selection color */
-        --theme-contrasty: #1a1a1a; /* Dark gray */
+        --theme-contrasty: #0f0f0f; /* Pure neutral dark */
     }
 
     /* Enhanced CRT Effect - Pure Overlay */
@@ -256,7 +256,7 @@
 
     /* Phosphor glow effect sutil */
     .crt-effect {
-        filter: contrast(1.1) brightness(1.05) saturate(1.5);
+        filter: contrast(1.1) saturate(1.3);
     }
 
     .crt-effect * {
@@ -288,4 +288,41 @@
             repeat-x;
     -webkit-mask: var(--mask);
     mask: var(--mask);
+}
+
+/* Corner crosses utility */
+.corner-crosses {
+    position: relative;
+}
+
+.corner-crosses::before,
+.corner-crosses::after {
+    content: '';
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    pointer-events: none;
+}
+
+/* Top-left and top-right crosses */
+.corner-crosses::before {
+    top: -0.5px;
+    left: -0.5px;
+    background-image: 
+        linear-gradient(to right, var(--color-main) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--color-main) 1px, transparent 1px);
+    background-position: 0 3.5px, 3.5px 0;
+    background-size: 8px 1px, 1px 8px;
+    background-repeat: no-repeat;
+}
+
+.corner-crosses::after {
+    top: -0.5px;
+    right: -0.5px;
+    background-image:
+        linear-gradient(to left, var(--color-main) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--color-main) 1px, transparent 1px);
+    background-position: 0 3.5px, 4.5px 0;
+    background-size: 8px 1px, 1px 8px;
+    background-repeat: no-repeat;
 }

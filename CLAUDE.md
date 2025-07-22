@@ -114,12 +114,16 @@ Centralized configuration including:
 
 ### Styling
 
-- **Global styles** in `src/styles/global.css` with CSS custom properties
+**IMPORTANT: Always use Tailwind CSS for styling. Avoid custom CSS whenever possible.**
+
+- **Primary approach**: Use Tailwind utility classes for all styling
+- **Global styles** in `src/styles/global.css` with CSS custom properties (only for theme variables)
 - **Tailwind customization** in `tailwind.config.cjs` with custom colors and animations
 - **Typography plugin** with custom "dante" prose styles and tech fonts
 - **Tech font stack** with Space Grotesk, JetBrains Mono, and IBM Plex Mono
 - **OpenType features** enabled for enhanced typography rendering
 - **Mobile-first responsive design**
+- **No custom CSS**: Prefer Tailwind classes over `<style>` blocks in components
 
 ### Content Management
 
@@ -140,3 +144,4 @@ Centralized configuration including:
 - **Site is in early development** (version 0.0.1)
 - **Content is bilingual** (Spanish UI, potentially English content)
 - **Professional focus** on web development and accessibility projects
+- **ALWAYS use Tailwind CSS** for styling - avoid custom CSS and `<style>` blocks whenever possible
