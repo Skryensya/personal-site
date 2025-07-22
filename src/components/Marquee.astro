@@ -16,15 +16,22 @@ const { links } = Astro.props;
 
 <ColumnHeader title="Tecnologías" />
 <div class="overflow-hidden relative w-full pb-4 pt-1">
-  <div class="flex w-max animate-scroll hover:[animation-play-state:paused]">
-    <ul class="flex items-center flex-shrink-0 space-x-4">
+  <div class="flex w-max marquee-scroll hover:animate-none">
+    <ul class="flex items-center flex-shrink-0 space-x-4 pr-4">
       {links.map(link => (
         <li>
           <Tag text={link.text} />
         </li>
       ))}
     </ul>
-    <ul class="flex items-center flex-shrink-0 space-x-4" aria-hidden="true">
+    <ul class="flex items-center flex-shrink-0 space-x-4 pr-4" aria-hidden="true">
+      {links.map(link => (
+        <li>
+          <Tag text={link.text} />
+        </li>
+      ))}
+    </ul>
+    <ul class="flex items-center flex-shrink-0 space-x-4 pr-4" aria-hidden="true">
       {links.map(link => (
         <li>
           <Tag text={link.text} />
@@ -33,3 +40,18 @@ const { links } = Astro.props;
     </ul>
   </div>
 </div>
+
+<style>
+  @keyframes marquee {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-33.333%);
+    }
+  }
+  
+  .marquee-scroll {
+    animation: marquee 30s linear infinite;
+  }
+</style>

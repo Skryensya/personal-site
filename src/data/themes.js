@@ -11,83 +11,83 @@
 export const themes = {
   void: {
     name: 'VOID',
-    colorful: '#f8f9fa',  // Subtle off-white
-    contrasty: '#0d1117'  // GitHub dark
+    colorful: '#f5f7fa',  // Pure crisp white with slight blue undertone
+    contrasty: '#0a0c10'  // Deep space black with blue hint
   },
   phantom: {
     name: 'PHANTOM',
-    colorful: '#39ff14',  // Matrix green (INTENSE)
-    contrasty: '#0a1a0a'  // Very dark green
+    colorful: '#00ff41',  // Pure matrix green - iconic and sharp
+    contrasty: '#0d1b0f'  // Rich dark green with depth
   },
   bloom: {
     name: 'BLOOM',
-    colorful: '#ff6b9d',  // Cherry blossom pink
-    contrasty: '#2d1b20'  // Dark rose
+    colorful: '#ff4d87',  // Vibrant cherry blossom - more saturated
+    contrasty: '#1f0e16'  // Deep burgundy black
   },
   crimson: {
     name: 'CRIMSON',
-    colorful: '#ff073a',  // Blood red (INTENSE)
-    contrasty: '#220a0a'  // Very dark red
+    colorful: '#dc143c',  // Classic crimson - rich and powerful
+    contrasty: '#1a0408'  // Almost black with red undertone
   },
   azure: {
     name: 'AZURE',
-    colorful: '#007fff',  // Azure blue
-    contrasty: '#0a1a2e'  // Dark navy
+    colorful: '#0080ff',  // Perfect azure - bright but not harsh
+    contrasty: '#060f1c'  // Deep midnight blue
   },
   volt: {
     name: 'VOLT',
-    colorful: '#ffff00',  // Electric yellow (INTENSE)
-    contrasty: '#2e2e0a'  // Dark olive
+    colorful: '#f0ff00',  // Electric lime - more energetic than pure yellow
+    contrasty: '#1c1f06'  // Dark olive with yellow undertone
   },
   forest: {
     name: 'FOREST',
-    colorful: '#228b22',  // Forest green
-    contrasty: '#0f1f0f'  // Dark forest
+    colorful: '#2d5a2d',  // Rich forest green - more sophisticated
+    contrasty: '#0b1a0b'  // Deep forest night
   },
   ember: {
     name: 'EMBER',
-    colorful: '#ff6347',  // Tomato ember
-    contrasty: '#2e1a0f'  // Dark ember
+    colorful: '#ff5722',  // Perfect ember orange - warm and glowing
+    contrasty: '#1a0e06'  // Deep amber black
   },
   flame: {
     name: 'FLAME',
-    colorful: '#ff4500',  // Orange flame
-    contrasty: '#2e1500'  // Dark flame
+    colorful: '#ff6600',  // Pure flame orange - intense heat
+    contrasty: '#1f1100'  // Dark flame base
   },
   violet: {
     name: 'VIOLET',
-    colorful: '#9932cc',  // Dark orchid
-    contrasty: '#1a0f2e'  // Dark purple
+    colorful: '#8a2be2',  // Blue violet - more refined than orchid
+    contrasty: '#14081f'  // Deep violet black
   },
   plasma: {
     name: 'PLASMA',
-    colorful: '#00ffff',  // Electric cyan (INTENSE)
-    contrasty: '#0a2e2e'  // Dark teal
+    colorful: '#00e5ff',  // Electric cyan - bright plasma blue
+    contrasty: '#051f1f'  // Deep teal black
   },
   solar: {
     name: 'SOLAR',
-    colorful: '#ffa500',  // Golden orange
-    contrasty: '#2e1f0a'  // Dark gold
+    colorful: '#ffb347',  // Warm solar peach - softer than pure orange
+    contrasty: '#1f1608'  // Rich golden black
   },
   frost: {
     name: 'FROST',
-    colorful: '#4fbdba',  // Ice blue
-    contrasty: '#0f2e2d'  // Dark frost
+    colorful: '#87ceeb',  // Sky blue - cooler and more icy
+    contrasty: '#0c1b1e'  // Deep frost black
   },
   neon: {
     name: 'NEON',
-    colorful: '#ff00ff',  // Pure magenta (INTENSE)
-    contrasty: '#2e0a2e'  // Dark magenta
+    colorful: '#ff0080',  // Hot magenta - more electric than pure magenta
+    contrasty: '#1f051a'  // Deep magenta black
   },
   pulse: {
     name: 'PULSE',
-    colorful: '#ff1493',  // Deep pink
-    contrasty: '#2e0f1f'  // Dark pink
+    colorful: '#ff3366',  // Bright coral pink - more energetic
+    contrasty: '#1a0810'  // Deep rose black
   },
   prism: {
     name: 'PRISM',
     colorful: 'var(--user-selection-color)',  // Dynamic user selection color
-    contrasty: '#1a1a1a'  // Dark gray
+    contrasty: '#0f0f0f'  // Pure neutral dark
   }
 };
 
