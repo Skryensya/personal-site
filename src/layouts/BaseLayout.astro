@@ -28,7 +28,7 @@ const { showHeader = true, headerTitle = null, headerSubtitle = null,  ...head }
             // Color animation for Prism theme
             let mainHue = 0;
             function updateColorSystem() {
-                mainHue = (mainHue + 0.5) % 360;
+                mainHue = (mainHue + 0.25) % 360;
                 document.documentElement.style.setProperty('--main-hue', mainHue.toFixed(2));
                 requestAnimationFrame(updateColorSystem);
             }

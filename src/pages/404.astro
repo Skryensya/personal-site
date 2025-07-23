@@ -1,16 +1,22 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import siteConfig from '../data/site-config'; 
-import SectionHeading from '../components/SectionHeading.astro';
+import GameOfLife from '../components/GameOfLife.astro';
+import siteConfig from '../data/site-config';
 ---
 
-<BaseLayout description={siteConfig.description} image={siteConfig.image}
-headerTitle='Oops!' headerSubtitle=' '>
-     
-    <div class="mb-12 group/section">
-        <SectionHeading label="404 Not Found" />
-        <p class="mb-6">
-            Lo sentimos, pero la página que estás buscando no existe. ¡Puedes <a href="/" >volver a la página principal</a> o <a href="/projects">ver los proyectos</a> que he hecho!
-        </p>
+<BaseLayout title="404 - Page Not Found" description="Page not found" image={siteConfig.image}>
+    <div class="mb-12 group/section" data-is-404="true">
+        <GameOfLife is404Page={true} />
+        
+        <!-- Home Button -->
+        <div class="flex justify-center mt-8">
+            <a
+                href="/"
+                class="px-8 py-4 border-2 border-main bg-secondary text-main hover:bg-main hover:text-secondary transition-colors font-mono text-lg font-semibold"
+                title="Go to Home"
+            >
+                BACK TO HOME
+            </a>
+        </div>
     </div>
 </BaseLayout>

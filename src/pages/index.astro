@@ -10,10 +10,15 @@ import ExperienceSection from '../components/ExperienceSection.astro';
 import FeaturedProjectsSection from '../components/FeaturedProjectsSection.astro';
 import ServicesSection from '../components/ServicesSection.astro';
 import CornersWithCrosses from '../components/CornersWithCrosses.astro';
+import GameOfLife from '../components/GameOfLife.astro';
 ---
 
 <BaseLayout description={siteConfig.description} image={siteConfig.image}>
     <Hero />
+
+    <BigSectionContainer title="Game of Life" id="game" initialVariant="outline">
+        <GameOfLife />
+    </BigSectionContainer>
 
     <CornersWithCrosses class="my-8 max-w-full overflow-hidden">
         <MarqueeSection
