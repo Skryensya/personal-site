@@ -1,0 +1,1011 @@
+---
+import CornersWithCrosses from './CornersWithCrosses.astro';
+
+interface Props {
+    is404Page?: boolean;
+}
+
+const { is404Page = false } = Astro.props;
+
+// Pass the prop to the client-side script via a data attribute
+---
+
+<div class="w-full w-full h- mx-auto relative" data-is-404={is404Page ? 'true' : 'false'}>
+    <CornersWithCrosses class="border border-dotted">
+        <canvas
+            id="gameOfLifeCanvas"
+            class="w-full cursor-crosshair bg-transparent"
+        ></canvas>
+        
+        <!-- Pattern name display -->
+        <div id="patternName" class="absolute top-2 left-2 text-[var(--color-main)] font-mono text-xs font-semibold opacity-0 transition-opacity duration-300"></div>
+        
+        <!-- Content Actions (bottom-left) -->
+        <div class="absolute bottom-2 left-2 flex items-center gap-1">
+            <button
+                id="patternBtn"
+                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                title="Random Pattern"
+            >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10 7v10.9"/>
+                    <path d="M14 6.1V17"/>
+                    <path d="M16 7V3a1 1 0 0 1 1.707-.707 2.5 2.5 0 0 0 2.152.717 1 1 0 0 1 1.131 1.131 2.5 2.5 0 0 0 .717 2.152A1 1 0 0 1 21 8h-4"/>
+                    <path d="M16.536 7.465a5 5 0 0 0-7.072 0l-2 2a5 5 0 0 0 0 7.07 5 5 0 0 0 7.072 0l2-2a5 5 0 0 0 0-7.07"/>
+                    <path d="M8 17v4a1 1 0 0 1-1.707.707 2.5 2.5 0 0 0-2.152-.717 1 1 0 0 1-1.131-1.131 2.5 2.5 0 0 0-.717-2.152A1 1 0 0 1 3 16h4"/>
+                </svg>
+            </button>
+            <button
+                id="randomBtn"
+                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                title="Random Noise"
+            >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect width="16" height="16" x="4" y="4" rx="2" ry="2"/>
+                    <circle cx="8" cy="8" r="0.5" fill="currentColor"/>
+                    <circle cx="16" cy="8" r="0.5" fill="currentColor"/>
+                    <circle cx="12" cy="12" r="0.5" fill="currentColor"/>
+                    <circle cx="8" cy="16" r="0.5" fill="currentColor"/>
+                    <circle cx="16" cy="16" r="0.5" fill="currentColor"/>
+                </svg>
+            </button>
+            <button
+                id="clearBtn"
+                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                title="Clear Grid"
+            >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 6 6 18"/>
+                    <path d="m6 6 12 12"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Simulation Controls (bottom-right) -->
+        <div class="absolute bottom-2 right-2 flex items-center gap-1">
+            <button
+                id="trailBtn"
+                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                title="Toggle Ghost Trail"
+            >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 10h.01"/>
+                    <path d="M15 10h.01"/>
+                    <path d="M12 2a8 8 0 0 0-8 8v12l3-3 2.5 2.5L12 19l2.5 2.5L17 19l3 3V10a8 8 0 0 0-8-8z"/>
+                </svg>
+            </button>
+            <button
+                id="speedToggle"
+                class="px-1 py-1 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                title="Speed Control"
+            >
+                <svg width="34" height="8" viewBox="0 0 34 8" style="display: block;">
+                    <polygon points="1,0.5 7.5,4 1,7.5" fill="var(--color-main)" stroke="var(--color-main)" stroke-width="1"/>
+                    <polygon points="1,0.5 7.5,4 1,7.5" fill="none" stroke="var(--color-secondary)" stroke-width="0.5"/>
+                    <polygon points="9,0.5 15.5,4 9,7.5" fill="var(--color-main)" stroke="var(--color-main)" stroke-width="1"/>
+                    <polygon points="9,0.5 15.5,4 9,7.5" fill="none" stroke="var(--color-secondary)" stroke-width="0.5"/>
+                    <polygon points="17,0.5 23.5,4 17,7.5" fill="var(--color-secondary)" stroke="var(--color-main)" stroke-width="1"/>
+                    <polygon points="17,0.5 23.5,4 17,7.5" fill="none" stroke="var(--color-secondary)" stroke-width="0.5"/>
+                    <polygon points="25,0.5 31.5,4 25,7.5" fill="var(--color-secondary)" stroke="var(--color-main)" stroke-width="1"/>
+                    <polygon points="25,0.5 31.5,4 25,7.5" fill="none" stroke="var(--color-secondary)" stroke-width="0.5"/>
+                </svg>
+            </button>
+            <button
+                id="playPauseBtn"
+                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                title="Play/Pause"
+            >
+                ⏸
+            </button>
+        </div>
+
+        <!-- Expand Button (top-right) -->
+        <div class="absolute top-2 right-2">
+            <a
+                href="/conways-game-of-life"
+                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                title="Full Screen View"
+            >
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m15 15 6 6"/>
+                    <path d="m15 9 6-6"/>
+                    <path d="M21 16v5h-5"/>
+                    <path d="M21 8V3h-5"/>
+                    <path d="M3 16v5h5"/>
+                    <path d="m3 21 6-6"/>
+                    <path d="M3 8V3h5"/>
+                    <path d="M9 9 3 3"/>
+                </svg>
+            </a>
+        </div>
+    </CornersWithCrosses>
+</div>
+
+<script>
+// @ts-nocheck
+class GameOfLife {
+    constructor() {
+        this.canvas = document.getElementById('gameOfLifeCanvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.cellSize = 16;
+        this.speed = 150; // Normal speed (2 squares filled)
+        this.speedLevel = 2; // Current speed level (1-4, 2 is normal)
+        this.isRunning = true;
+        this.isDrawing = false;
+        this.lastUpdateTime = 0;
+        this.animationId = null;
+        this.lastDrawPos = null; // Para interpolación de líneas
+        this.drawMode = null; // 'activate' o 'deactivate' según la primera célula tocada
+        this.history = []; // Para undo/redo functionality
+        this.historyIndex = -1;
+        this.trailEnabled = false; // Ghost trail toggle
+        this.generationHistory = []; // Store previous generations for trail effect
+        this.maxTrailGenerations = 5; // Number of generations to keep for trail
+        
+        // Check if this is a 404 page
+        const container = this.canvas.closest('[data-is-404]');
+        this.is404Page = container && container.getAttribute('data-is-404') === 'true';
+        
+        // 404 page specific properties
+        this.countdown404 = 5000; // 5 seconds
+        this.start404Time = null;
+        
+        // Gap between squares (in pixels)
+        this.gap = 1;
+        
+        // Responsive and performance properties
+        this.resizeObserver = null;
+        this.resizeTimeout = null;
+        this.pixelRatio = window.devicePixelRatio || 1;
+        this.needsResize = false;
+        
+        // Famous Game of Life patterns with display names
+        this.patternNames = ['Glider', 'Blinker', 'Toad', 'Beacon', 'Pulsar', 'Gosper Gun'];
+        
+        // 404 pattern - bold, blocky letters
+this.pattern404 = [
+  // -------- "4" ----------     -------- "0" ----------     -------- "4" ----------
+  [0,0,0,0,0,1,1,1,0,0,0,0,     0,0,0,1,1,1,1,0,0,0,0,0,     0,0,0,0,1,1,1,0,0,0,0],
+  [0,0,0,0,1,1,1,1,0,0,0,0,     0,0,1,1,1,1,1,1,0,0,0,0,     0,0,0,1,1,1,1,0,0,0,0],
+  [0,0,0,1,1,1,1,1,0,0,0,0,     0,1,1,1,0,0,1,1,1,0,0,0,     0,0,1,1,1,1,1,0,0,0,0],
+  [0,0,1,1,0,1,1,1,0,0,0,0,     0,1,1,0,0,0,0,1,1,0,0,0,     0,1,1,0,1,1,1,0,0,0,0],
+  [0,1,1,0,0,1,1,1,0,0,0,0,     1,1,1,0,0,0,0,1,1,1,0,0,     1,1,0,0,1,1,1,0,0,0,0],
+  [0,1,1,0,0,1,1,1,0,0,0,0,     1,1,1,0,0,0,0,1,1,1,0,0,     1,1,0,0,1,1,1,0,0,0,0],
+  [0,1,1,1,1,1,1,1,1,1,0,0,     1,1,1,0,0,0,0,1,1,1,0,0,     1,1,1,1,1,1,1,1,1,0,0],
+  [0,1,1,1,1,1,1,1,1,1,0,0,     1,1,1,0,0,0,0,1,1,1,0,0,     1,1,1,1,1,1,1,1,1,0,0],
+  [0,0,0,0,0,1,1,1,0,0,0,0,     0,1,1,0,0,0,0,1,1,0,0,0,     0,0,0,0,1,1,1,0,0,0,0],
+  [0,0,0,0,0,1,1,1,0,0,0,0,     0,1,1,1,0,0,1,1,1,0,0,0,     0,0,0,0,1,1,1,0,0,0,0],
+  [0,0,0,0,0,1,1,1,0,0,0,0,     0,0,1,1,1,1,1,1,0,0,0,0,     0,0,0,0,1,1,1,0,0,0,0],
+  [0,0,0,0,0,1,1,1,0,0,0,0,     0,0,0,1,1,1,1,0,0,0,0,0,     0,0,0,0,1,1,1,0,0,0,0],
+
+  [0,0,0,0,0,0,0,0,0,0,0,     0,0,0,0,0,0,0,0,0,0,0,0,     0,0,0,0,0,0,0,0,0,0,0,0],
+
+  [1,1,0,1,0,1,1,1,0,1,1,     1,0,0,0,1,1,1,0,1,1,1,0,     1,0,1,0,1,1,0,1,0,1,1,0],
+  [1,0,1,1,0,1,0,1,0,0,1,     0,0,0,0,1,1,0,0,1,0,1,0,     1,0,1,0,1,0,1,1,0,1,0,1],
+  [1,0,0,1,0,1,1,1,0,0,1,     0,0,0,0,1,0,0,0,1,1,1,0,     1,1,1,0,1,0,0,1,0,1,1,0],
+];
+        
+        this.patterns = {
+            glider: [
+                [0, 1, 0],
+                [0, 0, 1],
+                [1, 1, 1]
+            ],
+            blinker: [
+                [1, 1, 1]
+            ],
+            toad: [
+                [0, 1, 1, 1],
+                [1, 1, 1, 0]
+            ],
+            beacon: [
+                [1, 1, 0, 0],
+                [1, 1, 0, 0],
+                [0, 0, 1, 1],
+                [0, 0, 1, 1]
+            ],
+            pulsar: [
+                [0,0,1,1,1,0,0,0,1,1,1,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [0,0,1,1,1,0,0,0,1,1,1,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,1,1,1,0,0,0,1,1,1,0,0],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [1,0,0,0,0,1,0,1,0,0,0,0,1],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,1,1,1,0,0,0,1,1,1,0,0]
+            ],
+            gosper: [
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+                [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+                [1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [1,1,0,0,0,0,0,0,0,0,1,0,0,0,1,0,1,1,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                [0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+            ]
+        };
+        
+        this.setupCanvas();
+        this.initializeGrid();
+        this.setupEventListeners();
+        this.updatePlayPauseIcon();
+        this.updateSpeedIcon();
+        
+        // Initialize 404 page if needed
+        if (this.is404Page) {
+            this.setup404Page();
+        }
+        
+        this.startRenderLoop();
+    }
+    
+    setupCanvas() {
+        // Get the actual displayed size of the canvas
+        const rect = this.canvas.getBoundingClientRect();
+        const displayWidth = rect.width;
+        const displayHeight = rect.height;
+        
+        // Set the canvas internal size taking device pixel ratio into account
+        const canvasWidth = Math.floor(displayWidth * this.pixelRatio);
+        const canvasHeight = Math.floor(displayHeight * this.pixelRatio);
+        
+        // Only resize if dimensions actually changed to avoid unnecessary work
+        if (this.canvas.width !== canvasWidth || this.canvas.height !== canvasHeight) {
+            this.canvas.width = canvasWidth;
+            this.canvas.height = canvasHeight;
+            
+            // Scale the canvas back down using CSS
+            this.canvas.style.width = displayWidth + 'px';
+            this.canvas.style.height = displayHeight + 'px';
+            
+            // Scale the drawing context so everything draws at the correct size
+            this.ctx.scale(this.pixelRatio, this.pixelRatio);
+            
+            // Recalculate grid dimensions based on logical size
+            this.cols = Math.floor(displayWidth / this.cellSize);
+            this.rows = Math.floor(displayHeight / this.cellSize);
+            
+            // Mark that we need to reinitialize the grid
+            this.needsResize = true;
+        }
+        
+        // Configure context for crisp pixels
+        this.ctx.imageSmoothingEnabled = false;
+        
+        // Setup resize observer for responsive behavior
+        this.setupResizeObserver();
+    }
+    
+    setupResizeObserver() {
+        if (!this.resizeObserver) {
+            this.resizeObserver = new ResizeObserver(entries => {
+                // Debounce resize events to avoid excessive recalculations
+                clearTimeout(this.resizeTimeout);
+                this.resizeTimeout = setTimeout(() => {
+                    this.handleResize();
+                }, 100);
+            });
+            
+            this.resizeObserver.observe(this.canvas);
+        }
+    }
+    
+    handleResize() {
+        const oldCols = this.cols;
+        const oldRows = this.rows;
+        
+        // Reconfigure canvas for new size
+        this.setupCanvas();
+        
+        // If grid dimensions changed, we need to handle the transition
+        if (this.needsResize && (oldCols !== this.cols || oldRows !== this.rows)) {
+            this.handleGridResize(oldCols, oldRows);
+            this.needsResize = false;
+        }
+    }
+    
+    handleGridResize(oldCols, oldRows) {
+        if (!this.grid || !oldCols || !oldRows) {
+            // First initialization or invalid old dimensions
+            this.initializeGrid();
+            return;
+        }
+        
+        // Create new grids with new dimensions
+        const newGrid = [];
+        const newNextGrid = [];
+        
+        for (let i = 0; i < this.rows; i++) {
+            newGrid[i] = [];
+            newNextGrid[i] = [];
+            for (let j = 0; j < this.cols; j++) {
+                // Copy from old grid if cell exists, otherwise create new cell
+                if (i < oldRows && j < oldCols && this.grid[i] && this.grid[i][j]) {
+                    newGrid[i][j] = { alive: this.grid[i][j].alive };
+                } else {
+                    newGrid[i][j] = { alive: false };
+                }
+                newNextGrid[i][j] = { alive: false };
+            }
+        }
+        
+        // Replace the grids
+        this.grid = newGrid;
+        this.nextGrid = newNextGrid;
+        
+        // If this is a 404 page, re-place the pattern
+        if (this.is404Page) {
+            this.place404Pattern();
+        }
+    }
+    
+    initializeGrid() {
+        this.grid = [];
+        this.nextGrid = [];
+        
+        for (let i = 0; i < this.rows; i++) {
+            this.grid[i] = [];
+            this.nextGrid[i] = [];
+            for (let j = 0; j < this.cols; j++) {
+                this.grid[i][j] = {
+                    alive: this.is404Page ? false : Math.random() < 0.15
+                };
+                this.nextGrid[i][j] = { alive: false };
+            }
+        }
+    }
+    
+    setup404Page() {
+        // Clear grid first
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                this.grid[i][j].alive = false;
+            }
+        }
+        
+        // Place 404 pattern centered horizontally
+        this.place404Pattern();
+        
+        // Pause the simulation initially
+        this.isRunning = false;
+        this.updatePlayPauseIcon();
+        
+        // Start countdown timer
+        this.start404Time = performance.now();
+    }
+    
+    place404Pattern() {
+        const pattern = this.pattern404;
+        const patternHeight = pattern.length;
+        const patternWidth = pattern[0].length;
+        
+        // Center horizontally, place in upper-middle area vertically
+        const startCol = Math.floor((this.cols - patternWidth) / 2);
+        const startRow = Math.floor(this.rows / 3); // Place in upper third
+        
+        for (let i = 0; i < patternHeight; i++) {
+            for (let j = 0; j < patternWidth; j++) {
+                const row = startRow + i;
+                const col = startCol + j;
+                if (row >= 0 && row < this.rows && col >= 0 && col < this.cols) {
+                    this.grid[row][col].alive = pattern[i][j] === 1;
+                }
+            }
+        }
+    }
+    
+    setupEventListeners() {
+        // Canvas mouse events
+        this.canvas.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Prevenir comportamiento por defecto
+            this.isDrawing = true;
+            this.drawMode = null; // Reset del modo de dibujo
+            this.lastDrawPos = null; // Reset de posición anterior
+            this.handleCanvasClick(e);
+        });
+        
+        this.canvas.addEventListener('mousemove', (e) => {
+            e.preventDefault(); // Prevenir comportamiento por defecto
+            if (this.isDrawing) {
+                this.handleCanvasClick(e);
+            }
+        });
+        
+        this.canvas.addEventListener('mouseup', (e) => {
+            e.preventDefault(); // Prevenir comportamiento por defecto
+            this.isDrawing = false;
+            this.drawMode = null;
+            this.lastDrawPos = null;
+        });
+        
+        this.canvas.addEventListener('mouseleave', () => {
+            this.isDrawing = false;
+            this.drawMode = null;
+            this.lastDrawPos = null;
+        });
+        
+        // Prevenir context menu y drag
+        this.canvas.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+        });
+        
+        this.canvas.addEventListener('dragstart', (e) => {
+            e.preventDefault();
+        });
+        
+        // Control buttons
+        document.getElementById('playPauseBtn').addEventListener('click', () => {
+            this.togglePlayPause();
+        });
+        
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            this.clearGrid();
+        });
+        
+        document.getElementById('randomBtn').addEventListener('click', () => {
+            this.randomizeGrid();
+        });
+        
+        // Speed toggle button
+        document.getElementById('speedToggle').addEventListener('click', () => {
+            this.toggleSpeed();
+        });
+        
+        // Pattern button
+        document.getElementById('patternBtn').addEventListener('click', () => {
+            this.placeRandomPattern();
+        });
+        
+        // Trail toggle button
+        document.getElementById('trailBtn').addEventListener('click', () => {
+            this.toggleTrail();
+        });
+        
+    }
+    
+    toggleSpeed() {
+        this.speedLevel = (this.speedLevel % 4) + 1; // Cycle 1-4
+        
+        // Speeds: level 2 is normal (2 filled squares)
+        const speeds = [300, 150, 75, 40]; // slowest to fastest
+        this.speed = speeds[this.speedLevel - 1];
+        
+        // Update button with square icons
+        const btn = document.getElementById('speedToggle');
+        if (btn) {
+            btn.innerHTML = this.getSpeedIcon(this.speedLevel);
+        }
+    }
+    
+    getSpeedIcon(level) {
+        // Create SVG with 4 Lucide play buttons placed together without padding
+        const playButtons = [];
+        for (let i = 1; i <= 4; i++) {
+            const filled = i <= level;
+            const x = (i-1) * 6; // No spacing between buttons
+            playButtons.push(`
+                <polygon 
+                    points="${x+1},1 ${x+1},7 ${x+5},4" 
+                    fill="${filled ? 'var(--color-main)' : 'none'}" 
+                    stroke="var(--color-main)" 
+                    stroke-width="1"
+                />
+            `);
+        }
+        
+        return `
+            <svg width="24" height="8" viewBox="0 0 24 8" style="display: block;">
+                ${playButtons.join('')}
+            </svg>
+        `;
+    }
+    
+    updatePlayPauseIcon() {
+        const btn = document.getElementById('playPauseBtn');
+        if (btn) {
+            btn.textContent = this.isRunning ? '⏸' : '▶';
+        }
+    }
+    
+    updateSpeedIcon() {
+        const btn = document.getElementById('speedToggle');
+        if (btn) {
+            btn.innerHTML = this.getSpeedIcon(this.speedLevel);
+        }
+    }
+    
+    handleCanvasClick(e) {
+        const rect = this.canvas.getBoundingClientRect();
+        
+        // Get coordinates relative to the display size (not internal canvas size)
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        // Convert to grid coordinates
+        const col = Math.floor(x / this.cellSize);
+        const row = Math.floor(y / this.cellSize);
+        
+        if (row >= 0 && row < this.rows && col >= 0 && col < this.cols) {
+            const currentPos = { row, col };
+            
+            // Determine drawing mode on first click
+            if (this.drawMode === null) {
+                this.drawMode = this.grid[row][col].alive ? 'deactivate' : 'activate';
+            }
+            
+            // If there's a previous position, interpolate line
+            if (this.lastDrawPos) {
+                this.drawLine(this.lastDrawPos, currentPos);
+            } else {
+                // First cell
+                this.toggleCell(row, col);
+            }
+            
+            this.lastDrawPos = currentPos;
+        }
+    }
+    
+    drawLine(start, end) {
+        // Algoritmo de línea de Bresenham para dibujar todas las células entre dos puntos
+        const dx = Math.abs(end.col - start.col);
+        const dy = Math.abs(end.row - start.row);
+        const sx = (start.col < end.col) ? 1 : -1;
+        const sy = (start.row < end.row) ? 1 : -1;
+        let err = dx - dy;
+        
+        let currentCol = start.col;
+        let currentRow = start.row;
+        
+        while (true) {
+            // Dibujar célula actual
+            this.toggleCell(currentRow, currentCol);
+            
+            // Verificar si llegamos al final
+            if (currentCol === end.col && currentRow === end.row) break;
+            
+            const e2 = 2 * err;
+            if (e2 > -dy) {
+                err -= dy;
+                currentCol += sx;
+            }
+            if (e2 < dx) {
+                err += dx;
+                currentRow += sy;
+            }
+        }
+    }
+    
+    toggleCell(row, col) {
+        if (row >= 0 && row < this.rows && col >= 0 && col < this.cols) {
+            if (this.drawMode === 'activate') {
+                this.grid[row][col].alive = true;
+            } else if (this.drawMode === 'deactivate') {
+                this.grid[row][col].alive = false;
+            }
+        }
+    }
+    
+    togglePlayPause() {
+        this.isRunning = !this.isRunning;
+        this.updatePlayPauseIcon();
+        
+        // No necesitamos reiniciar la animación, el renderLoop maneja el estado
+        if (this.isRunning) {
+            this.lastUpdateTime = performance.now(); // Reset del timer
+        }
+    }
+    
+    clearGrid() {
+        this.saveToHistory();
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                this.grid[i][j].alive = false;
+            }
+        }
+    }
+    
+    randomizeGrid() {
+        this.saveToHistory();
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                this.grid[i][j].alive = Math.random() < 0.15;
+            }
+        }
+    }
+    
+    saveToHistory() {
+        // Create a deep copy of the current grid state
+        const gridCopy = [];
+        for (let i = 0; i < this.rows; i++) {
+            gridCopy[i] = [];
+            for (let j = 0; j < this.cols; j++) {
+                gridCopy[i][j] = { alive: this.grid[i][j].alive };
+            }
+        }
+        
+        // Remove any history after current index (if we're not at the end)
+        this.history = this.history.slice(0, this.historyIndex + 1);
+        
+        // Add new state to history
+        this.history.push(gridCopy);
+        this.historyIndex++;
+        
+        // Limit history size to prevent memory issues
+        if (this.history.length > 20) {
+            this.history.shift();
+            this.historyIndex--;
+        }
+    }
+    
+    redo() {
+        if (this.historyIndex < this.history.length - 1) {
+            this.historyIndex++;
+            this.restoreFromHistory();
+        }
+    }
+    
+    restoreFromHistory() {
+        if (this.historyIndex >= 0 && this.historyIndex < this.history.length) {
+            const savedGrid = this.history[this.historyIndex];
+            for (let i = 0; i < this.rows && i < savedGrid.length; i++) {
+                for (let j = 0; j < this.cols && j < savedGrid[i].length; j++) {
+                    this.grid[i][j].alive = savedGrid[i][j].alive;
+                }
+            }
+        }
+    }
+    
+    placeRandomPattern() {
+        this.saveToHistory();
+        
+        // Select random pattern
+        const patternKeys = Object.keys(this.patterns);
+        const randomKey = patternKeys[Math.floor(Math.random() * patternKeys.length)];
+        const randomIndex = patternKeys.indexOf(randomKey);
+        const patternDisplayName = this.patternNames[randomIndex];
+        
+        // Clear grid first
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                this.grid[i][j].alive = false;
+            }
+        }
+        
+        // Place pattern in center of canvas
+        const pattern = this.patterns[randomKey];
+        const startRow = Math.floor((this.rows - pattern.length) / 2);
+        const startCol = Math.floor((this.cols - pattern[0].length) / 2);
+        
+        for (let i = 0; i < pattern.length; i++) {
+            for (let j = 0; j < pattern[i].length; j++) {
+                const row = startRow + i;
+                const col = startCol + j;
+                if (row >= 0 && row < this.rows && col >= 0 && col < this.cols) {
+                    this.grid[row][col].alive = pattern[i][j] === 1;
+                }
+            }
+        }
+        
+        // Show pattern name in top-left corner
+        this.showPatternName(patternDisplayName);
+    }
+    
+    showPatternName(name) {
+        const nameElement = document.getElementById('patternName');
+        if (nameElement) {
+            nameElement.textContent = name;
+            nameElement.style.opacity = '1';
+            
+            // Hide after 3 seconds
+            setTimeout(() => {
+                nameElement.style.opacity = '0';
+            }, 3000);
+        }
+    }
+    
+    countNeighbors(row, col) {
+        let count = 0;
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+                if (i === 0 && j === 0) continue;
+                
+                const newRow = row + i;
+                const newCol = col + j;
+                
+                if (newRow >= 0 && newRow < this.rows && newCol >= 0 && newCol < this.cols) {
+                    if (this.grid[newRow][newCol].alive) count++;
+                }
+            }
+        }
+        return count;
+    }
+    
+    updateGrid() {
+        // Save current generation for trail effect if enabled
+        if (this.trailEnabled) {
+            this.saveGenerationForTrail();
+        }
+        
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                const neighbors = this.countNeighbors(i, j);
+                const currentCell = this.grid[i][j];
+                
+                if (currentCell.alive) {
+                    // Cell survives if it has 2 or 3 neighbors
+                    this.nextGrid[i][j].alive = neighbors === 2 || neighbors === 3;
+                } else {
+                    // Cell becomes alive if it has exactly 3 neighbors
+                    this.nextGrid[i][j].alive = neighbors === 3;
+                }
+            }
+        }
+        
+        // Swap grids
+        [this.grid, this.nextGrid] = [this.nextGrid, this.grid];
+    }
+    
+    saveGenerationForTrail() {
+        // Create a deep copy of the current grid
+        const gridCopy = [];
+        for (let i = 0; i < this.rows; i++) {
+            gridCopy[i] = [];
+            for (let j = 0; j < this.cols; j++) {
+                gridCopy[i][j] = { alive: this.grid[i][j].alive };
+            }
+        }
+        
+        // Add to generation history
+        this.generationHistory.push(gridCopy);
+        
+        // Keep only the last N generations
+        if (this.generationHistory.length > this.maxTrailGenerations) {
+            this.generationHistory.shift();
+        }
+    }
+    
+    toggleTrail() {
+        this.trailEnabled = !this.trailEnabled;
+        
+        // Clear generation history when disabling
+        if (!this.trailEnabled) {
+            this.generationHistory = [];
+        }
+        
+        // Update button appearance
+        const btn = document.getElementById('trailBtn');
+        if (btn) {
+            if (this.trailEnabled) {
+                btn.style.backgroundColor = 'var(--color-main)';
+                btn.style.color = 'var(--color-secondary)';
+            } else {
+                btn.style.backgroundColor = 'var(--color-secondary)';
+                btn.style.color = 'var(--color-main)';
+            }
+        }
+    }
+    
+    draw() {
+        // Get display dimensions (logical size, not internal canvas size)
+        const rect = this.canvas.getBoundingClientRect();
+        const displayWidth = rect.width;
+        const displayHeight = rect.height;
+        
+        // Clear canvas with transparent background
+        this.ctx.clearRect(0, 0, displayWidth, displayHeight);
+        
+        // Get main color for alive cells
+        const computedStyle = getComputedStyle(document.documentElement);
+        const mainColor = computedStyle.getPropertyValue('--color-main').trim() || '#000000';
+        
+        // Draw grid lines with low opacity
+        this.ctx.strokeStyle = mainColor;
+        this.ctx.globalAlpha = 0.1;
+        this.ctx.lineWidth = 0.5;
+        
+        // Draw vertical grid lines
+        for (let j = 0; j <= this.cols; j++) {
+            const x = j * this.cellSize;
+            this.ctx.beginPath();
+            this.ctx.moveTo(x, 0);
+            this.ctx.lineTo(x, displayHeight);
+            this.ctx.stroke();
+        }
+        
+        // Draw horizontal grid lines
+        for (let i = 0; i <= this.rows; i++) {
+            const y = i * this.cellSize;
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, y);
+            this.ctx.lineTo(displayWidth, y);
+            this.ctx.stroke();
+        }
+        
+        // Draw trail effect if enabled
+        if (this.trailEnabled && this.generationHistory.length > 0) {
+            for (let gen = 0; gen < this.generationHistory.length; gen++) {
+                const generation = this.generationHistory[gen];
+                // Calculate opacity: oldest generation = 0.1, newest = 0.5
+                const opacity = 0.1 + (gen / this.generationHistory.length) * 0.4;
+                this.ctx.globalAlpha = opacity;
+                this.ctx.fillStyle = mainColor;
+                
+                // Draw cells from this generation
+                for (let i = 0; i < this.rows && i < generation.length; i++) {
+                    for (let j = 0; j < this.cols && j < generation[i].length; j++) {
+                        if (generation[i][j].alive) {
+                            const x = j * this.cellSize + this.gap;
+                            const y = i * this.cellSize + this.gap;
+                            const size = this.cellSize - (this.gap * 2);
+                            this.ctx.fillRect(x, y, size, size);
+                        }
+                    }
+                }
+            }
+        }
+        
+        // Draw current generation at full opacity
+        this.ctx.globalAlpha = 1.0;
+        this.ctx.fillStyle = mainColor;
+        
+        // Draw alive cells as squares with gaps
+        for (let i = 0; i < this.rows; i++) {
+            for (let j = 0; j < this.cols; j++) {
+                if (this.grid[i][j].alive) {
+                    const x = j * this.cellSize + this.gap;
+                    const y = i * this.cellSize + this.gap;
+                    const size = this.cellSize - (this.gap * 2);
+                    this.ctx.fillRect(x, y, size, size);
+                }
+            }
+        }
+    }
+    
+    startRenderLoop() {
+        const renderFrame = (currentTime) => {
+            // Handle 404 page countdown
+            if (this.is404Page && this.start404Time !== null) {
+                const elapsed = currentTime - this.start404Time;
+                if (elapsed >= this.countdown404 && !this.isRunning) {
+                    // Start the simulation after countdown
+                    this.isRunning = true;
+                    this.updatePlayPauseIcon();
+                    this.start404Time = null; // Stop checking countdown
+                    this.lastUpdateTime = currentTime; // Reset simulation timer
+                }
+            }
+            
+            // Actualizar simulación si está corriendo y ha pasado suficiente tiempo
+            if (this.isRunning && currentTime - this.lastUpdateTime >= this.speed) {
+                this.updateGrid();
+                this.lastUpdateTime = currentTime;
+            }
+            
+            // Dibujar siempre (permite ver cambios al dibujar)
+            this.draw();
+            
+            // Continuar el loop
+            this.animationId = requestAnimationFrame(renderFrame);
+        };
+        
+        // Iniciar el loop
+        this.animationId = requestAnimationFrame(renderFrame);
+    }
+    
+    stopRenderLoop() {
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+            this.animationId = null;
+        }
+    }
+    
+    destroy() {
+        // Clean up resize observer
+        if (this.resizeObserver) {
+            this.resizeObserver.disconnect();
+            this.resizeObserver = null;
+        }
+        
+        // Clean up timeouts
+        if (this.resizeTimeout) {
+            clearTimeout(this.resizeTimeout);
+            this.resizeTimeout = null;
+        }
+        
+        // Stop render loop
+        this.stopRenderLoop();
+    }
+}
+
+// Global instance manager to handle cleanup
+let gameInstance = null;
+
+// Initialize the game when the DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    // Clean up any existing instance
+    if (gameInstance) {
+        gameInstance.destroy();
+    }
+    gameInstance = new GameOfLife();
+});
+
+// Handle theme changes and page navigation
+document.addEventListener('astro:after-swap', () => {
+    // Clean up any existing instance
+    if (gameInstance) {
+        gameInstance.destroy();
+    }
+    gameInstance = new GameOfLife();
+});
+
+// Clean up when page is about to unload
+window.addEventListener('beforeunload', () => {
+    if (gameInstance) {
+        gameInstance.destroy();
+        gameInstance = null;
+    }
+});
+</script>
+
+<style>
+/* CSS custom properties for theme colors */
+:root {
+    --bg-color: #ffffff;
+    --text-color: #000000;
+}
+
+:root.dark {
+    --bg-color: #000000;
+    --text-color: #ffffff;
+}
+
+/* Ensure proper canvas sizing and responsive behavior */
+#gameOfLifeCanvas {
+    display: block;
+    width: 100%;
+    height: 400px;
+    max-width: 100%;
+}
+
+/* Full height canvas for 404 pages */
+[data-is-404="true"] #gameOfLifeCanvas {
+    height: 70vh;
+    min-height: 500px;
+}
+
+/* Custom slider styling */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 4px;
+    background: currentColor;
+    outline: none;
+    border-radius: 0;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background: currentColor;
+    border-radius: 0;
+    cursor: pointer;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    background: currentColor;
+    border-radius: 0;
+    cursor: pointer;
+    border: none;
+}
+</style>
