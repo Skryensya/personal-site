@@ -1,6 +1,6 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
-import BaseLayout from '../layouts/BaseLayout.astro';
+import Layout from '../layouts/Layout.astro';
 
 export async function getStaticPaths() {
     const pages = await getCollection('pages');
@@ -19,11 +19,11 @@ const { title, seo } = page.data;
 const { Content } = await page.render();
 ---
 
-<BaseLayout title={seo?.title ?? title} description={seo?.description} image={seo?.image} showHeader={true} headerTitle={title} headerSubtitle="">
+<Layout title={seo?.title ?? title} description={seo?.description} image={seo?.image} showHeader={true} headerTitle={title} headerSubtitle="">
     <article class="mb-16 sm:mb-24">
  
         <div class="max-w-none prose prose-dante sm:prose-lg">
             <Content />
         </div>
     </article>
-</BaseLayout>
+</Layout>

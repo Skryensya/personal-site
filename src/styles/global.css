@@ -15,25 +15,7 @@
         border-color: var(--color-main);
     }
 
-    /* Universal color transitions for theme changes - applies to all elements */
-    *,
-    *::before,
-    *::after {
-        transition: 
-            color 600ms ease-out,
-            background-color 600ms ease-out,
-            border-color 600ms ease-out,
-            fill 600ms ease-out,
-            stroke 600ms ease-out,
-            background-image 600ms ease-out;
-    }
-
-    /* Instant hover effects - override transitions on hover */
-    *:hover,
-    *:hover::before,
-    *:hover::after {
-        transition: none !important;
-    }
+    /* No color transitions - instant color changes */
 
     body {
         font-family: 'Space Grotesk', sans-serif;
@@ -240,4 +222,11 @@
         8px 1px,
         1px 8px;
     background-repeat: no-repeat;
+}
+.diagonal-stripe {
+    width: 100%;
+    background-image: repeating-linear-gradient(315deg, var(--color-main) 0, var(--color-main) 1px, transparent 0, transparent 50%);
+    background-size: 10px 10px;
+    background-attachment: fixed;
+    /* border: 1px solid var(--color-main); */
 }

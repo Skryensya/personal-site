@@ -51,7 +51,7 @@ const displayProjects = showAll ? projects : projects.filter(p => p.featured);
         
         <div class="grid gap-6 md:gap-8">
             {displayProjects.map((project) => (
-                <div class="border border-main/20 p-6 hover:border-main/40 transition-colors group">
+                <div class="border border-main/20 p-6 hover:border-main/40 group">
                     <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                         <div class="flex-1">
                             <h3 class="text-xl font-semibold text-main mb-2 group-hover:text-main/80">

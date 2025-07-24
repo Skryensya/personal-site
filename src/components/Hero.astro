@@ -5,19 +5,19 @@ import AsciiGrid from './AsciiGrid.astro';
 import CornersWithCrosses from './CornersWithCrosses.astro';
 ---
 
-<section class="hero-section pt-10 pb-20 min-h-screen">
+<section class="hero-section pt-4 pb-20 ">
     <div class="grid grid-cols-1 md:grid-cols-2">
         <!-- Text Content -->
-        <CornersWithCrosses class="flex flex-col justify-center  p-4 pr-10">
+        <CornersWithCrosses class="flex flex-col justify-start p-4 pr-10">
             <h1 class="text-4xl md:text-8xl font-bold text-main mb-4 text-balance">Hola, soy Allison Bienvenido a mi sitio</h1>
             <div class="mb-8">
                 <TextGenerateEffect
                     words="Me gusta crear sitios web que funcionen bien y sean fáciles de usar. Trabajo principalmente con React y TypeScript."
                 />
             </div>
-            <div class="flex gap-4">
-                <Button href="/projects" size="md"> Ver mis proyectos </Button>
-                <Button href="/projects" size="md" filled elevated> Ver mis proyectos </Button>
+            <div class="flex flex-col md:flex-row gap-4">
+                <Button href="/projects" size="md" class='order-2 md:order-1'> Ver mis proyectos </Button>
+                <Button href="/projects" size="md" filled elevated class='order-1 md:order-2'> Ver mis proyectos </Button>
             </div>
         </CornersWithCrosses>
         

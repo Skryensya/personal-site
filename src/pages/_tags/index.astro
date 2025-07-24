@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import ArrowRight from '../../icons/ArrowRight.astro';
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import Layout from '../../layouts/Layout.astro';
 import { sortItemsByDateDesc, getAllTags, getPostsByTag } from '../../utils/data-utils';
 
 const posts = (await getCollection('blog')).sort(sortItemsByDateDesc);
@@ -12,7 +12,7 @@ const tags = getAllTags(posts).sort((tagA, tagB) => {
 });
 ---
 
-<BaseLayout
+<Layout
     title="Tags"
     description="Explore tag directory for easy navigation and discovery. Find a wide range of topics, articles, and insights organized by tags, making it effortless to locate the content that interests you most."
     showHeader={false}
@@ -39,4 +39,4 @@ const tags = getAllTags(posts).sort((tagA, tagB) => {
         })
     }
     <!-- <Subscribe class="my-16 sm:my-24" /> -->
-</BaseLayout>
+</Layout>

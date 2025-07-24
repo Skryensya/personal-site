@@ -18,13 +18,13 @@ const { is404Page = false } = Astro.props;
         ></canvas>
         
         <!-- Pattern name display -->
-        <div id="patternName" class="absolute top-2 left-2 text-[var(--color-main)] font-mono text-xs font-semibold opacity-0 transition-opacity duration-300"></div>
+        <div id="patternName" class="absolute top-2 left-2 text-[var(--color-main)] font-mono text-xs font-semibold opacity-0"></div>
         
         <!-- Content Actions (bottom-left) -->
         <div class="absolute bottom-2 left-2 flex items-center gap-1">
             <button
                 id="patternBtn"
-                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] font-mono text-xs font-semibold flex items-center justify-center"
                 title="Random Pattern"
             >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -37,7 +37,7 @@ const { is404Page = false } = Astro.props;
             </button>
             <button
                 id="randomBtn"
-                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] font-mono text-xs font-semibold flex items-center justify-center"
                 title="Random Noise"
             >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -51,7 +51,7 @@ const { is404Page = false } = Astro.props;
             </button>
             <button
                 id="clearBtn"
-                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] font-mono text-xs font-semibold flex items-center justify-center"
                 title="Clear Grid"
             >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -65,7 +65,7 @@ const { is404Page = false } = Astro.props;
         <div class="absolute bottom-2 right-2 flex items-center gap-1">
             <button
                 id="trailBtn"
-                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] font-mono text-xs font-semibold flex items-center justify-center"
                 title="Toggle Ghost Trail"
             >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -76,7 +76,7 @@ const { is404Page = false } = Astro.props;
             </button>
             <button
                 id="speedToggle"
-                class="px-1 py-1 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                class="px-1 py-1 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] font-mono text-xs font-semibold flex items-center justify-center"
                 title="Speed Control"
             >
                 <svg width="34" height="8" viewBox="0 0 34 8" style="display: block;">
@@ -92,7 +92,7 @@ const { is404Page = false } = Astro.props;
             </button>
             <button
                 id="playPauseBtn"
-                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] font-mono text-xs font-semibold flex items-center justify-center"
                 title="Play/Pause"
             >
                 ⏸
@@ -103,7 +103,7 @@ const { is404Page = false } = Astro.props;
         <div class="absolute top-2 right-2">
             <a
                 href="/conways-game-of-life"
-                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                class="w-6 h-6 border border-[var(--color-main)] bg-[var(--color-secondary)] text-[var(--color-main)] hover:bg-[var(--color-main)] hover:text-[var(--color-secondary)] font-mono text-xs font-semibold flex items-center justify-center"
                 title="Full Screen View"
             >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

@@ -1,10 +1,10 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import Layout from '../layouts/Layout.astro';
 import GameOfLife from '../components/GameOfLife.astro';
 import siteConfig from '../data/site-config';
 ---
 
-<BaseLayout title="404 - Page Not Found" description="Page not found" image={siteConfig.image}>
+<Layout title="404 - Page Not Found" description="Page not found" image={siteConfig.image}>
     <div class="mb-12 group/section" data-is-404="true">
         <GameOfLife is404Page={true} />
         
@@ -12,11 +12,11 @@ import siteConfig from '../data/site-config';
         <div class="flex justify-center mt-8">
             <a
                 href="/"
-                class="px-8 py-4 border-2 border-main bg-secondary text-main hover:bg-main hover:text-secondary transition-colors font-mono text-lg font-semibold"
+                class="px-8 py-4 border-2 border-main bg-secondary text-main hover:bg-main hover:text-secondary font-mono text-lg font-semibold"
                 title="Go to Home"
             >
                 BACK TO HOME
             </a>
         </div>
     </div>
-</BaseLayout>
+</Layout>
