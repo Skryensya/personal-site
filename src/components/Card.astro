@@ -1,0 +1,88 @@
+---
+// --- INTERFACES Y PROPS ---
+interface Props {
+  title?: string;
+  content?: string;
+  corners?: {
+    topLeft?: number;
+    topRight?: number;
+    bottomLeft?: number;
+    bottomRight?: number;
+  };
+}
+
+// --- VALORES POR DEFECTO ---
+const {
+  title = "Card Title",
+  content,
+  corners: customCorners = {},
+} = Astro.props;
+
+const defaultCorners = {
+  topLeft: 80, // Tamaño de esquina por defecto
+  topRight: 0,
+  bottomLeft: 0,
+  bottomRight: 0,
+};
+
+const corners = { ...defaultCorners, ...customCorners };
+
+// --- LÓGICA CENTRALIZADA ---
+const cornerData = [
+  { key: 'topLeft',     x: -1, y: -1, float: 'left'  },
+  { key: 'topRight',    x:  1, y: -1, float: 'right' },
+  { key: 'bottomLeft',  x: -1, y:  1, float: 'left'  },
+  { key: 'bottomRight', x:  1, y:  1, float: 'right' },
+].map(c => {
+  const size = corners[c.key as keyof typeof corners] || 0;
+  return {
+    ...c,
+    size: size,
+    // El espaciador ahora es 1/4 del tamaño para un ajuste más preciso
+    spacerSize: Math.round(size * 0.25)
+  }
+});
+---
+
+<div class="relative w-full border border-main bg-transparent overflow-hidden">
+
+  <div class="p-6 flow-root">
+    
+    {cornerData.map(corner => (
+      corner.size > 0 && (
+        <div
+          class:list={[ corner.float === 'left' ? 'float-left' : 'float-right' ]}
+          style={`width: ${corner.spacerSize}px; height: ${corner.spacerSize}px;`}
+        ></div>
+      )
+    ))}
+
+    <h3 class="text-4xl font-bold mb-4">{title}</h3>
+
+    <div class="text-main/90">
+      {content && <p>{content}</p>}
+      <slot />
+    </div>
+  </div>
+
+  {cornerData.map(corner => (
+    corner.size > 0 && (
+      <div
+        class:list={[
+          "absolute aspect-square bg-main", // Un color de fondo simple es suficiente
+          corner.key.includes('left') ? "left-0" : "right-0",
+          corner.key.includes('top') ? "top-0" : "bottom-0",
+        ]}
+        style={`
+          --size: ${corner.size}px;
+          width: var(--size);
+          transform: 
+            translateX(calc(var(--size) / 2 * ${corner.x})) 
+            translateY(calc(var(--size) / 2 * ${corner.y})) 
+            rotate(45deg);
+        `}
+      >
+      </div>
+    )
+  ))}
+</div>

@@ -1,4 +1,4 @@
-// Theme metadata configuration
+// Optimized theme configuration - Limited to 5 beautiful, carefully curated themes
 // CSS implementation is in /src/styles/themes.css
 // This file only contains metadata for UI generation
 
@@ -6,114 +6,167 @@ export const themes = [
   {
     id: 'void',
     name: 'VOID',
-    colorful: '#f5f7fa',  // Pure crisp white with slight blue undertone
-    contrasty: '#0a0c10'  // Deep space black with blue hint
+    description: 'Pure minimalist contrast',
+    colorful: '#f8fafc',  // Softer white with subtle warmth
+    contrasty: '#0f172a'  // Rich slate black for better readability
   },
   {
     id: 'phantom',
-    name: 'PHANTOM',
-    colorful: '#00ff41',  // Pure matrix green - iconic and sharp
-    contrasty: '#0d1b0f'  // Rich dark green with depth
-  },
-  {
-    id: 'bloom',
-    name: 'BLOOM',
-    colorful: '#ff4d87',  // Vibrant cherry blossom - more saturated
-    contrasty: '#1f0e16'  // Deep burgundy black
-  },
-  {
-    id: 'crimson',
-    name: 'CRIMSON',
-    colorful: '#dc143c',  // Classic crimson - rich and powerful
-    contrasty: '#1a0408'  // Almost black with red undertone
+    name: 'PHANTOM', 
+    description: 'Classic terminal green',
+    colorful: '#22c55e',  // Softer matrix green - easier on eyes
+    contrasty: '#0f1419'  // Warmer dark green base
   },
   {
     id: 'azure',
     name: 'AZURE',
-    colorful: '#0080ff',  // Perfect azure - bright but not harsh
-    contrasty: '#060f1c'  // Deep midnight blue
-  },
-  {
-    id: 'volt',
-    name: 'VOLT',
-    colorful: '#f0ff00',  // Electric lime - more energetic than pure yellow
-    contrasty: '#1c1f06'  // Dark olive with yellow undertone
-  },
-  {
-    id: 'forest',
-    name: 'FOREST',
-    colorful: '#2d5a2d',  // Rich forest green - more sophisticated
-    contrasty: '#0b1a0b'  // Deep forest night
+    description: 'Calm ocean depths',
+    colorful: '#3b82f6',  // Softer blue - more readable
+    contrasty: '#1e293b'  // Deeper slate blue for contrast
   },
   {
     id: 'ember',
     name: 'EMBER',
-    colorful: '#ff5722',  // Perfect ember orange - warm and glowing
-    contrasty: '#1a0e06'  // Deep amber black
-  },
-  {
-    id: 'flame',
-    name: 'FLAME',
-    colorful: '#ff6600',  // Pure flame orange - intense heat
-    contrasty: '#1f1100'  // Dark flame base
+    description: 'Warm coding comfort',
+    colorful: '#f97316',  // Softer orange - less harsh
+    contrasty: '#1c1917'  // Warm dark stone
   },
   {
     id: 'violet',
     name: 'VIOLET',
-    colorful: '#8a2be2',  // Blue violet - more refined than orchid
-    contrasty: '#14081f'  // Deep violet black
+    description: 'Creative inspiration',
+    colorful: '#8b5cf6',  // Softer purple - more refined
+    contrasty: '#1e1b3a'  // Deep violet base for elegance
   },
   {
-    id: 'plasma',
-    name: 'PLASMA',
-    colorful: '#00e5ff',  // Electric cyan - bright plasma blue
-    contrasty: '#051f1f'  // Deep teal black
-  },
-  {
-    id: 'solar',
-    name: 'SOLAR',
-    colorful: '#ffb347',  // Warm solar peach - softer than pure orange
-    contrasty: '#1f1608'  // Rich golden black
-  },
-  {
-    id: 'frost',
-    name: 'FROST',
-    colorful: '#87ceeb',  // Sky blue - cooler and more icy
-    contrasty: '#0c1b1e'  // Deep frost black
-  },
-  {
-    id: 'neon',
-    name: 'NEON',
-    colorful: '#ff0080',  // Hot magenta - more electric than pure magenta
-    contrasty: '#1f051a'  // Deep magenta black
-  },
-  {
-    id: 'pulse',
-    name: 'PULSE',
-    colorful: '#ff3366',  // Bright coral pink - more energetic
-    contrasty: '#1a0810'  // Deep rose black
+    id: 'custom',
+    name: 'CUSTOM',
+    description: 'Your personalized colors',
+    colorful: '#3b82f6',  // Default blue (will be overridden)
+    contrasty: '#1e293b'  // Default dark (will be overridden)
   }
 ];
 
-// Prism theme is special - uses user selection color
-export const prismTheme = {
-  id: 'prism',
-  name: 'PRISM',
-  colorful: 'var(--user-selection-color)',  // Dynamic user selection color
-  contrasty: '#0f0f0f'  // Pure neutral dark
-};
-
 export const themeKeys = themes.map(theme => theme.id);
-export const allThemes = [...themes, prismTheme];
 
-// Simple theme application - CSS handles the heavy lifting
-export function applyTheme(themeId, isDark = false) {
+// Enhanced theme management with localStorage optimization
+export function applyTheme(themeId, isDark = false, customColors = null) {
   document.documentElement.setAttribute('data-theme', themeId);
   document.documentElement.classList.toggle('dark', isDark);
+  
+  // Apply custom colors if provided
+  if (themeId === 'custom' && customColors) {
+    document.documentElement.style.setProperty('--theme-colorful', customColors.colorful);
+    document.documentElement.style.setProperty('--theme-contrasty', customColors.contrasty);
+  }
+  
+  // Persist to localStorage with error handling
+  try {
+    localStorage.setItem('theme-id', themeId);
+    localStorage.setItem('theme-mode', isDark ? 'dark' : 'light');
+    
+    // Save custom colors only if it's a custom theme
+    if (themeId === 'custom' && customColors) {
+      localStorage.setItem('custom-theme-colors', JSON.stringify(customColors));
+    }
+  } catch (e) {
+    console.warn('Failed to save theme to localStorage:', e);
+  }
 }
 
-// Get theme by id
+// Get theme by id with fallback
 export function getThemeById(id) {
-  if (id === 'prism') return prismTheme;
   return themes.find(theme => theme.id === id) || themes[0];
+}
+
+// Parse theme from URL parameters
+export function parseThemeFromURL() {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const themeParam = urlParams.get('theme');
+    
+    if (themeParam) {
+      const themeData = JSON.parse(atob(themeParam));
+      if (themeData.name && themeData.colorful && themeData.contrasty) {
+        return {
+          name: themeData.name,
+          colorful: themeData.colorful,
+          contrasty: themeData.contrasty
+        };
+      }
+    }
+  } catch (e) {
+    console.warn('Failed to parse theme from URL:', e);
+  }
+  return null;
+}
+
+// Load theme from localStorage with validation
+export function loadThemeFromStorage() {
+  try {
+    // First check if there's a theme in the URL
+    const urlTheme = parseThemeFromURL();
+    if (urlTheme) {
+      // Apply URL theme and switch to custom theme
+      saveCustomColors(urlTheme.colorful, urlTheme.contrasty, urlTheme.name);
+      localStorage.setItem('theme-id', 'custom');
+      return { themeId: 'custom', isDark: false, customColors: urlTheme };
+    }
+
+    const savedThemeId = localStorage.getItem('theme-id');
+    const savedMode = localStorage.getItem('theme-mode');
+    
+    // Validate saved theme exists in current theme list
+    const theme = savedThemeId && themes.find(t => t.id === savedThemeId) 
+      ? savedThemeId 
+      : themes[0].id;
+    
+    const isDark = savedMode === 'dark';
+    
+    // Load custom colors if it's a custom theme
+    let customColors = null;
+    if (theme === 'custom') {
+      try {
+        const savedColors = localStorage.getItem('custom-theme-colors');
+        customColors = savedColors ? JSON.parse(savedColors) : null;
+      } catch (e) {
+        console.warn('Failed to parse custom theme colors:', e);
+      }
+    }
+    
+    return { themeId: theme, isDark, customColors };
+  } catch (e) {
+    console.warn('Failed to load theme from localStorage:', e);
+    return { themeId: themes[0].id, isDark: false, customColors: null };
+  }
+}
+
+// Get custom colors from localStorage
+export function getCustomColors() {
+  try {
+    const savedColors = localStorage.getItem('custom-theme-colors');
+    return savedColors ? JSON.parse(savedColors) : { colorful: '#3b82f6', contrasty: '#1e293b', name: 'CUSTOM' };
+  } catch (e) {
+    console.warn('Failed to get custom colors:', e);
+    return { colorful: '#3b82f6', contrasty: '#1e293b', name: 'CUSTOM' };
+  }
+}
+
+// Save custom colors to localStorage
+export function saveCustomColors(colorful, contrasty, name = 'CUSTOM') {
+  try {
+    const customColors = { colorful, contrasty, name };
+    localStorage.setItem('custom-theme-colors', JSON.stringify(customColors));
+    return customColors;
+  } catch (e) {
+    console.warn('Failed to save custom colors:', e);
+    return null;
+  }
+}
+
+// Initialize theme on page load
+export function initializeTheme() {
+  const { themeId, isDark, customColors } = loadThemeFromStorage();
+  applyTheme(themeId, isDark, customColors);
+  return { themeId, isDark, customColors };
 }

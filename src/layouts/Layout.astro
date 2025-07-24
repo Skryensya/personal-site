@@ -1,0 +1,87 @@
+---
+import { ViewTransitions } from 'astro:transitions';
+import BaseHead, { type Props as HeadProps } from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import ColorPickerWrapper from '../components/ColorPickerWrapper.astro';
+import ThemeURLHandler from '../components/ThemeURLHandler.astro';
+
+export type Props = HeadProps & { showHeader?: boolean; headerTitle?: string, headerSubtitle?: string };
+
+const { showHeader = true, headerTitle = null, headerSubtitle = null,  ...head } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en" class="antialiased break-words">
+    <head>
+        <BaseHead {...head} />
+        <script>
+            // Fast theme initialization with validation
+            const validThemes = ['void', 'phantom', 'azure', 'ember', 'violet', 'custom'];
+            
+            function applyTheme(themeId, isDark, customColors = null) {
+                document.documentElement.setAttribute('data-theme', themeId);
+                document.documentElement.classList.toggle('dark', isDark);
+                
+                // Apply custom colors if provided
+                if (themeId === 'custom' && customColors) {
+                    document.documentElement.style.setProperty('--theme-colorful', customColors.colorful);
+                    document.documentElement.style.setProperty('--theme-contrasty', customColors.contrasty);
+                }
+            }
+
+            // Load and apply saved theme with validation
+            try {
+                const savedMode = localStorage.getItem('theme-mode') || 'light';
+                const savedTheme = localStorage.getItem('theme-id') || 'void';
+                
+                // Validate theme exists in current theme list
+                const theme = validThemes.includes(savedTheme) ? savedTheme : 'void';
+                
+                let customColors = null;
+                // Load custom colors if it's a custom theme
+                if (theme === 'custom') {
+                    try {
+                        const savedColors = localStorage.getItem('custom-theme-colors');
+                        if (savedColors) {
+                            customColors = JSON.parse(savedColors);
+                        } else {
+                            // If no custom colors found but custom theme selected, fallback to void theme
+                            const fallbackTheme = 'void';
+                            localStorage.setItem('theme-id', fallbackTheme);
+                            applyTheme(fallbackTheme, savedMode === 'dark');
+                            return;
+                        }
+                    } catch (e) {
+                        console.warn('Failed to load custom colors:', e);
+                        // Fallback to void theme if custom colors are invalid
+                        const fallbackTheme = 'void';
+                        localStorage.setItem('theme-id', fallbackTheme);
+                        applyTheme(fallbackTheme, savedMode === 'dark');
+                        return;
+                    }
+                }
+                
+                applyTheme(theme, savedMode === 'dark', customColors);
+                
+                // Update localStorage if theme was invalid
+                if (theme !== savedTheme) {
+                    localStorage.setItem('theme-id', theme);
+                }
+            } catch (e) {
+                // Fallback if localStorage fails
+                applyTheme('void', false);
+            }
+        </script>
+        <ViewTransitions />
+    </head>
+    <body class="bg-secondary text-main md:px-10 (--max-w-size:1280px) max-w-[var(--max-w-size)] mx-auto overflow-x-hidden relative">
+        <Header />
+     <div class="mt-8">  
+        <main class="text-left px-4">
+                <slot />
+            </main>
+        </div>
+        <ColorPickerWrapper />
+        <ThemeURLHandler />
+    </body>
+</html>

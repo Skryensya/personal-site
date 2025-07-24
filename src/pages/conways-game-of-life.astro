@@ -39,7 +39,7 @@ import CornersWithCrosses from '../components/CornersWithCrosses.astro';
                     <div class="flex items-center gap-2">
                         <a
                             href="/"
-                            class="w-8 h-8 border border-main bg-secondary text-main hover:bg-main hover:text-secondary transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                            class="w-8 h-8 border border-main bg-secondary text-main hover:bg-main hover:text-secondary  font-mono text-xs font-semibold flex items-center justify-center"
                             title="Back to Home"
                         >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -48,7 +48,7 @@ import CornersWithCrosses from '../components/CornersWithCrosses.astro';
                         </a>
                         <button
                             id="sidebarToggle"
-                            class="w-8 h-8 border border-main bg-secondary text-main hover:bg-main hover:text-secondary transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                            class="w-8 h-8 border border-main bg-secondary text-main hover:bg-main hover:text-secondary  font-mono text-xs font-semibold flex items-center justify-center"
                             title="Toggle Sidebar"
                         >
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -74,7 +74,7 @@ import CornersWithCrosses from '../components/CornersWithCrosses.astro';
                         <div class="absolute bottom-4 left-4 flex items-center gap-2 z-10">
                             <button
                                 id="clearBtn"
-                                class="w-8 h-8 border border-main bg-secondary text-main hover:bg-main hover:text-secondary transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                                class="w-8 h-8 border border-main bg-secondary text-main hover:bg-main hover:text-secondary  font-mono text-xs font-semibold flex items-center justify-center"
                                 title="Clear Grid"
                             >
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -84,7 +84,7 @@ import CornersWithCrosses from '../components/CornersWithCrosses.astro';
                             </button>
                             <button
                                 id="randomBtn"
-                                class="w-8 h-8 border border-main bg-secondary text-main hover:bg-main hover:text-secondary transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                                class="w-8 h-8 border border-main bg-secondary text-main hover:bg-main hover:text-secondary  font-mono text-xs font-semibold flex items-center justify-center"
                                 title="Random Noise"
                             >
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -102,7 +102,7 @@ import CornersWithCrosses from '../components/CornersWithCrosses.astro';
                         <div class="absolute bottom-4 right-4 flex items-center gap-2 z-10">
                             <button
                                 id="trailBtn"
-                                class="w-8 h-8 border border-main bg-secondary text-main hover:bg-main hover:text-secondary transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                                class="w-8 h-8 border border-main bg-secondary text-main hover:bg-main hover:text-secondary  font-mono text-xs font-semibold flex items-center justify-center"
                                 title="Toggle Ghost Trail"
                             >
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -113,7 +113,7 @@ import CornersWithCrosses from '../components/CornersWithCrosses.astro';
                             </button>
                             <button
                                 id="speedToggle"
-                                class="px-2 py-1 h-8 border border-main bg-secondary text-main hover:bg-main hover:text-secondary transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                                class="px-2 py-1 h-8 border border-main bg-secondary text-main hover:bg-main hover:text-secondary  font-mono text-xs font-semibold flex items-center justify-center"
                                 title="Speed Control"
                             >
                                 <svg width="40" height="12" viewBox="0 0 40 12" style="display: block;">
@@ -125,7 +125,7 @@ import CornersWithCrosses from '../components/CornersWithCrosses.astro';
                             </button>
                             <button
                                 id="playPauseBtn"
-                                class="w-8 h-8 border border-main bg-secondary text-main hover:bg-main hover:text-secondary transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                                class="w-8 h-8 border border-main bg-secondary text-main hover:bg-main hover:text-secondary  font-mono text-xs font-semibold flex items-center justify-center"
                                 title="Play/Pause"
                             >
                                 ⏸
@@ -146,7 +146,7 @@ import CornersWithCrosses from '../components/CornersWithCrosses.astro';
                         </div>
                         <button
                             id="sidebarClose"
-                            class="w-6 h-6 border border-main bg-secondary text-main hover:bg-main hover:text-secondary transition-colors font-mono text-xs font-semibold flex items-center justify-center"
+                            class="w-6 h-6 border border-main bg-secondary text-main hover:bg-main hover:text-secondary  font-mono text-xs font-semibold flex items-center justify-center"
                             title="Close Sidebar"
                         >
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -160,22 +160,22 @@ import CornersWithCrosses from '../components/CornersWithCrosses.astro';
                     <div>
                         <h2 class="text-sm font-bold font-mono text-main mb-3">PATTERNS</h2>
                         <div class="grid grid-cols-2 gap-2">
-                            <button class="pattern-btn w-full p-3 border border-main bg-secondary text-main hover:bg-main hover:text-secondary transition-colors text-xs font-mono font-semibold text-left" data-pattern="glider">
+                            <button class="pattern-btn w-full p-3 border border-main bg-secondary text-main hover:bg-main hover:text-secondary  text-xs font-mono font-semibold text-left" data-pattern="glider">
                                 GLIDER
                             </button>
-                            <button class="pattern-btn w-full p-3 border border-main bg-secondary text-main hover:bg-main hover:text-secondary transition-colors text-xs font-mono font-semibold text-left" data-pattern="blinker">
+                            <button class="pattern-btn w-full p-3 border border-main bg-secondary text-main hover:bg-main hover:text-secondary  text-xs font-mono font-semibold text-left" data-pattern="blinker">
                                 BLINKER
                             </button>
-                            <button class="pattern-btn w-full p-3 border border-main bg-secondary text-main hover:bg-main hover:text-secondary transition-colors text-xs font-mono font-semibold text-left" data-pattern="toad">
+                            <button class="pattern-btn w-full p-3 border border-main bg-secondary text-main hover:bg-main hover:text-secondary  text-xs font-mono font-semibold text-left" data-pattern="toad">
                                 TOAD
                             </button>
-                            <button class="pattern-btn w-full p-3 border border-main bg-secondary text-main hover:bg-main hover:text-secondary transition-colors text-xs font-mono font-semibold text-left" data-pattern="beacon">
+                            <button class="pattern-btn w-full p-3 border border-main bg-secondary text-main hover:bg-main hover:text-secondary  text-xs font-mono font-semibold text-left" data-pattern="beacon">
                                 BEACON
                             </button>
-                            <button class="pattern-btn w-full p-3 border border-main bg-secondary text-main hover:bg-main hover:text-secondary transition-colors text-xs font-mono font-semibold text-left" data-pattern="pulsar">
+                            <button class="pattern-btn w-full p-3 border border-main bg-secondary text-main hover:bg-main hover:text-secondary  text-xs font-mono font-semibold text-left" data-pattern="pulsar">
                                 PULSAR
                             </button>
-                            <button class="pattern-btn w-full p-3 border border-main bg-secondary text-main hover:bg-main hover:text-secondary transition-colors text-xs font-mono font-semibold text-left" data-pattern="gosper">
+                            <button class="pattern-btn w-full p-3 border border-main bg-secondary text-main hover:bg-main hover:text-secondary  text-xs font-mono font-semibold text-left" data-pattern="gosper">
                                 GOSPER GUN
                             </button>
                         </div>

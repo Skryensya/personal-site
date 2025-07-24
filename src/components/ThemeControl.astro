@@ -1,7 +1,5 @@
 ---
-import { themes, prismTheme } from '../data/themes.js';
-
-const allThemes = [...themes, prismTheme];
+import { themes } from '../data/themes.js';
 ---
 
 <div class="theme-control relative inline-block">
@@ -12,7 +10,7 @@ const allThemes = [...themes, prismTheme];
     </div>
   </button>
   
-  <div class="theme-control-dropdown absolute top-[calc(100%+0.5rem)] right-0 bg-secondary border border-main p-3 opacity-0 invisible transition-all duration-200 ease-in-out z-50 min-w-48">
+  <div class="theme-control-dropdown absolute top-[calc(100%+0.5rem)] right-0 bg-secondary border border-main p-3 opacity-0 invisible transition-all duration-200 ease-in-out z-50 min-w-64">
     <div class="theme-section mb-3">
       <div class="section-label text-main mono text-xs font-bold mb-2">MODE</div>
       <div class="theme-options">
@@ -29,17 +27,26 @@ const allThemes = [...themes, prismTheme];
     
     <div class="theme-section">
       <div class="section-label text-main mono text-xs font-bold mb-2">THEME</div>
-      <div class="color-options grid grid-cols-3 gap-1">
-        {allThemes.map(theme => (
+      <div class="color-options grid grid-cols-2 gap-2">
+        {themes.map(theme => (
           <button 
-            class="color-option flex flex-col items-center gap-1 p-2 border-transparent bg-transparent cursor-pointer text-main text-[10px] font-semibold text-center hover:bg-main hover:text-secondary"
+            class="color-option flex items-center gap-2 p-2 border-transparent bg-transparent cursor-pointer text-main text-[10px] font-semibold text-left w-full hover:bg-main hover:text-secondary"
             data-theme={theme.id}
+            title={theme.description}
           >
             <div 
-              class="color-sample w-4 h-4 border border-main relative overflow-hidden"
-              style={`background: linear-gradient(135deg, ${theme.colorful} 50%, ${theme.contrasty} 50%)`}
-            ></div>
-            <span>{theme.name}</span>
+              class="color-sample w-4 h-4 border border-main relative overflow-hidden flex-shrink-0"
+              style={theme.id === 'custom' ? '' : `background: linear-gradient(135deg, ${theme.colorful} 50%, ${theme.contrasty} 50%)`}
+              data-custom-preview={theme.id === 'custom' ? 'true' : 'false'}
+            >
+              {theme.id === 'custom' && (
+                <div class="w-full h-full flex items-center justify-center text-[8px] font-bold">⚙</div>
+              )}
+            </div>
+            <div class="flex flex-col items-start">
+              <span class="font-bold">{theme.name}</span>
+              <span class="text-[8px] opacity-70">{theme.description}</span>
+            </div>
           </button>
         ))}
       </div>
@@ -69,7 +76,7 @@ const allThemes = [...themes, prismTheme];
 </style>
 
 <script>
-  import { applyTheme } from '../data/themes.js';
+  import { applyTheme, loadThemeFromStorage } from '../data/themes.js';
 
   document.addEventListener('astro:page-load', () => {
     const themeControl = document.querySelector('.theme-control');
@@ -80,9 +87,18 @@ const allThemes = [...themes, prismTheme];
 
     if (!themeControl || !trigger || !dropdown) return;
 
-    // Load saved settings
-    let savedMode = localStorage.getItem('theme-mode') || 'light';
-    let savedTheme = localStorage.getItem('theme-id') || 'void';
+    // Load saved settings with validation
+    const { themeId: savedTheme, isDark, customColors } = loadThemeFromStorage();
+    const savedMode = isDark ? 'dark' : 'light';
+    
+    // Update custom theme preview if available
+    if (savedTheme === 'custom' && customColors) {
+      const customPreview = document.querySelector('[data-custom-preview="true"]');
+      if (customPreview) {
+        customPreview.style.background = `linear-gradient(135deg, ${customColors.colorful} 50%, ${customColors.contrasty} 50%)`;
+        customPreview.querySelector('div').style.display = 'none';
+      }
+    }
     
     updateActiveOptions(savedMode, savedTheme);
 
@@ -98,9 +114,7 @@ const allThemes = [...themes, prismTheme];
         e.stopPropagation();
         const mode = option.dataset.mode;
         if (mode) {
-          savedMode = mode;
           applyTheme(savedTheme, mode === 'dark');
-          localStorage.setItem('theme-mode', mode);
           updateActiveOptions(mode, savedTheme);
         }
       });
@@ -112,10 +126,15 @@ const allThemes = [...themes, prismTheme];
         e.stopPropagation();
         const themeId = option.dataset.theme;
         if (themeId) {
-          savedTheme = themeId;
-          applyTheme(themeId, savedMode === 'dark');
-          localStorage.setItem('theme-id', themeId);
-          updateActiveOptions(savedMode, themeId);
+          if (themeId === 'custom') {
+            // Open color picker for custom theme
+            if (window.openColorPicker) {
+              window.openColorPicker(option);
+            }
+          } else {
+            applyTheme(themeId, savedMode === 'dark');
+            updateActiveOptions(savedMode, themeId);
+          }
         }
       });
     });

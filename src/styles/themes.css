@@ -1,22 +1,24 @@
 /* 
- * Unified Theme System - CSS Based
+ * Optimized Theme System - 5 Beautiful Curated Themes
  * 
- * All themes defined in CSS for maximum performance
- * JS only handles metadata and selection logic
+ * Softer colors for better readability and eye comfort
+ * Enhanced localStorage integration and performance
  */
 
 /* Base theme variables structure */
 :root {
-    --theme-colorful: #f5f7fa;  /* Default: void colorful */
-    --theme-contrasty: #0a0c10; /* Default: void contrasty */
+    --theme-colorful: #f8fafc;  /* Default: void colorful */
+    --theme-contrasty: #0f172a; /* Default: void contrasty */
     
     /* Light mode: contrasty text on colorful background */
     --color-main: var(--theme-contrasty);
     --color-secondary: var(--theme-colorful);
     
+    /* Smoother transitions with better performance */
     transition: 
-        --color-main 600ms ease-out,
-        --color-secondary 600ms ease-out;
+        color 300ms ease-out,
+        background-color 300ms ease-out,
+        border-color 300ms ease-out;
 }
 
 html.dark {
@@ -25,112 +27,51 @@ html.dark {
     --color-secondary: var(--theme-contrasty);
 }
 
-/* Theme Definitions */
+/* Optimized Theme Definitions - 5 Curated Themes */
 
-/* Void theme - Default */
+/* Void theme - Pure minimalist contrast */
 :root,
 :root[data-theme='void'] {
-    --theme-colorful: #f5f7fa;  /* Pure crisp white with slight blue undertone */
-    --theme-contrasty: #0a0c10; /* Deep space black with blue hint */
+    --theme-colorful: #f8fafc;  /* Softer white with subtle warmth */
+    --theme-contrasty: #0f172a; /* Rich slate black for better readability */
 }
 
-/* Phantom theme */
+/* Phantom theme - Classic terminal green */
 :root[data-theme='phantom'] {
-    --theme-colorful: #00ff41;  /* Pure matrix green - iconic and sharp */
-    --theme-contrasty: #0d1b0f; /* Rich dark green with depth */
+    --theme-colorful: #22c55e;  /* Softer matrix green - easier on eyes */
+    --theme-contrasty: #0f1419; /* Warmer dark green base */
 }
 
-/* Bloom theme */
-:root[data-theme='bloom'] {
-    --theme-colorful: #ff4d87;  /* Vibrant cherry blossom - more saturated */
-    --theme-contrasty: #1f0e16; /* Deep burgundy black */
-}
-
-/* Crimson theme */
-:root[data-theme='crimson'] {
-    --theme-colorful: #dc143c;  /* Classic crimson - rich and powerful */
-    --theme-contrasty: #1a0408; /* Almost black with red undertone */
-}
-
-/* Azure theme */
+/* Azure theme - Calm ocean depths */
 :root[data-theme='azure'] {
-    --theme-colorful: #0080ff;  /* Perfect azure - bright but not harsh */
-    --theme-contrasty: #060f1c; /* Deep midnight blue */
+    --theme-colorful: #3b82f6;  /* Softer blue - more readable */
+    --theme-contrasty: #1e293b; /* Deeper slate blue for contrast */
 }
 
-/* Volt theme */
-:root[data-theme='volt'] {
-    --theme-colorful: #f0ff00;  /* Electric lime - more energetic than pure yellow */
-    --theme-contrasty: #1c1f06; /* Dark olive with yellow undertone */
-}
-
-/* Forest theme */
-:root[data-theme='forest'] {
-    --theme-colorful: #2d5a2d;  /* Rich forest green - more sophisticated */
-    --theme-contrasty: #0b1a0b; /* Deep forest night */
-}
-
-/* Ember theme */
+/* Ember theme - Warm coding comfort */
 :root[data-theme='ember'] {
-    --theme-colorful: #ff5722;  /* Perfect ember orange - warm and glowing */
-    --theme-contrasty: #1a0e06; /* Deep amber black */
+    --theme-colorful: #f97316;  /* Softer orange - less harsh */
+    --theme-contrasty: #1c1917; /* Warm dark stone */
 }
 
-/* Flame theme */
-:root[data-theme='flame'] {
-    --theme-colorful: #ff6600;  /* Pure flame orange - intense heat */
-    --theme-contrasty: #1f1100; /* Dark flame base */
-}
-
-/* Violet theme */
+/* Violet theme - Creative inspiration */
 :root[data-theme='violet'] {
-    --theme-colorful: #8a2be2;  /* Blue violet - more refined than orchid */
-    --theme-contrasty: #14081f; /* Deep violet black */
+    --theme-colorful: #8b5cf6;  /* Softer purple - more refined */
+    --theme-contrasty: #1e1b3a; /* Deep violet base for elegance */
 }
 
-/* Plasma theme */
-:root[data-theme='plasma'] {
-    --theme-colorful: #00e5ff;  /* Electric cyan - bright plasma blue */
-    --theme-contrasty: #051f1f; /* Deep teal black */
+/* Custom theme - User-defined colors */
+:root[data-theme='custom'] {
+    --theme-colorful: #3b82f6;  /* Default blue (overridden by JS) */
+    --theme-contrasty: #1e293b; /* Default dark (overridden by JS) */
 }
 
-/* Solar theme */
-:root[data-theme='solar'] {
-    --theme-colorful: #ffb347;  /* Warm solar peach - softer than pure orange */
-    --theme-contrasty: #1f1608; /* Rich golden black */
-}
-
-/* Frost theme */
-:root[data-theme='frost'] {
-    --theme-colorful: #87ceeb;  /* Sky blue - cooler and more icy */
-    --theme-contrasty: #0c1b1e; /* Deep frost black */
-}
-
-/* Neon theme */
-:root[data-theme='neon'] {
-    --theme-colorful: #ff0080;  /* Hot magenta - more electric than pure magenta */
-    --theme-contrasty: #1f051a; /* Deep magenta black */
-}
-
-/* Pulse theme */
-:root[data-theme='pulse'] {
-    --theme-colorful: #ff3366;  /* Bright coral pink - more energetic */
-    --theme-contrasty: #1a0810; /* Deep rose black */
-}
-
-/* Prism theme - Special dynamic theme */
-:root[data-theme='prism'] {
-    --theme-colorful: var(--user-selection-color); /* Dynamic user selection color */
-    --theme-contrasty: #0f0f0f; /* Pure neutral dark */
-    
-    /* Enhanced transitions for dynamic color */
-    transition: 
-        --color-main 600ms ease-out,
-        --color-secondary 600ms ease-out,
-        --theme-colorful 600ms ease-out;
-}
-
-:root[data-theme='prism'].dark {
-    --color-main: var(--theme-colorful);
-    --color-secondary: var(--theme-contrasty);
+/* Enhanced syntax highlighting colors for better readability */
+:root {
+    --syntax-comment: color-mix(in srgb, var(--color-main) 60%, transparent);
+    --syntax-keyword: var(--theme-colorful);
+    --syntax-string: color-mix(in srgb, var(--theme-colorful) 80%, var(--color-main) 20%);
+    --syntax-number: color-mix(in srgb, var(--theme-colorful) 90%, var(--color-main) 10%);
+    --syntax-function: color-mix(in srgb, var(--theme-colorful) 85%, var(--color-main) 15%);
+    --syntax-operator: color-mix(in srgb, var(--color-main) 80%, var(--theme-colorful) 20%);
 }

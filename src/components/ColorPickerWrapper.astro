@@ -1,0 +1,176 @@
+---
+// Wrapper para integrar el ColorPickerWindow de React en Astro
+---
+
+<div id="color-picker-container"></div>
+
+<script>
+  import { applyTheme, saveCustomColors, getCustomColors } from '../data/themes.js';
+
+  document.addEventListener('astro:page-load', () => {
+    const container = document.getElementById('color-picker-container');
+    if (!container) return;
+
+    let root = null;
+    let isOpen = false;
+
+    // Función para abrir el color picker
+    async function openColorPicker(triggerElement) {
+      if (root) {
+        root.unmount();
+      }
+
+      // Dynamic imports for React components
+      const { createRoot } = await import('react-dom/client');
+      const React = await import('react');
+      const { default: AdvancedColorPicker } = await import('./AdvancedColorPicker');
+
+      const initialColors = getCustomColors();
+      const currentTheme = localStorage.getItem('theme-id') || 'void';
+      
+      // Calculate position below the trigger button
+      let position = { x: 20, y: 80 }; // default fallback
+      
+      if (triggerElement) {
+        const rect = triggerElement.getBoundingClientRect();
+        const windowWidth = window.innerWidth;
+        const windowHeight = window.innerHeight;
+        const pickerWidth = 240; // AdvancedColorPicker width
+        const pickerHeight = 280; // AdvancedColorPicker height
+        
+        // Position below the button
+        let x = rect.left;
+        let y = rect.bottom + 8;
+        
+        // Ensure it fits in viewport
+        if (x + pickerWidth > windowWidth) {
+          x = windowWidth - pickerWidth - 20;
+        }
+        if (y + pickerHeight > windowHeight) {
+          y = rect.top - pickerHeight - 8;
+        }
+        
+        // Ensure minimum margins
+        x = Math.max(20, x);
+        y = Math.max(20, y);
+        
+        position = { x, y };
+      }
+      
+      const handleClose = () => {
+        isOpen = false;
+        if (root) {
+          root.unmount();
+          root = null;
+        }
+      };
+
+      const handleApply = (colorful, contrasty, themeName) => {
+        const customColors = saveCustomColors(colorful, contrasty, themeName);
+        if (customColors) {
+          const currentMode = document.documentElement.classList.contains('dark');
+          applyTheme('custom', currentMode, customColors);
+          
+          // Update custom theme previews
+          updateCustomPreviews(customColors);
+          
+          // Update active theme in UI
+          updateActiveThemeOption('custom');
+          
+          // Update theme name in header
+          updateThemeName(themeName);
+        }
+        // Don't close - keep window open for real-time editing
+      };
+
+      const handleSelectPreset = (themeId) => {
+        // Apply the preset theme
+        const currentMode = document.documentElement.classList.contains('dark');
+        applyTheme(themeId, currentMode);
+        
+        // Update localStorage
+        localStorage.setItem('theme-id', themeId);
+        
+        // Update UI
+        updateActiveThemeOption(themeId);
+        
+        // Update theme name in header
+        const themes = {
+          'void': 'VOID',
+          'phantom': 'PHANTOM', 
+          'azure': 'AZURE',
+          'ember': 'EMBER',
+          'violet': 'VIOLET'
+        };
+        updateThemeName(themes[themeId] || themeId.toUpperCase());
+      };
+
+      isOpen = true;
+      root = createRoot(container);
+      root.render(React.createElement(AdvancedColorPicker, {
+        isOpen: true,
+        onClose: handleClose,
+        onApply: handleApply,
+        onSelectPreset: handleSelectPreset,
+        currentTheme: currentTheme,
+        initialColors,
+        defaultPosition: position
+      }));
+    }
+
+    // Update custom theme previews in UI
+    function updateCustomPreviews(customColors) {
+      // Update ThemeControl preview
+      const customPreview = document.querySelector('[data-custom-preview="true"]');
+      if (customPreview) {
+        customPreview.style.background = `linear-gradient(135deg, ${customColors.colorful} 50%, ${customColors.contrasty} 50%)`;
+        const icon = customPreview.querySelector('div');
+        if (icon) icon.style.display = 'none';
+      }
+
+      // Update Header preview
+      const headerPreview = document.querySelector('[data-custom-header-preview="true"]');
+      if (headerPreview) {
+        headerPreview.style.background = `linear-gradient(135deg, ${customColors.colorful} 50%, ${customColors.contrasty} 50%)`;
+        const icon = headerPreview.querySelector('div');
+        if (icon) icon.style.display = 'none';
+      }
+    }
+
+    // Update active theme option in UI
+    function updateActiveThemeOption(themeId) {
+      // Update ThemeControl
+      const themeOptions = document.querySelectorAll('.color-option');
+      themeOptions.forEach(option => {
+        option.classList.toggle('active', option.dataset.theme === themeId);
+      });
+
+      // Update Header
+      const headerOptions = document.querySelectorAll('.theme-option');
+      headerOptions.forEach(option => {
+        const checkmark = option.querySelector('.theme-checkmark');
+        if (checkmark) {
+          checkmark.style.opacity = option.dataset.theme === themeId ? '1' : '0';
+        }
+      });
+    }
+
+    // Update theme name in header
+    function updateThemeName(themeName) {
+      const themeNameText = document.querySelector('.theme-name-text');
+      if (themeNameText) {
+        themeNameText.textContent = themeName || 'CUSTOM';
+      }
+    }
+
+    // Expose function globally
+    window.openColorPicker = openColorPicker;
+
+    // Initialize custom previews if custom theme is already selected
+    const currentTheme = localStorage.getItem('theme-id');
+    if (currentTheme === 'custom') {
+      const customColors = getCustomColors();
+      updateCustomPreviews(customColors);
+    }
+  });
+</script>

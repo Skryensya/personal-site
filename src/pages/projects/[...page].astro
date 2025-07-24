@@ -1,7 +1,7 @@
 ---
 import type { GetStaticPathsOptions, Page } from 'astro';
 import { type CollectionEntry, getCollection } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import Layout from '../../layouts/Layout.astro';
 import Pagination from '../../components/Pagination.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import siteConfig from '../../data/site-config';
@@ -18,7 +18,7 @@ const { page } = Astro.props;
 const portfolio = page.data;
 ---
 
-<BaseLayout
+<Layout
     title="Proyectos"
     description="Conoce en lo que he trabajado"
     showHeader={true}
@@ -30,4 +30,4 @@ const portfolio = page.data;
         {portfolio.map((project) => <ProjectCard project={project} />)}
     </div>
     <Pagination page={page} class="my-8 sm:my-12" />
-</BaseLayout>
+</Layout>

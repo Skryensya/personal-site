@@ -16,7 +16,7 @@ const navLinks = siteConfig.headerNavLinks || [];
                 <div class="hidden md:flex items-center space-x-6">
                     {navLinks.map((link) => (
                         <NavLink
-                            class="text-main/70 hover:text-main transition-colors"
+                            class="text-main/70 hover:text-main"
                             href={link.href}
                             download={link.download}
                         >
@@ -43,7 +43,7 @@ const navLinks = siteConfig.headerNavLinks || [];
                 <div class="py-2 space-y-1 border-t border-main/20">
                     {navLinks.map((link) => (
                         <NavLink
-                            class="block py-2 text-main/70 hover:text-main transition-colors"
+                            class="block py-2 text-main/70 hover:text-main"
                             href={link.href}
                             download={link.download}
                         >

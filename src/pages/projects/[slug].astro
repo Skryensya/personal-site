@@ -1,6 +1,6 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro'; 
+import Layout from '../../layouts/Layout.astro'; 
 import ProjectPreview from '../../components/ProjectPreview.astro';
 import { sortItemsByDateDesc } from '../../utils/data-utils';
 import ImageFramed from '../../components/ImageFramed.astro';
@@ -26,7 +26,7 @@ const { src, alt, caption } = seo?.image || {};
 const { Content } = await project.render();
 ---
 
-<BaseLayout title={seo?.title ?? title} description={seo?.description ?? description} image={seo?.image} pageType="article" showHeader={false}>
+<Layout title={seo?.title ?? title} description={seo?.description ?? description} image={seo?.image} pageType="article" showHeader={false}>
     <article class="mb-16 sm:mb-24">
         <header class="mb-8">
             <h1 class="text-3xl leading-tight font-serif font-medium sm:text-5xl sm:leading-tight pb-6">{title}</h1>
@@ -45,4 +45,4 @@ const { Content } = await project.render();
             </div>
         )
     }
-</BaseLayout>
+</Layout>

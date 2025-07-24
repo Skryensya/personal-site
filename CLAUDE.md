@@ -27,10 +27,11 @@ This is Allison Peña's personal portfolio built with **Astro.js 4.15.9** and **
 Three main collections with Zod schema validation:
 
 - **`blog/`** - Blog posts with tags, featured status, and SEO metadata
-- **`projects/`** - Portfolio projects with descriptions, colors, and featured status  
+- **`projects/`** - Portfolio projects with descriptions, colors, and featured status
 - **`pages/`** - Static pages
 
 Key schema fields:
+
 - `isFeatured: boolean` - Controls homepage display
 - `publishDate: Date` - Required for sorting
 - `seo: object` - Optional SEO overrides (title, description, image, pageType)
@@ -40,6 +41,7 @@ Key schema fields:
 ### Site Configuration (`src/data/site-config.ts`)
 
 Centralized configuration including:
+
 - Site metadata (title: "Allison Peña", subtitle: "Full-stack web developer")
 - Navigation links (Spanish: "Inicio", "Proyectos")
 - Social links (LinkedIn: skryensya)
@@ -50,13 +52,15 @@ Centralized configuration including:
 **Design Philosophy**: Minimalist brutalist aesthetic inspired by stripe.dev - tech-oriented, clean, and functional.
 
 **Core Principles**:
+
 - **Brutalist minimalism**: Bold typography, stark contrasts, geometric layouts
 - **Tech-focused**: Code-like aesthetics, monospace fonts for technical elements
 - **stripe.dev inspiration**: Clean information hierarchy, subtle interactions
 - **Functionality over decoration**: Every element serves a purpose
 
 **Typography**:
-- **Primary**: Space Grotesk (sans-serif) for UI, headings, and body text  
+
+- **Primary**: Space Grotesk (sans-serif) for UI, headings, and body text
 - **Code/Technical**: JetBrains Mono and IBM Plex Mono for technical content and code blocks
 - **Bold hierarchy**: Strong font weights (600) for headings and emphasis
 - **Limited font sizes**: Consistent type scale with clear hierarchy
@@ -64,6 +68,7 @@ Centralized configuration including:
 - **Tabular numbers**: Numeric alignment for technical data
 
 **Color Palette**:
+
 - **Bi-color system**: Only two colors throughout the entire site
 - **High contrast pair**: Pure black (#000000) and pure white (#FFFFFF)
 - **Background/Foreground**: One color for background, the other for all text and UI elements
@@ -72,18 +77,21 @@ Centralized configuration including:
 - **No accent colors**: Remove all other colors (greens, reds, blues) for pure minimalism
 
 **Layout & Spacing**:
+
 - **Grid-based**: Strict geometric layouts
 - **Generous whitespace**: Breathing room between sections
 - **Sharp edges**: Minimal border radius, prefer rectangles
 - **Technical spacing**: Consistent spacing scale (8px, 16px, 24px, 32px, etc.)
 
 **Interactive Elements**:
+
 - **Minimal hover states**: Subtle color changes or underlines
 - **No fancy animations**: Simple, fast transitions
 - **Focus on usability**: Clear click targets and feedback
 - **Technical aesthetics**: Button styles that feel like UI elements
 
 **Components Style**:
+
 - **Cards**: Simple borders, no shadows, clean rectangles
 - **Buttons**: Minimal styling, clear hierarchy (primary/secondary)
 - **Navigation**: Clean, horizontal layout inspired by developer tools
@@ -91,7 +99,7 @@ Centralized configuration including:
 
 ### Key Components
 
-- **`BaseLayout.astro`** - Main layout wrapper with SEO
+- **`Layout.astro`** - Main layout wrapper with SEO
 - **`Header.astro`** / **`Nav.astro`** - Responsive navigation with mobile menu
 - **`ThemeToggle.astro`** - Dark/light mode switcher
 - **`PostPreview.astro`** / **`ProjectPreview.astro`** - Content previews
@@ -140,8 +148,12 @@ Centralized configuration including:
 ## Important Notes
 
 - **No linting/testing commands** configured - only core Astro scripts available
-- **Prettier** is configured with Tailwind plugin for code formatting  
+- **Prettier** is configured with Tailwind plugin for code formatting
 - **Site is in early development** (version 0.0.1)
 - **Content is bilingual** (Spanish UI, potentially English content)
 - **Professional focus** on web development and accessibility projects
 - **ALWAYS use Tailwind CSS** for styling - avoid custom CSS and `<style>` blocks whenever possible
+
+## Memories
+
+- Improve typing: Ensure all Astro files have proper type definitions
