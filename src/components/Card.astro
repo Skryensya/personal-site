@@ -14,51 +14,50 @@ interface Props {
 // --- VALORES POR DEFECTO ---
 const {
   title = "Card Title",
-  content,
+  content = "lorem ipsum dolorum amedeus palaris puticos lorem ipsum dolorum amedeus palaris puticos ",
   corners: customCorners = {},
 } = Astro.props;
 
 const defaultCorners = {
-  topLeft: 80, // Tamaño de esquina por defecto
-  topRight: 0,
-  bottomLeft: 0,
-  bottomRight: 0,
+  topLeft: 80, // Tamaño de esquina por defecto en píxeles
+  topRight: 120,
+  bottomLeft: 10,
+  bottomRight: 200,
 };
-
 const corners = { ...defaultCorners, ...customCorners };
 
 // --- LÓGICA CENTRALIZADA ---
+// Se definen los datos de cada esquina para generar los elementos dinámicamente.
 const cornerData = [
-  { key: 'topLeft',     x: -1, y: -1, float: 'left'  },
-  { key: 'topRight',    x:  1, y: -1, float: 'right' },
-  { key: 'bottomLeft',  x: -1, y:  1, float: 'left'  },
-  { key: 'bottomRight', x:  1, y:  1, float: 'right' },
-].map(c => {
-  const size = corners[c.key as keyof typeof corners] || 0;
+  { key: 'topLeft',     x: -1, y: -1, float: 'float-left',  position: 'top-0 left-0' },
+  { key: 'topRight',    x:  1, y: -1, float: 'float-right', position: 'top-0 right-0' },
+  { key: 'bottomLeft',  x: -1, y:  1, float: 'float-left',  position: 'bottom-0 left-0' },
+  { key: 'bottomRight', x:  1, y:  1, float: 'float-right', position: 'bottom-0 right-0' },
+].map(config => {
+  const size = corners[config.key as keyof typeof corners] || 0;
   return {
-    ...c,
-    size: size,
-    // El espaciador ahora es 1/4 del tamaño para un ajuste más preciso
-    spacerSize: Math.round(size * 0.25)
-  }
+    ...config,
+    size,
+    // El tamaño del espaciador que empuja el texto.
+    spacerSize: Math.round(size * 0.35),
+  };
 });
 ---
 
-<div class="relative w-full border border-main bg-transparent overflow-hidden">
+<div class="relative w-full  bg-transparent overflow-hidden">
 
-  <div class="p-6 flow-root">
+  <div class="px-4 py-2 flow-root border border-main">
     
     {cornerData.map(corner => (
       corner.size > 0 && (
         <div
-          class:list={[ corner.float === 'left' ? 'float-left' : 'float-right' ]}
+          class={corner.float}
           style={`width: ${corner.spacerSize}px; height: ${corner.spacerSize}px;`}
         ></div>
       )
     ))}
 
     <h3 class="text-4xl font-bold mb-4">{title}</h3>
-
     <div class="text-main/90">
       {content && <p>{content}</p>}
       <slot />
@@ -68,14 +67,11 @@ const cornerData = [
   {cornerData.map(corner => (
     corner.size > 0 && (
       <div
-        class:list={[
-          "absolute aspect-square bg-main", // Un color de fondo simple es suficiente
-          corner.key.includes('left') ? "left-0" : "right-0",
-          corner.key.includes('top') ? "top-0" : "bottom-0",
-        ]}
+        class:list={["absolute aspect-square bg-secondary border border-main", corner.position]}
         style={`
           --size: ${corner.size}px;
           width: var(--size);
+          /* 3. La transformación es la parte más importante y delicada. */
           transform: 
             translateX(calc(var(--size) / 2 * ${corner.x})) 
             translateY(calc(var(--size) / 2 * ${corner.y})) 
