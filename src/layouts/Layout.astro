@@ -1,7 +1,8 @@
 ---
 import { ViewTransitions } from 'astro:transitions';
 import BaseHead, { type Props as HeadProps } from '../components/BaseHead.astro';
-import Header from '../components/Header.astro'; 
+import Header from '../components/Header.astro';
+import TerminalFooter from '../components/TerminalFooter.astro'; 
 
 export type Props = HeadProps & { showHeader?: boolean; headerTitle?: string, headerSubtitle?: string };
 
@@ -51,10 +52,11 @@ const { showHeader = true, headerTitle = null, headerSubtitle = null,  ...head }
     <body class="bg-secondary text-main md:px-10 (--max-w-size:1280px) max-w-[var(--max-w-size)] mx-auto  relative">
  
         <Header />
-     <div class="mt-8 overflow-x-hidden">  
+     <div class="mt-8 ">  
         <main class="text-left px-4">
                 <slot />
             </main>
         </div>
+        <TerminalFooter />
     </body>
 </html>
