@@ -1,106 +1,29 @@
 ---
-export interface Props {
-  /** El título que se mostrará verticalmente en la barra. */
-  title: string;
-  /** Un ID único para la sección, importante para la navegación y accesibilidad. */
+export interface Props { 
+  title: string; 
   id: string;
-  /** El estado inicial de la barra ('filled' o 'outline'). El estado cambiará automáticamente con el scroll. */
-  initialVariant?: "filled" | "outline";
-  /** Clases CSS adicionales para el contenedor principal de la sección. */
   class?: string;
 }
 
 const {
   title,
-  id,
-  initialVariant = "outline",
+  id, 
   class: className,
 } = Astro.props;
 ---
 
 <section
   id={id}
-  class:list={[
-    "section-container flex   relative",
-    className,
-  ]}
-  data-section-observer
-  data-state={initialVariant}
+ 
 >
-  <div
-    class:list={[
-      "section-bar flex-shrink-0 relative  duration-400 ease-in-out border-r-2 border-foreground",
-      initialVariant === "outline" ? "" : "bg-foreground"
-    ]}
-    style="width: clamp(50px, 8vw, 100px);"
-  >
-    <h2 
-      class:list={[
-        "sticky text-xl md:text-4xl font-bold uppercase tracking-tight whitespace-nowrap",
-        "transform rotate-180 [writing-mode:vertical-rl]",
-        initialVariant === "outline" ? "text-foreground" : "text-background"
-      ]}
-      style="bottom: 4px; right: 8px;"
-    >
+  <div >
+    <h2>
       {title}
     </h2>
   </div>
 
-  <div class="">
+  <div >
     <slot />
   </div>
 </section>
-
-<script>
-  document.addEventListener("astro:page-load", () => {
-    const sections = document.querySelectorAll<HTMLElement>("[data-section-observer]");
-    if (sections.length === 0) return;
-
-    const intersectingStatus = new Map<Element, boolean>();
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          intersectingStatus.set(entry.target, entry.isIntersecting);
-        });
-
-        let firstVisibleSection: Element | null = null;
-        for (const section of sections) {
-          if (intersectingStatus.get(section)) {
-            firstVisibleSection = section;
-            break;
-          }
-        }
-
-        sections.forEach((section) => {
-          const newState = section === firstVisibleSection ? "filled" : "outline";
-          const bar = section.querySelector('.section-bar');
-          const title = section.querySelector('h2');
-          
-          if (section.dataset.state !== newState) {
-            section.dataset.state = newState;
-            
-            if (bar && title) {
-              if (newState === "filled") {
-                bar.classList.remove('');
-                bar.classList.add('bg-foreground');
-                title.classList.remove('text-foreground');
-                title.classList.add('text-background');
-              } else {
-                bar.classList.remove('bg-foreground');
-                bar.classList.add('');
-                title.classList.remove('text-background');
-                title.classList.add('text-foreground');
-              }
-            }
-          }
-        });
-      },
-      {
-        rootMargin: "-30% 0px -10% 0px",
-      }
-    );
-
-    sections.forEach((section) => observer.observe(section));
-  });
-</script>
+ 
