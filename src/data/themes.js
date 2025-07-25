@@ -88,15 +88,18 @@ export const themes = [
 export const themeKeys = themes.map(theme => theme.id);
 
 // Simple theme management with localStorage optimization
-export function applyTheme(themeId, isDark = false) {
+export function applyTheme(themeId, isDark = false, mode = null) {
   document.documentElement.setAttribute('data-theme', themeId);
   document.documentElement.classList.toggle('dark', isDark);
   
-  console.log('Applied theme:', themeId, 'isDark:', isDark);
+  console.log('Applied theme:', themeId, 'isDark:', isDark, 'mode:', mode);
   
   // Persist to localStorage with error handling
   try {
     localStorage.setItem('theme-id', themeId);
+    if (mode) {
+      localStorage.setItem('theme-mode-preference', mode);
+    }
     localStorage.setItem('theme-mode', isDark ? 'dark' : 'light');
   } catch (e) {
     console.warn('Failed to save theme to localStorage:', e);
@@ -113,6 +116,7 @@ export function loadThemeFromStorage() {
   try {
     const savedThemeId = localStorage.getItem('theme-id');
     const savedMode = localStorage.getItem('theme-mode');
+    const savedModePreference = localStorage.getItem('theme-mode-preference');
     
     // Validate saved theme exists in current theme list
     const theme = savedThemeId && themes.find(t => t.id === savedThemeId) 
@@ -120,11 +124,12 @@ export function loadThemeFromStorage() {
       : themes[0].id;
     
     const isDark = savedMode === 'dark';
+    const mode = savedModePreference || (isDark ? 'dark' : 'light');
     
-    return { themeId: theme, isDark };
+    return { themeId: theme, isDark, mode };
   } catch (e) {
     console.warn('Failed to load theme from localStorage:', e);
-    return { themeId: themes[0].id, isDark: false };
+    return { themeId: themes[0].id, isDark: false, mode: 'light' };
   }
 }
 

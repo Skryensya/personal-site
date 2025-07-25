@@ -9,8 +9,8 @@ import SkillsSection from '../components/SkillsSection.astro';
 import ExperienceSection from '../components/ExperienceSection.astro';
 import FeaturedProjectsSection from '../components/FeaturedProjectsSection.astro';
 import ServicesSection from '../components/ServicesSection.astro';
-import CornersWithCrosses from '../components/CornersWithCrosses.astro';  
-import Card from '@/components/Card.astro';
+import CornersWithCrosses from '../components/CornersWithCrosses.astro';
+import GithubGrid from '@/components/GithubGrid';
 import DitheredImageReact from '@/components/DitheredImageReact.tsx';
 ---
 
@@ -53,62 +53,15 @@ import DitheredImageReact from '@/components/DitheredImageReact.tsx';
             ]}
         />
     </CornersWithCrosses>
-
-
- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3   gap-4">
-
-    <div>
-
-    </div>
-    </div>
-
-
-
- <div> 
  
- </div>
 
-    <BigSectionContainer title="Sobre mí" id="about" initialVariant="outline">
-<div>
+    <GithubGrid client:idle />
+
+    <BigSectionContainer title="Sobre mí" id="about" >
+        <div>
             <div class="w-full max-w-md mx-auto aspect-square">
-            <DitheredImageReact 
-                src="/Allison.jpeg"
-                alt="Perfil de Allison Peña"
-                className="w-full h-full"
-                client:idle
-            />
+                <DitheredImageReact src="/Allison.jpeg" alt="Perfil de Allison Peña" className="w-full h-full" client:idle />
+            </div>
         </div>
-        
-</div>
     </BigSectionContainer>
-
-    <BigSectionContainer title="Habilidades" id="skills" initialVariant="outline">
-        <SkillsSection />
-    </BigSectionContainer>
-
-    <BigSectionContainer title="Experiencia" id="experience" initialVariant="outline">
-        <ExperienceSection />
-    </BigSectionContainer>
-
-    <BigSectionContainer title="Servicios" id="services" initialVariant="outline">
-        <ServicesSection 
-            title="Qué ofrezco"
-            services={[
-                { id: "01", title: "Desarrollo Web" },
-                { id: "02", title: "Consultoría Técnica" },
-                { id: "03", title: "Mentoring" }
-            ]}
-        />
-    </BigSectionContainer>
-
-    <BigSectionContainer title="Proyectos" id="projects" initialVariant="outline">
-        <FeaturedProjectsSection 
-            title="Proyectos destacados"
-            buttonText="Ver todos los proyectos →"
-            buttonHref="/projects"
-            showProjects={true}
-        />
-    </BigSectionContainer>
-
- 
 </Layout>

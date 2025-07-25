@@ -1,5 +1,6 @@
 --- 
 import { themes } from '../data/themes.js';
+import Dropdown from './Dropdown.astro';
 
 const navItems = [
   { label: 'ALLISON PEÑA', href: '/', hotkey: null },
@@ -8,11 +9,12 @@ const navItems = [
   { label: 'ABOUT', href: '/about', hotkey: 'a' },
   { label: 'CONTACT', href: '/contact', hotkey: 'c' }
 ];
+
 ---
 
  
 <header class="sticky top-4 z-[100] flex justify-center">
-  <div class="max-w-[1280px] w-full px-4 ">
+  <div class="max-w-[1280px] w-full px-4">
     <div class="flex items-start justify-between gap-2 flex-nowrap diagonal-stripe px-4 py-2">
       <div class="flex items-start gap-x-2 gap-y-1 flex-wrap w-4/5">
         {navItems.map((item) => (
@@ -29,76 +31,110 @@ const navItems = [
       </div>
 
       <div class="flex flex-col md:flex-row items-center gap-1 pointer-events-auto">
-        <!-- Mode Toggle -->
-        <button id="mode-toggle" class="w-7 h-7 md:w-auto md:h-8 border border-main bg-secondary flex items-center justify-center hover:bg-main group md:px-2 md:gap-2" aria-label="Cambiar modo">
-          <!-- Icon container with fixed size -->
-          <div class="w-3.5 h-3.5 relative flex-shrink-0">
-            <!-- Sun icon for light mode -->
-            <svg class="w-3.5 h-3.5 text-main absolute inset-0  duration-150 group-hover:text-secondary sun-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <!-- Mode Dropdown -->
+        <Dropdown id="mode">
+          <div slot="trigger" class="w-3.5 h-3.5 relative flex-shrink-0">
+            <svg class="w-3.5 h-3.5 text-main absolute inset-0 duration-150 group-hover:text-secondary sun-icon" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="5"/>
               <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
             </svg>
-            
-            <!-- Moon icon for dark mode -->
-            <svg class="w-3.5 h-3.5 text-main absolute inset-0  duration-150 group-hover:text-secondary moon-icon opacity-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <svg class="w-3.5 h-3.5 text-main absolute inset-0 duration-150 group-hover:text-secondary moon-icon opacity-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
               <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
             </svg>
+            <svg class="w-3.5 h-3.5 text-main absolute inset-0 duration-150 group-hover:text-secondary system-icon opacity-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
           </div>
+          <span slot="trigger" class="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary mode-text">LIGHT</span>
           
-          <!-- Text labels for desktop -->
-          <span class="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary mode-text">LIGHT</span>
-        </button>
+          <div class="grid gap-0">
+            <div 
+              class="flex items-center gap-2 p-1 cursor-pointer font-mono text-xs font-semibold text-main hover:bg-main hover:text-secondary dropdown-option mode-option whitespace-nowrap border-b border-main"
+              data-mode="light"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="5"/>
+                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+              </svg>
+              <span class="flex-1 px-1">LIGHT</span>
+              <svg class="w-2.5 h-2.5 opacity-0 mode-checkmark" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M20 6 9 17l-5-5"/>
+              </svg>
+            </div>
+            <div 
+              class="flex items-center gap-2 p-1 cursor-pointer font-mono text-xs font-semibold text-main hover:bg-main hover:text-secondary dropdown-option mode-option whitespace-nowrap border-b border-main"
+              data-mode="dark"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+              </svg>
+              <span class="flex-1 px-1">DARK</span>
+              <svg class="w-2.5 h-2.5 opacity-0 mode-checkmark" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M20 6 9 17l-5-5"/>
+              </svg>
+            </div>
+            <div 
+              class="flex items-center gap-2 p-1 cursor-pointer font-mono text-xs font-semibold text-main hover:bg-main hover:text-secondary dropdown-option mode-option whitespace-nowrap"
+              data-mode="system"
+              role="menuitem"
+              tabindex="-1"
+            >
+              <svg class="w-3 h-3 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                <line x1="8" y1="21" x2="16" y2="21"/>
+                <line x1="12" y1="17" x2="12" y2="21"/>
+              </svg>
+              <span class="flex-1 px-1">SYSTEM</span>
+              <svg class="w-2.5 h-2.5 opacity-0 mode-checkmark" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                <path d="M20 6 9 17l-5-5"/>
+              </svg>
+            </div>
+          </div>
+        </Dropdown>
 
-        <!-- Theme Selector -->
-        <div class="relative theme-selector">
-          <button 
-            id="theme-toggle" 
-            class="w-7 h-7 md:w-auto md:h-8 border border-main bg-secondary flex items-center justify-center hover:bg-main md:px-2 md:gap-2 group" 
-            aria-label="Cambiar tema"
-            aria-haspopup="true"
-            aria-expanded="false"
-          >
-            <div class="w-4 h-4 border border-main theme-preview-current void-preview md:flex-shrink-0"></div>
-            <span class="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary theme-name-text">TEMAS</span>
-          </button>
+        <!-- Theme Dropdown -->
+        <Dropdown id="theme">
+          <div slot="trigger" class="w-4 h-4 border border-main theme-preview-current void-preview md:flex-shrink-0"></div>
+          <span slot="trigger" class="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary theme-name-text">TEMAS</span>
           
-          <div 
-            id="theme-dropdown" 
-            class="fixed bg-secondary border border-main opacity-0 invisible transform scale-95  duration-200 z-[999] theme-dropdown rounded-none"
-            role="menu"
-            aria-labelledby="theme-toggle"
-          >
-            <div class="grid gap-0">
-              {themes.map((theme) => {
-                return (
+          <div class="grid gap-0">
+            {themes.map((theme) => {
+              return (
+                <div 
+                  class="flex items-center gap-2 p-1 cursor-pointer font-mono text-xs font-semibold text-main hover:bg-main hover:text-secondary dropdown-option theme-option whitespace-nowrap border-b border-main last:border-b-0"
+                  data-theme={theme.id}
+                  role="menuitem"
+                  tabindex="-1"
+                >
                   <div 
-                    class="flex items-center gap-2 p-1 cursor-pointer font-mono text-xs font-semibold text-main hover:bg-main hover:text-secondary theme-option whitespace-nowrap border-b border-main last:border-b-0"
-                    data-theme={theme.id}
-                    role="menuitem"
-                    tabindex="-1"
+                    class="w-3 h-3 border border-main flex-shrink-0 theme-preview-sample"
+                    style={theme.id === 'custom' ? '' : `background: linear-gradient(135deg, ${theme.colorful} 50%, ${theme.contrasty} 50%)`}
+                    data-custom-header-preview={theme.id === 'custom' ? 'true' : 'false'}
                   >
-                    <div 
-                      class="w-3 h-3 border border-main flex-shrink-0 theme-preview-sample"
-                      style={theme.id === 'custom' ? '' : `background: linear-gradient(135deg, ${theme.colorful} 50%, ${theme.contrasty} 50%)`}
-                      data-custom-header-preview={theme.id === 'custom' ? 'true' : 'false'}
-                    >
-                      {theme.id === 'custom' && (
-                        <div class="w-full h-full flex items-center justify-center text-[8px] font-bold">⚙</div>
-                      )}
-                    </div>
-                    <span class="flex-1 px-1">{theme.name}</span>
-                    <span class="opacity-0 theme-checkmark text-xs">✓</span>
+                    {theme.id === 'custom' && (
+                      <div class="w-full h-full flex items-center justify-center text-[8px] font-bold">⚙</div>
+                    )}
                   </div>
-                );
-              })}
-            </div>
-            <div class="border-t border-main bg-main p-1 flex justify-between items-center gap-1 font-mono text-xs font-semibold text-secondary">
-              <button class="hover:text-main hover:bg-secondary px-1 py-0.5" data-hotkey="[">PREV [</button>
-              <button class="hover:text-main hover:bg-secondary px-1 py-0.5" data-hotkey="]">NEXT ]</button>
-              <button class="hover:text-main hover:bg-secondary px-1 py-0.5" data-hotkey="_">RANDOM _</button>
-            </div>
+                  <span class="flex-1 px-1">{theme.name}</span>
+                  <svg class="w-2.5 h-2.5 opacity-0 theme-checkmark" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                    <path d="M20 6 9 17l-5-5"/>
+                  </svg>
+                </div>
+              );
+            })}
           </div>
-        </div>
+          <div class="border-t border-main bg-main p-1 flex justify-between items-center gap-1 font-mono text-xs font-semibold text-secondary">
+            <button class="hover:text-main hover:bg-secondary px-1 py-0.5" data-hotkey="[">PREV [</button>
+            <button class="hover:text-main hover:bg-secondary px-1 py-0.5" data-hotkey="]">NEXT ]</button>
+            <button class="hover:text-main hover:bg-secondary px-1 py-0.5" data-hotkey="_">RANDOM _</button>
+          </div>
+        </Dropdown>
 
     </div>
     </div>
@@ -116,27 +152,50 @@ const navItems = [
     const navLinks = document.querySelectorAll('.nav-link');
     const currentPath = window.location.pathname;
 
-    // Theme elements
-    const themeToggle = document.getElementById('theme-toggle');
-    const themeDropdown = document.querySelector('.theme-dropdown');
+    // Theme and mode elements
     const themeOptions = document.querySelectorAll('.theme-option');
-    const modeToggle = document.getElementById('mode-toggle');
+    const modeOptions = document.querySelectorAll('.mode-option');
     const currentThemePreview = document.querySelector('.theme-preview-current');
     const themeNameText = document.querySelector('.theme-name-text');
     const modeText = document.querySelector('.mode-text');
-    // Load saved settings
+    
+    // Load saved settings with system preference support
     const savedTheme = localStorage.getItem('theme') || 'void';
-    const savedMode = localStorage.getItem('mode') || 'light';
+    const savedModePreference = localStorage.getItem('mode-preference') || 'light';
+    
+    // Functions for system preference detection
+    function getSystemPreference() {
+      return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    
+    function getEffectiveMode(modePreference:any) {
+      if (modePreference === 'system') {
+        return getSystemPreference() ? 'dark' : 'light';
+      }
+      return modePreference;
+    }
     
     let lastThemeChange = 0;
     const themeChangeDelay = 150; // milliseconds
+    let currentModePreference = savedModePreference;
     
+    // Apply initial settings
     applyTheme(savedTheme);
-    applyMode(savedMode);
+    const effectiveMode = getEffectiveMode(currentModePreference);
+    applyMode(effectiveMode, currentModePreference);
     // Apply CRT effect permanently
     document.documentElement.classList.add('crt-effect');
     updateActiveThemeOption(savedTheme);
     updateCurrentThemePreview(savedTheme);
+    updateActiveModeOption(currentModePreference);
+    
+    // Listen for system preference changes
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+      if (currentModePreference === 'system') {
+        const newEffectiveMode = getEffectiveMode('system');
+        applyMode(newEffectiveMode, 'system');
+      }
+    });
 
     // Get all theme names from data attributes
     const allThemes = Array.from(themeOptions).map(option => (option as HTMLElement).dataset.theme).filter(Boolean);
@@ -162,98 +221,19 @@ const navItems = [
       });
     });
 
-    // Mode toggle (dark/light)
-    modeToggle?.addEventListener('click', () => {
-      const isDark = document.documentElement.classList.contains('dark');
-      const newMode = isDark ? 'light' : 'dark';
-      applyMode(newMode);
-      localStorage.setItem('mode', newMode);
-    });
-
-
-    // Theme dropdown functionality
-    let isDropdownOpen = false;
-
-    function positionDropdown() {
-      if (!themeToggle || !themeDropdown) return;
-      
-      const toggleRect = themeToggle.getBoundingClientRect();
-      const dropdownRect = themeDropdown.getBoundingClientRect();
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-      
-      // Reset position to measure natural size
-      (themeDropdown as HTMLElement).style.left = '';
-      (themeDropdown as HTMLElement).style.right = '';
-      (themeDropdown as HTMLElement).style.top = '';
-      (themeDropdown as HTMLElement).style.bottom = '';
-      
-      let left = toggleRect.left;
-      let top = toggleRect.bottom + 4;
-      
-      // Estimate dropdown size (compact version)
-      const dropdownWidth = 200; // More compact width
-      const dropdownHeight = 400; // Approximate height for all themes
-      
-      // Adjust horizontal position if dropdown would overflow viewport
-      if (left + dropdownWidth > viewportWidth - 8) {
-        left = toggleRect.right - dropdownWidth;
-      }
-      
-      // Ensure dropdown doesn't go off left edge
-      if (left < 8) {
-        left = 8;
-      }
-      
-      // Adjust vertical position if dropdown would overflow viewport
-      if (top + dropdownHeight > viewportHeight - 8) {
-        top = toggleRect.top - dropdownHeight - 4;
-      }
-      
-      // Ensure dropdown doesn't go off top edge
-      if (top < 8) {
-        top = 8;
-      }
-      
-      (themeDropdown as HTMLElement).style.left = `${left}px`;
-      (themeDropdown as HTMLElement).style.top = `${top}px`;
-    }
-
-    function openDropdown() {
-      if (!themeToggle || !themeDropdown) return;
-      
-      isDropdownOpen = true;
-      themeToggle.setAttribute('aria-expanded', 'true');
-      positionDropdown();
-      
-      themeDropdown.classList.remove('opacity-0', 'invisible', 'scale-95');
-      themeDropdown.classList.add('opacity-100', 'visible', 'scale-100');
-      
-      // Focus first theme option for keyboard navigation
-      const firstOption = themeDropdown.querySelector('.theme-option');
-      if (firstOption) {
-        (firstOption as HTMLElement).focus();
-      }
-    }
-
-    function closeDropdown() {
-      if (!themeToggle || !themeDropdown) return;
-      
-      isDropdownOpen = false;
-      themeToggle.setAttribute('aria-expanded', 'false');
-      
-      themeDropdown.classList.remove('opacity-100', 'visible', 'scale-100');
-      themeDropdown.classList.add('opacity-0', 'invisible', 'scale-95');
-    }
-
-    // Theme dropdown toggle
-    themeToggle?.addEventListener('click', (e: Event) => {
-      e.stopPropagation();
-      if (isDropdownOpen) {
-        closeDropdown();
-      } else {
-        openDropdown();
-      }
+    // Handle mode selection
+    modeOptions.forEach(option => {
+      option.addEventListener('click', (e: Event) => {
+        e.stopPropagation();
+        const modePreference = (option as HTMLElement).dataset.mode;
+        if (modePreference) {
+          currentModePreference = modePreference;
+          const effectiveMode = getEffectiveMode(modePreference);
+          applyMode(effectiveMode, modePreference);
+          localStorage.setItem('mode-preference', modePreference);
+          updateActiveModeOption(modePreference);
+        }
+      });
     });
 
     // Handle theme selection
@@ -270,74 +250,24 @@ const navItems = [
             if (!hasCustomColors) {
               // No custom colors saved, use defaults and apply immediately
               const defaultCustomColors = { colorful: '#3b82f6', contrasty: '#1e293b', name: 'CUSTOM' };
-              applyTheme('custom', currentMode, defaultCustomColors);
+              applyTheme('custom');
               localStorage.setItem('theme-id', 'custom');
               localStorage.setItem('theme', 'custom'); // Keep both for compatibility
-            } else {
-              // Custom colors exist, apply them  
-              const { customColors } = loadThemeFromStorage();
-              applyTheme('custom', currentMode, customColors);
-              localStorage.setItem('theme-id', 'custom');
-              localStorage.setItem('theme', 'custom'); // Keep both for compatibility
-            }
+            } 
+            
             updateActiveThemeOption(theme);
             updateCurrentThemePreview(theme);
             currentThemeIndex = allThemes.indexOf(theme);
           } else {
-            const currentMode = document.documentElement.classList.contains('dark');
-            applyTheme(theme, currentMode);
+            applyTheme(theme);
             localStorage.setItem('theme-id', theme);
             localStorage.setItem('theme', theme); // Keep both for compatibility
             updateActiveThemeOption(theme);
             updateCurrentThemePreview(theme);
             currentThemeIndex = allThemes.indexOf(theme);
           }
-          closeDropdown();
         }
       });
-      
-      // Keyboard navigation for menu items
-      option.addEventListener('keydown', (e: Event) => {
-        const keyEvent = e as KeyboardEvent;
-        if (keyEvent.key === 'Enter' || keyEvent.key === ' ') {
-          keyEvent.preventDefault();
-          (option as HTMLElement).click();
-        } else if (keyEvent.key === 'Escape') {
-          closeDropdown();
-          themeToggle?.focus();
-        } else if (keyEvent.key === 'ArrowDown') {
-          keyEvent.preventDefault();
-          const next = option.nextElementSibling as HTMLElement;
-          if (next && next.classList.contains('theme-option')) {
-            next.focus();
-          }
-        } else if (keyEvent.key === 'ArrowUp') {
-          keyEvent.preventDefault();
-          const prev = option.previousElementSibling as HTMLElement;
-          if (prev && prev.classList.contains('theme-option')) {
-            prev.focus();
-          }
-        }
-      });
-    });
-
-    // Close dropdown when clicking outside or pressing Escape
-    document.addEventListener('click', () => {
-      closeDropdown();
-    });
-
-    document.addEventListener('keydown', (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isDropdownOpen) {
-        closeDropdown();
-        themeToggle?.focus();
-      }
-    });
-
-    // Reposition dropdown on window resize
-    window.addEventListener('resize', () => {
-      if (isDropdownOpen) {
-        positionDropdown();
-      }
     });
 
     // Keyboard navigation
@@ -415,24 +345,31 @@ const navItems = [
       document.documentElement.setAttribute('data-theme', theme);
     }
 
-    function applyMode(mode: string) {
+    function applyMode(mode: string, modePreference: string = mode) {
       document.documentElement.classList.toggle('dark', mode === 'dark');
       
       // Update icon visibility
       const sunIcon = document.querySelector('.sun-icon');
       const moonIcon = document.querySelector('.moon-icon');
+      const systemIcon = document.querySelector('.system-icon');
       
-      if (mode === 'dark') {
-        sunIcon?.classList.add('opacity-0');
-        sunIcon?.classList.remove('opacity-100');
-        moonIcon?.classList.add('opacity-100');
+      // Hide all icons first
+      sunIcon?.classList.add('opacity-0');
+      moonIcon?.classList.add('opacity-0');
+      systemIcon?.classList.add('opacity-0');
+      
+      // Show appropriate icon based on preference
+      if (modePreference === 'system') {
+        systemIcon?.classList.remove('opacity-0');
+        systemIcon?.classList.add('opacity-100');
+        if (modeText) modeText.textContent = 'SYSTEM';
+      } else if (modePreference === 'dark') {
         moonIcon?.classList.remove('opacity-0');
+        moonIcon?.classList.add('opacity-100');
         if (modeText) modeText.textContent = 'DARK';
       } else {
-        sunIcon?.classList.add('opacity-100');
         sunIcon?.classList.remove('opacity-0');
-        moonIcon?.classList.add('opacity-0');
-        moonIcon?.classList.remove('opacity-100');
+        sunIcon?.classList.add('opacity-100');
         if (modeText) modeText.textContent = 'LIGHT';
       }
     }
@@ -441,6 +378,21 @@ const navItems = [
       themeOptions.forEach(option => {
         const checkmark = option.querySelector('.theme-checkmark');
         if ((option as HTMLElement).dataset.theme === theme) {
+          option.classList.add('!bg-main', '!text-secondary');
+          checkmark?.classList.remove('opacity-0');
+          checkmark?.classList.add('opacity-100');
+        } else {
+          option.classList.remove('!bg-main', '!text-secondary');
+          checkmark?.classList.remove('opacity-100');
+          checkmark?.classList.add('opacity-0');
+        }
+      });
+    }
+
+    function updateActiveModeOption(modePreference: string) {
+      modeOptions.forEach(option => {
+        const checkmark = option.querySelector('.mode-checkmark');
+        if ((option as HTMLElement).dataset.mode === modePreference) {
           option.classList.add('!bg-main', '!text-secondary');
           checkmark?.classList.remove('opacity-0');
           checkmark?.classList.add('opacity-100');
@@ -575,19 +527,8 @@ const navItems = [
     opacity: 1;
   }
 
-  /* Improved dropdown styles */
-  .theme-dropdown {
-    backdrop-filter: blur(8px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  }
-
-
-  /* Focus styles for dropdown options */
-  .theme-option:focus {
-    outline: 2px solid var(--color-main);
-    outline-offset: -2px;
-    background: var(--color-main) !important;
-    color: var(--color-secondary) !important;
+  .system-icon {
+    opacity: 0;
   }
 
  

@@ -1,0 +1,130 @@
+---
+export interface Props {
+  text: string;
+  speed?: number;
+  delay?: number;
+  id: string;
+  className?: string;
+}
+
+const { text, speed = 50, delay = 0, id, className = '' } = Astro.props;
+---
+
+<div class={`typing-container ${className}`} data-typing-id={id}>
+  <span class="typing-text" data-text={text}></span>
+  <span class="cursor opacity-0">_</span>
+</div>
+
+<style>
+  .cursor {
+    animation: blink 1s infinite;
+    font-family: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+    font-weight: bold;
+  }
+
+  .cursor.active {
+    opacity: 1;
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  .typing-text {
+    font-family: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+  }
+</style>
+
+<script>
+  // Global typing manager to ensure only one cursor is active
+  class TypingManager {
+    private static instance: TypingManager;
+    private activeCursor: HTMLElement | null = null;
+    private isTyping = false;
+
+    static getInstance(): TypingManager {
+      if (!TypingManager.instance) {
+        TypingManager.instance = new TypingManager();
+      }
+      return TypingManager.instance;
+    }
+
+    async typeText(container: HTMLElement, text: string, speed: number, delay: number): Promise<void> {
+      return new Promise((resolve) => {
+        setTimeout(async () => {
+          this.isTyping = true;
+          const textElement = container.querySelector('.typing-text') as HTMLElement;
+          const cursor = container.querySelector('.cursor') as HTMLElement;
+          
+          // Hide all other cursors and show this one
+          this.setActiveCursor(cursor);
+          
+          let currentText = '';
+          let i = 0;
+          
+          const typeChar = () => {
+            if (i < text.length) {
+              currentText += text[i];
+              textElement.textContent = currentText;
+              i++;
+              setTimeout(typeChar, speed);
+            } else {
+              // Typing complete, hide cursor after a brief pause
+              setTimeout(() => {
+                this.clearActiveCursor();
+                this.isTyping = false;
+                resolve();
+              }, 500);
+            }
+          };
+          
+          typeChar();
+        }, delay);
+      });
+    }
+
+    private setActiveCursor(cursor: HTMLElement) {
+      // Hide all cursors
+      document.querySelectorAll('.cursor').forEach(c => {
+        c.classList.remove('active');
+        (c as HTMLElement).style.opacity = '0';
+      });
+      
+      // Show the active cursor
+      this.activeCursor = cursor;
+      cursor.classList.add('active');
+      cursor.style.opacity = '1';
+    }
+
+    private clearActiveCursor() {
+      if (this.activeCursor) {
+        this.activeCursor.classList.remove('active');
+        this.activeCursor.style.opacity = '0';
+        this.activeCursor = null;
+      }
+    }
+
+    getIsTyping(): boolean {
+      return this.isTyping;
+    }
+  }
+
+  // Export the manager globally
+  (window as any).TypingManager = TypingManager;
+
+  document.addEventListener('astro:page-load', () => {
+    const manager = TypingManager.getInstance();
+    
+    // Initialize all typing containers
+    document.querySelectorAll('[data-typing-id]').forEach(container => {
+      const textElement = container.querySelector('.typing-text') as HTMLElement;
+      const text = textElement?.dataset.text || '';
+      
+      // Clear any existing text
+      if (textElement) {
+        textElement.textContent = '';
+      }
+    });
+  });
+</script>
