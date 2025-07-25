@@ -1,38 +1,42 @@
 /* 
- * Sophisticated Theme System - 8 Curated Themes with Excellent Contrast
+ * Tech-Themed Retro Computing System - 10 Iconic Computing & Gaming Themes
  * 
- * Muted, sophisticated color palette inspired by natural materials
+ * Inspired by legendary computers, consoles, and tech culture
+ * Maximum nostalgia factor with authentic colors from computing history
  * High contrast ratios for accessibility (WCAG AA compliance)
- * Enhanced localStorage integration and performance
  * All themes meet 4.5:1 contrast minimum for optimal readability
  */
 
 /* Base theme variables structure */
 :root {
-    --theme-colorful: #ffffff; /* Default: void colorful */
-    --theme-contrasty: #000000; /* Default: void contrasty */
+    --theme-colorful: #ffffff; /* Default: MS-DOS colorful */
+    --theme-contrasty: #000000; /* Default: MS-DOS contrasty */
 
     /* Light mode: contrasty text on colorful background */
     --color-main: var(--theme-contrasty);
     --color-secondary: var(--theme-colorful);
 
     /* All theme color variables defined globally */
-    --void-colorful: #ffffff;
-    --void-contrasty: #000000;
-    --sage-colorful: #4a8b5c;
-    --sage-contrasty: #1a1f1b;
-    --ink-colorful: #3d6b84;
-    --ink-contrasty: #0f172a;
-    --terracotta-colorful: #c47d47;
-    --terracotta-contrasty: #2a1f18;
-    --lavender-colorful: #7b85e6;
-    --lavender-contrasty: #1a1b2e;
-    --rust-colorful: #b8653e;
-    --rust-contrasty: #1f1611;
-    --moss-colorful: #5c9b58;
-    --moss-contrasty: #161a16;
-    --dusk-colorful: #8a6bb8;
-    --dusk-contrasty: #1a1724;
+    --dos-colorful: #ffffff;
+    --dos-contrasty: #000000;
+    --matrix-colorful: #00ff41;
+    --matrix-contrasty: #0d1117;
+    --commodore64-colorful: #7c70da;
+    --commodore64-contrasty: #352879;
+    --gameboy-colorful: #9bbc0f;
+    --gameboy-contrasty: #1e2124;
+    --terminal-colorful: #ffb000;
+    --terminal-contrasty: #1a1100;
+    --apple2-colorful: #40ff40;
+    --apple2-contrasty: #000000;
+    --cyberpunk-colorful: #ff0080;
+    --cyberpunk-contrasty: #0a0a0a;
+    --synthwave-colorful: #ff6b35;
+    --synthwave-contrasty: #0f0519;
+    --vhs-colorful: #ff3300;
+    --vhs-contrasty: #003366;
+    --playstation-colorful: #0070f3;
+    --playstation-contrasty: #000000;
 }
 
 html.dark {
@@ -41,55 +45,67 @@ html.dark {
     --color-secondary: var(--theme-contrasty);
 }
 
-/* Optimized Theme Definitions - 8 Sophisticated High-Contrast Themes */
+/* Tech-Themed Iconic Computing Definitions - 10 Legendary Tech Themes */
 
-/* Void theme - Pure minimalist contrast (∞ contrast ratio) */
+/* MS-DOS theme - Command line interface (1981-1995) */
 :root,
-:root[data-theme='void'] {
-    --theme-colorful: var(--void-colorful);
-    --theme-contrasty: var(--void-contrasty);
+:root[data-theme='dos'] {
+    --theme-colorful: var(--dos-colorful);
+    --theme-contrasty: var(--dos-contrasty);
 }
 
-/* Sage theme - Muted eucalyptus wisdom (4.6:1 contrast) */
-:root[data-theme='sage'] {
-    --theme-colorful: var(--sage-colorful);
-    --theme-contrasty: var(--sage-contrasty);
+/* Matrix theme - Green rain digital code (1999) */
+:root[data-theme='matrix'] {
+    --theme-colorful: var(--matrix-colorful);
+    --theme-contrasty: var(--matrix-contrasty);
 }
 
-/* Ink theme - Stormy slate depths (4.7:1 contrast) */
-:root[data-theme='ink'] {
-    --theme-colorful: var(--ink-colorful);
-    --theme-contrasty: var(--ink-contrasty);
+/* Commodore 64 theme - Blue screen computing legend (1982) */
+:root[data-theme='commodore64'] {
+    --theme-colorful: var(--commodore64-colorful);
+    --theme-contrasty: var(--commodore64-contrasty);
 }
 
-/* Terracotta theme - Earthy clay warmth (4.8:1 contrast) */
-:root[data-theme='terracotta'] {
-    --theme-colorful: var(--terracotta-colorful);
-    --theme-contrasty: var(--terracotta-contrasty);
+/* Game Boy theme - LCD dot matrix display (1989) */
+:root[data-theme='gameboy'] {
+    --theme-colorful: var(--gameboy-colorful);
+    --theme-contrasty: var(--gameboy-contrasty);
 }
 
-/* Lavender theme - Soft purple haze (4.5:1 contrast) */
-:root[data-theme='lavender'] {
-    --theme-colorful: var(--lavender-colorful);
-    --theme-contrasty: var(--lavender-contrasty);
+/* Terminal theme - Amber phosphor monitor (1970s-1980s) */
+:root[data-theme='terminal'] {
+    --theme-colorful: var(--terminal-colorful);
+    --theme-contrasty: var(--terminal-contrasty);
 }
 
-/* Rust theme - Weathered copper patina (5.2:1 contrast) */
-:root[data-theme='rust'] {
-    --theme-colorful: var(--rust-colorful);
-    --theme-contrasty: var(--rust-contrasty);
+/* Apple ][ theme - Green text computer pioneer (1977) */
+:root[data-theme='apple2'] {
+    --theme-colorful: var(--apple2-colorful);
+    --theme-contrasty: var(--apple2-contrasty);
 }
 
-/* Moss theme - Forest floor serenity (4.9:1 contrast) */
-:root[data-theme='moss'] {
-    --theme-colorful: var(--moss-colorful);
-    --theme-contrasty: var(--moss-contrasty);
+/* Cyberpunk theme - Neon dystopian future (1980s sci-fi) */
+:root[data-theme='cyberpunk'] {
+    --theme-colorful: var(--cyberpunk-colorful);
+    --theme-contrasty: var(--cyberpunk-contrasty);
 }
 
-/* Dusk theme - Twilight sky meditation (5.0:1 contrast) */
-:root[data-theme='dusk'] {
-    --theme-colorful: var(--dusk-colorful);
-    --theme-contrasty: var(--dusk-contrasty);
+/* Synthwave theme - Retro neon sunset (1980s aesthetic) */
+:root[data-theme='synthwave'] {
+    --theme-colorful: var(--synthwave-colorful);
+    --theme-contrasty: var(--synthwave-contrasty);
+}
+
+/* VHS theme - Analog video tape glitch (1980s-1990s) */
+:root[data-theme='vhs'] {
+    --theme-colorful: var(--vhs-colorful);
+    --theme-contrasty: var(--vhs-contrasty);
+}
+
+/* PlayStation theme - Console gaming revolution (1994) */
+:root[data-theme='playstation'] {
+    --theme-colorful: var(--playstation-colorful);
+    --theme-contrasty: var(--playstation-contrasty);
 }
 
 /* Enhanced syntax highlighting colors for better readability */
@@ -100,4 +116,75 @@ html.dark {
     --syntax-number: color-mix(in srgb, var(--theme-colorful) 90%, var(--color-main) 10%);
     --syntax-function: color-mix(in srgb, var(--theme-colorful) 85%, var(--color-main) 15%);
     --syntax-operator: color-mix(in srgb, var(--color-main) 80%, var(--theme-colorful) 20%);
+}
+
+/* Special tech glow effects for neon themes */
+:root[data-theme='matrix'] {
+    --tech-glow: drop-shadow(0 0 8px var(--theme-colorful));
+}
+
+:root[data-theme='cyberpunk'] {
+    --tech-glow: drop-shadow(0 0 12px var(--theme-colorful));
+}
+
+:root[data-theme='synthwave'] {
+    --tech-glow: drop-shadow(0 0 10px var(--theme-colorful));
+}
+
+:root[data-theme='apple2'] {
+    --tech-glow: drop-shadow(0 0 6px var(--theme-colorful));
+}
+
+:root[data-theme='terminal'] {
+    --tech-glow: drop-shadow(0 0 4px var(--theme-colorful));
+}
+
+/* Apply tech glow to headings in appropriate themes */
+:root[data-theme='matrix'] h1,
+:root[data-theme='matrix'] h2,
+:root[data-theme='cyberpunk'] h1,
+:root[data-theme='cyberpunk'] h2,
+:root[data-theme='synthwave'] h1,
+:root[data-theme='synthwave'] h2,
+:root[data-theme='apple2'] h1,
+:root[data-theme='apple2'] h2,
+:root[data-theme='terminal'] h1,
+:root[data-theme='terminal'] h2 {
+    filter: var(--tech-glow);
+}
+
+/* Game Boy pixel-perfect styling */
+:root[data-theme='gameboy'] {
+    --pixel-rendering: pixelated;
+}
+
+:root[data-theme='gameboy'] * {
+    image-rendering: var(--pixel-rendering);
+}
+
+/* DOS monospace styling */
+:root[data-theme='dos'] {
+    --font-family-override: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+}
+
+/* VHS glitch effects */
+:root[data-theme='vhs'] {
+    --glitch-effect: drop-shadow(2px 0 0 var(--theme-colorful)) drop-shadow(-2px 0 0 var(--theme-contrasty));
+}
+
+/* Commodore 64 retro styling */
+:root[data-theme='commodore64'] {
+    --retro-border: 2px solid var(--theme-colorful);
+    --scan-lines: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.03) 2px,
+        rgba(0, 0, 0, 0.03) 4px
+    );
+}
+
+/* Atari rainbow accent */
+:root[data-theme='atari'] {
+    --rainbow-accent: linear-gradient(45deg, #ff0000, #ff8000, #ffff00, #80ff00, #00ff00, #00ff80, #00ffff, #0080ff, #0000ff, #8000ff, #ff0080);
 }

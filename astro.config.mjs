@@ -12,9 +12,7 @@ export default defineConfig({
         host: true
     },
     integrations: [
-        react({
-            experimentalReactChildren: true
-        }),
+        react(),
         mdx(),
         sitemap()
     ],
