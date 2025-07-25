@@ -11,7 +11,7 @@ import FeaturedProjectsSection from '../components/FeaturedProjectsSection.astro
 import ServicesSection from '../components/ServicesSection.astro';
 import CornersWithCrosses from '../components/CornersWithCrosses.astro';  
 import Card from '@/components/Card.astro';
-import DitheredImage from '@/components/DitheredImage.astro';
+import DitheredImageReact from '@/components/DitheredImageReact.tsx';
 ---
 
 <Layout description={siteConfig.description} image={siteConfig.image}>
@@ -69,18 +69,16 @@ import DitheredImage from '@/components/DitheredImage.astro';
  </div>
 
     <BigSectionContainer title="Sobre mí" id="about" initialVariant="outline">
-<div class="flex">
-    <div class="aspect-square w-100">
-            <DitheredImage 
-        src="/Allison.jpeg" 
-        alt="Description of the image for screen readers" 
-        class="w-full "
-        crunch={1}
-        />
-    </div>
-    <div>
-
-    </div>
+<div>
+            <div class="w-full max-w-md mx-auto aspect-square">
+            <DitheredImageReact 
+                src="/Allison.jpeg"
+                alt="Perfil de Allison Peña"
+                className="w-full h-full"
+                client:idle
+            />
+        </div>
+        
 </div>
     </BigSectionContainer>
 
@@ -111,4 +109,6 @@ import DitheredImage from '@/components/DitheredImage.astro';
             showProjects={true}
         />
     </BigSectionContainer>
+
+ 
 </Layout>

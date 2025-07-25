@@ -1,8 +1,8 @@
-// Sophisticated theme configuration - 8 curated themes with excellent contrast
+// Iconic theme configuration - 8 nostalgic and wow-factor themes with excellent contrast
 // CSS implementation is in /src/styles/themes.css
 // This file only contains metadata for UI generation
 // All themes meet WCAG AA contrast requirements (4.5:1 minimum)
-// Inspired by natural materials with muted, sophisticated color palette
+// Inspired by iconic computing eras, retro tech, and nostalgic digital aesthetics
 
 // Function to get CSS variable value
 function getCSSVariable(variableName) {
@@ -14,60 +14,74 @@ function getCSSVariable(variableName) {
 
 export const themes = [
   {
-    id: 'void',
-    name: 'VOID',
-    description: 'Pure minimalist contrast',
-    get colorful() { return getCSSVariable('--void-colorful') || '#ffffff'; },
-    get contrasty() { return getCSSVariable('--void-contrasty') || '#000000'; }
+    id: 'dos',
+    name: 'MS-DOS',
+    description: 'Command line interface',
+    get colorful() { return getCSSVariable('--dos-colorful') || '#ffffff'; },
+    get contrasty() { return getCSSVariable('--dos-contrasty') || '#000000'; }
   },
   {
-    id: 'sage',
-    name: 'SAGE', 
-    description: 'Muted eucalyptus wisdom',
-    get colorful() { return getCSSVariable('--sage-colorful') || '#4a8b5c'; },
-    get contrasty() { return getCSSVariable('--sage-contrasty') || '#1a1f1b'; }
+    id: 'matrix',
+    name: 'MATRIX',
+    description: 'Green rain digital code',
+    get colorful() { return getCSSVariable('--matrix-colorful') || '#00ff41'; },
+    get contrasty() { return getCSSVariable('--matrix-contrasty') || '#0d1117'; }
   },
   {
-    id: 'ink',
-    name: 'INK',
-    description: 'Stormy slate depths',
-    get colorful() { return getCSSVariable('--ink-colorful') || '#3d6b84'; },
-    get contrasty() { return getCSSVariable('--ink-contrasty') || '#0f172a'; }
+    id: 'commodore64',
+    name: 'C64',
+    description: 'Blue screen computing legend',
+    get colorful() { return getCSSVariable('--commodore64-colorful') || '#7c70da'; },
+    get contrasty() { return getCSSVariable('--commodore64-contrasty') || '#352879'; }
   },
   {
-    id: 'terracotta',
-    name: 'TERRACOTTA',
-    description: 'Earthy clay warmth',
-    get colorful() { return getCSSVariable('--terracotta-colorful') || '#c47d47'; },
-    get contrasty() { return getCSSVariable('--terracotta-contrasty') || '#2a1f18'; }
+    id: 'gameboy',
+    name: 'GAMEBOY',
+    description: 'LCD dot matrix display',
+    get colorful() { return getCSSVariable('--gameboy-colorful') || '#9bbc0f'; },
+    get contrasty() { return getCSSVariable('--gameboy-contrasty') || '#1e2124'; }
   },
   {
-    id: 'lavender',
-    name: 'LAVENDER',
-    description: 'Soft purple haze',
-    get colorful() { return getCSSVariable('--lavender-colorful') || '#7b85e6'; },
-    get contrasty() { return getCSSVariable('--lavender-contrasty') || '#1a1b2e'; }
+    id: 'terminal',
+    name: 'TERMINAL',
+    description: 'Amber phosphor monitor',
+    get colorful() { return getCSSVariable('--terminal-colorful') || '#ffb000'; },
+    get contrasty() { return getCSSVariable('--terminal-contrasty') || '#1a1100'; }
   },
   {
-    id: 'rust',
-    name: 'RUST',
-    description: 'Weathered copper patina',
-    get colorful() { return getCSSVariable('--rust-colorful') || '#b8653e'; },
-    get contrasty() { return getCSSVariable('--rust-contrasty') || '#1f1611'; }
+    id: 'apple2',
+    name: 'APPLE ][',
+    description: 'Green text computer pioneer',
+    get colorful() { return getCSSVariable('--apple2-colorful') || '#40ff40'; },
+    get contrasty() { return getCSSVariable('--apple2-contrasty') || '#000000'; }
   },
   {
-    id: 'moss',
-    name: 'MOSS',
-    description: 'Forest floor serenity',
-    get colorful() { return getCSSVariable('--moss-colorful') || '#5c9b58'; },
-    get contrasty() { return getCSSVariable('--moss-contrasty') || '#161a16'; }
+    id: 'cyberpunk',
+    name: 'CYBERPUNK',
+    description: 'Neon dystopian future',
+    get colorful() { return getCSSVariable('--cyberpunk-colorful') || '#ff0080'; },
+    get contrasty() { return getCSSVariable('--cyberpunk-contrasty') || '#0a0a0a'; }
   },
   {
-    id: 'dusk',
-    name: 'DUSK',
-    description: 'Twilight sky meditation',
-    get colorful() { return getCSSVariable('--dusk-colorful') || '#8a6bb8'; },
-    get contrasty() { return getCSSVariable('--dusk-contrasty') || '#1a1724'; }
+    id: 'synthwave',
+    name: 'SYNTHWAVE',
+    description: 'Retro neon sunset',
+    get colorful() { return getCSSVariable('--synthwave-colorful') || '#ff6b35'; },
+    get contrasty() { return getCSSVariable('--synthwave-contrasty') || '#0f0519'; }
+  },
+  {
+    id: 'vhs',
+    name: 'VHS',
+    description: 'Analog video tape glitch',
+    get colorful() { return getCSSVariable('--vhs-colorful') || '#ff3300'; },
+    get contrasty() { return getCSSVariable('--vhs-contrasty') || '#003366'; }
+  },
+  {
+    id: 'playstation',
+    name: 'PLAYSTATION',
+    description: 'Console gaming revolution',
+    get colorful() { return getCSSVariable('--playstation-colorful') || '#0070f3'; },
+    get contrasty() { return getCSSVariable('--playstation-contrasty') || '#000000'; }
   }
 ];
 
