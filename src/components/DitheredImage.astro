@@ -1,0 +1,334 @@
+---
+interface Props {
+    src: string;
+    alt: string;
+    class?: string;
+    crunch?: 'auto' | 'pixel' | number;
+    cutoff?: number;
+    mainColor?: string;
+    secondaryColor?: string;
+}
+
+const { 
+    src, 
+    alt, 
+    class: className, 
+    crunch = 'pixel',
+    cutoff = 0.7,
+    mainColor,
+    secondaryColor
+} = Astro.props;
+---
+
+<div class="dithered-image-container">
+    <as-dithered-image 
+        src={src} 
+        alt={alt} 
+        class={className} 
+        crunch={crunch} 
+        cutoff={cutoff}
+        data-main-color={mainColor}
+        data-secondary-color={secondaryColor}
+    ></as-dithered-image>
+    <div class="original-image-overlay" style={`background-image: url('${src}');`}></div>
+</div>
+
+<style>
+.dithered-image-container {
+    position: relative;
+    display: block;
+}
+
+as-dithered-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.original-image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.dithered-image-container.show-original .original-image-overlay {
+    opacity: 0.75;
+    filter: contrast(1.1);
+}
+</style>
+
+<script>
+// Convert hex to rgba string with optional transparency
+function hexToRgba(hex:any, alpha = 0) {
+    if (!hex) return null;
+    hex = hex.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+// Get current theme colors - always use the most contrasting pair
+function getThemeColors() {
+    const computedStyle = getComputedStyle(document.documentElement);
+    const themeColorful = computedStyle.getPropertyValue('--theme-colorful').trim();
+    const themeContrasty = computedStyle.getPropertyValue('--theme-contrasty').trim();
+
+    const colorful = themeColorful || '#ffffff';
+    const contrasty = themeContrasty || '#000000';
+
+    function getGrayscaleValue(hex:any) {
+        if (!hex || hex.length < 6) return 0;
+        hex = hex.replace('#', '');
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        return (0.299 * r + 0.587 * g + 0.114 * b);
+    }
+
+    const colorfulGray = getGrayscaleValue(colorful);
+    const contrastyGray = getGrayscaleValue(contrasty);
+
+    if (colorfulGray < contrastyGray) {
+        return { dark: colorful, light: contrasty };
+    } else {
+        return { dark: contrasty, light: colorful };
+    }
+}
+
+// Setup hover delay functionality
+function setupHoverDelay(ditheredElement: any) {
+    const container = ditheredElement.parentElement;
+    if (!container || !container.classList.contains('dithered-image-container')) return;
+    
+    // Check if already setup to prevent duplicate listeners
+    if (container.dataset.hoverSetup === 'true') return;
+    container.dataset.hoverSetup = 'true';
+    
+    let hoverTimeout: number | null = null;
+    
+    // Mouse enter - start timer
+    container.addEventListener('mouseenter', () => {
+        hoverTimeout = setTimeout(() => {
+            container.classList.add('show-original');
+        }, 500); // 3 seconds
+    });
+    
+    // Mouse leave - clear timer and hide image
+    container.addEventListener('mouseleave', () => {
+        if (hoverTimeout) {
+            clearTimeout(hoverTimeout);
+            hoverTimeout = null;
+        }
+        container.classList.remove('show-original');
+    });
+}
+
+// Synchronize overlay position with canvas
+function syncOverlayWithCanvas(ditheredElement: any) {
+    const container = ditheredElement.parentElement;
+    if (!container || !container.classList.contains('dithered-image-container')) return;
+    
+    const overlay = container.querySelector('.original-image-overlay');
+    if (!overlay) return;
+    
+    // Get the canvas from shadow DOM
+    const shadowRoot = ditheredElement.shadowRoot;
+    if (!shadowRoot) return;
+    
+    const canvas = shadowRoot.querySelector('canvas');
+    if (!canvas) return;
+    
+    // Get canvas dimensions and position
+    const canvasRect = canvas.getBoundingClientRect();
+    const containerRect = container.getBoundingClientRect();
+    
+    // Calculate relative position
+    const relativeTop = canvasRect.top - containerRect.top;
+    const relativeLeft = canvasRect.left - containerRect.left;
+    
+    // Apply the exact same dimensions and position
+    overlay.style.top = `${relativeTop}px`;
+    overlay.style.left = `${relativeLeft}px`;
+    overlay.style.width = `${canvasRect.width}px`;
+    overlay.style.height = `${canvasRect.height}px`;
+}
+
+// Update dithered image colors
+function updateDitheredImageColors(element:any) {
+    const customMain = element.getAttribute('data-main-color');
+    const customSecondary = element.getAttribute('data-secondary-color');
+
+    let darkColor: string, lightColor: string;
+
+    function getGrayscaleValue(hex:any) {
+        if (!hex || hex.length < 6) return 0;
+        hex = hex.replace('#', '');
+        const r = parseInt(hex.substring(0, 2), 16);
+        const g = parseInt(hex.substring(2, 4), 16);
+        const b = parseInt(hex.substring(4, 6), 16);
+        return (0.299 * r + 0.587 * g + 0.114 * b);
+    }
+
+    if (customMain && customSecondary) {
+        if (getGrayscaleValue(customMain) < getGrayscaleValue(customSecondary)) {
+            darkColor = customMain;
+            lightColor = customSecondary;
+        } else {
+            darkColor = customSecondary;
+            lightColor = customMain;
+        }
+    } else {
+        const themeColors = getThemeColors();
+        darkColor = themeColors.dark;
+        lightColor = themeColors.light;
+    }
+
+    const darkrgba = hexToRgba(darkColor, 232); // 78% opacity
+    const lightrgba = hexToRgba(lightColor, 255); // 100% opacity
+
+    if (darkrgba && lightrgba) {
+        element.setAttribute('darkrgba', darkrgba);
+        element.setAttribute('lightrgba', lightrgba);
+        console.log('DitheredImage: Updated colors for element:', element.getAttribute('src'));
+        console.log('DitheredImage: Colors applied:', { darkColor, lightColor, darkrgba, lightrgba });
+    }
+}
+
+// Initialize when DOM is ready
+function initializeDitheredImages() {
+    const ditheredImages = document.querySelectorAll('as-dithered-image');
+
+    // Apply colors immediately on first load
+    ditheredImages.forEach(element => {
+        updateDitheredImageColors(element);
+        setupHoverDelay(element);
+        // Delay sync to ensure canvas is rendered
+        setTimeout(() => syncOverlayWithCanvas(element), 100);
+        
+        // Set up resize observer for this element
+        const resizeObserver = new ResizeObserver(() => {
+            setTimeout(() => syncOverlayWithCanvas(element), 50);
+        });
+        resizeObserver.observe(element);
+    });
+
+    // Also listen for new dithered images added to the DOM
+    const imageObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            mutation.addedNodes.forEach((node) => {
+                if (node.nodeType === Node.ELEMENT_NODE) {
+                    if (node.tagName === 'AS-DITHERED-IMAGE') {
+                        updateDitheredImageColors(node);
+                        setupHoverDelay(node);
+                        setTimeout(() => syncOverlayWithCanvas(node), 100);
+                    }
+                    // Also check for nested dithered images
+                    if (node instanceof Element) {
+                        const nestedImages = node.querySelectorAll('as-dithered-image');
+                        nestedImages.forEach((element: any) => {
+                            updateDitheredImageColors(element);
+                            setupHoverDelay(element);
+                            setTimeout(() => syncOverlayWithCanvas(element), 100);
+                        });
+                    }
+                }
+            });
+        });
+    });
+
+    imageObserver.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+
+    // Listen for theme changes
+    const themeObserver = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+                console.log('Theme change detected, updating dithered images');
+                // Re-query to catch any new elements
+                const allDitheredImages = document.querySelectorAll('as-dithered-image');
+                setTimeout(() => {
+                    allDitheredImages.forEach(element => {
+                        updateDitheredImageColors(element);
+                        setupHoverDelay(element);
+                        setTimeout(() => syncOverlayWithCanvas(element), 50);
+                    });
+                }, 50);
+            }
+        });
+    });
+
+    themeObserver.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme']
+    });
+}
+
+// Execute immediately as soon as this script loads
+(function immediateInit() {
+    const existingImages = document.querySelectorAll('as-dithered-image');
+    existingImages.forEach(element => {
+        updateDitheredImageColors(element);
+        setupHoverDelay(element);
+        // Delay sync to ensure canvas is rendered
+        setTimeout(() => syncOverlayWithCanvas(element), 50);
+    });
+    
+    // If no images exist yet, set up a quick polling to catch them as soon as they appear
+    if (existingImages.length === 0) {
+        let attempts = 0;
+        const maxAttempts = 20; // Limit attempts to prevent infinite polling
+        
+        const quickPoll = setInterval(() => {
+            attempts++;
+            const newImages = document.querySelectorAll('as-dithered-image');
+            
+            if (newImages.length > 0) {
+                newImages.forEach(element => {
+                    updateDitheredImageColors(element);
+                    setupHoverDelay(element);
+                    setTimeout(() => syncOverlayWithCanvas(element), 50);
+                });
+                clearInterval(quickPoll);
+            } else if (attempts >= maxAttempts) {
+                clearInterval(quickPoll);
+            }
+        }, 50); // Check every 50ms
+    }
+})();
+
+// Initialize immediately or when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeDitheredImages);
+} else {
+    // DOM is already ready, initialize immediately
+    initializeDitheredImages();
+}
+
+// Re-initialize on Astro page navigation
+document.addEventListener('astro:page-load', initializeDitheredImages);
+
+// Force update on theme toggle events (additional safety)
+document.addEventListener('theme-updated', () => {
+    console.log('Manual theme update event detected');
+    const ditheredImages = document.querySelectorAll('as-dithered-image');
+    setTimeout(() => {
+        ditheredImages.forEach(element => {
+            updateDitheredImageColors(element);
+            setupHoverDelay(element);
+            setTimeout(() => syncOverlayWithCanvas(element), 50);
+        });
+    }, 10);
+});
+</script>

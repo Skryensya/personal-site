@@ -9,9 +9,12 @@ import SkillsSection from '../components/SkillsSection.astro';
 import ExperienceSection from '../components/ExperienceSection.astro';
 import FeaturedProjectsSection from '../components/FeaturedProjectsSection.astro';
 import ServicesSection from '../components/ServicesSection.astro';
-import CornersWithCrosses from '../components/CornersWithCrosses.astro';
+import CornersWithCrosses from '../components/CornersWithCrosses.astro';  
+import allison from "../../public/allison.jpeg"
+ 
  
 import Card from '@/components/Card.astro';
+import DitheredImage from '@/components/DitheredImage.astro';
 ---
 
 <Layout description={siteConfig.description} image={siteConfig.image}>
@@ -55,16 +58,33 @@ import Card from '@/components/Card.astro';
     </CornersWithCrosses>
 
 
- <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-       <Card />
-          <Card />
-             <Card />
-                <Card />
+ <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3   gap-4">
 
+    <div>
+
+    </div>
+    </div>
+
+
+
+ <div> 
+ 
  </div>
 
     <BigSectionContainer title="Sobre mí" id="about" initialVariant="outline">
-        <AboutMeSection />
+<div class="flex">
+    <div class="aspect-square w-100">
+            <DitheredImage 
+        src={allison.src} 
+        alt="Description of the image for screen readers" 
+        class="w-full "
+        crunch={1}
+        />
+    </div>
+    <div>
+
+    </div>
+</div>
     </BigSectionContainer>
 
     <BigSectionContainer title="Habilidades" id="skills" initialVariant="outline">

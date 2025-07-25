@@ -2,9 +2,9 @@
 import ThemeControl from './ThemeControl.astro';
 ---
 
-<nav class="navbar fixed top-0 left-0 right-0 z-50 transition-all duration-300 ease-out">
+<nav class="navbar fixed top-0 left-0 right-0 z-50  duration-300 ease-out">
   <div class="navbar-container max-w-6xl mx-auto px-6">
-    <div class="navbar-content flex items-center justify-between transition-all duration-300 ease-out">
+    <div class="navbar-content flex items-center justify-between  duration-300 ease-out">
       <!-- Logo -->
       <a href="/" class="logo-link group">
         <div class="flex items-center space-x-2">
@@ -100,7 +100,7 @@ import ThemeControl from './ThemeControl.astro';
     width: 2.5rem;
     height: 2.5rem;
     background: var(--color-main);
-    transition: all 0.3s ease;
+
     overflow: hidden;
   }
 
@@ -114,7 +114,7 @@ import ThemeControl from './ThemeControl.astro';
   .logo-text {
     @apply font-bold text-main relative z-10;
     font-size: 1.25rem;
-    transition: font-size 0.3s ease;
+ 
   }
 
   .navbar.scrolled .logo-text {
@@ -128,7 +128,7 @@ import ThemeControl from './ThemeControl.astro';
     position: relative;
     display: inline-block;
     font-size: 1rem;
-    transition: all 0.3s ease;
+ 
   }
 
   .navbar.scrolled .nav-link {
@@ -142,7 +142,7 @@ import ThemeControl from './ThemeControl.astro';
     width: 0;
     height: 2px;
     background: var(--color-main);
-    transition: width 0.3s ease;
+ 
   }
 
   .nav-link:hover .nav-underline {
@@ -162,7 +162,7 @@ import ThemeControl from './ThemeControl.astro';
   .mobile-menu {
     max-height: 0;
     overflow: hidden;
-    transition: max-height 0.3s ease;
+ 
   }
 
   .mobile-menu.open {
@@ -170,7 +170,7 @@ import ThemeControl from './ThemeControl.astro';
   }
 
   .mobile-link {
-    @apply block px-4 py-2 text-main hover:text-main transition-all;
+    @apply block px-4 py-2 text-main hover:text-main;
   }
 
   /* Hamburger Menu */
@@ -179,7 +179,7 @@ import ThemeControl from './ThemeControl.astro';
   }
 
   .hamburger span {
-    @apply absolute block w-full h-0.5 bg-main rounded transition-all duration-300;
+    @apply absolute block w-full h-0.5 bg-main rounded  duration-300;
   }
 
   .hamburger span:nth-child(1) { top: 0; }

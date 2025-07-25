@@ -1,9 +1,7 @@
 ---
 import { ViewTransitions } from 'astro:transitions';
 import BaseHead, { type Props as HeadProps } from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
-import ColorPickerWrapper from '../components/ColorPickerWrapper.astro';
-import ThemeURLHandler from '../components/ThemeURLHandler.astro';
+import Header from '../components/Header.astro'; 
 
 export type Props = HeadProps & { showHeader?: boolean; headerTitle?: string, headerSubtitle?: string };
 
@@ -16,72 +14,47 @@ const { showHeader = true, headerTitle = null, headerSubtitle = null,  ...head }
         <BaseHead {...head} />
         <script>
             // Fast theme initialization with validation
-            const validThemes = ['void', 'phantom', 'azure', 'ember', 'violet', 'custom'];
+            const validThemes = ['void', 'phantom', 'azure', 'ember', 'violet'];
             
-            function applyTheme(themeId, isDark, customColors = null) {
+            function applyTheme(themeId: any, isDark: any) {
                 document.documentElement.setAttribute('data-theme', themeId);
                 document.documentElement.classList.toggle('dark', isDark);
-                
-                // Apply custom colors if provided
-                if (themeId === 'custom' && customColors) {
-                    document.documentElement.style.setProperty('--theme-colorful', customColors.colorful);
-                    document.documentElement.style.setProperty('--theme-contrasty', customColors.contrasty);
-                }
             }
 
             // Load and apply saved theme with validation
-            try {
-                const savedMode = localStorage.getItem('theme-mode') || 'light';
-                const savedTheme = localStorage.getItem('theme-id') || 'void';
-                
-                // Validate theme exists in current theme list
-                const theme = validThemes.includes(savedTheme) ? savedTheme : 'void';
-                
-                let customColors = null;
-                // Load custom colors if it's a custom theme
-                if (theme === 'custom') {
-                    try {
-                        const savedColors = localStorage.getItem('custom-theme-colors');
-                        if (savedColors) {
-                            customColors = JSON.parse(savedColors);
-                        } else {
-                            // If no custom colors found but custom theme selected, fallback to void theme
-                            const fallbackTheme = 'void';
-                            localStorage.setItem('theme-id', fallbackTheme);
-                            applyTheme(fallbackTheme, savedMode === 'dark');
-                            return;
-                        }
-                    } catch (e) {
-                        console.warn('Failed to load custom colors:', e);
-                        // Fallback to void theme if custom colors are invalid
-                        const fallbackTheme = 'void';
-                        localStorage.setItem('theme-id', fallbackTheme);
-                        applyTheme(fallbackTheme, savedMode === 'dark');
-                        return;
+            function initializeTheme() {
+                try {
+                    const savedMode = localStorage.getItem('theme-mode') || 'light';
+                    const savedTheme = localStorage.getItem('theme-id') || 'void';
+                    
+                    // Validate theme exists in current theme list
+                    const theme = validThemes.includes(savedTheme) ? savedTheme : 'void';
+                    
+                    applyTheme(theme, savedMode === 'dark');
+                    
+                    // Update localStorage if theme was invalid
+                    if (theme !== savedTheme) {
+                        localStorage.setItem('theme-id', theme);
                     }
+                } catch (e) {
+                    // Fallback if localStorage fails
+                    applyTheme('void', false);
                 }
-                
-                applyTheme(theme, savedMode === 'dark', customColors);
-                
-                // Update localStorage if theme was invalid
-                if (theme !== savedTheme) {
-                    localStorage.setItem('theme-id', theme);
-                }
-            } catch (e) {
-                // Fallback if localStorage fails
-                applyTheme('void', false);
             }
+            
+            // Initialize theme
+            initializeTheme();
         </script>
+        <script src="/as-dithered-image.js" is:inline></script>
         <ViewTransitions />
     </head>
     <body class="bg-secondary text-main md:px-10 (--max-w-size:1280px) max-w-[var(--max-w-size)] mx-auto  relative">
+ 
         <Header />
      <div class="mt-8 overflow-x-hidden">  
         <main class="text-left px-4">
                 <slot />
             </main>
         </div>
-        <ColorPickerWrapper />
-        <ThemeURLHandler />
     </body>
 </html>
