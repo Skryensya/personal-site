@@ -14,7 +14,7 @@ export default function DitheredImageReact({
   src, 
   alt, 
   className = '', 
-  crunch = 'pixel',
+  crunch = 'auto',
   cutoff = 0.7,
   mainColor,
   secondaryColor
@@ -96,7 +96,7 @@ export default function DitheredImageReact({
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsReady(true);
-    }, 100);
+    }, 200);
     return () => clearTimeout(timer);
   }, []);
 
