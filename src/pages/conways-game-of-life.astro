@@ -32,7 +32,7 @@ import CornersWithCrosses from '../components/CornersWithCrosses.astro';
     <body class="bg-secondary text-main overflow-hidden">
         <div class="fixed inset-0 flex bg-secondary text-main">
             <!-- Main Game Area -->
-            <div id="gameArea" class="flex-1 relative transition-all duration-300">
+            <div id="gameArea" class="flex-1 relative  duration-300">
                 <!-- Top Controls Bar -->
                 <div class="absolute top-0 left-0 right-0 z-20 flex justify-between items-center p-4">
                     <!-- Left controls -->
@@ -68,7 +68,7 @@ import CornersWithCrosses from '../components/CornersWithCrosses.astro';
                         ></canvas>
                     
                         <!-- Pattern name display -->
-                        <div id="patternName" class="absolute top-16 left-4 text-main font-mono text-sm font-semibold opacity-0 transition-opacity duration-300 z-10"></div>
+                        <div id="patternName" class="absolute top-16 left-4 text-main font-mono text-sm font-semibold opacity-0  duration-300 z-10"></div>
                         
                         <!-- Content Actions (bottom-left) -->
                         <div class="absolute bottom-4 left-4 flex items-center gap-2 z-10">
@@ -136,7 +136,7 @@ import CornersWithCrosses from '../components/CornersWithCrosses.astro';
             </div>
 
             <!-- Sidebar -->
-            <div id="sidebar" class="w-80 max-w-[350px] bg-secondary border-l border-main overflow-y-auto transition-transform duration-300 transform translate-x-0" style="min-width: 320px;">
+            <div id="sidebar" class="w-80 max-w-[350px] bg-secondary border-l border-main overflow-y-auto duration-300 transform translate-x-0" style="min-width: 320px;">
                 <div class="p-6 space-y-6">
                     <!-- Sidebar Header with Close Button -->
                     <div class="flex justify-between items-center border-b border-main pb-4">

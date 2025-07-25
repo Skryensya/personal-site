@@ -23,11 +23,6 @@ const sizeClasses = {
             <div class="isometric-text layer-3" aria-hidden="true">{text}</div>
             <div class="isometric-text layer-4" aria-hidden="true">{text}</div>
             <div class="isometric-text layer-5" aria-hidden="true">{text}</div>
-            <!-- <div class="isometric-text layer-6" aria-hidden="true">{text}</div>
-            <div class="isometric-text layer-7" aria-hidden="true">{text}</div>
-            <div class="isometric-text layer-8" aria-hidden="true">{text}</div>
-            <div class="isometric-text layer-9" aria-hidden="true">{text}</div>
-            <div class="isometric-text layer-10" aria-hidden="true">{text}</div> -->
             
             <!-- Main visible text layer -->
             <div class="isometric-text main-layer">{text}</div>
@@ -37,13 +32,13 @@ const sizeClasses = {
     
 <style>
     .isometric-text-card {
-        --layer-opacity: .3;
+        --layer-opacity: .45;
         /* Square card container with border */
         position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
-        perspective: 600px;
+        perspective: 800px;
         perspective-origin: 30% 200%;
         border: 1px solid rgb(var(--color-main));
     }
@@ -63,7 +58,7 @@ const sizeClasses = {
         font-family: 'JetBrains Mono', 'IBM Plex Mono', 'Courier New', monospace;
         font-variant-numeric: tabular-nums;
         font-feature-settings: "tnum" 1;
-        font-size: 96px;
+        font-size: 56px;
         white-space: nowrap;
         user-select: none;
         pointer-events: none;
@@ -82,14 +77,14 @@ const sizeClasses = {
         opacity: var(--layer-opacity);
     }
 
-    /* Depth layers with progressive left-down offset */
+    /* Depth layers - all in same position initially */
     .layer-1 {
         color: rgb(var(--color-main));
         transform: translate(-50%, -50%) 
                    rotateX(-45deg) 
                    rotateY(-45deg) 
                    rotateZ(0deg) 
-                   translateZ(3px);
+                   translateZ(0px);
         opacity: var(--layer-opacity);
         z-index: 2;
         transition: transform 0.3s ease;
@@ -101,7 +96,7 @@ const sizeClasses = {
                    rotateX(-45deg) 
                    rotateY(-45deg) 
                    rotateZ(0deg) 
-                   translateZ(6px);
+                   translateZ(0px);
         opacity: var(--layer-opacity);
         z-index: 3;
         transition: transform 0.3s ease;
@@ -113,7 +108,7 @@ const sizeClasses = {
                    rotateX(-45deg) 
                    rotateY(-45deg) 
                    rotateZ(0deg) 
-                   translateZ(9px);
+                   translateZ(0px);
         opacity: var(--layer-opacity);
         z-index: 4;
         transition: transform 0.3s ease;
@@ -125,7 +120,7 @@ const sizeClasses = {
                    rotateX(-45deg) 
                    rotateY(-45deg) 
                    rotateZ(0deg) 
-                   translateZ(12px);
+                   translateZ(0px);
         opacity: var(--layer-opacity);
         z-index: 5;
         transition: transform 0.3s ease;
@@ -137,71 +132,12 @@ const sizeClasses = {
                    rotateX(-45deg) 
                    rotateY(-45deg) 
                    rotateZ(0deg) 
-                   translateZ(15px);
+                   translateZ(0px);
         opacity: var(--layer-opacity);
         z-index: 6;
         transition: transform 0.3s ease;
     }
 
-    .layer-6 {
-        color: rgb(var(--color-main));
-        transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
-                   translateZ(18px);
-        opacity: var(--layer-opacity);
-        z-index: 7;
-        transition: transform 0.3s ease;
-    }
-
-    .layer-7 {
-        color: rgb(var(--color-main));
-        transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
-                   translateZ(21px);
-        opacity: var(--layer-opacity);
-        z-index: 8;
-        transition: transform 0.3s ease;
-    }
-
-    .layer-8 {
-        color: rgb(var(--color-main));
-        transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
-                   translateZ(24px);
-        opacity: var(--layer-opacity);
-        z-index: 9;
-        transition: transform 0.3s ease;
-    }
-
-    .layer-9 {
-        color: rgb(var(--color-main));
-        transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
-                   translateZ(27px);
-        opacity: var(--layer-opacity);
-        z-index: 10;
-        transition: transform 0.3s ease;
-    }
-
-    .layer-10 {
-        color: rgb(var(--color-main));
-        transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
-                   translateZ(30px);
-        opacity: var(--layer-opacity);
-        z-index: 11;
-        transition: transform 0.3s ease;
-    }
 
     /* Hover effect for extra depth */
     .isometric-text-card:hover .isometric-text-container {
@@ -218,15 +154,15 @@ const sizeClasses = {
         transition: transform 0.3s ease;
     }
 
-    /* Enhanced depth layers on hover with increased left-down separation */
-    .isometric-text-card:hover .main-layer { opacity: 0.17; }
+    /* Enhanced depth layers on hover with Z-axis separation only */
+    .isometric-text-card:hover .main-layer { opacity: 0.15; }
     .isometric-text-card:hover .layer-1 { 
         opacity: var(--layer-opacity); 
         transform: translate(-50%, -50%) 
                    rotateX(-45deg) 
                    rotateY(-45deg) 
                    rotateZ(0deg) 
-                   translateZ(6px);
+                   translateZ(8px);
     }
     .isometric-text-card:hover .layer-2 { 
         opacity: var(--layer-opacity); 
@@ -234,7 +170,7 @@ const sizeClasses = {
                    rotateX(-45deg) 
                    rotateY(-45deg) 
                    rotateZ(0deg) 
-                   translateZ(12px);
+                   translateZ(16px);
     }
     .isometric-text-card:hover .layer-3 { 
         opacity: var(--layer-opacity); 
@@ -242,7 +178,7 @@ const sizeClasses = {
                    rotateX(-45deg) 
                    rotateY(-45deg) 
                    rotateZ(0deg) 
-                   translateZ(18px);
+                   translateZ(24px);
     }
     .isometric-text-card:hover .layer-4 { 
         opacity: var(--layer-opacity); 
@@ -250,7 +186,7 @@ const sizeClasses = {
                    rotateX(-45deg) 
                    rotateY(-45deg) 
                    rotateZ(0deg) 
-                   translateZ(24px);
+                   translateZ(32px);
     }
     .isometric-text-card:hover .layer-5 { 
         opacity: var(--layer-opacity); 
@@ -258,46 +194,6 @@ const sizeClasses = {
                    rotateX(-45deg) 
                    rotateY(-45deg) 
                    rotateZ(0deg) 
-                   translateZ(30px);
-    }
-    .isometric-text-card:hover .layer-6 { 
-        opacity: var(--layer-opacity); 
-        transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
-                   translateZ(36px);
-    }
-    .isometric-text-card:hover .layer-7 { 
-        opacity: var(--layer-opacity); 
-        transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
-                   translateZ(42px);
-    }
-    .isometric-text-card:hover .layer-8 { 
-        opacity: var(--layer-opacity); 
-        transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
-                   translateZ(48px);
-    }
-    .isometric-text-card:hover .layer-9 { 
-        opacity: var(--layer-opacity); 
-        transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
-                   translateZ(54px);
-    }
-    .isometric-text-card:hover .layer-10 { 
-        opacity: var(--layer-opacity); 
-        transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
-                   translateZ(60px);
+                   translateZ(40px);
     }
 </style>

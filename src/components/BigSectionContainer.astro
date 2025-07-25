@@ -21,7 +21,7 @@ const {
 <section
   id={id}
   class:list={[
-    "section-container flex items-stretch gap-x-4 md:gap-x-8 relative",
+    "section-container flex   relative",
     className,
   ]}
   data-section-observer
@@ -29,8 +29,8 @@ const {
 >
   <div
     class:list={[
-      "section-bar flex-shrink-0 relative transition-all duration-400 ease-in-out border-r-2 border-foreground",
-      initialVariant === "outline" ? "bg-stripe-diagonal" : "bg-foreground"
+      "section-bar flex-shrink-0 relative  duration-400 ease-in-out border-r-2 border-foreground",
+      initialVariant === "outline" ? "" : "bg-foreground"
     ]}
     style="width: clamp(50px, 8vw, 100px);"
   >
@@ -46,7 +46,7 @@ const {
     </h2>
   </div>
 
-  <div class="content-area flex-1 py-12 md:py-20">
+  <div class="">
     <slot />
   </div>
 </section>
@@ -82,13 +82,13 @@ const {
             
             if (bar && title) {
               if (newState === "filled") {
-                bar.classList.remove('bg-stripe-diagonal');
+                bar.classList.remove('');
                 bar.classList.add('bg-foreground');
                 title.classList.remove('text-foreground');
                 title.classList.add('text-background');
               } else {
                 bar.classList.remove('bg-foreground');
-                bar.classList.add('bg-stripe-diagonal');
+                bar.classList.add('');
                 title.classList.remove('text-background');
                 title.classList.add('text-foreground');
               }

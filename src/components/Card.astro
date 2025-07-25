@@ -1,84 +1,25 @@
----
-// --- INTERFACES Y PROPS ---
-interface Props {
-  title?: string;
-  content?: string;
-  corners?: {
-    topLeft?: number;
-    topRight?: number;
-    bottomLeft?: number;
-    bottomRight?: number;
-  };
-}
 
-// --- VALORES POR DEFECTO ---
-const {
-  title = "Card Title",
-  content = "lorem ipsum dolorum amedeus palaris puticos lorem ipsum dolorum amedeus palaris puticos ",
-  corners: customCorners = {},
-} = Astro.props;
+<div class="relative border p-6 overflow-hidden leading-relaxed text-justify">
+  <div
+    class="float-left w-full h-[300px] bg-green-400/50"
+    style="
+      shape-outside: polygon(100% 0, 0 50%, 0 0); 
+    "
+  ></div>
 
-const defaultCorners = {
-  topLeft: 80, // Tamaño de esquina por defecto en píxeles
-  topRight: 120,
-  bottomLeft: 10,
-  bottomRight: 200,
-};
-const corners = { ...defaultCorners, ...customCorners };
 
-// --- LÓGICA CENTRALIZADA ---
-// Se definen los datos de cada esquina para generar los elementos dinámicamente.
-const cornerData = [
-  { key: 'topLeft',     x: -1, y: -1, float: 'float-left',  position: 'top-0 left-0' },
-  { key: 'topRight',    x:  1, y: -1, float: 'float-right', position: 'top-0 right-0' },
-  { key: 'bottomLeft',  x: -1, y:  1, float: 'float-left',  position: 'bottom-0 left-0' },
-  { key: 'bottomRight', x:  1, y:  1, float: 'float-right', position: 'bottom-0 right-0' },
-].map(config => {
-  const size = corners[config.key as keyof typeof corners] || 0;
-  return {
-    ...config,
-    size,
-    // El tamaño del espaciador que empuja el texto.
-    spacerSize: Math.round(size * 0.35),
-  };
-});
----
+  <h4 class="font-bold text-xl mb-2">Hola mundo</h4>
+  <p>
+    Lorem ipsum dolor sit amet consectetur adipisicing elit. Rem aliquam eveniet fugit magni neque eum,
+    quasi nulla consequatur deserunt natus enim. Accusamus natus eum consequatur eligendi ad iure sint
+    impedit. Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis, rem? Lorem ipsum dolor sit
+    amet consectetur adipisicing elit. Placeat libero at doloribus reprehenderit blanditiis!
+  </p>
+    <div
+    class="float-right w-full h-[200px] bg-green-800/90"
+    style="
+      shape-outside: polygon(100% 80%, 0 100%, 100% 100%); 
+    "
+  ></div>
 
-<div class="relative w-full  bg-transparent overflow-hidden">
-
-  <div class="px-4 py-2 flow-root border border-main">
-    
-    {cornerData.map(corner => (
-      corner.size > 0 && (
-        <div
-          class={corner.float}
-          style={`width: ${corner.spacerSize}px; height: ${corner.spacerSize}px;`}
-        ></div>
-      )
-    ))}
-
-    <h3 class="text-4xl font-bold mb-4">{title}</h3>
-    <div class="text-main/90">
-      {content && <p>{content}</p>}
-      <slot />
-    </div>
-  </div>
-
-  {cornerData.map(corner => (
-    corner.size > 0 && (
-      <div
-        class:list={["absolute aspect-square bg-secondary border border-main", corner.position]}
-        style={`
-          --size: ${corner.size}px;
-          width: var(--size);
-          /* 3. La transformación es la parte más importante y delicada. */
-          transform: 
-            translateX(calc(var(--size) / 2 * ${corner.x})) 
-            translateY(calc(var(--size) / 2 * ${corner.y})) 
-            rotate(45deg);
-        `}
-      >
-      </div>
-    )
-  ))}
 </div>
