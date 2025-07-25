@@ -13,7 +13,7 @@ interface DitheredImageProps {
 export default function DitheredImageReact({ 
   src, 
   alt, 
-  className = '', 
+  className, 
   crunch = 'auto',
   cutoff = 0.7,
   mainColor,
