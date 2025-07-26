@@ -1,6 +1,6 @@
 ---
 import Button from './Button.astro';
-import TextGenerateEffect from './TextGenerateEffect.astro';
+import TextGenerate from './TextGenerate.tsx';
 import AsciiGrid from './AsciiGrid.astro';
 import CornersWithCrosses from './CornersWithCrosses.astro';
 ---
@@ -11,7 +11,7 @@ import CornersWithCrosses from './CornersWithCrosses.astro';
         <CornersWithCrosses class="flex flex-col justify-start p-4 pr-10">
             <h1 class="text-4xl md:text-8xl font-bold text-main mb-4 text-balance">Hola, soy Allison Bienvenido a mi sitio</h1>
             <div class="mb-8">
-                <TextGenerateEffect
+                <TextGenerate
                     words="Me gusta crear sitios web que funcionen bien y sean fáciles de usar. Trabajo principalmente con React y TypeScript."
                 />
             </div>
