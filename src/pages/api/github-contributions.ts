@@ -11,7 +11,7 @@ export const GET: APIRoute = async ({ url }) => {
   const username = url.searchParams.get('username') || 'skryensya';
   
   try {
-    console.log(`🔍 Server-side fetching contributions for ${username}...`);
+    // console.log(`🔍 Server-side fetching contributions for ${username}...`);
     
     const githubUrl = `https://github.com/users/${username}/contributions`;
     const res = await fetch(githubUrl, {
@@ -27,7 +27,7 @@ export const GET: APIRoute = async ({ url }) => {
     const html = await res.text();
     const $ = cheerio.load(html);
     
-    console.log(`📄 HTML length: ${html.length} characters`);
+    // console.log(`📄 HTML length: ${html.length} characters`);
     
     const days: ContributionDay[] = [];
     
@@ -56,8 +56,8 @@ export const GET: APIRoute = async ({ url }) => {
       }
     });
 
-    console.log(`📊 Found ${days.length} contribution days`);
-    console.log(`🎯 Sample data:`, days.slice(0, 5));
+    // console.log(`📊 Found ${days.length} contribution days`);
+    // console.log(`🎯 Sample data:`, days.slice(0, 5));
     
     return new Response(JSON.stringify({
       success: true,

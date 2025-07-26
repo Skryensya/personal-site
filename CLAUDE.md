@@ -47,65 +47,141 @@ Centralized configuration including:
 - Social links (LinkedIn: skryensya)
 - Pagination settings (5 items per page)
 
-### Visual Design System
+## Design Philosophy & Strict Guidelines
 
-**Design Philosophy**: Minimalist brutalist aesthetic inspired by stripe.dev - tech-oriented, clean, and functional.
+### **Core Aesthetic: Retro Minimalist Brutalism**
 
-**Core Principles**:
-
-- **Brutalist minimalism**: Bold typography, stark contrasts, geometric layouts
-- **Tech-focused**: Code-like aesthetics, monospace fonts for technical elements
-- **stripe.dev inspiration**: Clean information hierarchy, subtle interactions
-- **Functionality over decoration**: Every element serves a purpose
+**Color System - STRICT ENFORCEMENT**:
+- **ONLY two colors**: `main` and `secondary` (defined by theme)
+- **NEVER use gray tones, accent colors, or additional colors**
+- **Theme-based inversion**: Colors swap between light/dark modes
+- **No gradients except for theme previews**: Only solid colors throughout
 
 **Typography**:
-
 - **Primary**: Space Grotesk (sans-serif) for UI, headings, and body text
-- **Code/Technical**: JetBrains Mono and IBM Plex Mono for technical content and code blocks
-- **Bold hierarchy**: Strong font weights (600) for headings and emphasis
-- **Limited font sizes**: Consistent type scale with clear hierarchy
-- **OpenType features**: Font feature settings enabled for better rendering
-- **Tabular numbers**: Numeric alignment for technical data
+- **Code/Technical**: JetBrains Mono and IBM Plex Mono for technical content
+- **Monospace for technical elements**: Font-mono class for technical aesthetics
+- **Bold hierarchy**: Clear font weight distinctions (normal/semibold/bold)
 
-**Color Palette**:
+**Visual Hierarchy**:
+- **Sharp geometric shapes**: No rounded corners unless absolutely necessary
+- **Technical spacing**: 8px grid system (px-2, py-2, gap-4, etc.)
+- **High contrast borders**: Always `border-main` for clear separation
+- **No shadows or blur effects**: Except for functional dropdowns
 
-- **Bi-color system**: Only two colors throughout the entire site
-- **High contrast pair**: Pure black (#000000) and pure white (#FFFFFF)
-- **Background/Foreground**: One color for background, the other for all text and UI elements
-- **No gray tones**: Eliminate all intermediate grays - strict black/white only
-- **Theme switching**: Dark mode (black bg/white text) and light mode (white bg/black text)
-- **No accent colors**: Remove all other colors (greens, reds, blues) for pure minimalism
+### **Component Architecture Rules**
 
-**Layout & Spacing**:
+**React vs Astro - STRICT SEPARATION**:
+- **Interactive components**: MUST be React (.tsx) with `client:idle` or `client:load`
+- **Static content**: MUST be Astro (.astro) for performance
+- **State management**: Only React components can have useState, useEffect, etc.
+- **Event handlers**: Only in React components
 
-- **Grid-based**: Strict geometric layouts
-- **Generous whitespace**: Breathing room between sections
-- **Sharp edges**: Minimal border radius, prefer rectangles
-- **Technical spacing**: Consistent spacing scale (8px, 16px, 24px, 32px, etc.)
+**React Component Standards**:
+- **Import pattern**: `import * as React from 'react';` then `const { useState, useEffect } = React;`
+- **Floating UI**: Use `@floating-ui/react` for all floating elements (dropdowns, tooltips)
+- **TypeScript interfaces**: Always define props interfaces
+- **Client directives**: Use `client:idle` for non-critical, `client:load` for critical
+
+**Astro Component Standards**:
+- **No JavaScript interactivity**: Pure HTML/CSS generation
+- **Tailwind only**: No `<style>` blocks unless absolutely necessary
+- **Props validation**: Use TypeScript interfaces in frontmatter
+
+### **Styling System - MANDATORY PATTERNS**
+
+**Tailwind Classes - REQUIRED**:
+- **Colors**: ONLY `bg-main`, `bg-secondary`, `text-main`, `text-secondary`, `border-main`
+- **Hover states**: `hover:bg-main hover:text-secondary` pattern
+- **Focus states**: `focus:bg-main focus:text-secondary focus:outline-none`
+- **Typography**: `font-mono text-xs font-semibold` for technical elements
+
+**NO TRANSITIONS OR ANIMATIONS**:
+- **Remove all**: `transition-*`, `duration-*`, `ease-*` classes
+- **Instant state changes**: Immediate hover/focus feedback
+- **No loading spinners**: Use immediate state indicators
+- **No fade effects**: Instant opacity changes only
 
 **Interactive Elements**:
+- **Button pattern**: `bg-secondary border border-main hover:bg-main hover:text-secondary`
+- **Dropdown pattern**: Split button with main action + dropdown arrow
+- **Form elements**: Always `border-main` with `focus:` states
+- **Links**: `hover:bg-main hover:text-secondary` for clear feedback
 
-- **Minimal hover states**: Subtle color changes or underlines
-- **No fancy animations**: Simple, fast transitions
-- **Focus on usability**: Clear click targets and feedback
-- **Technical aesthetics**: Button styles that feel like UI elements
+### **Key Components**
 
-**Components Style**:
+**Modern React Components**:
+- **`HeaderControls.tsx`** - Theme/mode switching with split buttons
+- **`DropdownButton.tsx`** - Reusable split button with Floating UI
+- **`DitheredImageReact.tsx`** - Theme-aware image processing
+- **`GithubGrid.tsx`** - Interactive git contribution display
 
-- **Cards**: Simple borders, no shadows, clean rectangles
-- **Buttons**: Minimal styling, clear hierarchy (primary/secondary)
-- **Navigation**: Clean, horizontal layout inspired by developer tools
-- **Code blocks**: Terminal-like appearance with proper syntax highlighting
-
-### Key Components
-
+**Astro Layout Components**:
 - **`Layout.astro`** - Main layout wrapper with SEO
-- **`Header.astro`** / **`Nav.astro`** - Responsive navigation with mobile menu
-- **`ThemeToggle.astro`** - Dark/light mode switcher
-- **`PostPreview.astro`** / **`ProjectPreview.astro`** - Content previews
-- **`Pagination.astro`** - Collection pagination
+- **`Header.astro`** - Navigation structure (uses React components for interactivity)
+- **`BigSectionContainer.astro`** - Content section wrapper
+- **`Hero.astro`** - Static hero section
 
-### Routing Structure
+### **Theme System**
+
+**Color Variables**:
+- **`--theme-colorful`** and **`--theme-contrasty`** - Theme-specific colors
+- **CSS classes**: `.dark` class toggles for mode switching
+- **Local storage**: Persist theme-id and mode preferences
+
+**Theme Switching**:
+- **Split button pattern**: Main button cycles, dropdown shows all options
+- **Mode detection**: Light/dark/system with proper `prefers-color-scheme` support
+- **Instant switching**: No transitions on theme changes
+
+**Image Processing**:
+- **DitheredImage variants**: Original and theme-swapping versions
+- **Color inversion**: `swapOnTheme` prop for dark mode color reversal
+- **Theme synchronization**: MutationObserver for instant updates
+
+### **Mobile Responsiveness**
+
+**Desktop-first approach**:
+- **Hide secondary actions**: Dropdown arrows hidden on mobile (`hidden md:flex`)
+- **Simplified interactions**: Only main button actions on small screens
+- **Monospace scaling**: Maintain technical aesthetic across devices
+
+**Responsive Patterns**:
+- **Grid layouts**: `grid-cols-1 md:grid-cols-2` for content
+- **Text visibility**: `hidden md:block` for secondary text
+- **Button sizing**: `w-7 h-7 md:w-auto md:h-8` for adaptive sizing
+
+### **Performance & Efficiency**
+
+**React Optimization**:
+- **useCallback**: For functions passed to useEffect dependencies
+- **Minimal re-renders**: Careful dependency arrays
+- **Client directives**: `client:idle` for non-critical components
+
+**Astro Optimization**:
+- **Static generation**: Maximum use of Astro's static capabilities
+- **Component islands**: Isolated React components only where needed
+- **Asset optimization**: Proper image handling and lazy loading
+
+### **Code Patterns - ENFORCE THESE**
+
+**Forbidden Patterns**:
+- ❌ Custom CSS transitions or animations
+- ❌ Additional colors beyond main/secondary
+- ❌ Rounded corners (`rounded-*`) except for functional needs
+- ❌ Box shadows (`shadow-*`) except for floating elements
+- ❌ Intermediate gray colors or opacity variations
+- ❌ JavaScript in Astro components for interactivity
+
+**Required Patterns**:
+- ✅ React for all interactive elements
+- ✅ Tailwind classes only: `bg-main`, `text-secondary`, `border-main`
+- ✅ Split button pattern for actions with options
+- ✅ `font-mono` for technical aesthetics
+- ✅ Floating UI for all positioned elements
+- ✅ Theme-aware color systems
+
+### **Routing Structure**
 
 - **`/`** - Homepage with bio and featured projects
 - **`/projects/`** - Project listings and individual project pages
@@ -114,46 +190,34 @@ Centralized configuration including:
 - **`/_tags/`** - Tag-based filtering
 - **`/rss.xml.js`** - RSS feed generation
 
-### Astro Configuration
+### **Astro Configuration**
 
 - **Site URL**: `https://example.com` (placeholder)
-- **Integrations**: MDX, Sitemap, Tailwind (with `applyBaseStyles: false`)
+- **Integrations**: MDX, Sitemap, React, Tailwind (with `applyBaseStyles: false`)
 - **Vite alias**: `@components` → `/src/components`
 
-### Styling
-
-**IMPORTANT: Always use Tailwind CSS for styling. Avoid custom CSS whenever possible.**
-
-- **Primary approach**: Use Tailwind utility classes for all styling
-- **Global styles** in `src/styles/global.css` with CSS custom properties (only for theme variables)
-- **Tailwind customization** in `tailwind.config.cjs` with custom colors and animations
-- **Typography plugin** with custom "dante" prose styles and tech fonts
-- **Tech font stack** with Space Grotesk, JetBrains Mono, and IBM Plex Mono
-- **OpenType features** enabled for enhanced typography rendering
-- **Mobile-first responsive design**
-- **No custom CSS**: Prefer Tailwind classes over `<style>` blocks in components
-
-### Content Management
+### **Content Management**
 
 - Content files use **Markdown (.md)** and **MDX (.mdx)**
 - **Multilingual**: Site content is in Spanish
 - **SEO optimized** with meta tags, sitemaps, and RSS feeds
 - **Featured content system** for homepage curation
 
-### Utilities
-
-- **`src/utils/data-utils.ts`** - Content sorting, filtering, and tag management
-- **`src/utils/common-utils.ts`** - General utilities (slugify, etc.)
-
-## Important Notes
+### **Development Notes**
 
 - **No linting/testing commands** configured - only core Astro scripts available
 - **Prettier** is configured with Tailwind plugin for code formatting
 - **Site is in early development** (version 0.0.1)
 - **Content is bilingual** (Spanish UI, potentially English content)
 - **Professional focus** on web development and accessibility projects
-- **ALWAYS use Tailwind CSS** for styling - avoid custom CSS and `<style>` blocks whenever possible
 
-## Memories
+## Memories & Preferences
 
-- Improve typing: Ensure all Astro files have proper type definitions
+**Established Patterns**:
+- Split button dropdowns with main action + dropdown arrow
+- Theme system with instant color swapping
+- React components for all interactivity, Astro for static content
+- Strict two-color design system
+- Technical, monospace typography for UI elements
+- No transitions or animations - instant state changes
+- Mobile-first responsive hiding of secondary actions

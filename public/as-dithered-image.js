@@ -27,7 +27,7 @@ function cleanupCache() {
         // Remove oldest entries (simple FIFO)
         const toRemove = entries.slice(0, DITHER_CACHE.size - MAX_CACHE_SIZE);
         toRemove.forEach(([key]) => DITHER_CACHE.delete(key));
-        console.log(`Cache cleanup: removed ${toRemove.length} entries`);
+        // console.log(`Cache cleanup: removed ${toRemove.length} entries`);
     }
 }
 
@@ -61,7 +61,7 @@ class ASDitheredImage extends HTMLElement {
                     imageData: imageData,
                     timestamp: Date.now()
                 });
-                console.log(`Cached dithered image: ${this.current_cache_key_}`);
+                // console.log(`Cached dithered image: ${this.current_cache_key_}`);
                 cleanupCache();
             }
 
@@ -269,7 +269,7 @@ class ASDitheredImage extends HTMLElement {
             )
             .catch(
                 ((decodeError) => {
-                    console.log('Error decoding image: ', decodeError);
+                    // console.log('Error decoding image: ', decodeError);
                     this.original_image_ = undefined;
                 }).bind(this)
             )
@@ -291,7 +291,7 @@ class ASDitheredImage extends HTMLElement {
 
     repaintImage() {
         if (this.is_processing_) {
-            console.log('Already processing, skipping...');
+            // console.log('Already processing, skipping...');
             return;
         }
 
@@ -328,14 +328,14 @@ class ASDitheredImage extends HTMLElement {
 
         // Check if we already have this exact configuration
         if (this.last_draw_state_.cacheKey === cacheKey) {
-            console.log('Same configuration, skipping render');
+            // console.log('Same configuration, skipping render');
             return;
         }
 
         // Check cache first
         const cached = DITHER_CACHE.get(cacheKey);
         if (cached) {
-            console.log(`Using cached dithered image: ${cacheKey}`);
+            // console.log(`Using cached dithered image: ${cacheKey}`);
             this.canvas_.width = calculatedWidth;
             this.canvas_.height = calculatedHeight;
             this.context_.putImageData(cached.imageData, 0, 0);
@@ -354,7 +354,7 @@ class ASDitheredImage extends HTMLElement {
             return;
         }
 
-        console.log(`Computing new dithered image: ${cacheKey}`);
+        // console.log(`Computing new dithered image: ${cacheKey}`);
         this.is_processing_ = true;
         this.current_cache_key_ = cacheKey;
 

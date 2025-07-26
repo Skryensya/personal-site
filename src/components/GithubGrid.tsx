@@ -7,7 +7,7 @@ export interface ContributionDay {
 }
 
 export async function fetchGitHubContributions(username: string = "skryensya"): Promise<ContributionDay[]> {
-  console.log(`🔍 Fetching contributions for ${username} via API...`);
+  // console.log(`🔍 Fetching contributions for ${username} via API...`);
   
   const url = `/api/github-contributions?username=${encodeURIComponent(username)}`;
   const res = await fetch(url);
@@ -22,8 +22,8 @@ export async function fetchGitHubContributions(username: string = "skryensya"): 
     throw new Error(data.error || 'API returned error');
   }
 
-  console.log(`📊 API returned ${data.totalDays} contribution days`);
-  console.log(`🎯 Sample data:`, data.contributions.slice(0, 5));
+  // console.log(`📊 API returned ${data.totalDays} contribution days`);
+  // console.log(`🎯 Sample data:`, data.contributions.slice(0, 5));
   
   return data.contributions;
 }
@@ -126,29 +126,29 @@ export function GithubGrid({ username = "skryensya", className = "" }: GithubGri
         setContributions(data);
         
         // Enhanced console logging with statistics
-        const stats = analyzeContributions(data);
-        console.group(`🔥 GitHub Contributions para ${username}`);
-        console.log('📊 Estadísticas:');
-        console.table({
-          'Total días': data.length,
-          'Días con contribuciones': stats.activeDays,
-          'Total contribuciones': stats.totalContributions,
-          'Promedio diario': stats.averageDaily,
-          'Máximo en un día': stats.maxDaily,
-          'Racha actual': stats.currentStreak
-        });
+        // const stats = analyzeContributions(data);
+        // console.group(`🔥 GitHub Contributions para ${username}`);
+        // console.log('📊 Estadísticas:');
+        // console.table({
+        //   'Total días': data.length,
+        //   'Días con contribuciones': stats.activeDays,
+        //   'Total contribuciones': stats.totalContributions,
+        //   'Promedio diario': stats.averageDaily,
+        //   'Máximo en un día': stats.maxDaily,
+        //   'Racha actual': stats.currentStreak
+        // });
         
-        console.log('\n🏆 Top 10 días con más contribuciones:');
-        console.table(stats.topDays.map(day => ({
-          'Fecha': day.date,
-          'Contribuciones': `${day.count} ${getContributionEmoji(day.count)}`,
-          'Nivel': `${day.level}/4`
-        })));
+        // console.log('\n🏆 Top 10 días con más contribuciones:');
+        // console.table(stats.topDays.map(day => ({
+        //   'Fecha': day.date,
+        //   'Contribuciones': `${day.count} ${getContributionEmoji(day.count)}`,
+        //   'Nivel': `${day.level}/4`
+        // })));
         
-        console.log('\n📅 Vista semanal (últimas 8 semanas):');
-        displayWeeklyView(data);
+        // console.log('\n📅 Vista semanal (últimas 8 semanas):');
+        // displayWeeklyView(data);
         
-        console.groupEnd();
+        // console.groupEnd();
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Error desconocido');
       } finally {
@@ -516,11 +516,12 @@ export function GithubGrid({ username = "skryensya", className = "" }: GithubGri
                 {visibleContributions.map((day) => (
                   <div
                     key={day.date}
-                    className="cursor-pointer transition-opacity duration-200 hover:opacity-75"
+                    className="cursor-pointer hover:opacity-75"
                     style={{
                       width: `${cellSize}px`,
                       height: '12px',
-                      ...getContributionStyle(day.count)
+                      ...getContributionStyle(day.count),
+                      aspectRatio: "1/1"
                     }}
                     onClick={(e) => handleClick(e, day)}
                     aria-hidden="true"

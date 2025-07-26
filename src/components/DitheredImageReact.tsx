@@ -1,4 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import * as React from 'react';
+
+const { useEffect, useRef, useState } = React;
 
 interface DitheredImageProps {
   src: string;
@@ -88,7 +90,7 @@ export default function DitheredImageReact({
     if (darkrgba && lightrgba) {
       element.setAttribute('darkrgba', darkrgba);
       element.setAttribute('lightrgba', lightrgba);
-      console.log('React: Colors updated:', { darkColor, lightColor, darkrgba, lightrgba });
+      // console.log('React: Colors updated:', { darkColor, lightColor, darkrgba, lightrgba });
     }
   };
 
@@ -144,7 +146,7 @@ export default function DitheredImageReact({
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
-          console.log('React: Theme change detected, updating colors');
+          // console.log('React: Theme change detected, updating colors');
           setTimeout(updateDitheredImageColors, 50);
         }
       });
@@ -176,7 +178,7 @@ export default function DitheredImageReact({
         data-secondary-color={secondaryColor}
       />
       <div
-        className={`absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none z-10 transition-opacity duration-300 ${
+        className={`absolute top-0 left-0 w-full h-full bg-cover bg-center bg-no-repeat pointer-events-none z-10 ${
           showOriginal ? 'opacity-75' : 'opacity-0'
         }`}
         style={{
