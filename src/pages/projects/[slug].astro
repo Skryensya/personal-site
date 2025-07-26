@@ -1,9 +1,7 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro'; 
-import ProjectPreview from '../../components/ProjectPreview.astro';
-import { sortItemsByDateDesc } from '../../utils/data-utils';
-import ImageFramed from '../../components/ImageFramed.astro';
+import Layout from '../../layouts/Layout.astro';  
+import { sortItemsByDateDesc } from '../../utils/data-utils'; 
 
 export async function getStaticPaths() {
     const projects = (await getCollection('projects')).sort(sortItemsByDateDesc);
@@ -30,19 +28,19 @@ const { Content } = await project.render();
     <article class="mb-16 sm:mb-24">
         <header class="mb-8">
             <h1 class="text-3xl leading-tight font-serif font-medium sm:text-5xl sm:leading-tight pb-6">{title}</h1>
-        <ImageFramed src={src} alt={alt} color={color}  size="6px" radius="4px" isCover={true}  caption={caption}  />
+        <!-- <ImageFramed src={src} alt={alt} color={color}  size="6px" radius="4px" isCover={true}  caption={caption}  /> -->
         </header>
         <div class="max-w-none prose prose-dante sm:prose-lg">
             <Content />
         </div>
     </article>
     {
-        (prevProject || nextProject) && (
-            <div class="my-16 sm:my-24 ">
-                <h2 class="mb-12 text-xl font-serif italic sm:mb-16 sm:text-2xl">Sigue leyendo</h2>
-                {nextProject && <ProjectPreview project={nextProject} class="mb-10 sm:mb-12" headingLevel="h3" />}
-                {prevProject && <ProjectPreview project={prevProject} class="mb-10 sm:mb-12" headingLevel="h3" />}
-            </div>
-        )
+        // (prevProject || nextProject) && (
+        //     <div class="my-16 sm:my-24 ">
+        //         <h2 class="mb-12 text-xl font-serif italic sm:mb-16 sm:text-2xl">Sigue leyendo</h2>
+        //         {nextProject && <ProjectPreview project={nextProject} class="mb-10 sm:mb-12" headingLevel="h3" />}
+        //         {prevProject && <ProjectPreview project={prevProject} class="mb-10 sm:mb-12" headingLevel="h3" />}
+        //     </div>
+        // )
     }
 </Layout>
