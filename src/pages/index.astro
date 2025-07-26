@@ -6,8 +6,7 @@ import Hero from '../components/Hero.astro';
 import BigSectionContainer from '../components/BigSectionContainer.astro';
 import CornersWithCrosses from '../components/CornersWithCrosses.astro';
 import GithubGrid from '@/components/GithubGrid';
-import DitheredImageReact from '@/components/DitheredImageReact';
-import DitheredImageReact2 from '@/components/DitheredImageReact2';
+import DitheredImageReact from '@/components/DitheredImageReact'; 
 import { CalendarView } from "@/components/CalendarView"; 
 ---
 
@@ -60,12 +59,9 @@ import { CalendarView } from "@/components/CalendarView";
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 <div class="w-full max-w-md mx-auto aspect-square">
                     <h3 class="text-lg font-semibold mb-4 text-center">Original</h3>
-                    <DitheredImageReact src="/Allison.jpeg" alt="Perfil de Allison Peña" className="w-full h-full" client:idle />
+                    <DitheredImageReact src="/Allison.jpeg" alt="Perfil de Allison Peña" className="w-full h-full" client:load />
                 </div>
-                <div class="w-full max-w-md mx-auto aspect-square">
-                    <h3 class="text-lg font-semibold mb-4 text-center">Invertido</h3>
-                    <DitheredImageReact2 src="/Allison.jpeg" alt="Perfil de Allison Peña (Invertido)" className="w-full h-full" swapOnTheme={true} client:idle />
-                </div>
+           
             </div> 
         </div>
     </BigSectionContainer>
