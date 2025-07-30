@@ -299,7 +299,7 @@ export function CalendarView({ username = "skryensya", className = "" }: Calenda
               {calendarDays.map((day, index) => (
                 <div
                   key={index}
-                  className={`h-8 w-8 aspect-square cursor-pointer  duration-200 hover:opacity-75 ${
+                  className={`h-8 w-8 aspect-square cursor-pointer hover:opacity-75 ${
                     !day.isCurrentMonth ? 'opacity-30' : ''
                   }`}
                   style={{

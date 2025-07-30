@@ -389,7 +389,7 @@ export function GithubGrid({ username = "skryensya", className = "" }: GithubGri
                 <div className="grid gap-1"
                      style={{
                        gridTemplateColumns: `repeat(${visibleWeeks}, ${cellSize}px)`,
-                       gridTemplateRows: 'repeat(7, 12px)',
+                       gridTemplateRows: `repeat(7, ${cellSize}px)`,
                        gridAutoFlow: 'column'
                      }}>
                   {Array.from({ length: totalCells }).map((_, i) => {
@@ -400,7 +400,7 @@ export function GithubGrid({ username = "skryensya", className = "" }: GithubGri
                         key={i} 
                         style={{ 
                           width: `${cellSize}px`,
-                          height: '12px',
+                          height: `${cellSize}px`,
                           backgroundColor: 'color-mix(in srgb, var(--color-main) 20%, transparent)',
                           animation: `wave-opacity 2s ease-in-out infinite`,
                           animationDelay: `${delay}s`
@@ -510,7 +510,7 @@ export function GithubGrid({ username = "skryensya", className = "" }: GithubGri
               <div className="grid gap-1"
                    style={{
                      gridTemplateColumns: `repeat(${visibleWeeks}, ${cellSize}px)`,
-                     gridTemplateRows: 'repeat(7, 12px)',
+                     gridTemplateRows: `repeat(7, ${cellSize}px)`,
                      gridAutoFlow: 'column'
                    }}>
                 {visibleContributions.map((day) => (
@@ -519,9 +519,8 @@ export function GithubGrid({ username = "skryensya", className = "" }: GithubGri
                     className="cursor-pointer hover:opacity-75"
                     style={{
                       width: `${cellSize}px`,
-                      height: '12px',
-                      ...getContributionStyle(day.count),
-                      aspectRatio: "1/1"
+                      height: `${cellSize}px`,
+                      ...getContributionStyle(day.count)
                     }}
                     onClick={(e) => handleClick(e, day)}
                     aria-hidden="true"

@@ -83,7 +83,7 @@ export default function DropdownButton({
                     type="button"
                     onClick={handleMainClick}
                     disabled={disabled}
-                    className="flex items-center justify-center px-3 py-2 bg-secondary border border-main hover:bg-main group   disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                    className="flex items-center justify-center px-3 py-2 bg-secondary border border-main hover:bg-main hover:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                 >
                     {children}
                 </button>
@@ -94,13 +94,13 @@ export default function DropdownButton({
                     type="button"
                     onClick={handleDropdownClick}
                     disabled={disabled}
-                    className="hidden md:flex items-center justify-center w-8 bg-secondary border border-main border-l-0 hover:bg-main group   disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+                    className="hidden md:flex items-center justify-center w-8 bg-secondary border border-main border-l-0 hover:bg-main hover:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                     aria-haspopup="true"
                     aria-expanded={isOpen}
                     {...getReferenceProps()}
                 >
                     {/* Icono de flecha */}
-                    <svg className={`w-4 h-4   ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className={`w-4 h-4 text-main group-hover:text-secondary ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>

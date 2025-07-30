@@ -1,59 +1,67 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import siteConfig from '../data/site-config';
-import MarqueeSection from '../components/MarqueeSection.astro';
+import MarqueeSection from '../components/MarqueeSection';
 import Hero from '../components/Hero.astro';
 import BigSectionContainer from '../components/BigSectionContainer.astro';
 import CornersWithCrosses from '../components/CornersWithCrosses.astro';
 import GithubGrid from '@/components/GithubGrid';
 import DitheredImageReact from '@/components/DitheredImageReact';  
+import FullWidthContainer from '@/components/FullWidthContainer.astro';
+import ColumnHeader from '@/components/ColumnHeader.astro';
+import ProjectsSection from '@/components/ProjectsSection.astro';
 ---
 
 <Layout description={siteConfig.description} image={siteConfig.image}>
     <Hero />
 
-    <CornersWithCrosses class="my-8 max-w-full overflow-hidden">
-        <MarqueeSection
-            links={[
-                { href: 'https://react.dev/', text: 'React' },
-                { href: 'https://www.typescriptlang.org/', text: 'TypeScript' },
-                { href: 'https://nodejs.org/', text: 'Node.js' },
-                { href: 'https://astro.build/', text: 'Astro' },
-                { href: 'https://www.postgresql.org/', text: 'PostgreSQL' },
-                { href: 'https://aws.amazon.com/', text: 'AWS' },
-                { href: 'https://tailwindcss.com/', text: 'Tailwind CSS' },
-                { href: 'https://www.figma.com/', text: 'Figma' },
-                { href: 'https://www.framer.com/', text: 'Framer' },
-                { href: 'https://vercel.com/', text: 'Vercel' },
-                { href: 'https://www.docker.com/', text: 'Docker' },
-                { href: 'https://kubernetes.io/', text: 'Kubernetes' },
-                { href: 'https://www.jenkins.io/', text: 'Jenkins' },
-                { href: 'https://www.ansible.com/', text: 'Ansible' },
-                { href: 'https://www.terraform.io/', text: 'Terraform' },
-                { href: 'https://www.elastic.co/', text: 'Elasticsearch' },
-                { href: 'https://redis.io/', text: 'Redis' },
-                { href: 'https://graphql.org/', text: 'GraphQL' },
-                { href: 'https://www.apollographql.com/', text: 'Apollo' },
-                { href: 'https://www.prisma.io/', text: 'Prisma' },
-                { href: 'https://nextjs.org/', text: 'Next.js' },
-                { href: 'https://vitejs.dev/', text: 'Vite' },
-                { href: 'https://jestjs.io/', text: 'Jest' },
-                { href: 'https://testing-library.com/', text: 'Testing Library' },
-                { href: 'https://playwright.dev/', text: 'Playwright' },
-                { href: 'https://storybook.js.org/', text: 'Storybook' },
-                { href: 'https://www.gatsbyjs.com/', text: 'Gatsby' },
-                { href: 'https://www.electronjs.org/', text: 'Electron' },
-                { href: 'https://www.djangoproject.com/', text: 'Django' },
-                { href: 'https://rubyonrails.org/', text: 'Ruby on Rails' }
-            ]}
-        />
-    </CornersWithCrosses>
- 
+    <ColumnHeader title={"tecnología"} />
+    <!-- <FullWidthContainer> -->
+     <CornersWithCrosses>
+        
+            <MarqueeSection
+                client:load
+                links={[
+                    { href: 'https://react.dev/', text: 'React' },
+                    { href: 'https://www.typescriptlang.org/', text: 'TypeScript' },
+                    { href: 'https://nodejs.org/', text: 'Node.js' },
+                    { href: 'https://astro.build/', text: 'Astro' },
+                    { href: 'https://www.postgresql.org/', text: 'PostgreSQL' },
+                    { href: 'https://aws.amazon.com/', text: 'AWS' },
+                    { href: 'https://tailwindcss.com/', text: 'Tailwind CSS' },
+                    { href: 'https://www.figma.com/', text: 'Figma' },
+                    { href: 'https://www.framer.com/', text: 'Framer' },
+                    { href: 'https://vercel.com/', text: 'Vercel' },
+                    { href: 'https://www.docker.com/', text: 'Docker' },
+                    { href: 'https://kubernetes.io/', text: 'Kubernetes' },
+                    { href: 'https://www.jenkins.io/', text: 'Jenkins' },
+                    { href: 'https://www.ansible.com/', text: 'Ansible' },
+                    { href: 'https://www.terraform.io/', text: 'Terraform' },
+                    { href: 'https://www.elastic.co/', text: 'Elasticsearch' },
+                    { href: 'https://redis.io/', text: 'Redis' },
+                    { href: 'https://graphql.org/', text: 'GraphQL' },
+                    { href: 'https://www.apollographql.com/', text: 'Apollo' },
+                    { href: 'https://www.prisma.io/', text: 'Prisma' },
+                    { href: 'https://nextjs.org/', text: 'Next.js' },
+                    { href: 'https://vitejs.dev/', text: 'Vite' },
+                    { href: 'https://jestjs.io/', text: 'Jest' },
+                    { href: 'https://testing-library.com/', text: 'Testing Library' },
+                    { href: 'https://playwright.dev/', text: 'Playwright' },
+                    { href: 'https://storybook.js.org/', text: 'Storybook' },
+                    { href: 'https://www.gatsbyjs.com/', text: 'Gatsby' },
+                    { href: 'https://www.electronjs.org/', text: 'Electron' },
+                    { href: 'https://www.djangoproject.com/', text: 'Django' },
+                    { href: 'https://rubyonrails.org/', text: 'Ruby on Rails' }
+                ]}
+            />
+
+     </CornersWithCrosses>
+    <!-- </FullWidthContainer> -->
 
     <GithubGrid client:load />
     <!-- <CalendarView client:idle /> -->
 
-    <BigSectionContainer title="Sobre mí" id="about" >
+    <BigSectionContainer title="Sobre mí"  >
         <div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 <div class="w-full max-w-md mx-auto aspect-square">
@@ -64,4 +72,6 @@ import DitheredImageReact from '@/components/DitheredImageReact';
             </div> 
         </div>
     </BigSectionContainer>
+
+    <ProjectsSection />
 </Layout>

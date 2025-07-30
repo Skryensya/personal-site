@@ -7,7 +7,6 @@ const { text } = Astro.props;
 const slug = text.toLowerCase().replace(/\s+/g, '-');
 ---
 
-<a href={`/tags/${slug}`} class="relative inline-block bg-secondary text-main px-4 py-2 text-sm font-mono font-medium border-2 border-main hover:bg-main hover:text-secondary overflow-hidden group">
+<a href={`/tags/${slug}`} class="inline-block bg-main text-secondary px-3 py-1 !text-xs font-mono font-medium border-2 border-main hover:bg-secondary hover:text-main focus:bg-secondary focus:text-main focus:outline-none">
   #{text}
-  <div class="absolute bottom-0 right-0 w-0 h-0 border-l-[12px] border-l-transparent border-b-[12px] border-b-main group-hover:border-b-secondary"></div>
 </a>

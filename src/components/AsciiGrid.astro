@@ -139,6 +139,12 @@ const {
         let patternSwitchTime: number = 0;
         let transitionProgress: number = 0;
         let isTransitioning: boolean = false;
+        
+        // Estado para transición suave al salir el mouse
+        let isTransitioningToAnimation: boolean = false;
+        let transitionToAnimationProgress: number = 0;
+        let transitionStartMouseX: number = 0;
+        let transitionStartMouseY: number = 0;
 
         // Cache para colores del tema
         let cachedTextColor: string = '#000000';
@@ -252,9 +258,12 @@ const {
                 });
 
                 canvas.addEventListener('mouseleave', () => {
-                    mouseX = -1000;
-                    mouseY = -1000;
+                    // Iniciar transición suave de vuelta a la animación
                     isMouseHovering = false;
+                    isTransitioningToAnimation = true;
+                    transitionToAnimationProgress = 0;
+                    transitionStartMouseX = mouseX;
+                    transitionStartMouseY = mouseY;
                 });
 
                 canvas.addEventListener('mouseenter', (e: MouseEvent) => {
@@ -262,6 +271,9 @@ const {
                     mouseX = e.clientX - rect.left;
                     mouseY = e.clientY - rect.top;
                     isMouseHovering = true;
+                    // Cancelar cualquier transición en progreso
+                    isTransitioningToAnimation = false;
+                    transitionToAnimationProgress = 0;
                 });
             }
 
@@ -321,8 +333,33 @@ const {
                 rectUpdateTime = currentTime;
             }
             
+            // Handle smooth transition back to animation when mouse leaves
+            if (isTransitioningToAnimation) {
+                transitionToAnimationProgress += deltaTime / 800; // 800ms transition duration
+                
+                // Calculate target position from animation pattern
+                const centerX = cachedRect.width * 0.5;
+                const centerY = cachedRect.height * 0.5;
+                const scale = 100;
+                const targetPos = getPatternPosition(currentPattern, centerX, centerY, scale, animationTime);
+                
+                // Smooth easing function (ease-out cubic)
+                const t = Math.min(transitionToAnimationProgress, 1);
+                const easeProgress = 1 - Math.pow(1 - t, 3);
+                
+                // Interpolate from start position to target animation position
+                mouseX = transitionStartMouseX + (targetPos.x - transitionStartMouseX) * easeProgress;
+                mouseY = transitionStartMouseY + (targetPos.y - transitionStartMouseY) * easeProgress;
+                
+                // End transition when complete
+                if (transitionToAnimationProgress >= 1) {
+                    isTransitioningToAnimation = false;
+                    transitionToAnimationProgress = 0;
+                }
+            }
+            
             // Multiple animation patterns
-            if (!isMouseHovering) {
+            if (!isMouseHovering && !isTransitioningToAnimation) {
                 animationTime += deltaTime * 0.0008; // Slow animation speed
                 patternSwitchTime += deltaTime;
                 
@@ -375,9 +412,14 @@ const {
                 mouseY = newMouseY;
             }
             
-            // Only update if mouse moved significantly
+            // Continue animation time even during transition to keep patterns moving
+            if (!isMouseHovering) {
+                animationTime += deltaTime * 0.0008;
+            }
+            
+            // Only update if mouse moved significantly or if we're in transition
             const mouseMoved = Math.abs(mouseX - lastMouseX) > 1 || Math.abs(mouseY - lastMouseY) > 1;
-            if (!mouseMoved && isMouseHovering) {
+            if (!mouseMoved && isMouseHovering && !isTransitioningToAnimation) {
                 animationId = requestAnimationFrame(renderFrame);
                 return;
             }
