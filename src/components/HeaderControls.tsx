@@ -74,25 +74,34 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
         [currentMode]
     );
 
-    // Apply mode to document
+    // Apply mode to document with View Transitions
     const applyMode = useCallback(
         (mode: Mode) => {
-            let resolvedMode = mode;
-            if (mode === 'system') {
-                resolvedMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            }
+            const applyThemeChange = () => {
+                let resolvedMode = mode;
+                if (mode === 'system') {
+                    resolvedMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                }
 
-            const isDark = resolvedMode === 'dark';
+                const isDark = resolvedMode === 'dark';
 
-            // Use the official theme system
-            applyTheme(currentTheme.id, isDark, mode);
+                // Use the official theme system
+                applyTheme(currentTheme.id, isDark, mode);
 
-            try {
-                localStorage.setItem('theme-mode-preference', mode);
-                localStorage.setItem('theme-mode', resolvedMode);
-                (window as any).__APPLIED_MODE__ = mode;
-            } catch (error) {
-                console.warn('Failed to save mode:', error);
+                try {
+                    localStorage.setItem('theme-mode-preference', mode);
+                    localStorage.setItem('theme-mode', resolvedMode);
+                    (window as any).__APPLIED_MODE__ = mode;
+                } catch (error) {
+                    console.warn('Failed to save mode:', error);
+                }
+            };
+
+            // Use View Transitions API if available
+            if ('startViewTransition' in document && (document as any).startViewTransition) {
+                (document as any).startViewTransition(applyThemeChange);
+            } else {
+                applyThemeChange();
             }
         },
         [currentTheme]
@@ -148,19 +157,28 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
     }, [currentTheme, themes, applyThemeWithMode]);
 
     const nextTheme = useCallback(() => {
-        const currentIndex = themes.findIndex((t) => t.id === currentTheme.id);
-        const nextIndex = (currentIndex + 1) % themes.length;
-        const newTheme = themes[nextIndex];
+        const applyThemeChange = () => {
+            const currentIndex = themes.findIndex((t) => t.id === currentTheme.id);
+            const nextIndex = (currentIndex + 1) % themes.length;
+            const newTheme = themes[nextIndex];
 
-        setCurrentTheme(newTheme);
-        applyThemeWithMode(newTheme);
-        
-        // Save to localStorage and update window variables
-        try {
-            localStorage.setItem('theme-id', newTheme.id);
-            (window as any).__APPLIED_THEME__ = newTheme.id;
-        } catch (error) {
-            console.warn('Failed to save theme:', error);
+            setCurrentTheme(newTheme);
+            applyThemeWithMode(newTheme);
+            
+            // Save to localStorage and update window variables
+            try {
+                localStorage.setItem('theme-id', newTheme.id);
+                (window as any).__APPLIED_THEME__ = newTheme.id;
+            } catch (error) {
+                console.warn('Failed to save theme:', error);
+            }
+        };
+
+        // Use View Transitions API if available
+        if ('startViewTransition' in document && (document as any).startViewTransition) {
+            (document as any).startViewTransition(applyThemeChange);
+        } else {
+            applyThemeChange();
         }
     }, [currentTheme, themes, applyThemeWithMode]);
 
@@ -260,16 +278,25 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
 
     // Handle theme change (main button action) - uses the nextTheme function defined above
 
-    // Handle theme selection from dropdown
+    // Handle theme selection from dropdown with View Transitions
     const handleThemeSelect = (theme: Theme) => {
-        setCurrentTheme(theme);
-        applyThemeWithMode(theme);
-        
-        // Save to localStorage
-        try {
-            localStorage.setItem('theme-id', theme.id);
-        } catch (error) {
-            console.warn('Failed to save theme:', error);
+        const applyThemeChange = () => {
+            setCurrentTheme(theme);
+            applyThemeWithMode(theme);
+            
+            // Save to localStorage
+            try {
+                localStorage.setItem('theme-id', theme.id);
+            } catch (error) {
+                console.warn('Failed to save theme:', error);
+            }
+        };
+
+        // Use View Transitions API if available
+        if ('startViewTransition' in document && (document as any).startViewTransition) {
+            (document as any).startViewTransition(applyThemeChange);
+        } else {
+            applyThemeChange();
         }
     };
 
