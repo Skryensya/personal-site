@@ -45,7 +45,7 @@ class ASDitheredImage extends HTMLElement {
         this.worker_ = new Worker(workerPath);
         this.cutoff_ = 0.5;
         this.darkrgba_ = [0, 0, 0, 255];
-        this.lightrgba_ = [255, 255, 255, 255];
+        this.lightrgba_ = [255, 255, 255, 0];
 
         // Cache-related properties
         this.current_cache_key_ = null;
