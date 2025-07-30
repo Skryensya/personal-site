@@ -274,11 +274,6 @@ export default function DitheredImageReact({
       {/* Hover and click overlay using pseudo-element */}
       <style dangerouslySetInnerHTML={{
         __html: `
-          .dithered-container-${src.replace(/[^a-zA-Z0-9]/g, '')} {
-            transition: background-color 0.3s ease, 
-                       border-color 0.3s ease,
-                       color 0.3s ease;
-          }
           .dithered-container-${src.replace(/[^a-zA-Z0-9]/g, '')} canvas,
           .dithered-container-${src.replace(/[^a-zA-Z0-9]/g, '')} img {
             user-select: none;
