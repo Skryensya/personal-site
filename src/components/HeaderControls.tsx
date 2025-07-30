@@ -50,13 +50,13 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
                     return appliedMode as Mode;
                 }
                 
-                // Fallback to localStorage
-                return (localStorage.getItem('theme-mode-preference') as Mode) || 'light';
+                // Fallback to localStorage, default to system
+                return (localStorage.getItem('theme-mode-preference') as Mode) || 'system';
             } catch {
-                return 'light';
+                return 'system';
             }
         }
-        return 'light';
+        return 'system';
     });
 
     // Apply theme to document using the official theme system
@@ -235,11 +235,18 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
         }
     };
 
-    // Handle mode toggle (main button action)
+    // Handle mode toggle (main button action) - only toggles between light and dark
     const toggleMode = () => {
-        const modes: Mode[] = ['light', 'dark', 'system'];
-        const currentIndex = modes.indexOf(currentMode);
-        const nextMode = modes[(currentIndex + 1) % modes.length];
+        let nextMode: Mode;
+        
+        if (currentMode === 'system') {
+            // If in system mode, detect current preference and switch to the opposite
+            const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            nextMode = isSystemDark ? 'light' : 'dark';
+        } else {
+            // Toggle between light and dark
+            nextMode = currentMode === 'light' ? 'dark' : 'light';
+        }
 
         setCurrentMode(nextMode);
         applyMode(nextMode);

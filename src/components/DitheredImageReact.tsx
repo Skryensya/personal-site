@@ -68,6 +68,17 @@ export default function DitheredImageReact({
       element.setAttribute('lightrgba', lightrgba);
       // console.log('React: Color updated:', { themeColor, darkrgba });
     }
+
+    // Set canvas background to theme color to avoid white flash
+    setTimeout(() => {
+      const canvas = element.shadowRoot?.querySelector('canvas');
+      if (canvas) {
+        const computedStyle = getComputedStyle(document.documentElement);
+        let themeColorful = computedStyle.getPropertyValue('--theme-colorful').trim();
+        const bgColor = themeColorful || '#9bbc0f';
+        canvas.style.background = bgColor;
+      }
+    }, 10);
   };
 
   // Get cache key - simplified since we use a consistent dark color
@@ -263,6 +274,11 @@ export default function DitheredImageReact({
       {/* Hover and click overlay using pseudo-element */}
       <style dangerouslySetInnerHTML={{
         __html: `
+          .dithered-container-${src.replace(/[^a-zA-Z0-9]/g, '')} {
+            transition: background-color 0.3s ease, 
+                       border-color 0.3s ease,
+                       color 0.3s ease;
+          }
           .dithered-container-${src.replace(/[^a-zA-Z0-9]/g, '')} canvas,
           .dithered-container-${src.replace(/[^a-zA-Z0-9]/g, '')} img {
             user-select: none;
@@ -276,6 +292,8 @@ export default function DitheredImageReact({
             user-drag: none;
             draggable: false;
             pointer-events: none;
+            background: transparent !important;
+            transition: opacity 0.3s ease;
           }
           .dithered-container-${src.replace(/[^a-zA-Z0-9]/g, '')}::after {
             content: '';
@@ -295,16 +313,16 @@ export default function DitheredImageReact({
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
-            transition: opacity 0.2s ease;
+            transition: opacity 0.2s ease, background-image 0.3s ease;
             transition-delay: 0s;
           }
           .dithered-container-${src.replace(/[^a-zA-Z0-9]/g, '')}:hover:not(.show-original)::after {
             opacity: 0.7;
-            transition-delay: 1s;
+            transition-delay: 0.8s;
           }
           .dithered-container-${src.replace(/[^a-zA-Z0-9]/g, '')}.show-original::after {
             opacity: 0.7;
-            transition-delay: 0s;
+            transition: opacity 0.2s ease 0s !important;
           }
         `
       }} />
