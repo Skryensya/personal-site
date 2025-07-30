@@ -1,5 +1,6 @@
 import * as React from 'react';
 import DropdownButton, { DropdownItem, DropdownSeparator } from './DropdownButton';
+import { applyTheme } from '../data/themes.js';
 
 const { useState, useEffect, useCallback } = React;
 
@@ -18,59 +19,150 @@ interface HeaderControlsProps {
 type Mode = 'light' | 'dark' | 'system';
 
 export default function HeaderControls({ themes }: HeaderControlsProps) {
-    const [currentTheme, setCurrentTheme] = useState<Theme>(themes[0]);
-    const [currentMode, setCurrentMode] = useState<Mode>('light');
+    // Initialize state by syncing with what Layout.astro has already applied
+    const [currentTheme, setCurrentTheme] = useState<Theme>(() => {
+        if (typeof window !== 'undefined') {
+            try {
+                // First try to get what Layout.astro has already applied
+                const appliedTheme = (window as any).__APPLIED_THEME__;
+                if (appliedTheme) {
+                    const theme = themes.find((t) => t.id === appliedTheme);
+                    if (theme) return theme;
+                }
+                
+                // Fallback to localStorage
+                const savedThemeId = localStorage.getItem('theme-id');
+                const theme = themes.find((t) => t.id === savedThemeId);
+                return theme || themes[0];
+            } catch {
+                return themes[0];
+            }
+        }
+        return themes[0];
+    });
+    
+    const [currentMode, setCurrentMode] = useState<Mode>(() => {
+        if (typeof window !== 'undefined') {
+            try {
+                // First try to get what Layout.astro has already applied
+                const appliedMode = (window as any).__APPLIED_MODE__;
+                if (appliedMode) {
+                    return appliedMode as Mode;
+                }
+                
+                // Fallback to localStorage
+                return (localStorage.getItem('theme-mode-preference') as Mode) || 'light';
+            } catch {
+                return 'light';
+            }
+        }
+        return 'light';
+    });
 
-    // Apply theme to document
-    const applyTheme = useCallback((theme: Theme) => {
-        document.documentElement.setAttribute('data-theme-id', theme.id);
-        document.documentElement.style.setProperty('--theme-colorful', theme.colorful);
-        document.documentElement.style.setProperty('--theme-contrasty', theme.contrasty);
+    // Apply theme to document using the official theme system
+    const applyThemeWithMode = useCallback(
+        (theme: Theme) => {
+            // Only apply if the theme is actually different
+            const currentAppliedTheme = document.documentElement.getAttribute('data-theme');
+            if (currentAppliedTheme === theme.id) {
+                return; // Theme is already applied, skip
+            }
+            
+            const isDark = document.documentElement.classList.contains('dark');
+            applyTheme(theme.id, isDark, currentMode);
+        },
+        [currentMode]
+    );
 
+    // Apply mode to document
+    const applyMode = useCallback(
+        (mode: Mode) => {
+            let resolvedMode = mode;
+            if (mode === 'system') {
+                resolvedMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+            }
+
+            const isDark = resolvedMode === 'dark';
+
+            // Use the official theme system
+            applyTheme(currentTheme.id, isDark, mode);
+
+            try {
+                localStorage.setItem('theme-mode-preference', mode);
+                localStorage.setItem('theme-mode', resolvedMode);
+                (window as any).__APPLIED_MODE__ = mode;
+            } catch (error) {
+                console.warn('Failed to save mode:', error);
+            }
+        },
+        [currentTheme]
+    );
+
+    // Sync with Astro page transitions
+    useEffect(() => {
+        const handlePageLoad = () => {
+            // Sync React state with what Layout.astro has applied
+            try {
+                const appliedTheme = (window as any).__APPLIED_THEME__;
+                const appliedMode = (window as any).__APPLIED_MODE__;
+                
+                if (appliedTheme) {
+                    const theme = themes.find((t) => t.id === appliedTheme);
+                    if (theme && theme.id !== currentTheme.id) {
+                        setCurrentTheme(theme);
+                    }
+                }
+                
+                if (appliedMode && appliedMode !== currentMode) {
+                    setCurrentMode(appliedMode as Mode);
+                }
+            } catch (error) {
+                console.warn('Failed to sync theme on page load:', error);
+            }
+        };
+
+        // Handle Astro page transitions
+        document.addEventListener('astro:page-load', handlePageLoad);
+        
+        return () => {
+            document.removeEventListener('astro:page-load', handlePageLoad);
+        };
+    }, [themes, currentTheme.id, currentMode]);
+
+    // Theme navigation functions - defined early for keyboard shortcuts
+    const prevTheme = useCallback(() => {
+        const currentIndex = themes.findIndex((t) => t.id === currentTheme.id);
+        const prevIndex = currentIndex === 0 ? themes.length - 1 : currentIndex - 1;
+        const newTheme = themes[prevIndex];
+
+        setCurrentTheme(newTheme);
+        applyThemeWithMode(newTheme);
+        
+        // Save to localStorage and update window variables
         try {
-            localStorage.setItem('theme-id', theme.id);
+            localStorage.setItem('theme-id', newTheme.id);
+            (window as any).__APPLIED_THEME__ = newTheme.id;
         } catch (error) {
             console.warn('Failed to save theme:', error);
         }
-    }, []);
+    }, [currentTheme, themes, applyThemeWithMode]);
 
-    // Apply mode to document
-    const applyMode = useCallback((mode: Mode) => {
-        let resolvedMode = mode;
-        if (mode === 'system') {
-            resolvedMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        }
+    const nextTheme = useCallback(() => {
+        const currentIndex = themes.findIndex((t) => t.id === currentTheme.id);
+        const nextIndex = (currentIndex + 1) % themes.length;
+        const newTheme = themes[nextIndex];
 
-        // Apply the dark class for styling
-        document.documentElement.classList.toggle('dark', resolvedMode === 'dark');
-        // Also set the data-theme attribute for compatibility
-        document.documentElement.setAttribute('data-theme', resolvedMode);
-
+        setCurrentTheme(newTheme);
+        applyThemeWithMode(newTheme);
+        
+        // Save to localStorage and update window variables
         try {
-            localStorage.setItem('theme-mode-preference', mode);
-            localStorage.setItem('theme-mode', resolvedMode);
+            localStorage.setItem('theme-id', newTheme.id);
+            (window as any).__APPLIED_THEME__ = newTheme.id;
         } catch (error) {
-            console.warn('Failed to save mode:', error);
+            console.warn('Failed to save theme:', error);
         }
-    }, []);
-
-    // Initialize from localStorage
-    useEffect(() => {
-        try {
-            const savedThemeId = localStorage.getItem('theme-id') || themes[0].id;
-            const savedMode = (localStorage.getItem('theme-mode-preference') as Mode) || 'light';
-
-            const theme = themes.find((t) => t.id === savedThemeId) || themes[0];
-            setCurrentTheme(theme);
-            setCurrentMode(savedMode);
-
-            // Apply initial theme and mode
-            applyTheme(theme);
-            applyMode(savedMode);
-        } catch (error) {
-            console.warn('Failed to load theme from storage:', error);
-        }
-    }, [themes, applyTheme, applyMode]);
+    }, [currentTheme, themes, applyThemeWithMode]);
 
     // Listen for system preference changes when in system mode
     useEffect(() => {
@@ -84,6 +176,37 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
             return () => mediaQuery.removeEventListener('change', handleChange);
         }
     }, [currentMode, applyMode]);
+
+    // Keyboard shortcuts for theme navigation
+    useEffect(() => {
+        const handleKeyDown = (event: KeyboardEvent) => {
+            // Only trigger if no modifier keys are pressed and not in an input
+            if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
+                return;
+            }
+
+            // Don't trigger if user is typing in an input, textarea, or contenteditable
+            const target = event.target as HTMLElement;
+            if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.contentEditable === 'true') {
+                return;
+            }
+
+            // Use event.code for more reliable bracket detection
+            switch (event.code) {
+                case 'BracketLeft': // [
+                    event.preventDefault();
+                    prevTheme();
+                    break;
+                case 'BracketRight': // ]
+                    event.preventDefault();
+                    nextTheme();
+                    break;
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [prevTheme, nextTheme]);
 
     // Get mode icon
     const getModeIcon = (mode: Mode, className = 'w-3.5 h-3.5') => {
@@ -128,30 +251,19 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
         applyMode(mode);
     };
 
-    // Handle theme change (main button action)
-    const nextTheme = () => {
-        const currentIndex = themes.findIndex((t) => t.id === currentTheme.id);
-        const nextIndex = (currentIndex + 1) % themes.length;
-        const newTheme = themes[nextIndex];
-
-        setCurrentTheme(newTheme);
-        applyTheme(newTheme);
-    };
+    // Handle theme change (main button action) - uses the nextTheme function defined above
 
     // Handle theme selection from dropdown
     const handleThemeSelect = (theme: Theme) => {
         setCurrentTheme(theme);
-        applyTheme(theme);
-    };
-
-    // Theme navigation functions
-    const prevTheme = () => {
-        const currentIndex = themes.findIndex((t) => t.id === currentTheme.id);
-        const prevIndex = currentIndex === 0 ? themes.length - 1 : currentIndex - 1;
-        const newTheme = themes[prevIndex];
-
-        setCurrentTheme(newTheme);
-        applyTheme(newTheme);
+        applyThemeWithMode(theme);
+        
+        // Save to localStorage
+        try {
+            localStorage.setItem('theme-id', theme.id);
+        } catch (error) {
+            console.warn('Failed to save theme:', error);
+        }
     };
 
     const randomTheme = () => {
@@ -159,7 +271,15 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
         const newTheme = themes[randomIndex];
 
         setCurrentTheme(newTheme);
-        applyTheme(newTheme);
+        applyThemeWithMode(newTheme);
+        
+        // Save to localStorage and update window variables
+        try {
+            localStorage.setItem('theme-id', newTheme.id);
+            (window as any).__APPLIED_THEME__ = newTheme.id;
+        } catch (error) {
+            console.warn('Failed to save theme:', error);
+        }
     };
 
     return (
@@ -173,25 +293,27 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
                             <DropdownItem
                                 key={mode}
                                 onClick={() => handleModeSelect(mode)}
-                                className={`flex items-center gap-2 border-b border-main last:border-b-0 ${
+                                className={`flex items-center gap-2  border-main last:border-b-0 ${
                                     currentMode === mode ? 'bg-main text-secondary' : ''
                                 }`}
                             >
                                 {getModeIcon(mode, 'w-3 h-3')}
                                 <span className="flex-1 px-1 font-mono text-xs font-semibold">{mode.toUpperCase()}</span>
-                                {currentMode === mode && (
-                                    <svg
-                                        className="w-2.5 h-2.5"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path d="M20 6 9 17l-5-5" />
-                                    </svg>
-                                )}
+                                <div className="w-4 h-4 flex items-center justify-center">
+                                    {currentMode === mode && (
+                                        <svg
+                                            className="w-4 h-4"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path d="M20 6 9 17l-5-5" />
+                                        </svg>
+                                    )}
+                                </div>
                             </DropdownItem>
                         ))}
                     </div>
@@ -199,7 +321,7 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
                 className="w-7 h-7 md:w-auto md:h-8"
             >
                 <div className="flex items-center gap-2">
-                    <div className="w-3.5 h-3.5 relative flex-shrink-0">{getModeIcon(currentMode)}</div>
+                    <div className="w-3.5 h-3.5 relative flex-shrink-0">{getModeIcon(currentMode, "")}</div>
                     <span className="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary">{currentMode.toUpperCase()}</span>
                 </div>
             </DropdownButton>
@@ -219,47 +341,27 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
                             >
                                 <div
                                     className="w-3 h-3 border border-main flex-shrink-0"
-                                    style={{
-                                        background: `linear-gradient(135deg, ${theme.colorful} 50%, ${theme.contrasty} 50%)`
-                                    }}
+                                    style={{ background: `linear-gradient(135deg, ${theme.colorful} 50%, ${theme.contrasty} 50%)` }}
                                 />
                                 <span className="flex-1 px-1 font-mono text-xs font-semibold">{theme.name}</span>
-                                {currentTheme.id === theme.id && (
-                                    <svg
-                                        className="w-2.5 h-2.5"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path d="M20 6 9 17l-5-5" />
-                                    </svg>
-                                )}
+                                <div className="w-4 h-4 flex items-center justify-center">
+                                    {currentTheme.id === theme.id && (
+                                        <svg
+                                            className="w-4 h-4"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path d="M20 6 9 17l-5-5" />
+                                        </svg>
+                                    )}
+                                </div>
                             </DropdownItem>
                         ))}
                         <DropdownSeparator />
-                        <div className="bg-main p-1 flex justify-between items-center gap-1">
-                            <button
-                                onClick={prevTheme}
-                                className="hover:text-main hover:bg-secondary px-1 py-0.5 font-mono text-xs font-semibold text-secondary "
-                            >
-                                PREV [
-                            </button>
-                            <button
-                                onClick={nextTheme}
-                                className="hover:text-main hover:bg-secondary px-1 py-0.5 font-mono text-xs font-semibold text-secondary "
-                            >
-                                NEXT ]
-                            </button>
-                            <button
-                                onClick={randomTheme}
-                                className="hover:text-main hover:bg-secondary px-1 py-0.5 font-mono text-xs font-semibold text-secondary "
-                            >
-                                RANDOM _
-                            </button>
-                        </div>
                     </div>
                 }
                 className="w-7 h-7 md:w-auto md:h-8"
@@ -267,9 +369,7 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
                 <div className="flex items-center gap-2">
                     <div
                         className="w-4 h-4 border border-main theme-preview-current flex-shrink-0"
-                        style={{
-                            background: `linear-gradient(135deg, ${currentTheme.colorful} 50%, ${currentTheme.contrasty} 50%)`
-                        }}
+                        style={{ background: `linear-gradient(135deg, ${currentTheme.colorful} 50%, ${currentTheme.contrasty} 50%)` }}
                     />
                     <span className="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary">{currentTheme.name}</span>
                 </div>

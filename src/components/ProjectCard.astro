@@ -1,0 +1,40 @@
+---
+import DitheredImageReact from './DitheredImageReact';
+
+export interface Props {
+  title: string;
+  description: string;
+  href: string;
+  clientLogo?: string;
+  slug?: string;
+}
+
+const { title, description, href, clientLogo, slug } = Astro.props;
+---
+
+<article class="border border-main bg-secondary" style={`view-transition-name: project-card-${slug}`}>
+  <div class="p-4">
+    {clientLogo && (
+      <div class="w-6/12 mb-4 flex items-center justify-center" style={`view-transition-name: project-logo-${slug}`} data-client-logo={clientLogo}>
+        <DitheredImageReact 
+          src={clientLogo} 
+          alt={`Logo del cliente - ${title}`}
+          className="max-h-full max-w-full object-contain"
+          respectOriginalSize={true}
+          client:load
+        />
+      </div>
+    )}
+    <div class="w-full h-2 mb-4 bg-main"></div>
+    <div style={`view-transition-name: project-content-${slug}`}>
+      <h3 class="font-mono text-sm font-semibold mb-2 text-main">{title}</h3>
+      <p class="text-xs text-main mb-4 leading-relaxed">{description}</p>
+      <a 
+        href={href}
+        class="inline-block font-mono text-xs font-semibold bg-main text-secondary border border-main px-2 py-1 hover:bg-secondary hover:text-main"
+      >
+        Ver proyecto →
+      </a>
+    </div>
+  </div>
+</article>

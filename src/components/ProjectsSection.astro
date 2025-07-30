@@ -1,0 +1,77 @@
+---
+import { getCollection } from 'astro:content';
+import ProjectCard from './ProjectCard.astro';
+import BigSectionContainer from './BigSectionContainer.astro';
+
+// Get first 3 featured projects
+const allProjects = await getCollection('projects');
+const featuredProjects = allProjects
+  .filter(project => project.data.isFeatured)
+  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime())
+  .slice(0, 3);
+
+// Get all client logos for preloading
+const clientLogos = featuredProjects
+  .map(project => project.data.clientLogo)
+  .filter(Boolean);
+---
+
+<BigSectionContainer title="Proyectos destacados">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+    {featuredProjects.map(project => (
+      <ProjectCard
+        title={project.data.title}
+        description={project.data.description}
+        href={`/projects/${project.slug}`}
+        clientLogo={project.data.clientLogo}
+        slug={project.slug}
+      />
+    ))}
+  </div>
+  
+  <div class="text-center">
+    <a 
+      href="/projects"
+      class="inline-block font-mono text-sm font-semibold bg-secondary border border-main text-main px-4 py-2 hover:bg-main hover:text-secondary"
+    >
+      Ver más proyectos
+    </a>
+  </div>
+</BigSectionContainer>
+
+<!-- Preload client logos -->
+{clientLogos.map(logo => (
+  <link rel="preload" as="image" href={logo} />
+))}
+
+<script>
+  // Cache images and ensure they're loaded before transitions
+  const projectImages = new Map();
+  
+  function preloadAndCacheImages() {
+    const logos = document.querySelectorAll('[data-client-logo]');
+    
+    logos.forEach(async (element) => {
+      const logoSrc = element.dataset.clientLogo;
+      if (logoSrc && !projectImages.has(logoSrc)) {
+        try {
+          const img = new Image();
+          await new Promise((resolve, reject) => {
+            img.onload = resolve;
+            img.onerror = reject;
+            img.src = logoSrc;
+          });
+          projectImages.set(logoSrc, img);
+        } catch (error) {
+          console.warn('Failed to preload image:', logoSrc);
+        }
+      }
+    });
+  }
+  
+  // Preload images when page loads
+  document.addEventListener('DOMContentLoaded', preloadAndCacheImages);
+  
+  // Preload images for view transitions
+  document.addEventListener('astro:before-preparation', preloadAndCacheImages);
+</script>

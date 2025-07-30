@@ -69,7 +69,7 @@ const TextGenerate: React.FC<TextGenerateProps> = ({
       <div className="absolute top-0 left-0 w-full h-full">
         <span>{displayedText}</span>
         {isTyping && (
-          <span className={isCursorVisible ? 'opacity-100' : 'opacity-0'}>
+          <span className={ "select-none pointer-events-none " + (isCursorVisible ? 'opacity-100' : 'opacity-0')}>
             {cursorCharacter}
           </span>
         )}

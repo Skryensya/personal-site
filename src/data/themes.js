@@ -14,6 +14,17 @@ function getCSSVariable(variableName) {
 
 export const themes = [
     {
+        id: 'gameboy',
+        name: 'GAME BOY',
+        description: 'Monochrome LCD legend',
+        get colorful() {
+            return getCSSVariable('--gameboy-colorful') || '#9bbc0f';
+        },
+        get contrasty() {
+            return getCSSVariable('--gameboy-contrasty') || '#081f08';
+        }
+    },
+    {
         id: 'dos',
         name: 'MS-DOS',
         description: 'Command line interface',
@@ -25,102 +36,91 @@ export const themes = [
         }
     },
     {
-        id: 'matrix',
-        name: 'MATRIX',
-        description: 'Green rain digital code',
-        get colorful() {
-            return getCSSVariable('--matrix-colorful') || '#00ff41';
-        },
-        get contrasty() {
-            return getCSSVariable('--matrix-contrasty') || '#0d1117';
-        }
-    },
-    {
         id: 'commodore64',
-        name: 'C64',
+        name: 'COMMODORE 64',
         description: 'Blue screen computing legend',
         get colorful() {
-            return getCSSVariable('--commodore64-colorful') || '#7c70da';
+            return getCSSVariable('--commodore64-colorful') || '#b8d4f0';
         },
         get contrasty() {
-            return getCSSVariable('--commodore64-contrasty') || '#352879';
+            return getCSSVariable('--commodore64-contrasty') || '#0d0d1f';
         }
     },
     {
-        id: 'gameboy',
-        name: 'GAMEBOY',
-        description: 'LCD dot matrix display',
+        id: 'caution',
+        name: 'CAUTION',
+        description: 'Warning tape industrial',
         get colorful() {
-            return getCSSVariable('--gameboy-colorful') || '#9bbc0f';
+            return getCSSVariable('--caution-colorful') || '#ffff00';
         },
         get contrasty() {
-            return getCSSVariable('--gameboy-contrasty') || '#1e2124';
+            return getCSSVariable('--caution-contrasty') || '#000000';
         }
     },
     {
-        id: 'terminal',
-        name: 'TERMINAL',
-        description: 'Amber phosphor monitor',
+        id: 'sunset',
+        name: 'SUNSET',
+        description: 'Warm orange retro sunset',
         get colorful() {
-            return getCSSVariable('--terminal-colorful') || '#ffb000';
+            return getCSSVariable('--sunset-colorful') || '#ff6600';
         },
         get contrasty() {
-            return getCSSVariable('--terminal-contrasty') || '#1a1100';
+            return getCSSVariable('--sunset-contrasty') || '#1a0800';
         }
     },
     {
-        id: 'apple2',
-        name: 'APPLE ][',
-        description: 'Green text computer pioneer',
+        id: 'neon',
+        name: 'NEON',
+        description: 'Electric pink cyberpunk',
         get colorful() {
-            return getCSSVariable('--apple2-colorful') || '#40ff40';
+            return getCSSVariable('--neon-colorful') || '#ff0080';
         },
         get contrasty() {
-            return getCSSVariable('--apple2-contrasty') || '#000000';
+            return getCSSVariable('--neon-contrasty') || '#0a0008';
         }
     },
     {
-        id: 'cyberpunk',
-        name: 'CYBERPUNK',
-        description: 'Neon dystopian future',
+        id: 'ocean',
+        name: 'OCEAN',
+        description: 'Deep cyan retro waves',
         get colorful() {
-            return getCSSVariable('--cyberpunk-colorful') || '#ff0080';
+            return getCSSVariable('--ocean-colorful') || '#00ccff';
         },
         get contrasty() {
-            return getCSSVariable('--cyberpunk-contrasty') || '#0a0a0a';
+            return getCSSVariable('--ocean-contrasty') || '#001a33';
         }
     },
     {
-        id: 'synthwave',
-        name: 'SYNTHWAVE',
-        description: 'Retro neon sunset',
+        id: 'forest',
+        name: 'FOREST',
+        description: 'Classic green terminal',
         get colorful() {
-            return getCSSVariable('--synthwave-colorful') || '#ff6b35';
+            return getCSSVariable('--forest-colorful') || '#00ff00';
         },
         get contrasty() {
-            return getCSSVariable('--synthwave-contrasty') || '#0f0519';
+            return getCSSVariable('--forest-contrasty') || '#001100';
         }
     },
     {
-        id: 'vhs',
-        name: 'VHS',
-        description: 'Analog video tape glitch',
+        id: 'ember',
+        name: 'EMBER',
+        description: 'Burning red retro fire',
         get colorful() {
-            return getCSSVariable('--vhs-colorful') || '#ff3300';
+            return getCSSVariable('--ember-colorful') || '#ff3300';
         },
         get contrasty() {
-            return getCSSVariable('--vhs-contrasty') || '#003366';
+            return getCSSVariable('--ember-contrasty') || '#1a0500';
         }
     },
     {
-        id: 'playstation',
-        name: 'PLAYSTATION',
-        description: 'Console gaming revolution',
+        id: 'violet',
+        name: 'VIOLET',
+        description: 'Purple retro synthwave',
         get colorful() {
-            return getCSSVariable('--playstation-colorful') || '#0070f3';
+            return getCSSVariable('--violet-colorful') || '#9966ff';
         },
         get contrasty() {
-            return getCSSVariable('--playstation-contrasty') || '#000000';
+            return getCSSVariable('--violet-contrasty') || '#0f0a1a';
         }
     }
 ];

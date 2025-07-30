@@ -1,7 +1,8 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';  
-import { sortItemsByDateDesc } from '../../utils/data-utils'; 
+import { sortItemsByDateDesc } from '../../utils/data-utils';
+import DitheredImageReact from '../../components/DitheredImageReact'; 
 
 export async function getStaticPaths() {
     const projects = (await getCollection('projects')).sort(sortItemsByDateDesc);
@@ -19,16 +20,28 @@ export async function getStaticPaths() {
 type Props = { project: CollectionEntry<'projects'>; prevProject: CollectionEntry<'projects'>; nextProject: CollectionEntry<'projects'> };
 
 const { project, prevProject, nextProject } = Astro.props;
-const { title, description, seo, color } = project.data;
+const { title, description, seo, color, clientLogo } = project.data;
 const { src, alt, caption } = seo?.image || {};
 const { Content } = await project.render();
 ---
 
 <Layout title={seo?.title ?? title} description={seo?.description ?? description} image={seo?.image} pageType="article" showHeader={false}>
-    <article class="mb-16 sm:mb-24">
+    <article class="mb-16 sm:mb-24" style={`view-transition-name: project-card-${project.slug}`}>
         <header class="mb-8">
-            <h1 class="text-3xl leading-tight font-serif font-medium sm:text-5xl sm:leading-tight pb-6">{title}</h1>
-        <!-- <ImageFramed src={src} alt={alt} color={color}  size="6px" radius="4px" isCover={true}  caption={caption}  /> -->
+            {clientLogo && (
+                <div class="w-32 mb-6 flex items-center justify-center" style={`view-transition-name: project-logo-${project.slug}`} data-client-logo={clientLogo}>
+                    <DitheredImageReact 
+                        src={clientLogo} 
+                        alt={`Logo del cliente - ${title}`}
+                        className="max-h-full max-w-full object-contain"
+                        respectOriginalSize={true}
+                        client:load
+                    />
+                </div>
+            )}
+            <div style={`view-transition-name: project-content-${project.slug}`}>
+                <h1 class="text-3xl leading-tight font-serif font-medium sm:text-5xl sm:leading-tight pb-6">{title}</h1>
+            </div>
         </header>
         <div class="max-w-none prose prose-dante sm:prose-lg">
             <Content />
@@ -44,3 +57,6 @@ const { Content } = await project.render();
         // )
     }
 </Layout>
+
+<!-- Preload client logo -->
+{clientLogo && <link rel="preload" as="image" href={clientLogo} />}
