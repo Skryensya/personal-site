@@ -1,0 +1,105 @@
+---
+import siteConfig from '@/data/site-config';
+
+const currentYear = new Date().getFullYear();
+---
+
+ 
+
+<footer class="bg-main">
+    <div class="mx-auto max-w-[var(--max-w-size)] pt-8">
+
+    <!-- Enlaces y contenido arriba -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12 ">
+        <!-- Navegación -->
+        <div>
+            <h3 class="font-mono text-xs font-semibold text-secondary mb-4 uppercase">Sitio</h3>
+            <nav class="space-y-2">
+                {siteConfig.footerNavLinks?.map((link) => (
+                    <a
+                        href={link.href}
+                        target={link.target}
+                        class="block font-mono text-xs text-secondary px-2 py-1 border border-transparent hover:border-main"
+                    >
+                        {link.text}
+                    </a>
+                ))}
+            </nav>
+        </div>
+
+        <!-- Enlaces sociales -->
+        <div>
+            <h3 class="font-mono text-xs font-semibold text-secondary mb-4 uppercase">Social</h3>
+            <nav class="space-y-2">
+                {siteConfig.socialLinks?.map((link) => (
+                    <a
+                        href={link.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="block font-mono text-xs text-secondary px-2 py-1 border border-transparent hover:border-main"
+                    >
+                        {link.text} ↗
+                    </a>
+                ))}
+                <a
+                    href="mailto:contact@allisonpena.dev"
+                    class="block font-mono text-xs text-secondary px-2 py-1 border border-transparent hover:border-main"
+                >
+                    Email
+                </a>
+                <a
+                    href="/resume.pdf"
+                    target="_blank"
+                    class="block font-mono text-xs text-secondary px-2 py-1 border border-transparent hover:border-main"
+                >
+                    CV/Resume ↗
+                </a>
+            </nav>
+        </div>
+
+        <!-- Info -->
+        <div>
+            <h3 class="font-mono text-xs font-semibold text-secondary mb-4 uppercase">Info</h3>
+            <div class="space-y-2">
+                <p class="font-mono text-xs text-secondary px-2 py-1">
+                    {siteConfig.subtitle}
+                </p>
+                <p class="font-mono text-xs text-secondary px-2 py-1">
+                    Santiago, Chile
+                </p>
+                <p class="font-mono text-xs text-secondary px-2 py-1">
+                    Disponible para proyectos
+                </p>
+            </div>
+        </div>
+
+        <!-- Sistema -->
+        <div>
+            <h3 class="font-mono text-xs font-semibold text-secondary mb-4 uppercase">Sistema</h3>
+            <div class="space-y-2">
+                <p class="font-mono text-xs text-secondary px-2 py-1">
+                    Astro + Tailwind
+                </p>
+                <a href="/sitemap-index.xml" class="block font-mono text-xs text-secondary px-2 py-1 border border-transparent hover:border-main">
+                    Sitemap
+                </a>
+                <a href="/rss.xml" class="block font-mono text-xs text-secondary px-2 py-1 border border-transparent hover:border-main">
+                    RSS
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Copyright -->
+    <!-- <div class="border-t border-main pt-6 mb-8">
+        <p class="font-mono text-xs text-secondary text-center">
+            © {currentYear} {siteConfig.title}. Todos los derechos reservados.
+        </p>
+    </div> -->
+    </div>
+    <div class="relative mx-auto w-full flex justify-center overflow-hidden">
+        <h2 class="text-[clamp(4rem,15vw,20rem)] font-bold text-secondary select-none leading-none whitespace-nowrap translate-y-3/12">
+            {siteConfig.title}
+        </h2>
+    </div>
+</footer>

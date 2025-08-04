@@ -4,26 +4,55 @@ import { type CollectionEntry, getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro'; 
 import siteConfig from '../../data/site-config';
 import { sortItemsByDateDesc } from '../../utils/data-utils';
+import { getLocaleFromUrl } from '@/utils/i18n';
+import { getCollectionByLanguage } from '@/utils/content-utils';
+import { createText } from '@/i18n/universal-text';
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-    const projects = (await getCollection('projects')).sort(sortItemsByDateDesc);
-    return paginate(projects, { pageSize: siteConfig.projectsPerPage || 6 });
+    // Generate paginated paths for each language
+    const allProjects = await getCollection('projects');
+    const languages = ['es', 'en', 'no'] as const;
+    
+    const paths = [];
+    for (const lang of languages) {
+        const projectsInLang = allProjects
+            .filter(project => project.id.startsWith(`${lang}/`))
+            .sort(sortItemsByDateDesc);
+        
+        const paginatedPaths = paginate(projectsInLang, { 
+            pageSize: siteConfig.projectsPerPage || 6,
+            params: { lang },
+            props: { language: lang }
+        });
+        
+        paths.push(...paginatedPaths);
+    }
+    
+    return paths;
 }
 
-type Props = { page: Page<CollectionEntry<'projects'>> };
+type Props = { 
+    page: Page<CollectionEntry<'projects'>>; 
+    language: string;
+};
 
-const { page } = Astro.props;
+const { page, language } = Astro.props;
+const currentLocale = getLocaleFromUrl(Astro.url);
+const text = createText(currentLocale);
+
+// Filter projects to show only those in the current language
+const projectsInCurrentLang = (await getCollectionByLanguage('projects', currentLocale)).sort(sortItemsByDateDesc);
 const portfolio = page.data;
 ---
 
 <Layout
-    title="Proyectos"
-    description="Conoce en lo que he trabajado"
+    title={text.navProjects()}
+    description={text.navProjects()}
     showHeader={true}
-    headerTitle="Proyectos"
-    headerSubtitle='En lo que he Colaborado'
+    headerTitle={text.navProjects()}
+    headerSubtitle={text.navProjects()}
 >
-    <h1 class="mb-12 text-2xl leading-tight font-serif italic sm:mb-16 sm:text-4xl">Proyectos</h1>
+    <h1 class="mb-12 text-2xl leading-tight font-serif italic sm:mb-16 sm:text-4xl">{text.navProjects()}</h1>
     <!-- <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
         {portfolio.map((project) => <ProjectCard project={project} />)}
     </div>

@@ -1,23 +1,30 @@
 --- 
 import { themes } from '../data/themes.js';
 import HeaderControls from './HeaderControls.tsx';
+import LanguageSwitcher from './LanguageSwitcher.tsx';
+import { getLocaleFromUrl } from '@/utils/i18n';
+import { createText } from '@/i18n/universal-text';
+
+const currentLocale = getLocaleFromUrl(Astro.url);
+const currentPath = Astro.url.pathname;
+const text = createText(currentLocale);
 
 const navItems = [
   { label: 'ALLISON PEÑA', href: '/', hotkey: null },
-  { label: 'PROJECTS', href: '/projects', hotkey: 'p' },
-  { label: 'BLOG', href: '/_blog', hotkey: 'b' },
-  { label: 'ABOUT', href: '/about', hotkey: 'a' },
-  { label: 'CONTACT', href: '/contact', hotkey: 'c' }
+  { label: text.navProjects().toUpperCase(), href: '/projects', hotkey: 'p' },
+  { label: text.navBlog().toUpperCase(), href: '/_blog', hotkey: 'b' },
+  { label: text.navAbout().toUpperCase(), href: '/about', hotkey: 'a' },
+  { label: text.navContact().toUpperCase(), href: '/contact', hotkey: 'c' }
 ];
 
 ---
 
  
-<header class="sticky top-4 z-[100] flex justify-center">
+<header class="sticky top-4 z-[100] flex justify-center mx-auto max-w-[var(--max-w-size)]">
   <div class="max-w-[1280px] w-full px-4">
     <div class="flex items-start justify-between gap-2 flex-nowrap diagonal-stripe px-4 py-2">
-      <div class="flex items-start gap-x-2 gap-y-1 flex-wrap w-4/5">
-        {navItems.map((item) => (
+      <div class="flex items-start gap-x-2 gap-y-1 flex-wrap flex-1 mr-2">
+        {navItems.map((item, index) => (
           <a 
             href={item.href}
             class="flex items-center gap-1.5 px-2 py-1 h-7 md:h-8 bg-secondary border border-main font-grotesk text-sm !font-thin text-main no-underline pointer-events-auto hover:bg-main hover:text-secondary active:bg-main active:text-secondary nav-link"
@@ -30,7 +37,66 @@ const navItems = [
         ))}
       </div>
 
-      <HeaderControls themes={themes} client:idle />
+      <div class="flex items-center gap-2 flex-shrink-0">
+        <!-- Static placeholder buttons that match React component dimensions -->
+        <div class="flex justify-end items-center gap-x-4 gap-y-1 pointer-events-none" id="header-controls-placeholder">
+          <!-- Mode Toggle Placeholder -->
+          <div class="w-7 h-7 md:w-auto md:h-8 inline-flex">
+            <div class="flex items-center justify-center px-3 py-2 bg-secondary border border-main">
+              <div class="flex items-center gap-2">
+                <div class="w-3.5 h-3.5 flex-shrink-0">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                  </svg>
+                </div>
+                <span class="hidden md:block font-mono text-xs font-semibold text-main">SYSTEM</span>
+              </div>
+            </div>
+            <div class="hidden md:flex items-center justify-center w-8 bg-secondary border border-main border-l-0">
+              <svg class="w-4 h-4 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
+          
+          <!-- Theme Switcher Placeholder -->
+          <div class="w-7 h-7 md:w-full md:h-8 inline-flex">
+            <div class="flex items-center justify-center px-3 py-2 bg-secondary border border-main">
+              <div class="flex items-center gap-2 w-full">
+                <div class="w-4 h-4 border border-main flex-shrink-0 bg-secondary"></div>
+                <span class="hidden md:block font-mono text-xs font-semibold text-main flex-1 text-left">VOID</span>
+              </div>
+            </div>
+            <div class="hidden md:flex items-center justify-center w-8 bg-secondary border border-main border-l-0">
+              <svg class="w-4 h-4 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
+          
+          <!-- Language Switcher Placeholder -->
+          <div class="w-7 h-7 md:w-auto md:h-8 inline-flex">
+            <div class="flex items-center justify-center px-3 py-2 bg-secondary border border-main">
+              <div class="flex items-center gap-2">
+                <span class="font-mono text-xs font-semibold text-main">ES</span>
+              </div>
+            </div>
+            <div class="hidden md:flex items-center justify-center w-8 bg-secondary border border-main border-l-0">
+              <svg class="w-4 h-4 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+        
+        <!-- React components replace placeholders when loaded -->
+        <div class="flex justify-end items-center gap-x-4 gap-y-1 pointer-events-auto" id="header-controls-react" style="display: none;">
+          <HeaderControls themes={themes} client:load />
+          <LanguageSwitcher initialLocale={currentLocale} client:load />
+        </div>
+      </div>
     </div>
   
   </header>
@@ -39,8 +105,57 @@ const navItems = [
  
 
 <script>
+  // Hide static placeholders when React components mount
+  function hideStaticPlaceholders() {
+    const placeholder = document.getElementById('header-controls-placeholder');
+    if (placeholder) {
+      placeholder.style.display = 'none';
+    }
+  }
+
+  // Show static placeholders if React components fail to load
+  function showStaticPlaceholders() {
+    const placeholder = document.getElementById('header-controls-placeholder');
+    if (placeholder) {
+      placeholder.style.display = 'flex';
+    }
+  }
+
+  // Show React components and hide placeholders
+  function showReactComponents() {
+    const placeholder = document.getElementById('header-controls-placeholder');
+    const reactContainer = document.getElementById('header-controls-react');
+    
+    if (placeholder && reactContainer) {
+      placeholder.style.display = 'none';
+      reactContainer.style.display = 'flex';
+    }
+  }
+
+  // Check if React components are ready
+  function checkReactComponents() {
+    const reactContainer = document.getElementById('header-controls-react');
+    if (reactContainer && reactContainer.children.length > 0) {
+      // Check if any React component has actual content (not just loading state)
+      const hasContent = Array.from(reactContainer.children).some(child => 
+        child.querySelector('button') !== null
+      );
+      if (hasContent) {
+        showReactComponents();
+      } else {
+        // React components are loading, try again soon
+        setTimeout(checkReactComponents, 50);
+      }
+    } else {
+      // React components not ready, try again
+      setTimeout(checkReactComponents, 50);
+    }
+  }
+
   // Keep only navigation keyboard shortcuts
   document.addEventListener('astro:page-load', () => {
+    // Start checking for React components
+    checkReactComponents();
     // Navigation elements
     const navLinks = document.querySelectorAll('.nav-link');
     const currentPath = window.location.pathname;
@@ -96,6 +211,7 @@ const navItems = [
 </script>
 
 <style>
+
   /* Theme previews using CSS variables */
   .void-preview { 
     background: linear-gradient(45deg, var(--void-colorful) 50%, var(--void-contrasty) 50%); 

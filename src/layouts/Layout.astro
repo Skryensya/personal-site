@@ -1,7 +1,9 @@
 ---
 import { ViewTransitions } from 'astro:transitions';
 import BaseHead, { type Props as HeadProps } from '../components/BaseHead.astro';
-import Header from '../components/Header.astro'; 
+import Header from '../components/Header.astro';
+import Footer from "../components/Footer.astro"
+ 
 
 export type Props = HeadProps & { showHeader?: boolean; headerTitle?: string, headerSubtitle?: string };
 
@@ -65,6 +67,7 @@ const { showHeader = true, headerTitle = null, headerSubtitle = null,  ...head }
             document.addEventListener('astro:page-load', initializeTheme);
         </script>
         <script src="/as-dithered-image.js" is:inline></script>
+        <link rel="stylesheet" href="/src/styles/view-transitions.css">
         <ViewTransitions />
         <style>
             /* View Transitions for theme changes */
@@ -90,15 +93,22 @@ const { showHeader = true, headerTitle = null, headerSubtitle = null,  ...head }
                 animation-duration: 0.4s;
                 animation-timing-function: ease-in-out;
             }
+            
+            /* Prevent header from participating in theme view transitions */
+            ::view-transition-old(header),
+            ::view-transition-new(header) {
+                animation: none;
+                animation-duration: 0s;
+            }
         </style>
     </head>
-    <body class="bg-secondary text-main md:px-10 (--max-w-size:1280px) max-w-[var(--max-w-size)] mx-auto relative">
- 
+    <body class="bg-secondary text-main (--max-w-size:1280px) relative">
         <Header />
-     <div class="mt-8">  
+        <div class="mt-8 mx-auto max-w-[var(--max-w-size)]">  
         <main class="text-left px-4">
                 <slot />
             </main>
         </div> 
+        <Footer />
     </body>
 </html>

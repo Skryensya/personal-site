@@ -1,52 +1,33 @@
 ---
 export interface Props {
     text: string;
-    size?: 'sm' | 'md' | 'lg';
     class?: string;
 }
 
-const { text, size = 'md', class: className } = Astro.props;
-
-const sizeClasses = {
-    sm: 'w-32 h-32 text-xl',
-    md: 'w-48 h-48 text-3xl',
-    lg: 'w-64 h-64'
-};
+const { text, class: className } = Astro.props;
 ---
-<div class="p-4 border">
 
-    <div class:list={['isometric-text-card', sizeClasses[size], className]}>
-        <div class="isometric-text-container">
-            <!-- Generate 10 layers for depth effect -->
-            <div class="isometric-text layer-1" aria-hidden="true">{text}</div>
-            <div class="isometric-text layer-2" aria-hidden="true">{text}</div>
-            <div class="isometric-text layer-3" aria-hidden="true">{text}</div>
-            <div class="isometric-text layer-4" aria-hidden="true">{text}</div>
-            <div class="isometric-text layer-5" aria-hidden="true">{text}</div>
-            
-            <!-- Main visible text layer -->
-            <div class="isometric-text main-layer">{text}</div>
-        </div>
-    </div>
+<div class:list={['isometric-text-container', className]}>
+    <!-- Generate layers for depth effect -->
+    <div class="isometric-text layer-1" aria-hidden="true">{text}</div>
+    <div class="isometric-text layer-2" aria-hidden="true">{text}</div>
+    <div class="isometric-text layer-3" aria-hidden="true">{text}</div>
+    <div class="isometric-text layer-4" aria-hidden="true">{text}</div>
+    <div class="isometric-text layer-5" aria-hidden="true">{text}</div>
+    
+    <!-- Main visible text layer -->
+    <div class="isometric-text main-layer">{text}</div>
 </div>
     
 <style>
-    .isometric-text-card {
-        --layer-opacity: .45;
-        /* Square card container with border */
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        perspective: 800px;
-        perspective-origin: 30% 200%;
-        border: 1px solid rgb(var(--color-main));
-    }
-
     .isometric-text-container {
+        --layer-opacity: .45;
         position: relative;
         transform-style: preserve-3d;
         transform-origin: center center;
+        perspective: 800px;
+        perspective-origin: 30% 200%;
+        display: inline-block;
     }
 
     .isometric-text {
@@ -63,11 +44,11 @@ const sizeClasses = {
         user-select: none;
         pointer-events: none;
         
-        /* Base orthographic 3/4 transformation - opposite direction */
+        /* Base orthographic 3/4 transformation - more frontal with diagonal baseline */
         transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg);
+                   rotateX(-25deg) 
+                   rotateY(-25deg) 
+                   rotateZ(30deg);
     }
 
     /* Main visible layer - now the back/static layer */
@@ -81,9 +62,9 @@ const sizeClasses = {
     .layer-1 {
         color: rgb(var(--color-main));
         transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
+                   rotateX(-25deg) 
+                   rotateY(-25deg) 
+                   rotateZ(30deg) 
                    translateZ(0px);
         opacity: var(--layer-opacity);
         z-index: 2;
@@ -93,9 +74,9 @@ const sizeClasses = {
     .layer-2 {
         color: rgb(var(--color-main));
         transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
+                   rotateX(-25deg) 
+                   rotateY(-25deg) 
+                   rotateZ(30deg) 
                    translateZ(0px);
         opacity: var(--layer-opacity);
         z-index: 3;
@@ -105,9 +86,9 @@ const sizeClasses = {
     .layer-3 {
         color: rgb(var(--color-main));
         transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
+                   rotateX(-25deg) 
+                   rotateY(-25deg) 
+                   rotateZ(30deg) 
                    translateZ(0px);
         opacity: var(--layer-opacity);
         z-index: 4;
@@ -117,9 +98,9 @@ const sizeClasses = {
     .layer-4 {
         color: rgb(var(--color-main));
         transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
+                   rotateX(-25deg) 
+                   rotateY(-25deg) 
+                   rotateZ(30deg) 
                    translateZ(0px);
         opacity: var(--layer-opacity);
         z-index: 5;
@@ -129,9 +110,9 @@ const sizeClasses = {
     .layer-5 {
         color: rgb(var(--color-main));
         transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
+                   rotateX(-25deg) 
+                   rotateY(-25deg) 
+                   rotateZ(30deg) 
                    translateZ(0px);
         opacity: var(--layer-opacity);
         z-index: 6;
@@ -140,60 +121,59 @@ const sizeClasses = {
 
 
     /* Hover effect for extra depth */
-    .isometric-text-card:hover .isometric-text-container {
-    
+    .isometric-text-container:hover .isometric-text-container {
         transition: transform 0.3s ease;
     }
 
-    .isometric-text-card:hover .main-layer {
+    .isometric-text-container:hover .main-layer {
         transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
+                   rotateX(-25deg) 
+                   rotateY(-25deg) 
+                   rotateZ(30deg) 
                    translateZ(0px);
         transition: transform 0.3s ease;
     }
 
     /* Enhanced depth layers on hover with Z-axis separation only */
-    .isometric-text-card:hover .main-layer { opacity: 0.15; }
-    .isometric-text-card:hover .layer-1 { 
+    .isometric-text-container:hover .main-layer { opacity: 0.15; }
+    .isometric-text-container:hover .layer-1 { 
         opacity: var(--layer-opacity); 
         transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
+                   rotateX(-25deg) 
+                   rotateY(-25deg) 
+                   rotateZ(30deg) 
                    translateZ(8px);
     }
-    .isometric-text-card:hover .layer-2 { 
+    .isometric-text-container:hover .layer-2 { 
         opacity: var(--layer-opacity); 
         transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
+                   rotateX(-25deg) 
+                   rotateY(-25deg) 
+                   rotateZ(30deg) 
                    translateZ(16px);
     }
-    .isometric-text-card:hover .layer-3 { 
+    .isometric-text-container:hover .layer-3 { 
         opacity: var(--layer-opacity); 
         transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
+                   rotateX(-25deg) 
+                   rotateY(-25deg) 
+                   rotateZ(30deg) 
                    translateZ(24px);
     }
-    .isometric-text-card:hover .layer-4 { 
+    .isometric-text-container:hover .layer-4 { 
         opacity: var(--layer-opacity); 
         transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
+                   rotateX(-25deg) 
+                   rotateY(-25deg) 
+                   rotateZ(30deg) 
                    translateZ(32px);
     }
-    .isometric-text-card:hover .layer-5 { 
+    .isometric-text-container:hover .layer-5 { 
         opacity: var(--layer-opacity); 
         transform: translate(-50%, -50%) 
-                   rotateX(-45deg) 
-                   rotateY(-45deg) 
-                   rotateZ(0deg) 
+                   rotateX(-25deg) 
+                   rotateY(-25deg) 
+                   rotateZ(30deg) 
                    translateZ(40px);
     }
 </style>

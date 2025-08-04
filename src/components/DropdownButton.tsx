@@ -38,21 +38,27 @@ export default function DropdownButton({
     disabled = false
 }: DropdownButtonProps) {
     const [isOpen, setIsOpen] = useState(false);
+    const [isMounted, setIsMounted] = useState(false);
+
+    React.useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     const { refs, floatingStyles, context } = useFloating({
         open: isOpen,
         onOpenChange: setIsOpen,
         middleware: [
-            offset(2),
+            offset(4),
             flip({
                 fallbackPlacements: ['top-start', 'bottom-end', 'top-end']
             }),
             shift({
-                padding: 8
+                padding: 16
             })
         ],
         whileElementsMounted: autoUpdate,
-        placement: 'bottom-end'
+        placement: 'bottom-end',
+        strategy: 'fixed'
     });
 
     const click = useClick(context);
@@ -100,20 +106,28 @@ export default function DropdownButton({
                     {...getReferenceProps()}
                 >
                     {/* Icono de flecha */}
-                    <svg className={`w-4 h-4 text-main group-hover:text-secondary ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg 
+                        className="w-4 h-4 text-main group-hover:text-secondary" 
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                        style={{ 
+                            transform: isMounted && isOpen ? 'rotate(180deg)' : 'rotate(0deg)'
+                        }}
+                    >
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                 </button>
             </div>
 
             {/* Dropdown content */}
-            {isOpen && (
+            {isMounted && isOpen && (
                 <FloatingPortal>
                     <FloatingFocusManager context={context} modal={false}>
                         <div
                             ref={refs.setFloating}
                             style={floatingStyles}
-                            className={`z-[101] bg-secondary border border-main shadow-lg backdrop-blur-sm rounded-none min-w-[120px] max-w-[250px] overflow-y-auto whitespace-nowrap ${dropdownClassName}`}
+                            className={`fixed z-[101] bg-secondary border border-main rounded-none min-w-[120px] max-w-[250px] overflow-y-auto whitespace-nowrap ${dropdownClassName}`}
                             {...getFloatingProps()}
                         >
                             {dropdownContent}
@@ -130,17 +144,23 @@ export function DropdownItem({
     children,
     onClick,
     className = '',
+    selected = false,
     ...props
 }: {
     children: React.ReactNode;
     onClick?: () => void;
     className?: string;
+    selected?: boolean;
     [key: string]: any;
 }) {
     return (
         <button
             type="button"
-            className={`w-full px-3 py-2 text-left hover:bg-main hover:text-secondary   focus:bg-main focus:text-secondary focus:outline-none whitespace-nowrap ${className}`}
+            className={`w-full px-3 py-2 text-left focus:outline-none whitespace-nowrap ${
+                selected 
+                    ? 'bg-main text-secondary' 
+                    : 'bg-secondary text-main hover:bg-main hover:text-secondary'
+            } ${className}`}
             onClick={onClick}
             {...props}
         >
