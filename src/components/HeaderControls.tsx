@@ -1,8 +1,8 @@
 import * as React from 'react';
 import DropdownButton, { DropdownItem, DropdownSeparator } from './DropdownButton';
 import { applyTheme } from '../data/themes.js';
-import { locales, type Locale, defaultLocale } from '@/utils/i18n';
-import { getLoadingText } from '@/i18n/text-functions';
+import { supportedLanguages, type Language, defaultLang } from '@/i18n/ui';
+import { useClientTranslations } from '@/i18n/utils';
 
 const { useState, useEffect, useCallback } = React;
 
@@ -25,13 +25,13 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
     const [currentTheme, setCurrentTheme] = useState<Theme>(() => {
         // Try to get initial theme immediately if possible
         if (typeof window !== 'undefined') {
-            const appliedTheme = (window as any).__APPLIED_THEME__;
+            const appliedTheme = (window as Window & { __APPLIED_THEME__?: string }).__APPLIED_THEME__;
             if (appliedTheme) {
-                return themes.find(t => t.id === appliedTheme) || themes[0];
+                return themes.find((t) => t.id === appliedTheme) || themes[0];
             }
             const savedThemeId = localStorage.getItem('theme-id');
             if (savedThemeId) {
-                return themes.find(t => t.id === savedThemeId) || themes[0];
+                return themes.find((t) => t.id === savedThemeId) || themes[0];
             }
         }
         return themes[0]; // Fallback to first theme
@@ -39,7 +39,7 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
     const [currentMode, setCurrentMode] = useState<Mode>(() => {
         // Try to get initial mode immediately if possible
         if (typeof window !== 'undefined') {
-            const appliedMode = (window as any).__APPLIED_MODE__;
+            const appliedMode = (window as Window & { __APPLIED_MODE__?: string }).__APPLIED_MODE__;
             if (appliedMode) return appliedMode as Mode;
             const savedMode = localStorage.getItem('theme-mode-preference');
             if (savedMode) return savedMode as Mode;
@@ -49,31 +49,31 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
     const [isMounted, setIsMounted] = useState(false);
 
     // Detect locale from URL for loading text
-    const getLocaleFromURL = (): Locale => {
-        if (typeof window === 'undefined') return defaultLocale;
+    const getLocaleFromURL = (): Language => {
+        if (typeof window === 'undefined') return defaultLang;
         const urlPath = window.location.pathname;
         const [, possibleLocale] = urlPath.split('/');
-        if (possibleLocale && locales.includes(possibleLocale)) {
-            return possibleLocale as Locale;
+        if (possibleLocale && supportedLanguages.includes(possibleLocale as Language)) {
+            return possibleLocale as Language;
         }
-        return defaultLocale;
+        return defaultLang;
     };
 
     // Fast hydration - just set mounted flag
     useEffect(() => {
         setIsMounted(true);
-        
+
         // Quick sync check - only update if values have actually changed
         if (typeof window !== 'undefined') {
             try {
-                const appliedTheme = (window as any).__APPLIED_THEME__;
-                const appliedMode = (window as any).__APPLIED_MODE__;
-                
+                const appliedTheme = (window as Window & { __APPLIED_THEME__?: string }).__APPLIED_THEME__;
+                const appliedMode = (window as Window & { __APPLIED_MODE__?: string }).__APPLIED_MODE__;
+
                 if (appliedTheme && appliedTheme !== currentTheme.id) {
                     const theme = themes.find((t) => t.id === appliedTheme);
                     if (theme) setCurrentTheme(theme);
                 }
-                
+
                 if (appliedMode && appliedMode !== currentMode) {
                     setCurrentMode(appliedMode as Mode);
                 }
@@ -91,9 +91,9 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
             if (currentAppliedTheme === theme.id) {
                 return; // Theme is already applied, skip
             }
-            
+
             const isDark = document.documentElement.classList.contains('dark');
-            applyTheme(theme.id, isDark, currentMode);
+            applyTheme(theme.id, isDark, currentMode as string | null);
         },
         [currentMode]
     );
@@ -102,7 +102,7 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
     const applyMode = useCallback(
         (mode: Mode) => {
             if (typeof window === 'undefined') return;
-            
+
             let resolvedMode = mode;
             if (mode === 'system') {
                 resolvedMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -112,13 +112,13 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
 
             // Use the official theme system
             if (currentTheme) {
-                applyTheme(currentTheme.id, isDark, mode);
+                applyTheme(currentTheme.id, isDark, mode as string | null);
             }
 
             try {
                 localStorage.setItem('theme-mode-preference', mode);
                 localStorage.setItem('theme-mode', resolvedMode);
-                (window as any).__APPLIED_MODE__ = mode;
+                (window as Window & { __APPLIED_MODE__?: string }).__APPLIED_MODE__ = mode;
             } catch (error) {
                 console.warn('Failed to save mode:', error);
             }
@@ -131,16 +131,16 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
         const handlePageLoad = () => {
             // Sync React state with what Layout.astro has applied
             try {
-                const appliedTheme = (window as any).__APPLIED_THEME__;
-                const appliedMode = (window as any).__APPLIED_MODE__;
-                
+                const appliedTheme = (window as Window & { __APPLIED_THEME__?: string }).__APPLIED_THEME__;
+                const appliedMode = (window as Window & { __APPLIED_MODE__?: string }).__APPLIED_MODE__;
+
                 if (appliedTheme) {
                     const theme = themes.find((t) => t.id === appliedTheme);
                     if (theme && (!currentTheme || theme.id !== currentTheme.id)) {
                         setCurrentTheme(theme);
                     }
                 }
-                
+
                 if (appliedMode && appliedMode !== currentMode) {
                     setCurrentMode(appliedMode as Mode);
                 }
@@ -151,7 +151,7 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
 
         // Handle Astro page transitions
         document.addEventListener('astro:page-load', handlePageLoad);
-        
+
         return () => {
             document.removeEventListener('astro:page-load', handlePageLoad);
         };
@@ -160,18 +160,18 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
     // Theme navigation functions - defined early for keyboard shortcuts
     const prevTheme = useCallback(() => {
         if (!currentTheme) return;
-        
+
         const currentIndex = themes.findIndex((t) => t.id === currentTheme.id);
         const prevIndex = currentIndex === 0 ? themes.length - 1 : currentIndex - 1;
         const newTheme = themes[prevIndex];
 
         setCurrentTheme(newTheme);
         applyThemeWithMode(newTheme);
-        
+
         // Save to localStorage and update window variables
         try {
             localStorage.setItem('theme-id', newTheme.id);
-            (window as any).__APPLIED_THEME__ = newTheme.id;
+            (window as Window & { __APPLIED_THEME__?: string }).__APPLIED_THEME__ = newTheme.id;
         } catch (error) {
             console.warn('Failed to save theme:', error);
         }
@@ -179,18 +179,18 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
 
     const nextTheme = useCallback(() => {
         if (!currentTheme) return;
-        
+
         const currentIndex = themes.findIndex((t) => t.id === currentTheme.id);
         const nextIndex = (currentIndex + 1) % themes.length;
         const newTheme = themes[nextIndex];
 
         setCurrentTheme(newTheme);
         applyThemeWithMode(newTheme);
-        
+
         // Save to localStorage and update window variables
         try {
             localStorage.setItem('theme-id', newTheme.id);
-            (window as any).__APPLIED_THEME__ = newTheme.id;
+            (window as Window & { __APPLIED_THEME__?: string }).__APPLIED_THEME__ = newTheme.id;
         } catch (error) {
             console.warn('Failed to save theme:', error);
         }
@@ -212,7 +212,7 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
     // Keyboard shortcuts for theme navigation
     useEffect(() => {
         if (!isMounted || typeof window === 'undefined') return;
-        
+
         const handleKeyDown = (event: KeyboardEvent) => {
             // Only trigger if no modifier keys are pressed and not in an input
             if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
@@ -272,9 +272,9 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
     // Handle mode toggle (main button action) - only toggles between light and dark
     const toggleMode = () => {
         if (!isMounted || typeof window === 'undefined') return;
-        
+
         let nextMode: Mode;
-        
+
         if (currentMode === 'system') {
             // If in system mode, detect current preference and switch to the opposite
             const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -300,7 +300,7 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
     const handleThemeSelect = (theme: Theme) => {
         setCurrentTheme(theme);
         applyThemeWithMode(theme);
-        
+
         // Save to localStorage
         try {
             localStorage.setItem('theme-id', theme.id);
@@ -315,11 +315,11 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
 
         setCurrentTheme(newTheme);
         applyThemeWithMode(newTheme);
-        
+
         // Save to localStorage and update window variables
         try {
             localStorage.setItem('theme-id', newTheme.id);
-            (window as any).__APPLIED_THEME__ = newTheme.id;
+            (window as Window & { __APPLIED_THEME__?: string }).__APPLIED_THEME__ = newTheme.id;
         } catch (error) {
             console.warn('Failed to save theme:', error);
         }
@@ -327,24 +327,23 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
 
     // Show minimal loading state only if really needed
     if (!isMounted) {
-        const loadingLocale = getLocaleFromURL();
-        const loadingText = getLoadingText(loadingLocale);
-        
+        const t = useClientTranslations();
+
         return (
             <div className="flex justify-end items-center gap-x-4 gap-y-1 pointer-events-auto min-w-0">
                 {/* Placeholder mode button */}
                 <div className="w-7 h-7 md:w-auto md:h-8 bg-secondary border border-main flex items-center justify-center px-3 py-2">
                     <div className="flex items-center gap-2">
-                        <div className="w-3.5 h-3.5 relative flex-shrink-0">{getModeIcon(currentMode, "")}</div>
+                        <div className="w-3.5 h-3.5 relative flex-shrink-0">{getModeIcon(currentMode, '')}</div>
                         <span className="hidden md:block font-mono text-xs font-semibold text-main">{currentMode.toUpperCase()}</span>
                     </div>
                 </div>
-                
+
                 {/* Placeholder theme button */}
                 <div className="w-7 h-7 md:w-full md:h-8 bg-secondary border border-main flex items-center justify-center px-3 py-2">
                     <div className="flex items-center gap-2 w-full">
-                        <div 
-                            className="w-4 h-4 border border-main flex-shrink-0" 
+                        <div
+                            className="w-4 h-4 border border-main flex-shrink-0"
                             style={{ background: `linear-gradient(135deg, ${currentTheme.colorful} 50%, ${currentTheme.contrasty} 50%)` }}
                         />
                         <span className="hidden md:block font-mono text-xs font-semibold text-main flex-1 text-left">{currentTheme.name}</span>
@@ -356,7 +355,6 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
 
     return (
         <div className="flex justify-end items-center gap-x-4 gap-y-1 pointer-events-auto min-w-0">
-
             {/* Theme Switcher */}
             <DropdownButton
                 onMainClick={nextTheme}
@@ -401,12 +399,14 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
                         className="w-4 h-4 border border-main theme-preview-current flex-shrink-0"
                         style={{ background: `linear-gradient(135deg, ${currentTheme.colorful} 50%, ${currentTheme.contrasty} 50%)` }}
                     />
-                    <span className="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary flex-1 text-left">{currentTheme.name}</span>
+                    <span className="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary flex-1 text-left">
+                        {currentTheme.name}
+                    </span>
                 </div>
             </DropdownButton>
 
-                        {/* Mode Toggle */}
-                        <DropdownButton
+            {/* Mode Toggle */}
+            <DropdownButton
                 onMainClick={toggleMode}
                 dropdownContent={
                     <div>
@@ -441,11 +441,10 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
                 className="w-7 h-7 md:w-auto md:h-8"
             >
                 <div className="flex items-center gap-2">
-                    <div className="w-3.5 h-3.5 relative flex-shrink-0">{getModeIcon(currentMode, "")}</div>
+                    <div className="w-3.5 h-3.5 relative flex-shrink-0">{getModeIcon(currentMode, '')}</div>
                     <span className="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary">{currentMode.toUpperCase()}</span>
                 </div>
             </DropdownButton>
-
         </div>
     );
 }

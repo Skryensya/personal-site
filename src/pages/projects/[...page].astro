@@ -4,9 +4,9 @@ import { type CollectionEntry, getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro'; 
 import siteConfig from '../../data/site-config';
 import { sortItemsByDateDesc } from '../../utils/data-utils';
-import { getLocaleFromUrl } from '@/utils/i18n';
-import { getCollectionByLanguage } from '@/utils/content-utils';
-import { createText } from '@/i18n/universal-text';
+import { getLangFromUrl } from '@/i18n/utils';
+import { getProjectsByLanguage } from '@/utils/content-utils';
+import { useTranslations } from '@/i18n/utils';
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
     // Generate paginated paths for each language
@@ -37,22 +37,22 @@ type Props = {
 };
 
 const { page, language } = Astro.props;
-const currentLocale = getLocaleFromUrl(Astro.url);
-const text = createText(currentLocale);
+const currentLocale = getLangFromUrl(Astro.url);
+const t = useTranslations(currentLocale);
 
 // Filter projects to show only those in the current language
-const projectsInCurrentLang = (await getCollectionByLanguage('projects', currentLocale)).sort(sortItemsByDateDesc);
+const projectsInCurrentLang = (await getProjectsByLanguage(currentLocale)).sort(sortItemsByDateDesc);
 const portfolio = page.data;
 ---
 
 <Layout
-    title={text.navProjects()}
-    description={text.navProjects()}
+    title={t('nav.projects')}
+    description={t('nav.projects')}
     showHeader={true}
-    headerTitle={text.navProjects()}
-    headerSubtitle={text.navProjects()}
+    headerTitle={t('nav.projects')}
+    headerSubtitle={t('nav.projects')}
 >
-    <h1 class="mb-12 text-2xl leading-tight font-serif italic sm:mb-16 sm:text-4xl">{text.navProjects()}</h1>
+    <h1 class="mb-12 text-2xl leading-tight font-serif italic sm:mb-16 sm:text-4xl">{t('nav.projects')}</h1>
     <!-- <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
         {portfolio.map((project) => <ProjectCard project={project} />)}
     </div>

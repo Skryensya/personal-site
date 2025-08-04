@@ -5,8 +5,7 @@ import MarqueeSection from '../../components/MarqueeSection';
 import Hero from '../../components/Hero.astro';
 import BigSectionContainer from '../../components/BigSectionContainer.astro'; 
 import ProjectsSection from '@/components/ProjectsSection.astro';
-import { getLocaleFromUrl } from '@/utils/i18n';
-import { t } from '@/i18n/translations';
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
 
 export function getStaticPaths() {
     return [
@@ -15,13 +14,14 @@ export function getStaticPaths() {
     ];
 }
 
-const currentLocale = getLocaleFromUrl(Astro.url);
+const currentLocale = getLangFromUrl(Astro.url);
+const t = useTranslations(currentLocale);
 ---
 
 <Layout description={siteConfig.description} image={siteConfig.image}>
     <Hero />
 
-    <BigSectionContainer title={t('home.technologies', currentLocale)} id="tecnologia" style="view-transition-name: technologies-section;"> 
+    <BigSectionContainer title={t('home.technologies')} id="tecnologia" style="view-transition-name: technologies-section;"> 
         <MarqueeSection
             client:load
             links={[
@@ -61,22 +61,22 @@ const currentLocale = getLocaleFromUrl(Astro.url);
     
     
     <!-- ABOUT SECTION -->
-    <BigSectionContainer title={t('home.about', currentLocale)} id="about" style="view-transition-name: about-section;">
+    <BigSectionContainer title={t('home.about')} id="about" style="view-transition-name: about-section;">
         <div class="border-2 border-main bg-secondary p-6" style="view-transition-name: bio-content;">
-            <h3 class="font-mono text-xl font-bold text-main mb-4 uppercase tracking-wider" style="view-transition-name: bio-greeting;">{t('home.hello', currentLocale)}</h3>
+            <h3 class="font-mono text-xl font-bold text-main mb-4 uppercase tracking-wider" style="view-transition-name: bio-greeting;">{t('home.hello')}</h3>
             <p class="font-mono text-sm text-main leading-relaxed mb-6" style="view-transition-name: bio-intro;">
-                {t('home.bio.intro', currentLocale)}
+                {t('home.bio.intro')}
             </p>
             <p class="font-mono text-sm text-main leading-relaxed mb-6" style="view-transition-name: bio-experience;">
-                {t('home.bio.experience', currentLocale)}
+                {t('home.bio.experience')}
             </p>
             <div class="flex flex-wrap gap-3 mb-6" style="view-transition-name: bio-badges;">
-                <span class="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary" style="view-transition-name: badge-1;">{t('home.badge.problemSolver', currentLocale)}</span>
-                <span class="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary" style="view-transition-name: badge-2;">{t('home.badge.cleanCode', currentLocale)}</span>
-                <span class="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary" style="view-transition-name: badge-3;">{t('home.badge.userFocused', currentLocale)}</span>
+                <span class="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary" style="view-transition-name: badge-1;">{t('home.badge.problemSolver')}</span>
+                <span class="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary" style="view-transition-name: badge-2;">{t('home.badge.cleanCode')}</span>
+                <span class="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary" style="view-transition-name: badge-3;">{t('home.badge.userFocused')}</span>
             </div>
             <a href="/about" class="inline-block bg-main border border-main px-4 py-2 font-mono text-sm font-bold text-secondary hover:bg-secondary hover:text-main focus:bg-secondary focus:text-main focus:outline-none" style="view-transition-name: cta-button;">
-                {t('home.seeMore', currentLocale)}
+                {t('home.seeMore')}
             </a>
         </div>
     </BigSectionContainer>

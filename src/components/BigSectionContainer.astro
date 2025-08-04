@@ -3,18 +3,20 @@ export interface Props {
   title: string; 
   id: string;
   class?: string;
+  style?: string;
 }
 
 const {
   title,
   id, 
   class: className,
+  style,
 } = Astro.props;
 ---
 
 <section
   id={id}
- 
+  style={style}
 >
   <div >
     <h2>

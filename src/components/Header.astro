@@ -2,19 +2,20 @@
 import { themes } from '../data/themes.js';
 import HeaderControls from './HeaderControls.tsx';
 import LanguageSwitcher from './LanguageSwitcher.tsx';
-import { getLocaleFromUrl } from '@/utils/i18n';
-import { createText } from '@/i18n/universal-text';
+import { getLangFromUrl } from '@/i18n/utils';
+import { useTranslations } from '@/i18n/utils';
+import { defaultLang } from '@/i18n/ui';
 
-const currentLocale = getLocaleFromUrl(Astro.url);
+const currentLocale = getLangFromUrl(Astro.url);
 const currentPath = Astro.url.pathname;
-const text = createText(currentLocale);
+const t = useTranslations(currentLocale);
 
 const navItems = [
   { label: 'ALLISON PEÑA', href: '/', hotkey: null },
-  { label: text.navProjects().toUpperCase(), href: '/projects', hotkey: 'p' },
-  { label: text.navBlog().toUpperCase(), href: '/_blog', hotkey: 'b' },
-  { label: text.navAbout().toUpperCase(), href: '/about', hotkey: 'a' },
-  { label: text.navContact().toUpperCase(), href: '/contact', hotkey: 'c' }
+  { label: t('nav.projects').toUpperCase(), href: '/projects', hotkey: 'p' },
+  { label: t('nav.blog').toUpperCase(), href: '/_blog', hotkey: 'b' },
+  { label: t('nav.about').toUpperCase(), href: '/about', hotkey: 'a' },
+  { label: t('nav.contact').toUpperCase(), href: '/contact', hotkey: 'c' }
 ];
 
 ---

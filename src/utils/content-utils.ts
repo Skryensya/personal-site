@@ -1,8 +1,8 @@
 import { type CollectionEntry, getCollection } from 'astro:content';
-import type { Locale } from '@/utils/i18n';
+import type { Language } from '@/i18n/ui';
 
 // Extract language from collection entry id (e.g., "es/project-slug" -> "es")
-export function getLanguageFromId(id: string): Locale {
+export function getLanguageFromId(id: string): Language {
     const [lang] = id.split('/');
     if (lang === 'es' || lang === 'en' || lang === 'no') {
         return lang;
@@ -16,38 +16,55 @@ export function getSlugFromId(id: string): string {
     return slugParts.join('/');
 }
 
-// Get all entries for a specific language from any collection
-export async function getCollectionByLanguage<T extends keyof typeof import('astro:content')['collections']>(
-    collection: T,
-    language: Locale
-): Promise<CollectionEntry<T>[]> {
-    const allEntries = await getCollection(collection);
-    return allEntries.filter(entry => getLanguageFromId(entry.id) === language);
+// Get all entries for a specific language from blog collection
+export async function getBlogByLanguage(language: Language): Promise<CollectionEntry<'blog'>[]> {
+    const allEntries = await getCollection('blog');
+    return allEntries.filter((entry) => getLanguageFromId(entry.id) === language);
 }
 
-// Get a specific entry by slug and language
-export async function getEntryBySlugAndLanguage<T extends keyof typeof import('astro:content')['collections']>(
-    collection: T,
-    slug: string,
-    language: Locale
-): Promise<CollectionEntry<T> | undefined> {
-    const entries = await getCollectionByLanguage(collection, language);
-    return entries.find(entry => getSlugFromId(entry.id) === slug);
+// Get all entries for a specific language from projects collection
+export async function getProjectsByLanguage(language: Language): Promise<CollectionEntry<'projects'>[]> {
+    const allEntries = await getCollection('projects');
+    return allEntries.filter((entry) => getLanguageFromId(entry.id) === language);
 }
 
-// Get entries in other languages for the same content (by slug)
-export async function getAlternativeLanguages<T extends keyof typeof import('astro:content')['collections']>(
-    collection: T,
+// Get a specific blog entry by slug and language
+export async function getBlogEntryBySlugAndLanguage(slug: string, language: Language): Promise<CollectionEntry<'blog'> | undefined> {
+    const entries = await getBlogByLanguage(language);
+    return entries.find((entry) => getSlugFromId(entry.id) === slug);
+}
+
+// Get a specific project entry by slug and language
+export async function getProjectEntryBySlugAndLanguage(slug: string, language: Language): Promise<CollectionEntry<'projects'> | undefined> {
+    const entries = await getProjectsByLanguage(language);
+    return entries.find((entry) => getSlugFromId(entry.id) === slug);
+}
+
+// Get featured blog entries for a specific language
+export async function getFeaturedBlogByLanguage(language: Language): Promise<CollectionEntry<'blog'>[]> {
+    const entries = await getBlogByLanguage(language);
+    return entries.filter((entry) => entry.data.isFeatured);
+}
+
+// Get featured project entries for a specific language
+export async function getFeaturedProjectsByLanguage(language: Language): Promise<CollectionEntry<'projects'>[]> {
+    const entries = await getProjectsByLanguage(language);
+    return entries.filter((entry) => entry.data.isFeatured);
+}
+
+// Get project entries in other languages for the same content (by slug)
+export async function getAlternativeLanguages(
+    collection: 'projects' | 'blog',
     slug: string,
-    excludeLanguage?: Locale
-): Promise<{ language: Locale; entry: CollectionEntry<T> }[]> {
+    excludeLanguage?: Language
+): Promise<{ language: Language; entry: CollectionEntry<'projects'> | CollectionEntry<'blog'> }[]> {
     const allEntries = await getCollection(collection);
-    const alternatives: { language: Locale; entry: CollectionEntry<T> }[] = [];
-    
+    const alternatives: { language: Language; entry: CollectionEntry<'projects'> | CollectionEntry<'blog'> }[] = [];
+
     for (const entry of allEntries) {
         const entrySlug = getSlugFromId(entry.id);
         const entryLang = getLanguageFromId(entry.id);
-        
+
         if (entrySlug === slug && entryLang !== excludeLanguage) {
             alternatives.push({
                 language: entryLang,
@@ -55,15 +72,6 @@ export async function getAlternativeLanguages<T extends keyof typeof import('ast
             });
         }
     }
-    
-    return alternatives;
-}
 
-// Get featured entries for a specific language
-export async function getFeaturedByLanguage<T extends keyof typeof import('astro:content')['collections']>(
-    collection: T,
-    language: Locale
-): Promise<CollectionEntry<T>[]> {
-    const entries = await getCollectionByLanguage(collection, language);
-    return entries.filter(entry => 'isFeatured' in entry.data && entry.data.isFeatured);
+    return alternatives;
 }

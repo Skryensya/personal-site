@@ -34,9 +34,9 @@ const CursorTrail: React.FC<CursorTrailProps> = ({ enabled = true, debug = false
     );
 
     const animatePosition = useCallback(() => {
-        setPositions(prev => {
+        setPositions((prev) => {
             const newPositions = [...prev];
-            
+
             // First circle follows cursor directly with interpolation
             const dx0 = targetPosition.current.x - newPositions[0].x;
             const dy0 = targetPosition.current.y - newPositions[0].y;
@@ -44,7 +44,7 @@ const CursorTrail: React.FC<CursorTrailProps> = ({ enabled = true, debug = false
                 x: newPositions[0].x + dx0 * 0.25,
                 y: newPositions[0].y + dy0 * 0.25
             };
-            
+
             // Second circle follows first circle closely
             const dx1 = newPositions[0].x - newPositions[1].x;
             const dy1 = newPositions[0].y - newPositions[1].y;
@@ -52,7 +52,7 @@ const CursorTrail: React.FC<CursorTrailProps> = ({ enabled = true, debug = false
                 x: newPositions[1].x + dx1 * 0.22,
                 y: newPositions[1].y + dy1 * 0.22
             };
-            
+
             // Third circle follows second circle closely
             const dx2 = newPositions[1].x - newPositions[2].x;
             const dy2 = newPositions[1].y - newPositions[2].y;
@@ -60,10 +60,10 @@ const CursorTrail: React.FC<CursorTrailProps> = ({ enabled = true, debug = false
                 x: newPositions[2].x + dx2 * 0.18,
                 y: newPositions[2].y + dy2 * 0.18
             };
-            
+
             return newPositions;
         });
-        
+
         animationRef.current = requestAnimationFrame(animatePosition);
     }, []);
 
@@ -76,10 +76,14 @@ const CursorTrail: React.FC<CursorTrailProps> = ({ enabled = true, debug = false
 
             // Fast path for explicit cursor styles
             switch (cursor) {
-                case 'pointer': return 'pointer';
-                case 'text': return 'text';
-                case 'grab': return 'drag';
-                case 'grabbing': return 'grabbing';
+                case 'pointer':
+                    return 'pointer';
+                case 'text':
+                    return 'text';
+                case 'grab':
+                    return 'drag';
+                case 'grabbing':
+                    return 'grabbing';
                 case 'resize':
                 case 'n-resize':
                 case 's-resize':
@@ -100,7 +104,7 @@ const CursorTrail: React.FC<CursorTrailProps> = ({ enabled = true, debug = false
 
             // Check for clickable elements (only if not already handled)
             if (cursor !== 'default' && cursor !== 'auto') return 'normal';
-            
+
             if (
                 target.tagName === 'A' ||
                 target.tagName === 'BUTTON' ||
@@ -163,7 +167,7 @@ const CursorTrail: React.FC<CursorTrailProps> = ({ enabled = true, debug = false
             document.removeEventListener('mouseup', handleMouseUp);
             document.removeEventListener('mouseleave', handleMouseLeave);
             document.removeEventListener('mouseenter', handleMouseEnter);
-            
+
             // Cancel animation
             if (animationRef.current) {
                 cancelAnimationFrame(animationRef.current);
@@ -176,7 +180,7 @@ const CursorTrail: React.FC<CursorTrailProps> = ({ enabled = true, debug = false
     const renderCircles = () => {
         const sizes = ['w-4 h-4', 'w-3 h-3', 'w-2 h-2']; // Decreasing sizes
         const opacities = ['opacity-100', 'opacity-75', 'opacity-50']; // Decreasing opacity
-        
+
         return positions.map((pos, index) => (
             <div
                 key={index}
@@ -195,7 +199,7 @@ const CursorTrail: React.FC<CursorTrailProps> = ({ enabled = true, debug = false
         <div className={`${isVisible ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300`}>
             {renderCircles()}
             {debug && (
-                <div 
+                <div
                     className="fixed bg-main text-secondary px-2 py-1 text-xs font-mono whitespace-nowrap"
                     style={{
                         left: positions[0].x + 20,

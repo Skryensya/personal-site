@@ -1,159 +1,22 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import siteConfig from '../data/site-config';
-import MarqueeSection from '../components/MarqueeSection';
 import Hero from '../components/Hero.astro';
-import BigSectionContainer from '../components/BigSectionContainer.astro'; 
+import TechnologiesSection from '@/components/TechnologiesSection.astro';
+import AboutSection from '@/components/AboutSection.astro';
 import ProjectsSection from '@/components/ProjectsSection.astro';
-import AboutStats from '@/components/AboutStats.tsx';
-import AboutSpecialties from '@/components/AboutSpecialties.tsx';
-import { getLocaleFromUrl } from '@/utils/i18n';
-import { createText } from '@/i18n/universal-text';
+import { defaultLang } from '@/i18n/ui';
+import { useTranslations } from '@/i18n/utils';
 
-const currentLocale = getLocaleFromUrl(Astro.url);
-const text = createText(currentLocale);
+const t = useTranslations(defaultLang);
 ---
 
-<Layout description={siteConfig.description} image={siteConfig.image}>
-    <Hero />
-
-    <BigSectionContainer title={text.technologiesTitle()} id="tecnologia" style="view-transition-name: technologies-section;"> 
-        <MarqueeSection
-            client:load
-            links={[
-                { href: 'https://react.dev/', text: 'React' },
-                { href: 'https://www.typescriptlang.org/', text: 'TypeScript' },
-                { href: 'https://nodejs.org/', text: 'Node.js' },
-                { href: 'https://astro.build/', text: 'Astro' },
-                { href: 'https://www.postgresql.org/', text: 'PostgreSQL' },
-                { href: 'https://aws.amazon.com/', text: 'AWS' },
-                { href: 'https://tailwindcss.com/', text: 'Tailwind CSS' },
-                { href: 'https://www.figma.com/', text: 'Figma' },
-                { href: 'https://www.framer.com/', text: 'Framer' },
-                { href: 'https://vercel.com/', text: 'Vercel' },
-                { href: 'https://www.docker.com/', text: 'Docker' },
-                { href: 'https://kubernetes.io/', text: 'Kubernetes' },
-                { href: 'https://www.jenkins.io/', text: 'Jenkins' },
-                { href: 'https://www.ansible.com/', text: 'Ansible' },
-                { href: 'https://www.terraform.io/', text: 'Terraform' },
-                { href: 'https://www.elastic.co/', text: 'Elasticsearch' },
-                { href: 'https://redis.io/', text: 'Redis' },
-                { href: 'https://graphql.org/', text: 'GraphQL' },
-                { href: 'https://www.apollographql.com/', text: 'Apollo' },
-                { href: 'https://www.prisma.io/', text: 'Prisma' },
-                { href: 'https://nextjs.org/', text: 'Next.js' },
-                { href: 'https://vitejs.dev/', text: 'Vite' },
-                { href: 'https://jestjs.io/', text: 'Jest' },
-                { href: 'https://testing-library.com/', text: 'Testing Library' },
-                { href: 'https://playwright.dev/', text: 'Playwright' },
-                { href: 'https://storybook.js.org/', text: 'Storybook' },
-                { href: 'https://www.gatsbyjs.com/', text: 'Gatsby' },
-                { href: 'https://www.electronjs.org/', text: 'Electron' },
-                { href: 'https://www.djangoproject.com/', text: 'Django' },
-                { href: 'https://rubyonrails.org/', text: 'Ruby on Rails' }
-            ]}
-        />
-    </BigSectionContainer>
-    
-    
-    <!-- ABOUT SECTION -->
-    <BigSectionContainer title={text.aboutTitle()} id="about" style="view-transition-name: about-section;">
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- Main Bio Card -->
-            <div class="lg:col-span-2 border-2 border-main bg-secondary p-6" style="view-transition-name: bio-content;">
-                <h3 class="font-mono text-xl font-bold text-main mb-4 uppercase tracking-wider" style="view-transition-name: bio-greeting;">{text.bioGreeting()}</h3>
-                <p class="font-mono text-sm text-main leading-relaxed mb-4" style="view-transition-name: bio-intro;">
-                    {text.bioIntro()}
-                </p>
-                <p class="font-mono text-sm text-main leading-relaxed mb-6" style="view-transition-name: bio-experience;">
-                    {text.bioExperience()}
-                </p>
-                
-                <!-- Inline Stats -->
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
-                    <div>
-                        <div class="font-mono text-xs font-bold text-main uppercase tracking-wider mb-1">Experience</div>
-                        <div class="font-mono text-lg font-bold text-main">3+ Years</div>
-                    </div>
-                    <div>
-                        <div class="font-mono text-xs font-bold text-main uppercase tracking-wider mb-1">Location</div>
-                        <div class="font-mono text-sm font-bold text-main">Santiago, Chile</div>
-                    </div>
-                    <div class="col-span-2 md:col-span-1">
-                        <div class="font-mono text-xs font-bold text-main uppercase tracking-wider mb-1">Status</div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                            <span class="font-mono text-sm font-bold text-main">Available</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Core Values -->
-                <div class="flex flex-wrap gap-3 mb-6" style="view-transition-name: bio-badges;">
-                    <span class="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary" style="view-transition-name: badge-1;">{text.badgeProblemSolver()}</span>
-                    <span class="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary" style="view-transition-name: badge-2;">{text.badgeCleanCode()}</span>
-                    <span class="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary" style="view-transition-name: badge-3;">{text.badgeUserFocused()}</span>
-                </div>
-
-                <!-- CTA -->
-                <div class="text-left">
-                    <a href="/about" class="inline-block bg-main border border-main px-4 py-2 font-mono text-sm font-bold text-secondary hover:bg-secondary hover:text-main focus:bg-secondary focus:text-main focus:outline-none" style="view-transition-name: cta-button;">
-                        {text.seeMoreButton()} →
-                    </a>
-                </div>
-            </div>
-
-            <!-- Skills & Specialties Sidebar -->
-            <div class="space-y-6">
-                <!-- Tech Focus -->
-                <div class="border-2 border-main bg-main p-4">
-                    <h4 class="font-mono text-sm font-bold text-secondary uppercase tracking-wider mb-3">Tech Stack</h4>
-                    <div class="space-y-2">
-                        <div class="flex items-center gap-2">
-                            <div class="w-2 h-2 bg-secondary rounded-full"></div>
-                            <span class="font-mono text-xs text-secondary">React & TypeScript</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-2 h-2 bg-secondary rounded-full"></div>
-                            <span class="font-mono text-xs text-secondary">Node.js & PostgreSQL</span>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            <div class="w-2 h-2 bg-secondary rounded-full"></div>
-                            <span class="font-mono text-xs text-secondary">AWS & Docker</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Specialties -->
-                <div class="border-2 border-main bg-secondary p-4">
-                    <h4 class="font-mono text-sm font-bold text-main uppercase tracking-wider mb-3">Specialties</h4>
-                    <div class="flex flex-wrap gap-2">
-                        <span class="bg-main border border-main px-2 py-1 font-mono text-xs font-bold text-secondary">Accessibility</span>
-                        <span class="bg-main border border-main px-2 py-1 font-mono text-xs font-bold text-secondary">Performance</span>
-                        <span class="bg-main border border-main px-2 py-1 font-mono text-xs font-bold text-secondary">DX</span>
-                        <span class="bg-main border border-main px-2 py-1 font-mono text-xs font-bold text-secondary">UI/UX</span>
-                    </div>
-                </div>
-
-                <!-- Quick Contact -->
-                <div class="border-2 border-main bg-main p-4">
-                    <h4 class="font-mono text-sm font-bold text-secondary uppercase tracking-wider mb-3">Connect</h4>
-                    <div class="space-y-2">
-                        <a href="https://linkedin.com/in/skryensya" target="_blank" rel="noopener noreferrer" class="block font-mono text-xs text-secondary hover:underline">
-                            LinkedIn →
-                        </a>
-                        <a href="https://github.com/skryensya" target="_blank" rel="noopener noreferrer" class="block font-mono text-xs text-secondary hover:underline">
-                            GitHub →
-                        </a>
-                        <a href="mailto:contact@example.com" class="block font-mono text-xs text-secondary hover:underline">
-                            Email →
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </BigSectionContainer>
-
-    <!-- PROYECTOS DESTACADOS -->
-    <ProjectsSection /> 
+<Layout 
+    description={t('site.description')} 
+    title={t('site.title')}
+    lang={defaultLang}
+>
+    <Hero lang={defaultLang} />
+    <TechnologiesSection lang={defaultLang} />
+    <AboutSection lang={defaultLang} />
+    <ProjectsSection lang={defaultLang} /> 
 </Layout>

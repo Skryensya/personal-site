@@ -7,6 +7,7 @@ export interface Props {
   size?: 'sm' | 'md' | 'lg';
   elevated?: boolean;
   class?: string;
+  style?: string;
 }
 
 const {
@@ -15,6 +16,7 @@ const {
   size: rawSize = 'md',
   elevated = false,
   class: className,
+  style,
 } = Astro.props;
 
 const size = ['sm', 'md', 'lg'].includes(rawSize) ? rawSize : 'md';
@@ -52,7 +54,7 @@ const shadowClasses = cn(
   'isolate z-30': elevated,
   'z-20': !elevated 
 })}>
-  <Tag class={cn(buttonClasses, { 'button-with-sound': elevated })} href={href}>
+  <Tag class={cn(buttonClasses, { 'button-with-sound': elevated })} href={href} style={style}>
     <slot />
   </Tag>
 

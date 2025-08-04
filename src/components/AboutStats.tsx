@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { type Locale } from '@/utils/i18n';
-import { createText } from '@/i18n/universal-text';
+import { type Language } from '@/i18n/ui';
+import { useClientTranslations } from '@/i18n/utils';
 
 const { useEffect, useState } = React;
 
 interface AboutStatsProps {
-    initialLocale?: Locale;
+    initialLocale?: Language;
 }
 
 export default function AboutStats({ initialLocale }: AboutStatsProps) {
@@ -14,14 +14,14 @@ export default function AboutStats({ initialLocale }: AboutStatsProps) {
 
     useEffect(() => {
         setMounted(true);
-        
+
         // Listen for locale changes
-        const handleLocaleChange = (event: CustomEvent<Locale>) => {
+        const handleLocaleChange = (event: CustomEvent<Language>) => {
             setCurrentLocale(event.detail);
         };
 
         window.addEventListener('localeChanged', handleLocaleChange as EventListener);
-        
+
         return () => {
             window.removeEventListener('localeChanged', handleLocaleChange as EventListener);
         };
@@ -49,23 +49,23 @@ export default function AboutStats({ initialLocale }: AboutStatsProps) {
         );
     }
 
-    const text = createText(currentLocale);
-    
+    const t = useClientTranslations();
+
     return (
         <div className="flex flex-wrap gap-4 mb-4" style={{ viewTransitionName: 'stats-row' }}>
             <div className="flex-1 min-w-32 border-2 border-main bg-main p-4" style={{ viewTransitionName: 'stat-experience' }}>
-                <div className="font-mono text-xs font-bold text-secondary uppercase tracking-wider mb-2">{text.statsExperience()}</div>
-                <div className="font-mono text-xl font-bold text-secondary">{text.statsYears()}</div>
+                <div className="font-mono text-xs font-bold text-secondary uppercase tracking-wider mb-2">{t('home.stats.experience')}</div>
+                <div className="font-mono text-xl font-bold text-secondary">{t('home.stats.years')}</div>
             </div>
             <div className="flex-1 min-w-32 border-2 border-main bg-main p-4" style={{ viewTransitionName: 'stat-location' }}>
-                <div className="font-mono text-xs font-bold text-secondary uppercase tracking-wider mb-2">{text.statsLocation()}</div>
+                <div className="font-mono text-xs font-bold text-secondary uppercase tracking-wider mb-2">{t('home.stats.location')}</div>
                 <div className="font-mono text-sm font-bold text-secondary">Santiago, Chile</div>
             </div>
             <div className="flex-1 min-w-40 border-2 border-main bg-main p-4" style={{ viewTransitionName: 'stat-status' }}>
-                <div className="font-mono text-xs font-bold text-secondary uppercase tracking-wider mb-2">{text.statsStatus()}</div>
+                <div className="font-mono text-xs font-bold text-secondary uppercase tracking-wider mb-2">{t('home.stats.status')}</div>
                 <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                    <span className="font-mono text-sm font-bold text-secondary">{text.statsAvailable()}</span>
+                    <span className="font-mono text-sm font-bold text-secondary">{t('home.stats.available')}</span>
                 </div>
             </div>
         </div>
