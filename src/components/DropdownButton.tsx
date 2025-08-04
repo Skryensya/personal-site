@@ -106,12 +106,12 @@ export default function DropdownButton({
                     {...getReferenceProps()}
                 >
                     {/* Icono de flecha */}
-                    <svg 
-                        className="w-4 h-4 text-main group-hover:text-secondary" 
-                        fill="none" 
-                        stroke="currentColor" 
+                    <svg
+                        className="w-4 h-4 text-main group-hover:text-secondary"
+                        fill="none"
+                        stroke="currentColor"
                         viewBox="0 0 24 24"
-                        style={{ 
+                        style={{
                             transform: isMounted && isOpen ? 'rotate(180deg)' : 'rotate(0deg)'
                         }}
                     >
@@ -151,15 +151,12 @@ export function DropdownItem({
     onClick?: () => void;
     className?: string;
     selected?: boolean;
-    [key: string]: any;
 }) {
     return (
         <button
             type="button"
             className={`w-full px-3 py-2 text-left focus:outline-none whitespace-nowrap ${
-                selected 
-                    ? 'bg-main text-secondary' 
-                    : 'bg-secondary text-main hover:bg-main hover:text-secondary'
+                selected ? 'bg-main text-secondary' : 'bg-secondary text-main hover:bg-main hover:text-secondary'
             } ${className}`}
             onClick={onClick}
             {...props}

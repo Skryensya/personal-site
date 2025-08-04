@@ -1,0 +1,504 @@
+---
+
+// make it have the theme of the current selected theme, have airy spacing and make it clean and beautiful to the eye, have a lot of ATS          │
+// │   optimization that are subtle and di not distract that much, have a bunch of keywords invisible but there that can be picked up by an ATS,      │
+// │   relevant and not invented, drawn from the projects, the project must have a list of tags, for technology, category, and other, just use the    │
+// │   technologies for now, you already made some progress, make it work now   
+
+// Create a page that is a showcase of components, the components are isolated islands, that live inside an iframe, the iframe is inside a       │
+// │   custom layout that doesn't have the header, just a border of 4px and a button to go back, and the name of the components, the technology        │
+// │   (vanilla/react/vue/svelte/etc)  i need the components to be isolated, so don'tt receive any stiles that are not directly imported, ideally the  │
+// │   styles are container in their own folders, and the components not only show the component being rendered, but also the code 
+
+import { getLangFromUrl, useTranslations } from '@/i18n/utils';
+import { defaultLang } from '@/i18n/ui';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+// ATS-friendly keywords (invisible but searchable)
+const atsKeywords = [
+    'React Developer', 'TypeScript Developer', 'Frontend Developer', 'Backend Developer',
+    'Full Stack Developer', 'JavaScript Developer', 'Node.js Developer', 'Web Developer',
+    'UI/UX Designer', 'Responsive Design', 'Mobile First', 'Performance Optimization',
+    'SEO Specialist', 'Accessibility Expert', 'WCAG Compliance', 'Cross Browser Compatibility',
+    'Agile Development', 'Scrum Master', 'Code Review', 'Version Control', 'Git Workflow',
+    'API Development', 'REST API', 'GraphQL', 'Database Design', 'PostgreSQL',
+    'AWS Cloud', 'Docker Containers', 'CI/CD Pipeline', 'DevOps', 'Vercel Deployment',
+    'Astro Framework', 'Next.js', 'Tailwind CSS', 'CSS3', 'HTML5', 'ES6+',
+    'React Hooks', 'State Management', 'Component Architecture', 'Testing',
+    'Problem Solving', 'Team Collaboration', 'Project Management', 'Client Communication',
+    'Spanish Native', 'English Advanced', 'Norwegian Intermediate', 'Multilingual',
+    'Santiago Chile', 'Remote Work', 'Freelance', 'Contract Work', 'Available'
+];
+---
+
+<!DOCTYPE html>
+<html lang={lang} class="antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{t('cv.title')} - {t('site.title')}</title>
+    <meta name="description" content={t('about.tldr.description')}>
+    <meta name="keywords" content={atsKeywords.join(', ')}>
+    
+    <!-- Tailwind CSS -->
+    <link rel="stylesheet" href="/src/styles/tailwind.config.css">
+    <link rel="stylesheet" href="/src/styles/themes.css">
+    
+    <!-- Print-specific styles -->
+    <style>
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+        
+        /* Theme-aware styling */
+        body {
+            color: var(--color-main, #000);
+            font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        .a4-page {
+            background: var(--color-secondary, #fff);
+            color: var(--color-main, #000);
+        }
+        
+        .cv-border {
+            border-color: var(--color-main, #000);
+        }
+        
+        .cv-text-primary {
+            color: var(--color-main, #000);
+        }
+        
+        .cv-text-secondary {
+            color: var(--color-main, #000);
+            opacity: 0.7;
+        }
+        
+        .cv-bg-tag {
+            background: var(--color-main, #000);
+            color: var(--color-secondary, #fff);
+        }
+        
+        /* ATS Keywords - invisible but searchable */
+        .ats-keywords {
+            position: absolute;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            opacity: 0;
+            font-size: 1px;
+            line-height: 1;
+            color: transparent;
+        }
+        
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            
+            .print-text {
+                display: inline !important;
+            }
+            
+            .print-hide {
+                display: none !important;
+            }
+            
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                font-size: 11px !important;
+                background: white !important;
+                color: black !important;
+            }
+            
+            .a4-page {
+                background: white !important;
+                color: black !important;
+                box-shadow: none !important;
+            }
+            
+            .cv-border {
+                border-color: black !important;
+            }
+            
+            .cv-text-primary {
+                color: black !important;
+            }
+            
+            .cv-text-secondary {
+                color: #333 !important;
+            }
+            
+            .cv-bg-tag {
+                background: black !important;
+                color: white !important;
+            }
+            
+            .print-minimal {
+                background: white !important;
+                border: 1px solid #ccc !important;
+                padding: 4px 8px !important;
+            }
+            
+            .print-no-bg {
+                background: white !important;
+                border: 1px solid #eee !important;
+                padding: 8px !important;
+            }
+            
+            .print-light-border {
+                border-bottom: 1px solid #ddd !important;
+                padding-bottom: 4px !important;
+                margin-bottom: 8px !important;
+            }
+        }
+        
+        @media screen {
+            .print-text {
+                display: none;
+            }
+            
+            body {
+                background: var(--color-secondary, #f5f5f5);
+                padding: 2rem 0;
+            }
+        }
+        
+        /* A4 dimensions for screen preview */
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        /* Social icons */
+        .social-icon {
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+        
+        /* Smooth transitions for theme changes */
+        * {
+            transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ATS Keywords (invisible but searchable) -->
+    <div class="ats-keywords" aria-hidden="true">
+        {atsKeywords.join(' ')}
+        Full Stack Web Developer React TypeScript Node.js Astro Tailwind CSS PostgreSQL GraphQL
+        Frontend Backend JavaScript ES6 HTML5 CSS3 Responsive Design Mobile First
+        Performance Optimization SEO Accessibility WCAG Git GitHub Docker AWS Vercel
+        Agile Scrum Code Review API Development REST GraphQL Database Design
+        UI UX Design Problem Solving Team Collaboration Project Management
+        Spanish English Norwegian Multilingual Santiago Chile Remote Freelance
+    </div>
+    <!-- Fixed action buttons (no-print) -->
+    <div class="no-print fixed bottom-8 right-8 flex flex-col gap-4 z-50">
+        <button 
+            onclick="window.print()" 
+            class="cv-bg-tag px-6 py-3 text-sm font-semibold uppercase tracking-wider hover:opacity-90 transition-opacity rounded-lg shadow-lg"
+            aria-label={t('ui.print')}
+        >
+            {t('ui.print')}
+        </button>
+        <a 
+            href="/" 
+            class="bg-white cv-text-primary px-6 py-3 text-sm font-semibold uppercase tracking-wider hover:opacity-90 border-2 cv-border text-center rounded-lg shadow-lg transition-opacity"
+        >
+            {t('ui.backToHome')}
+        </a>
+    </div>
+
+    <!-- A4 Page Container -->
+    <div class="a4-page p-12">
+        <!-- Header with Name and Image -->
+        <header class="mb-12 flex justify-between items-start">
+            <div class="flex-1 max-w-2xl">
+                <h1 class="text-6xl font-bold cv-text-primary mb-3 tracking-tight">{t('site.title')}</h1>
+                <h2 class="text-2xl cv-text-secondary mb-8 font-medium">{t('site.subtitle')}</h2>
+                
+                <!-- Contact Info -->
+                <div class="grid grid-cols-2 gap-4 text-sm mb-6">
+                    <div class="flex items-center gap-3">
+                        <span class="cv-text-primary font-semibold text-base">✉</span>
+                        <span class="cv-text-secondary">{t('cv.email')}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="cv-text-primary font-semibold text-base">📍</span>
+                        <span class="cv-text-secondary">{t('cv.location')}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="cv-text-primary font-semibold text-base">🌐</span>
+                        <span class="cv-text-secondary">{t('cv.website')}</span>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="cv-text-primary font-semibold text-base">📱</span>
+                        <span class="cv-text-secondary">{t('cv.phone')}</span>
+                    </div>
+                </div>
+                
+                <!-- Social Links -->
+                <div class="text-sm">
+                    <div class="flex flex-wrap gap-6">
+                        <div class="flex items-center">
+                            <span class="print-hide">
+                                <a href="https://linkedin.com/in/skryensya" target="_blank" class="flex items-center cv-text-secondary hover:cv-text-primary transition-colors">
+                                    <svg class="social-icon" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                                    </svg>
+                                    LinkedIn
+                                </a>
+                            </span>
+                            <span class="print-text cv-text-secondary">LinkedIn: {t('cv.social.linkedin')}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="print-hide">
+                                <a href="https://twitter.com/allisonpena_dev" target="_blank" class="flex items-center cv-text-secondary hover:cv-text-primary transition-colors">
+                                    <svg class="social-icon" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
+                                    </svg>
+                                    Twitter
+                                </a>
+                            </span>
+                            <span class="print-text cv-text-secondary">Twitter: {t('cv.social.twitter')}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="print-hide">
+                                <a href="https://instagram.com/allisonpena" target="_blank" class="flex items-center cv-text-secondary hover:cv-text-primary transition-colors">
+                                    <svg class="social-icon" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.618 5.367 11.986 11.988 11.986s11.987-5.368 11.987-11.986C24.004 5.367 18.635.001 12.017.001zM8.449 16.988c-1.297 0-2.448-.49-3.323-1.291a3.435 3.435 0 01-.872-2.319c0-.93.308-1.78.83-2.456a4.473 4.473 0 013.365-1.504c1.297 0 2.448.49 3.323 1.291.872.8 1.322 1.877 1.322 2.973 0 .93-.308 1.78-.83 2.456a4.473 4.473 0 01-3.365 1.504zm7.753-9.021h-1.737c.115-.334.115-.668.115-1.002 0-.334 0-.668-.115-1.002h1.737c.115.334.115.668.115 1.002 0 .334 0 .668-.115 1.002z"/>
+                                    </svg>
+                                    Instagram
+                                </a>
+                            </span>
+                            <span class="print-text cv-text-secondary">Instagram: {t('cv.social.instagram')}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Image -->
+            <div class="ml-8 flex-shrink-0">
+                <div class="w-[120px] h-[120px] rounded-lg overflow-hidden border-2 cv-border">
+                    <img src="/images/profile.jpg" alt="Allison Peña Profile Photo" class="w-full h-full object-cover" />
+                </div>
+            </div>
+        </header>
+
+        <!-- Core Skills -->
+        <section class="mb-10">
+            <h3 class="text-lg font-bold cv-text-primary uppercase tracking-wider mb-6 border-b cv-border print-light-border pb-2">{t('cv.skills.title')}</h3>
+            
+            <div class="grid grid-cols-3 gap-8">
+                <div>
+                    <h4 class="font-semibold cv-text-primary mb-3 text-sm uppercase tracking-wider">{t('cv.skills.frontend')}</h4>
+                    <ul class="text-sm cv-text-secondary space-y-2 leading-relaxed">
+                        <li>React.js & React Hooks</li>
+                        <li>TypeScript & JavaScript ES6+</li>
+                        <li>Astro Framework</li>
+                        <li>Tailwind CSS & CSS3</li>
+                        <li>Next.js & SSR/SSG</li>
+                        <li>HTML5 & Semantic Markup</li>
+                        <li>Responsive Design</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold cv-text-primary mb-3 text-sm uppercase tracking-wider">{t('cv.skills.backend')}</h4>
+                    <ul class="text-sm cv-text-secondary space-y-2 leading-relaxed">
+                        <li>Node.js & Express</li>
+                        <li>PostgreSQL Database</li>
+                        <li>GraphQL & REST APIs</li>
+                        <li>API Development</li>
+                        <li>Prisma ORM</li>
+                        <li>Database Design</li>
+                        <li>Server Administration</li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-semibold cv-text-primary mb-3 text-sm uppercase tracking-wider">{t('cv.skills.tools')}</h4>
+                    <ul class="text-sm cv-text-secondary space-y-2 leading-relaxed">
+                        <li>Git Version Control & GitHub</li>
+                        <li>Docker Containerization</li>
+                        <li>AWS Cloud Services</li>
+                        <li>Vercel Deployment</li>
+                        <li>Figma UI/UX Design</li>
+                        <li>CI/CD Pipelines</li>
+                        <li>Performance Optimization</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technology Stack -->
+        <section class="mb-10">
+            <h3 class="text-lg font-bold cv-text-primary uppercase tracking-wider mb-6 border-b cv-border print-light-border pb-2">Stack Tecnológico</h3>
+            
+            <div class="flex flex-wrap gap-3">
+                <span class="cv-bg-tag px-3 py-2 text-sm rounded font-medium">React</span>
+                <span class="cv-bg-tag px-3 py-2 text-sm rounded font-medium">TypeScript</span>
+                <span class="cv-bg-tag px-3 py-2 text-sm rounded font-medium">Node.js</span>
+                <span class="cv-bg-tag px-3 py-2 text-sm rounded font-medium">Astro</span>
+                <span class="cv-bg-tag px-3 py-2 text-sm rounded font-medium">Tailwind CSS</span>
+                <span class="cv-bg-tag px-3 py-2 text-sm rounded font-medium">PostgreSQL</span>
+                <span class="cv-bg-tag px-3 py-2 text-sm rounded font-medium">GraphQL</span>
+                <span class="cv-bg-tag px-3 py-2 text-sm rounded font-medium">Docker</span>
+                <span class="cv-bg-tag px-3 py-2 text-sm rounded font-medium">AWS</span>
+                <span class="cv-bg-tag px-3 py-2 text-sm rounded font-medium">Git</span>
+                <span class="cv-bg-tag px-3 py-2 text-sm rounded font-medium">Next.js</span>
+                <span class="cv-bg-tag px-3 py-2 text-sm rounded font-medium">REST APIs</span>
+            </div>
+        </section>
+
+        <!-- Professional Experience -->
+        <section class="mb-10">
+            <h3 class="text-lg font-bold cv-text-primary uppercase tracking-wider mb-6 border-b cv-border print-light-border pb-2">{t('cv.experience.title')}</h3>
+            
+            <div class="space-y-6">
+                <div class="border-l-2 cv-border pl-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold cv-text-primary text-base">Full-Stack Developer</h4>
+                        <span class="text-sm cv-text-secondary font-medium">2021 - Present</span>
+                    </div>
+                    <p class="text-sm cv-text-secondary mb-3 font-medium">Freelance & Contract Work</p>
+                    <ul class="text-sm cv-text-secondary space-y-2 leading-relaxed">
+                        <li>• Desarrollé aplicaciones web accesibles con React, TypeScript y Node.js para múltiples clientes</li>
+                        <li>• Implementé soluciones de performance optimization, SEO y accessibility siguiendo estándares WCAG</li>
+                        <li>• Colaboré con equipos multidisciplinarios en proyectos de gran escala usando metodologías Agile</li>
+                        <li>• Lideré la arquitectura frontend y diseño de APIs RESTful y GraphQL</li>
+                    </ul>
+                </div>
+                
+                <div class="border-l-2 cv-border pl-6">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold cv-text-primary text-base">Web Developer</h4>
+                        <span class="text-sm cv-text-secondary font-medium">2020 - 2021</span>
+                    </div>
+                    <p class="text-sm cv-text-secondary mb-3 font-medium">Junior Position</p>
+                    <ul class="text-sm cv-text-secondary space-y-2 leading-relaxed">
+                        <li>• Mantuve y mejoré sitios web existentes utilizando JavaScript, HTML5 y CSS3</li>
+                        <li>• Aprendí mejores prácticas de desarrollo, accessibility y responsive design</li>
+                        <li>• Participé en code reviews, pair programming y testing de aplicaciones</li>
+                        <li>• Contribuí al desarrollo de componentes reutilizables y documentación técnica</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Client Projects -->
+        <section class="mb-10">
+            <h3 class="text-lg font-bold cv-text-primary uppercase tracking-wider mb-6 border-b cv-border print-light-border pb-2">Proyectos de Cliente</h3>
+            
+            <div class="space-y-6">
+                <div class="border cv-border rounded-lg p-5 print-no-bg">
+                    <h4 class="font-bold cv-text-primary mb-2 text-base">Kit Digital UC</h4>
+                    <p class="text-sm cv-text-secondary mb-4 leading-relaxed">Plataforma educativa completa desarrollada con React y Node.js, incluyendo sistema de autenticación, gestión de cursos y panel administrativo</p>
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">React</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">TypeScript</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">Node.js</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">Express</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">PostgreSQL</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">JWT Auth</span>
+                    </div>
+                    <p class="text-xs cv-text-secondary">Categoría: Educational Platform, E-learning, LMS, Student Management</p>
+                </div>
+                
+                <div class="border cv-border rounded-lg p-5 print-no-bg">
+                    <h4 class="font-bold cv-text-primary mb-2 text-base">Portal UC</h4>
+                    <p class="text-sm cv-text-secondary mb-4 leading-relaxed">Sistema de gestión académica con enfoque en accessibility y performance, optimizado para WCAG 2.1 AA compliance</p>
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">Astro</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">React</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">PostgreSQL</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">Tailwind CSS</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">GraphQL</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">WCAG</span>
+                    </div>
+                    <p class="text-xs cv-text-secondary">Categoría: Academic Management, Student Portal, Accessibility, Government</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Personal Projects -->
+        <section class="mb-10">
+            <h3 class="text-lg font-bold cv-text-primary uppercase tracking-wider mb-6 border-b cv-border print-light-border pb-2">Proyectos Personales</h3>
+            
+            <div class="space-y-6">
+                <div class="border cv-border rounded-lg p-5 print-no-bg">
+                    <h4 class="font-bold cv-text-primary mb-2 text-base">Portfolio Personal</h4>
+                    <p class="text-sm cv-text-secondary mb-4 leading-relaxed">Sitio web personal con diseño brutalist, soporte multilenguaje (ES/EN/NO) y optimizaciones avanzadas de performance</p>
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">Astro</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">React</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">Tailwind CSS</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">TypeScript</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">i18n</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">SSG</span>
+                    </div>
+                    <p class="text-xs cv-text-secondary">Categoría: Portfolio, Personal Branding, Multilingual, Static Site Generation</p>
+                </div>
+                
+                <div class="border cv-border rounded-lg p-5 print-no-bg">
+                    <h4 class="font-bold cv-text-primary mb-2 text-base">Contribuciones Open Source</h4>
+                    <p class="text-sm cv-text-secondary mb-4 leading-relaxed">Contribuciones a proyectos de código abierto, librerías de la comunidad y documentación técnica en GitHub</p>
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">JavaScript</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">TypeScript</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">Documentation</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">GitHub</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">Community</span>
+                        <span class="cv-bg-tag px-2 py-1 text-xs rounded">Testing</span>
+                    </div>
+                    <p class="text-xs cv-text-secondary">Categoría: Open Source, Community Contributions, Developer Tools, Libraries</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Languages -->
+        <section class="mb-10">
+            <h3 class="text-lg font-bold cv-text-primary uppercase tracking-wider mb-6 border-b cv-border print-light-border pb-2">{t('cv.languages.title')}</h3>
+            
+            <div class="grid grid-cols-3 gap-6">
+                <div class="text-sm">
+                    <span class="font-semibold cv-text-primary">{t('cv.languages.spanish')}</span>
+                </div>
+                <div class="text-sm">
+                    <span class="font-semibold cv-text-primary">{t('cv.languages.english')}</span>
+                </div>
+                <div class="text-sm">
+                    <span class="font-semibold cv-text-primary">{t('cv.languages.norwegian')}</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Education -->
+        <section class="mb-8">
+            <h3 class="text-lg font-bold cv-text-primary uppercase tracking-wider mb-6 border-b cv-border print-light-border pb-2">{t('cv.education.title')}</h3>
+            
+            <div class="border-l-2 cv-border pl-6">
+                <div class="flex justify-between items-start mb-2">
+                    <h4 class="font-bold cv-text-primary text-base">Autodidacta / Self-Taught</h4>
+                    <span class="text-sm cv-text-secondary font-medium">2020 - Present</span>
+                </div>
+                <p class="text-sm cv-text-secondary leading-relaxed">Continuous learning through online resources, documentation, hands-on projects, and professional development courses in web development, computer science fundamentals, and modern software engineering practices</p>
+            </div>
+        </section>
+    </div>
+</body>
+</html>

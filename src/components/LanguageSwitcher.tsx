@@ -1,132 +1,65 @@
 import * as React from 'react';
-import { locales, type Locale, defaultLocale, addLocaleToUrl, removeLocaleFromUrl } from '@/utils/i18n';
-import { getLoadingText } from '@/i18n/text-functions';
-import DropdownButton, { DropdownItem } from './DropdownButton';
-
-const { useState, useEffect, useCallback } = React;
+import { supportedLanguages, languages, type Language } from '@/i18n/ui';
+import { getLangFromUrl, getAlternateUrls } from '@/i18n/utils';
 
 interface LanguageSwitcherProps {
-    initialLocale?: Locale;
+    currentPath?: string;
+    initialLocale?: Language;
 }
 
-const localeNames = {
-    es: 'ESPAÑOL',
-    en: 'ENGLISH', 
-    no: 'NORSK'
-} as const;
+export default function LanguageSwitcher({ currentPath, initialLocale }: LanguageSwitcherProps) {
+    const [isOpen, setIsOpen] = React.useState(false);
+    const [currentLang, setCurrentLang] = React.useState<Language>(initialLocale || 'es');
 
-const localeCodes = {
-    es: 'ES',
-    en: 'EN',
-    no: 'NO'
-} as const;
-
-export default function LanguageSwitcher({ initialLocale = defaultLocale }: LanguageSwitcherProps) {
-    // Initialize with detected locale immediately to reduce loading time
-    const [currentLocale, setCurrentLocale] = useState<Locale>(() => {
+    React.useEffect(() => {
         if (typeof window !== 'undefined') {
-            const urlPath = window.location.pathname;
-            const [, possibleLocale] = urlPath.split('/');
-            if (possibleLocale && locales.includes(possibleLocale)) {
-                return possibleLocale as Locale;
-            }
+            const lang = getLangFromUrl(new URL(window.location.href));
+            setCurrentLang(lang);
         }
-        return initialLocale;
-    });
-    const [isMounted, setIsMounted] = useState(false);
+    }, []);
 
-    // Detect locale from URL before mounting  
-    const getLocaleFromURL = (): Locale => {
-        if (typeof window === 'undefined') return initialLocale;
-        const urlPath = window.location.pathname;
-        const [, possibleLocale] = urlPath.split('/');
-        if (possibleLocale && locales.includes(possibleLocale)) {
-            return possibleLocale as Locale;
+    const alternateUrls = React.useMemo(() => {
+        if (typeof window !== 'undefined') {
+            return getAlternateUrls(window.location.pathname);
         }
-        return defaultLocale;
+        if (currentPath) {
+            return getAlternateUrls(currentPath);
+        }
+        return [];
+    }, [currentPath]);
+
+    const handleLanguageSwitch = (lang: Language, url: string) => {
+        if (typeof window !== 'undefined') {
+            window.location.href = url;
+        }
     };
-
-    useEffect(() => {
-        setIsMounted(true);
-        // Quick sync check - only update if locale has changed
-        const detectedLocale = getLocaleFromURL();
-        if (detectedLocale !== currentLocale) {
-            setCurrentLocale(detectedLocale);
-        }
-    }, [currentLocale]);
-
-    // Navigate to language
-    const navigateToLanguage = useCallback((newLocale: Locale) => {
-        if (newLocale === currentLocale) return;
-        
-        const currentPath = window.location.pathname;
-        const cleanPath = removeLocaleFromUrl(currentPath);
-        const newUrl = addLocaleToUrl(cleanPath, newLocale);
-        
-        window.location.href = newUrl;
-    }, [currentLocale]);
-
-    // Cycle through languages (main button action)
-    const nextLanguage = useCallback(() => {
-        const currentIndex = locales.findIndex((l) => l === currentLocale);
-        const nextIndex = (currentIndex + 1) % locales.length;
-        const newLocale = locales[nextIndex] as Locale;
-        navigateToLanguage(newLocale);
-    }, [currentLocale, navigateToLanguage]);
-
-    // Handle language selection from dropdown
-    const handleLanguageSelect = (newLocale: Locale) => {
-        navigateToLanguage(newLocale);
-    };
-
-    // Show minimal loading state - use actual current locale
-    if (!isMounted) {
-        return (
-            <div className="w-7 h-7 md:w-auto md:h-8 bg-secondary border border-main flex items-center justify-center px-3 py-2">
-                <div className="flex items-center gap-2">
-                    <span className="font-mono text-xs font-semibold text-main">{localeCodes[currentLocale]}</span>
-                </div>
-            </div>
-        );
-    }
 
     return (
-        <DropdownButton
-            onMainClick={nextLanguage}
-            dropdownContent={
-                <div>
-                    {locales.map((localeOption) => (
-                        <DropdownItem
-                            key={localeOption}
-                            onClick={() => handleLanguageSelect(localeOption as Locale)}
-                            selected={localeOption === currentLocale}
-                            className="flex items-center gap-2 border-b border-main last:border-b-0"
+        <div className="relative">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="bg-secondary border border-main px-3 py-1 font-mono text-xs font-semibold text-main hover:bg-main hover:text-secondary focus:bg-main focus:text-secondary focus:outline-none uppercase tracking-wider flex items-center gap-2"
+                aria-label="Change language"
+            >
+                {languages[currentLang]}
+                <span className="text-xs">▼</span>
+            </button>
+
+            {isOpen && (
+                <div className="absolute top-full left-0 mt-1 bg-secondary border border-main shadow-none z-50 min-w-full">
+                    {alternateUrls.map(({ lang, url }) => (
+                        <button
+                            key={lang}
+                            onClick={() => handleLanguageSwitch(lang, url)}
+                            className={`block w-full text-left px-3 py-2 font-mono text-xs font-semibold hover:bg-main hover:text-secondary focus:bg-main focus:text-secondary focus:outline-none uppercase tracking-wider ${
+                                lang === currentLang ? 'bg-main text-secondary' : 'text-main'
+                            }`}
                         >
-                            <span className="flex-1 px-1 font-mono text-xs font-semibold">{localeNames[localeOption as keyof typeof localeNames]}</span>
-                            <div className="w-4 h-4 flex items-center justify-center">
-                                {localeOption === currentLocale && (
-                                    <svg
-                                        className="w-4 h-4"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path d="M20 6 9 17l-5-5" />
-                                    </svg>
-                                )}
-                            </div>
-                        </DropdownItem>
+                            {languages[lang]}
+                        </button>
                     ))}
                 </div>
-            }
-            className="w-7 h-7 md:w-auto md:h-8"
-        >
-            <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-semibold text-main group-hover:text-secondary">{localeCodes[currentLocale]}</span>
-            </div>
-        </DropdownButton>
+            )}
+        </div>
     );
 }

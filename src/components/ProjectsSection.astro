@@ -2,23 +2,26 @@
 import { getCollection } from 'astro:content';
 import ProjectCardReact from './ProjectCardReact';
 import { PointerTypeProvider } from '../contexts/PointerTypeProvider';
-import { getLocaleFromUrl } from '@/utils/i18n';
-import { getFeaturedByLanguage, getSlugFromId } from '@/utils/content-utils';
-import { createText } from '@/i18n/universal-text';
+import { getFeaturedProjectsByLanguage, getSlugFromId } from '@/utils/content-utils';
+import { useTranslations } from '@/i18n/utils';
+import { defaultLang, type Language } from '@/i18n/ui';
 
-// Get current locale and create text instance
-const currentLocale = getLocaleFromUrl(Astro.url);
-const text = createText(currentLocale);
+interface Props {
+    lang?: Language;
+}
+
+const { lang = defaultLang } = Astro.props;
+const t = useTranslations(lang);
 
 // Get first 4 featured projects in the current language
-const featuredProjects = (await getFeaturedByLanguage('projects', currentLocale))
+const featuredProjects = (await getFeaturedProjectsByLanguage(lang))
   .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime())
   .slice(0, 4);
 ---
 
 <section class="py-20 bg-secondary">
   <div class="max-w-7xl mx-auto">
-    <h2 class="font-mono text-3xl font-bold text-main mb-12">{text.featuredProjectsTitle()}</h2>
+    <h2 class="font-mono text-3xl font-bold text-main mb-12">{t('home.featuredProjects')}</h2>
     
     <PointerTypeProvider client:load>
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 items-start">
@@ -40,7 +43,7 @@ const featuredProjects = (await getFeaturedByLanguage('projects', currentLocale)
         href="/projects"
         class="inline-block bg-main text-secondary px-6 py-3 font-mono text-sm font-bold border border-main hover:bg-secondary hover:text-main"
       >
-        {text.navProjects()}
+        {t('nav.projects')}
       </a>
     </div>
   </div>

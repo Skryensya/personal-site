@@ -170,13 +170,7 @@ html.dark {
 /* Commodore 64 retro styling */
 :root[data-theme='commodore64'] {
     --retro-border: 2px solid var(--theme-colorful);
-    --scan-lines: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 2px,
-        rgba(0, 0, 0, 0.03) 2px,
-        rgba(0, 0, 0, 0.03) 4px
-    );
+    --scan-lines: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.03) 2px, rgba(0, 0, 0, 0.03) 4px);
 }
 
 /* Sunset warm glow effects */

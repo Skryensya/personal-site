@@ -1,11 +1,23 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides comprehensive guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+**Allison Peña's Personal Portfolio** - A modern, multilingual portfolio website built with Astro.js and React, featuring a retro minimalist brutalist design aesthetic with full internationalization support.
+
+### Tech Stack
+- **Framework**: Astro.js 5.12.3 (Static Site Generation)
+- **UI Library**: React 18.3.1 (Interactive components only)
+- **Styling**: Tailwind CSS 4.1.11 (Utility-first CSS)
+- **Internationalization**: Custom i18n system with Astro's built-in i18n routing
+- **Content Management**: Astro Content Collections with Zod validation
+- **Deployment**: Static build optimized for CDN deployment
 
 ## Development Commands
 
 ```bash
-# Start development server
+# Start development server (localhost:4321)
 npm run dev
 
 # Build for production
@@ -16,208 +28,394 @@ npm run preview
 
 # Run Astro CLI commands
 npm run astro -- <command>
+
+# Performance analysis
+npm run unlighthouse
 ```
 
 ## Project Architecture
 
-This is Allison Peña's personal portfolio built with **Astro.js 4.15.9** and **Tailwind CSS 3.4.13**. The site uses Astro's Content Collections for type-safe content management and features a custom theming system.
+### Core Philosophy: Retro Minimalist Brutalism
 
-### Content Collections (`src/content/`)
+This portfolio follows a strict design system that prioritizes:
+- **Functionality over decoration**
+- **Sharp geometric aesthetics**
+- **High contrast typography**
+- **Instant state changes (no animations)**
+- **Accessible and performant experiences**
 
-Three main collections with Zod schema validation:
+### Directory Structure
 
-- **`blog/`** - Blog posts with tags, featured status, and SEO metadata
-- **`projects/`** - Portfolio projects with descriptions, colors, and featured status
-- **`pages/`** - Static pages
+```
+src/
+├── components/           # Reusable UI components
+│   ├── sections/        # Page section components
+│   ├── ui/              # Basic UI elements
+│   └── *.astro          # Static Astro components
+├── content/             # Content collections
+│   ├── blog/           # Blog posts (.md/.mdx)
+│   ├── projects/       # Portfolio projects
+│   └── pages/          # Static pages
+├── i18n/               # Internationalization system
+│   ├── ui.ts           # Translation dictionaries
+│   ├── utils.ts        # i18n utility functions
+│   └── *.ts            # Legacy text functions (deprecated)
+├── layouts/            # Page layouts
+├── pages/              # Route components
+│   ├── [...lang]/      # Localized pages
+│   └── api/            # API endpoints
+├── styles/             # Global styles
+└── utils/              # Utility functions
+```
 
-Key schema fields:
+## Internationalization System
 
-- `isFeatured: boolean` - Controls homepage display
-- `publishDate: Date` - Required for sorting
-- `seo: object` - Optional SEO overrides (title, description, image, pageType)
-- `tags: string[]` - For blog categorization
-- `color: string` - For project theming
+### Supported Languages
+- **Spanish (es)**: Default language, no URL prefix
+- **English (en)**: URL prefix `/en/`
+- **Norwegian (no)**: URL prefix `/no/`
 
-### Site Configuration (`src/data/site-config.ts`)
+### Configuration
 
-Centralized configuration including:
+**Astro Config** (`astro.config.mjs`):
+```javascript
+i18n: {
+    defaultLocale: 'es',
+    locales: ['es', 'en', 'no'],
+    routing: {
+        prefixDefaultLocale: false  // Spanish has no prefix
+    }
+}
+```
 
-- Site metadata (title: "Allison Peña", subtitle: "Full-stack web developer")
-- Navigation links (Spanish: "Inicio", "Proyectos")
-- Social links (LinkedIn: skryensya)
-- Pagination settings (5 items per page)
+### Translation System
 
-## Design Philosophy & Strict Guidelines
+**Structure** (`src/i18n/ui.ts`):
+```typescript
+export const ui = {
+  es: {
+    'nav.home': 'Inicio',
+    'hero.heading': 'Hola, soy Allison...',
+    // Hierarchical key structure
+  },
+  en: { /* English translations */ },
+  no: { /* Norwegian translations */ }
+} as const;
+```
 
-### **Core Aesthetic: Retro Minimalist Brutalism**
+**Usage in Astro Components**:
+```astro
+---
+import { useTranslations } from '@/i18n/utils';
+import { defaultLang, type Language } from '@/i18n/ui';
 
-**Color System - STRICT ENFORCEMENT**:
-- **ONLY two colors**: `main` and `secondary` (defined by theme)
-- **NEVER use gray tones, accent colors, or additional colors**
-- **Theme-based inversion**: Colors swap between light/dark modes
-- **No gradients except for theme previews**: Only solid colors throughout
+interface Props {
+    lang?: Language;
+}
 
-**Typography**:
-- **Primary**: Space Grotesk (sans-serif) for UI, headings, and body text
-- **Code/Technical**: JetBrains Mono and IBM Plex Mono for technical content
-- **Monospace for technical elements**: Font-mono class for technical aesthetics
-- **Bold hierarchy**: Clear font weight distinctions (normal/semibold/bold)
+const { lang = defaultLang } = Astro.props;
+const t = useTranslations(lang);
+---
 
-**Visual Hierarchy**:
-- **Sharp geometric shapes**: No rounded corners unless absolutely necessary
-- **Technical spacing**: 8px grid system (px-2, py-2, gap-4, etc.)
-- **High contrast borders**: Always `border-main` for clear separation
-- **No shadows or blur effects**: Except for functional dropdowns
+<h1>{t('hero.heading')}</h1>
+```
 
-### **Component Architecture Rules**
+**Usage in React Components**:
+```tsx
+import { useClientTranslations } from '@/i18n/utils';
 
-**React vs Astro - STRICT SEPARATION**:
-- **Interactive components**: MUST be React (.tsx) with `client:idle` or `client:load`
-- **Static content**: MUST be Astro (.astro) for performance
-- **State management**: Only React components can have useState, useEffect, etc.
-- **Event handlers**: Only in React components
+export function MyComponent() {
+    const t = useClientTranslations();
+    return <h1>{t('hero.heading')}</h1>;
+}
+```
 
-**React Component Standards**:
-- **Import pattern**: `import * as React from 'react';` then `const { useState, useEffect } = React;`
-- **Floating UI**: Use `@floating-ui/react` for all floating elements (dropdowns, tooltips)
-- **TypeScript interfaces**: Always define props interfaces
-- **Client directives**: Use `client:idle` for non-critical, `client:load` for critical
+### Routing Strategy
 
-**Astro Component Standards**:
-- **No JavaScript interactivity**: Pure HTML/CSS generation
-- **Tailwind only**: No `<style>` blocks unless absolutely necessary
-- **Props validation**: Use TypeScript interfaces in frontmatter
+- **Default language (Spanish)**: No prefix (`/`, `/projects/`)
+- **Other languages**: Prefixed (`/en/`, `/no/projects/`)
+- **Automatic detection**: Based on URL pathname
+- **Fallback behavior**: Graceful degradation to default language
 
-### **Styling System - MANDATORY PATTERNS**
+## Component Architecture
 
-**Tailwind Classes - REQUIRED**:
-- **Colors**: ONLY `bg-main`, `bg-secondary`, `text-main`, `text-secondary`, `border-main`
-- **Hover states**: `hover:bg-main hover:text-secondary` pattern
-- **Focus states**: `focus:bg-main focus:text-secondary focus:outline-none`
-- **Typography**: `font-mono text-xs font-semibold` for technical elements
+### Astro vs React Separation
 
-**NO TRANSITIONS OR ANIMATIONS**:
-- **Remove all**: `transition-*`, `duration-*`, `ease-*` classes
-- **Instant state changes**: Immediate hover/focus feedback
-- **No loading spinners**: Use immediate state indicators
-- **No fade effects**: Instant opacity changes only
+**Astro Components** (.astro):
+- Static content rendering
+- Server-side logic
+- Layout components
+- SEO and metadata
+- No client-side interactivity
 
-**Interactive Elements**:
-- **Button pattern**: `bg-secondary border border-main hover:bg-main hover:text-secondary`
-- **Dropdown pattern**: Split button with main action + dropdown arrow
-- **Form elements**: Always `border-main` with `focus:` states
-- **Links**: `hover:bg-main hover:text-secondary` for clear feedback
+**React Components** (.tsx):
+- Interactive UI elements
+- State management
+- Event handlers
+- Real-time updates
+- Client-side functionality
 
-### **Key Components**
+### Component Categories
 
-**Modern React Components**:
-- **`HeaderControls.tsx`** - Theme/mode switching with split buttons
-- **`DropdownButton.tsx`** - Reusable split button with Floating UI
-- **`DitheredImageReact.tsx`** - Theme-aware image processing
-- **`GithubGrid.tsx`** - Interactive git contribution display
+#### 1. Section Components
+Self-contained page sections with full logic:
+- `HeroSection.astro` - Landing area with introduction
+- `TechnologiesSection.astro` - Scrolling tech stack
+- `AboutSection.astro` - Personal information and CTA
+- `ProjectsSection.astro` - Featured portfolio projects
 
-**Astro Layout Components**:
-- **`Layout.astro`** - Main layout wrapper with SEO
-- **`Header.astro`** - Navigation structure (uses React components for interactivity)
-- **`BigSectionContainer.astro`** - Content section wrapper
-- **`Hero.astro`** - Static hero section
+#### 2. UI Components
+Reusable interface elements:
+- `Button.astro` - Styled button with sound effects
+- `BigSectionContainer.astro` - Section wrapper with title
+- `DitheredImageReact.tsx` - Theme-aware image processing
 
-### **Theme System**
+#### 3. Interactive Components
+React components for dynamic functionality:
+- `HeaderControls.tsx` - Theme and language switching
+- `DropdownButton.tsx` - Reusable dropdown interface
+- `MarqueeSection.tsx` - Infinite scrolling technology list
+- `GithubGrid.tsx` - Git contribution visualization
 
-**Color Variables**:
-- **`--theme-colorful`** and **`--theme-contrasty`** - Theme-specific colors
-- **CSS classes**: `.dark` class toggles for mode switching
-- **Local storage**: Persist theme-id and mode preferences
+### Props and Type Safety
 
-**Theme Switching**:
-- **Split button pattern**: Main button cycles, dropdown shows all options
-- **Mode detection**: Light/dark/system with proper `prefers-color-scheme` support
-- **Instant switching**: No transitions on theme changes
+**Astro Component Interface**:
+```astro
+---
+interface Props {
+    lang?: Language;
+    title?: string;
+    class?: string;
+}
 
-**Image Processing**:
-- **DitheredImage variants**: Original and theme-swapping versions
-- **Color inversion**: `swapOnTheme` prop for dark mode color reversal
-- **Theme synchronization**: MutationObserver for instant updates
+const { 
+    lang = defaultLang,
+    title,
+    class: className 
+} = Astro.props;
+---
+```
 
-### **Mobile Responsiveness**
+**React Component Interface**:
+```tsx
+interface ComponentProps {
+    lang?: Language;
+    children?: React.ReactNode;
+    className?: string;
+}
 
-**Desktop-first approach**:
-- **Hide secondary actions**: Dropdown arrows hidden on mobile (`hidden md:flex`)
-- **Simplified interactions**: Only main button actions on small screens
-- **Monospace scaling**: Maintain technical aesthetic across devices
+export function Component({ lang = 'es', children, className }: ComponentProps) {
+    // Component logic
+}
+```
 
-**Responsive Patterns**:
-- **Grid layouts**: `grid-cols-1 md:grid-cols-2` for content
-- **Text visibility**: `hidden md:block` for secondary text
-- **Button sizing**: `w-7 h-7 md:w-auto md:h-8` for adaptive sizing
+## Design System
 
-### **Performance & Efficiency**
+### Color Philosophy
+**STRICT TWO-COLOR SYSTEM**:
+- `--color-main`: Text and borders
+- `--color-secondary`: Backgrounds and alternate text
+- **Theme inversion**: Colors swap between light/dark modes
+- **NO exceptions**: No grays, accents, or additional colors
 
-**React Optimization**:
-- **useCallback**: For functions passed to useEffect dependencies
-- **Minimal re-renders**: Careful dependency arrays
-- **Client directives**: `client:idle` for non-critical components
+### Typography Hierarchy
+- **Primary**: Space Grotesk (UI elements, headings, body text)
+- **Technical**: JetBrains Mono, IBM Plex Mono (code, technical content)
+- **Monospace aesthetic**: `font-mono` for technical feel throughout
 
-**Astro Optimization**:
-- **Static generation**: Maximum use of Astro's static capabilities
-- **Component islands**: Isolated React components only where needed
-- **Asset optimization**: Proper image handling and lazy loading
+### Layout Principles
+- **8px grid system**: Consistent spacing (`px-2`, `py-2`, `gap-4`)
+- **Sharp edges**: No rounded corners except functional elements
+- **High contrast borders**: Always `border-main`
+- **Geometric shapes**: Clean rectangles and squares
 
-### **Code Patterns - ENFORCE THESE**
+### Interactive Elements
+**Button Patterns**:
+```html
+<!-- Standard button -->
+<button class="bg-secondary border border-main hover:bg-main hover:text-secondary">
 
-**Forbidden Patterns**:
-- ❌ Custom CSS transitions or animations
-- ❌ Additional colors beyond main/secondary
-- ❌ Rounded corners (`rounded-*`) except for functional needs
-- ❌ Box shadows (`shadow-*`) except for floating elements
-- ❌ Intermediate gray colors or opacity variations
-- ❌ JavaScript in Astro components for interactivity
+<!-- Split button with dropdown -->
+<div class="flex">
+    <button class="bg-secondary border-r-0">Main Action</button>
+    <button class="bg-secondary border">▼</button>
+</div>
+```
 
-**Required Patterns**:
-- ✅ React for all interactive elements
-- ✅ Tailwind classes only: `bg-main`, `text-secondary`, `border-main`
-- ✅ Split button pattern for actions with options
-- ✅ `font-mono` for technical aesthetics
-- ✅ Floating UI for all positioned elements
-- ✅ Theme-aware color systems
+**NO ANIMATIONS POLICY**:
+- No `transition-*`, `duration-*`, or `ease-*` classes
+- Instant state changes only
+- No loading spinners or fade effects
+- Exception: Functional floating UI elements only
 
-### **Routing Structure**
+## Content Management
 
-- **`/`** - Homepage with bio and featured projects
-- **`/projects/`** - Project listings and individual project pages
-- **`/[...slug].astro`** - Dynamic routing for all content collections
-- **`/_blog/`** - Blog posts and listings
-- **`/_tags/`** - Tag-based filtering
-- **`/rss.xml.js`** - RSS feed generation
+### Content Collections
 
-### **Astro Configuration**
+**Blog Posts** (`src/content/blog/`):
+```yaml
+---
+title: "Post Title"
+publishDate: 2024-01-01
+tags: ['react', 'typescript']
+isFeatured: false
+seo:
+  title: "Custom SEO Title"
+  description: "Custom description"
+---
+```
 
-- **Site URL**: `https://example.com` (placeholder)
-- **Integrations**: MDX, Sitemap, React, Tailwind (with `applyBaseStyles: false`)
-- **Vite alias**: `@components` → `/src/components`
+**Projects** (`src/content/projects/`):
+```yaml
+---
+title: "Project Name"
+description: "Brief description"
+publishDate: 2024-01-01
+isFeatured: true
+color: "#FF5733"
+tags: ['astro', 'react']
+---
+```
 
-### **Content Management**
+### SEO Strategy
+- **Automated sitemap generation**
+- **RSS feed for blog content**
+- **Multi-language meta tags**
+- **Structured data markup**
+- **Performance-optimized images**
 
-- Content files use **Markdown (.md)** and **MDX (.mdx)**
-- **Multilingual**: Site content is in Spanish
-- **SEO optimized** with meta tags, sitemaps, and RSS feeds
-- **Featured content system** for homepage curation
+## Performance Optimization
 
-### **Development Notes**
+### Astro Optimizations
+- **Static Site Generation**: Pre-rendered at build time
+- **Component Islands**: Selective hydration for React components
+- **Image optimization**: Built-in processing and lazy loading
+- **Code splitting**: Automatic bundle optimization
 
-- **No linting/testing commands** configured - only core Astro scripts available
-- **Prettier** is configured with Tailwind plugin for code formatting
-- **Site is in early development** (version 0.0.1)
-- **Content is bilingual** (Spanish UI, potentially English content)
-- **Professional focus** on web development and accessibility projects
+### React Optimization Patterns
+```tsx
+// Lazy imports for client components
+const HeavyComponent = lazy(() => import('./HeavyComponent'));
 
-## Memories & Preferences
+// Proper client directives
+<ReactComponent client:idle />      // Non-critical
+<ReactComponent client:load />      // Critical
+<ReactComponent client:visible />   // Below fold
+```
 
-**Established Patterns**:
-- Split button dropdowns with main action + dropdown arrow
-- Theme system with instant color swapping
-- React components for all interactivity, Astro for static content
-- Strict two-color design system
-- Technical, monospace typography for UI elements
-- No transitions or animations - instant state changes
-- Mobile-first responsive hiding of secondary actions
+### Bundle Analysis
+- **Client bundle**: < 150kb gzipped
+- **Critical CSS**: Inlined for above-fold content
+- **Font optimization**: Preloaded and self-hosted
+- **Asset optimization**: WebP images, compressed static assets
+
+## Development Guidelines
+
+### Code Style
+- **TypeScript strict mode**: Full type safety
+- **Tailwind only**: No custom CSS except global styles
+- **Component composition**: Prefer small, focused components
+- **Props interfaces**: Always define component props
+
+### File Naming
+- **Astro components**: PascalCase.astro
+- **React components**: PascalCase.tsx
+- **Utilities**: camelCase.ts
+- **Content files**: kebab-case.md
+
+### Import Patterns
+```typescript
+// Astro components
+import Layout from '@/layouts/Layout.astro';
+import { useTranslations } from '@/i18n/utils';
+
+// React components  
+import * as React from 'react';
+const { useState, useEffect } = React;
+```
+
+### Testing Strategy
+- **Build verification**: `npm run build` for syntax checking
+- **Performance testing**: Lighthouse CI integration
+- **Accessibility testing**: Built-in Astro checks
+- **Cross-browser compatibility**: Modern evergreen browsers
+
+## Deployment Configuration
+
+### Build Output
+- **Static files**: Generated in `dist/` directory
+- **Asset optimization**: Automatic compression and optimization
+- **Route pre-rendering**: All pages generated at build time
+
+### Environment Variables
+```bash
+# Production URL (required for sitemaps)
+PUBLIC_SITE_URL=https://your-domain.com
+
+# Analytics (optional)
+PUBLIC_ANALYTICS_ID=your-analytics-id
+```
+
+### Hosting Requirements
+- **Static hosting**: CDN-optimized (Vercel, Netlify, Cloudflare Pages)
+- **Redirect rules**: Handle language routing
+- **Gzip compression**: Server-level compression enabled
+- **Cache headers**: Long-term caching for static assets
+
+## Maintenance Guidelines
+
+### Content Updates
+1. Add new content to appropriate collection (`blog/`, `projects/`)
+2. Update featured flags for homepage display
+3. Verify build passes: `npm run build`
+4. Check all language versions display correctly
+
+### Design System Updates
+1. **NEVER** add new colors or break two-color system
+2. Test theme switching functionality
+3. Verify mobile responsiveness
+4. Maintain brutalist aesthetic principles
+
+### Performance Monitoring
+- **Bundle size**: Monitor JavaScript payload
+- **Core Web Vitals**: Track loading performance
+- **Accessibility scores**: Maintain WCAG compliance
+- **Multi-language performance**: Test all locales
+
+## Migration Notes
+
+### Legacy Systems
+- **Old text functions**: Being phased out for unified i18n system
+- **Inline translations**: Moving to centralized dictionary
+- **Mixed component patterns**: Standardizing Astro/React separation
+
+### Future Improvements
+- **Content Management**: Potential headless CMS integration
+- **Advanced i18n**: Date/number formatting localization
+- **Performance**: Further bundle optimization opportunities
+- **Accessibility**: Enhanced screen reader optimizations
+
+---
+
+## Quick Reference
+
+### Essential Commands
+```bash
+npm run dev          # Development server
+npm run build        # Production build
+npm run astro add    # Add integrations
+```
+
+### Key File Locations
+- **Translations**: `src/i18n/ui.ts`
+- **Config**: `astro.config.mjs`
+- **Styles**: `src/styles/global.css`
+- **Content**: `src/content/{blog,projects}/`
+
+### Component Patterns
+- **Astro**: Static rendering, no client JS
+- **React**: Interactive elements with client directives
+- **Sections**: Self-contained page regions
+- **UI**: Reusable interface components
+
+Remember: Maintain the brutalist aesthetic, two-color system, and performance-first approach in all modifications.

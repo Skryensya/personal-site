@@ -2,14 +2,20 @@
 import Layout from '../layouts/Layout.astro';
 import siteConfig from '../data/site-config';
 import BigSectionContainer from '../components/BigSectionContainer.astro'; 
+import TLDRSection from '../components/TLDRSection.astro';
 import GithubGrid from '@/components/GithubGrid';
 import DitheredImageReact from '@/components/DitheredImageReact';   
 ---
 
 <Layout title="About - Allison Peña" description="Full-stack developer especializada en crear experiencias web brutalmente simples pero funcionalmente complejas.">
     
-    <!-- Hero Section -->
+    <!-- TLDR Section -->
     <BigSectionContainer title="About Me" id="about">
+        <TLDRSection showCTA={false} className="mb-8" />
+    </BigSectionContainer>
+
+    <!-- Detailed About Section -->
+    <BigSectionContainer title="Full Story" id="detailed-about">
         <div class="flex flex-col lg:flex-row gap-12">
             <!-- Photo and Quick Intro -->
             <div class="lg:w-80 lg:flex-shrink-0">

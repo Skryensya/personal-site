@@ -23,7 +23,7 @@ const blog = defineCollection({
         updatedDate: z.coerce.date().optional(),
         isFeatured: z.boolean().default(false),
         tags: z.array(z.string()).default([]),
-        seo: seoSchema.optional(),
+        seo: seoSchema.optional()
         // Language is now inferred from the folder structure
         // slug: z.string().optional(), // Base slug for cross-language linking
     })
@@ -34,7 +34,7 @@ const pages = defineCollection({
     type: 'content',
     schema: z.object({
         title: z.string(),
-        seo: seoSchema.optional(),
+        seo: seoSchema.optional()
         // Language is now inferred from the folder structure
         // slug: z.string().optional(), // Base slug for cross-language linking
     })
@@ -50,7 +50,7 @@ const projects = defineCollection({
         isFeatured: z.boolean().default(false),
         seo: seoSchema.optional(),
         color: z.string().optional(),
-        clientLogo: z.string().optional(),
+        clientLogo: z.string().optional()
         // Language is now inferred from the folder structure
         // slug: z.string().optional(), // Base slug for cross-language linking
     })

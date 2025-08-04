@@ -53,7 +53,7 @@ const { Content } = await post.render();
             {
                 tags.length > 0 && (
                     <div class="flex flex-wrap gap-x-5 gap-y-1 text-sm">
-                        {tags.map((tag: any) => (
+                        {tags.map((tag: string) => (
                             <Tag text={tag} />
                         ))}
                     </div>

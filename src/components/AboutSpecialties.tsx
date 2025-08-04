@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { type Locale } from '@/utils/i18n';
-import { createText } from '@/i18n/universal-text';
+import { type Language } from '@/i18n/ui';
+import { useClientTranslations } from '@/i18n/utils';
 
 const { useEffect, useState } = React;
 
 interface AboutSpecialtiesProps {
-    initialLocale?: Locale;
+    initialLocale?: Language;
 }
 
 export default function AboutSpecialties({ initialLocale }: AboutSpecialtiesProps) {
@@ -14,14 +14,14 @@ export default function AboutSpecialties({ initialLocale }: AboutSpecialtiesProp
 
     useEffect(() => {
         setMounted(true);
-        
+
         // Listen for locale changes
-        const handleLocaleChange = (event: CustomEvent<Locale>) => {
+        const handleLocaleChange = (event: CustomEvent<Language>) => {
             setCurrentLocale(event.detail);
         };
 
         window.addEventListener('localeChanged', handleLocaleChange as EventListener);
-        
+
         return () => {
             window.removeEventListener('localeChanged', handleLocaleChange as EventListener);
         };
@@ -41,16 +41,26 @@ export default function AboutSpecialties({ initialLocale }: AboutSpecialtiesProp
         );
     }
 
-    const text = createText(currentLocale);
-    
+    const t = useClientTranslations();
+
     return (
         <div className="border-2 border-main bg-secondary p-4 mb-4" style={{ viewTransitionName: 'specialties-section' }}>
-            <div className="font-mono text-xs font-bold text-main uppercase tracking-wider mb-3" style={{ viewTransitionName: 'specialties-title' }}>{text.specialtiesTitle()}</div>
+            <div className="font-mono text-xs font-bold text-main uppercase tracking-wider mb-3" style={{ viewTransitionName: 'specialties-title' }}>
+                {t('home.specialties')}
+            </div>
             <div className="flex flex-wrap gap-2" style={{ viewTransitionName: 'specialties-badges' }}>
-                <span className="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary" style={{ viewTransitionName: 'specialty-1' }}>{text.specialtyAccessibility()}</span>
-                <span className="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary" style={{ viewTransitionName: 'specialty-2' }}>{text.specialtyPerformance()}</span>
-                <span className="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary" style={{ viewTransitionName: 'specialty-3' }}>{text.specialtyDeveloperExperience()}</span>
-                <span className="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary" style={{ viewTransitionName: 'specialty-4' }}>{text.specialtyUIUX()}</span>
+                <span className="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary" style={{ viewTransitionName: 'specialty-1' }}>
+                    {t('home.specialties.accessibility')}
+                </span>
+                <span className="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary" style={{ viewTransitionName: 'specialty-2' }}>
+                    {t('home.specialties.performance')}
+                </span>
+                <span className="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary" style={{ viewTransitionName: 'specialty-3' }}>
+                    {t('home.specialties.dx')}
+                </span>
+                <span className="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary" style={{ viewTransitionName: 'specialty-4' }}>
+                    {t('home.specialties.uiux')}
+                </span>
             </div>
         </div>
     );

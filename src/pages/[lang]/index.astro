@@ -1,0 +1,37 @@
+---
+import { getStaticPaths } from 'astro';
+import Layout from '../../layouts/Layout.astro';
+import Hero from '../../components/Hero.astro';
+import TechnologiesSection from '@/components/TechnologiesSection.astro';
+import AboutSection from '@/components/AboutSection.astro';
+import ProjectsSection from '@/components/ProjectsSection.astro';
+import { supportedLanguages, type Language } from '@/i18n/ui';
+import { useTranslations } from '@/i18n/utils';
+
+export async function getStaticPaths() {
+    return supportedLanguages
+        .filter(lang => lang !== 'es') // Default locale handled by index.astro
+        .map(lang => ({
+            params: { lang },
+            props: { lang }
+        }));
+}
+
+interface Props {
+    lang: Language;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<Layout 
+    description={t('site.description')} 
+    title={t('site.title')}
+    lang={lang}
+>
+    <Hero lang={lang} />
+    <TechnologiesSection lang={lang} />
+    <AboutSection lang={lang} />
+    <ProjectsSection lang={lang} /> 
+</Layout>

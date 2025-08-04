@@ -2,8 +2,8 @@
 import { type CollectionEntry, getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';  
 import { sortItemsByDateDesc } from '../../utils/data-utils';
-import { getLocaleFromUrl } from '@/utils/i18n';
-import { getCollectionByLanguage, getSlugFromId, getLanguageFromId, getAlternativeLanguages } from '@/utils/content-utils';
+import { getLangFromUrl } from '@/i18n/utils';
+import { getProjectsByLanguage, getSlugFromId, getLanguageFromId, getAlternativeLanguages } from '@/utils/content-utils';
 import DitheredImageReact from '../../components/DitheredImageReact'; 
 
 export async function getStaticPaths() {
@@ -32,10 +32,10 @@ type Props = {
 };
 
 const { project, language, slug } = Astro.props;
-const currentLocale = getLocaleFromUrl(Astro.url);
+const currentLocale = getLangFromUrl(Astro.url);
 
 // Get projects in the current language for navigation
-const projectsInLanguage = (await getCollectionByLanguage('projects', currentLocale)).sort(sortItemsByDateDesc);
+const projectsInLanguage = (await getProjectsByLanguage(currentLocale)).sort(sortItemsByDateDesc);
 const currentIndex = projectsInLanguage.findIndex(p => getSlugFromId(p.id) === slug);
 const prevProject = currentIndex + 1 < projectsInLanguage.length ? projectsInLanguage[currentIndex + 1] : null;
 const nextProject = currentIndex > 0 ? projectsInLanguage[currentIndex - 1] : null;
