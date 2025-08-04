@@ -13,7 +13,9 @@ const seoSchema = z.object({
     pageType: z.enum(['website', 'article']).default('website')
 });
 
+// Blog collection with localized structure (blog/[lang]/[slug])
 const blog = defineCollection({
+    type: 'content',
     schema: z.object({
         title: z.string(),
         excerpt: z.string().optional(),
@@ -21,18 +23,26 @@ const blog = defineCollection({
         updatedDate: z.coerce.date().optional(),
         isFeatured: z.boolean().default(false),
         tags: z.array(z.string()).default([]),
-        seo: seoSchema.optional()
+        seo: seoSchema.optional(),
+        // Language is now inferred from the folder structure
+        // slug: z.string().optional(), // Base slug for cross-language linking
     })
 });
 
+// Pages collection with localized structure (pages/[lang]/[slug])
 const pages = defineCollection({
+    type: 'content',
     schema: z.object({
         title: z.string(),
-        seo: seoSchema.optional()
+        seo: seoSchema.optional(),
+        // Language is now inferred from the folder structure
+        // slug: z.string().optional(), // Base slug for cross-language linking
     })
 });
 
+// Projects collection with localized structure (projects/[lang]/[slug])
 const projects = defineCollection({
+    type: 'content',
     schema: z.object({
         title: z.string(),
         description: z.string().optional(),
@@ -40,7 +50,9 @@ const projects = defineCollection({
         isFeatured: z.boolean().default(false),
         seo: seoSchema.optional(),
         color: z.string().optional(),
-        clientLogo: z.string().optional()
+        clientLogo: z.string().optional(),
+        // Language is now inferred from the folder structure
+        // slug: z.string().optional(), // Base slug for cross-language linking
     })
 });
 

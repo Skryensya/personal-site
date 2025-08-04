@@ -3,22 +3,27 @@ import Button from './Button.astro';
 import TextGenerate from './TextGenerate.tsx';
 import AsciiGrid from './AsciiGrid.astro';
 import CornersWithCrosses from './CornersWithCrosses.astro';
+import { getLocaleFromUrl } from '@/utils/i18n';
+import { createText } from '@/i18n/universal-text';
+
+const currentLocale = getLocaleFromUrl(Astro.url);
+const text = createText(currentLocale);
 ---
 
 <section class="hero-section pt-4 pb-20 ">
     <div class="grid grid-cols-1 md:grid-cols-2">
         <!-- Text Content -->
         <CornersWithCrosses class="flex flex-col justify-start p-4 pr-10">
-            <h1 class="text-4xl md:text-8xl font-bold text-main mb-4 text-balance">Hola, soy Allison Bienvenido a mi sitio</h1>
+            <h1 class="text-4xl md:text-8xl font-bold text-main mb-4 text-balance">{text.heroHeading()}</h1>
             <div class="mb-8">
                 <TextGenerate
-                    words="Me gusta crear sitios web que funcionen bien y sean fáciles de usar. Trabajo principalmente con React y TypeScript."
+                    words={text.heroDescription()}
                     client:load
                 />
             </div>
             <div class="flex flex-col md:flex-row gap-4">
-                <Button href="/projects" size="md" class='order-2 md:order-1'> Ver mis proyectos </Button>
-                <Button href="/projects" size="md" filled elevated class='order-1 md:order-2'> Ver mis proyectos </Button>
+                <Button href="/projects" size="md" class='order-2 md:order-1'>{text.heroProjectsButton()}</Button>
+                <Button href="/projects" size="md" filled elevated class='order-1 md:order-2'>{text.heroProjectsButton()}</Button>
             </div>
         </CornersWithCrosses>
         

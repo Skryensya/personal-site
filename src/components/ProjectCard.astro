@@ -1,40 +1,143 @@
 ---
-import DitheredImageReact from './DitheredImageReact';
-
 export interface Props {
-  title: string;
-  description: string;
-  href: string;
-  clientLogo?: string;
-  slug?: string;
+    title: string;
+    description?: string;
+    href: string;
+    slug?: string;
+    dataIndex?: number;
+    dataImage?: string;
+    dataImageAlt?: string;
+    minimal?: boolean;
 }
 
-const { title, description, href, clientLogo, slug } = Astro.props;
+const { title, description = "", href, slug, dataIndex, dataImage, dataImageAlt, minimal = false } = Astro.props;
 ---
 
-<article class="border border-main bg-secondary" style={`view-transition-name: project-card-${slug}`}>
-  <div class="p-4">
-    {clientLogo && (
-      <div class="w-6/12 mb-4 flex items-center justify-center" style={`view-transition-name: project-logo-${slug}`} data-client-logo={clientLogo}>
-        <DitheredImageReact 
-          src={clientLogo} 
-          alt={`Logo del cliente - ${title}`}
-          className="max-h-full max-w-full object-contain"
-          respectOriginalSize={true}
-          client:load
-        />
-      </div>
-    )}
-    <div class="w-full h-2 mb-4 bg-main"></div>
-    <div style={`view-transition-name: project-content-${slug}`}>
-      <h3 class="font-mono text-sm font-semibold mb-2 text-main">{title}</h3>
-      <p class="text-xs text-main mb-4 leading-relaxed">{description}</p>
-      <a 
-        href={href}
-        class="inline-block font-mono text-xs font-semibold bg-main text-secondary border border-main px-2 py-1 hover:bg-secondary hover:text-main"
-      >
-        Ver proyecto →
-      </a>
-    </div>
-  </div>
-</article>
+<div 
+    class="w-full aspect-[2/3] relative group mobile-card-height" 
+    style={`view-transition-name: project-card-${slug};`}
+>
+    <div 
+        class="relative w-full h-full transition-all duration-300 ease-out desktop-transforms"
+    >
+        <!-- Large arrow icon aligned with card edge -->
+        <div class="absolute top-2 right-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100 transition-all duration-300 ease-out hover:scale-105 cursor-pointer z-40">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" class="text-main">
+                <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </div>
+
+        <a 
+            href={href} 
+            class="relative block w-full h-full cursor-pointer z-10"
+            onfocus="this.parentElement.style.transform = 'rotateY(0deg) translateZ(5px) translateY(2px)'"
+            onblur="this.parentElement.style.transform = 'rotateY(-8deg) translateZ(15px) translateY(-5px)'"
+            data-project-index={dataIndex}
+            data-project-image={dataImage}
+            data-project-image-alt={dataImageAlt}
+            data-project-title={title}
+            data-project-description={description}
+        >
+        <!-- Card face -->
+        <div 
+            class="absolute w-full h-full bg-main border-2 border-main transition-all duration-200 ease-out"
+            style="transform: translateZ(25px); clip-path: polygon(0 0, calc(100% - var(--triangle-outer)) 0, 100% var(--triangle-outer), 100% 100%, 0 100%);"
+        >
+            <!-- Title in outer card -->
+            <div class="px-4 py-2">
+                <h3 class="font-sans text-2xl font-bold mb-3 text-secondary" style={`view-transition-name: project-content-${slug}`}>
+                    {title}
+                </h3>
+            </div>
+
+
+            <!-- Inner content container with opposite color -->
+            <div 
+                class="absolute inset-0.5 top-12 bg-secondary border-2 border-main transition-all duration-200 ease-out"
+                style="clip-path: polygon(0 0, calc(100% - var(--triangle-inner)) 0, 100% var(--triangle-inner), 100% 100%, 0 100%);"
+            >
+
+                <!-- Content with CSS exclusions -->
+                <div class="px-3 py-2 h-full flex flex-col">
+                    {description && (
+                      <p class="text-base text-main leading-relaxed line-clamp-10 triangle-text-wrap text-pretty flex-1">
+                          {description}
+                      </p>
+                    )}
+                    
+                    <!-- Project number at bottom left -->
+                    <div class="mt-auto pt-4">
+                        <span class="text-main font-mono text-4xl font-bold">
+                            #{String(dataIndex || 0).padStart(2, '0')}
+                        </span>
+                    </div>
+                </div>
+
+                <style>
+                    :root {
+                        --triangle-base: 95px;
+                        --triangle-padding: 2px;
+                        --triangle-outer: var(--triangle-base);
+                        --triangle-inner: calc(var(--triangle-base) - var(--triangle-padding) * 22);
+                        --triangle-text: calc(var(--triangle-inner) - 30px);
+                    }
+
+                    /* Always natural height based on individual content */
+                    .mobile-card-height {
+                        height: auto;
+                        align-self: start;
+                    }
+
+                    /* Desktop: perspective and transforms */
+                    @media (min-width: 1024px) {
+                        .mobile-card-height {
+                            perspective: 1000px;
+                            height: auto;
+                        }
+                        
+                        .desktop-transforms {
+                            transform-style: preserve-3d;
+                            transform-origin: right center;
+                            transform: rotateY(-8deg) translateZ(15px) translateY(-5px);
+                        }
+
+                        .desktop-transforms:hover {
+                            transform: rotateY(0deg) translateZ(5px) translateY(2px);
+                        }
+
+                        .group:focus-within .desktop-transforms {
+                            transform: rotateY(0deg) translateZ(5px) translateY(2px);
+                        }
+                    }
+                    
+                    /* Mobile: no transforms */
+                    @media (max-width: 1023px) {
+                        .desktop-transforms {
+                            transform: none !important;
+                        }
+                        
+                        .desktop-transforms:hover {
+                            transform: none !important;
+                        }
+                    }
+                    
+                    .triangle-text-wrap {
+                        --triangle-size: var(--triangle-text);
+                        margin-right: 0;
+                    }
+                    
+                    .triangle-text-wrap::before {
+                        content: '';
+                        float: right;
+                        width: var(--triangle-size);
+                        height: var(--triangle-size);
+                        shape-outside: polygon(0% 0%, 100% 0%, 100% 100%);
+                  
+                        clip-path: polygon(0% 0%, 100% 0%, 100% 100%);
+                    }
+                </style>
+            </div>
+        </div>
+    </a>
+</div>
+

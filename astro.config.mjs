@@ -7,6 +7,13 @@ import tailwindcss from '@tailwindcss/vite';
 // https://astro.build/config
 export default defineConfig({
     site: 'https://example.com',
+    i18n: {
+        defaultLocale: 'es',
+        locales: ['es', 'en', 'no'],
+        routing: {
+            prefixDefaultLocale: false
+        }
+    },
     server: {
         port: 4321,
         host: true

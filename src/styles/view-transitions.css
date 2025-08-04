@@ -1,0 +1,181 @@
+/* View Transition animations for language switching */
+
+/* Default cross-fade for all elements */
+::view-transition-old(*),
+::view-transition-new(*) {
+  animation-duration: 0.3s;
+  animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* Text-specific animations - slide in from right for new text */
+::view-transition-old(bio-greeting),
+::view-transition-old(bio-intro),
+::view-transition-old(bio-experience),
+::view-transition-old(specialties-title),
+::view-transition-old(cta-button) {
+  animation: slide-out-left 0.2s ease-in forwards;
+}
+
+::view-transition-new(bio-greeting),
+::view-transition-new(bio-intro),
+::view-transition-new(bio-experience),
+::view-transition-new(specialties-title),
+::view-transition-new(cta-button) {
+  animation: slide-in-right 0.2s ease-out 0.1s both;
+}
+
+/* Badge animations - staggered fade */
+::view-transition-old(badge-1),
+::view-transition-old(badge-2),
+::view-transition-old(badge-3) {
+  animation: fade-out 0.15s ease-in forwards;
+}
+
+::view-transition-new(badge-1) {
+  animation: fade-in 0.15s ease-out 0.1s both;
+}
+
+::view-transition-new(badge-2) {
+  animation: fade-in 0.15s ease-out 0.15s both;
+}
+
+::view-transition-new(badge-3) {
+  animation: fade-in 0.15s ease-out 0.2s both;
+}
+
+/* Specialty badges - staggered slide */
+::view-transition-old(specialty-1),
+::view-transition-old(specialty-2),
+::view-transition-old(specialty-3),
+::view-transition-old(specialty-4) {
+  animation: scale-out 0.15s ease-in forwards;
+}
+
+::view-transition-new(specialty-1) {
+  animation: scale-in 0.15s ease-out 0.1s both;
+}
+
+::view-transition-new(specialty-2) {
+  animation: scale-in 0.15s ease-out 0.15s both;
+}
+
+::view-transition-new(specialty-3) {
+  animation: scale-in 0.15s ease-out 0.2s both;
+}
+
+::view-transition-new(specialty-4) {
+  animation: scale-in 0.15s ease-out 0.25s both;
+}
+
+/* Stats animations */
+::view-transition-old(stat-experience),
+::view-transition-old(stat-location),
+::view-transition-old(stat-status) {
+  animation: fade-scale-out 0.2s ease-in forwards;
+}
+
+::view-transition-new(stat-experience) {
+  animation: fade-scale-in 0.2s ease-out 0.1s both;
+}
+
+::view-transition-new(stat-location) {
+  animation: fade-scale-in 0.2s ease-out 0.15s both;
+}
+
+::view-transition-new(stat-status) {
+  animation: fade-scale-in 0.2s ease-out 0.2s both;
+}
+
+/* Keyframe definitions */
+@keyframes slide-out-left {
+  to {
+    transform: translateX(-20px);
+    opacity: 0;
+  }
+}
+
+@keyframes slide-in-right {
+  from {
+    transform: translateX(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scale-out {
+  to {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(1.1);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fade-scale-out {
+  to {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+@keyframes fade-scale-in {
+  from {
+    transform: scale(1.05);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0.1s;
+  }
+  
+  ::view-transition-old(bio-greeting),
+  ::view-transition-old(bio-intro),
+  ::view-transition-old(bio-experience),
+  ::view-transition-old(specialties-title),
+  ::view-transition-old(cta-button) {
+    animation: fade-out 0.1s ease-in forwards;
+  }
+
+  ::view-transition-new(bio-greeting),
+  ::view-transition-new(bio-intro),
+  ::view-transition-new(bio-experience),
+  ::view-transition-new(specialties-title),
+  ::view-transition-new(cta-button) {
+    animation: fade-in 0.1s ease-out both;
+  }
+}

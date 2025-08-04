@@ -37,6 +37,8 @@ export type SiteConfig = {
     subscribe?: Subscribe;
     postsPerPage?: number;
     projectsPerPage?: number;
+    defaultLocale?: string;
+    supportedLocales?: string[];
 };
 
 const siteConfig: SiteConfig = {
@@ -75,7 +77,9 @@ const siteConfig: SiteConfig = {
     ],
 
     postsPerPage: 5,
-    projectsPerPage: 5
+    projectsPerPage: 5,
+    defaultLocale: 'es',
+    supportedLocales: ['es', 'en', 'no']
 };
 
 export default siteConfig;
