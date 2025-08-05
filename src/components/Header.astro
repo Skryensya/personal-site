@@ -10,6 +10,9 @@ const currentLocale = getLangFromUrl(Astro.url);
 const currentPath = Astro.url.pathname;
 const t = useTranslations(currentLocale);
 
+// Check if current page is CV to make header non-sticky
+const isCVPage = currentPath.includes('/cv');
+
 const navItems = [
   { label: 'ALLISON PEÑA', href: '/', hotkey: null },
   { label: t('nav.projects').toUpperCase(), href: '/projects', hotkey: 'p' },
@@ -21,7 +24,7 @@ const navItems = [
 ---
 
  
-<header class="sticky top-4 z-[100] flex justify-center mx-auto max-w-[var(--max-w-size)]">
+<header class={`${isCVPage ? 'relative' : 'sticky top-4'} z-[100] flex justify-center mx-auto max-w-[var(--max-w-size)]`}>
   <div class="max-w-[1280px] w-full px-4">
     <div class="flex items-start justify-between gap-2 flex-nowrap diagonal-stripe px-4 py-2">
       <div class="flex items-start gap-x-2 gap-y-1 flex-wrap flex-1 mr-2">

@@ -35,18 +35,21 @@ export default function LanguageSwitcher({ currentPath, initialLocale }: Languag
     };
 
     const dropdownContent = (
-        <div>
-            {alternateUrls.map(({ lang, url }) => (
-                <DropdownItem
-                    key={lang}
-                    selected={lang === currentLang}
-                    onClick={() => handleLanguageSwitch(lang, url)}
-                    className="font-mono text-xs font-semibold uppercase tracking-wider"
-                >
-                    {languages[lang]}
-                </DropdownItem>
-            ))}
-        </div>
+        <>
+            {supportedLanguages.map((lang) => {
+                const url = alternateUrls.find(alt => alt.lang === lang)?.url || '/';
+                return (
+                    <DropdownItem
+                        key={lang}
+                        selected={lang === currentLang}
+                        onClick={() => handleLanguageSwitch(lang, url)}
+                        className="font-mono text-xs font-semibold uppercase tracking-wider"
+                    >
+                        {languages[lang]}
+                    </DropdownItem>
+                );
+            })}
+        </>
     );
 
     return (
@@ -55,7 +58,7 @@ export default function LanguageSwitcher({ currentPath, initialLocale }: Languag
             className="font-mono text-xs font-semibold uppercase tracking-wider"
         >
             <span className="text-main group-hover:text-secondary">
-                {languages[currentLang]}
+                {currentLang.toUpperCase()}
             </span>
         </DropdownButton>
     );

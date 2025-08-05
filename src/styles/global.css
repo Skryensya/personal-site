@@ -212,3 +212,22 @@
     background-repeat: repeat;
     /* border: 1px solid var(--color-main); */
 }
+
+/* Global print styles - hide site navigation header and footer on all pages */
+@media print {
+    header:not(.cv-header),
+    footer,
+    nav {
+        display: none !important;
+    }
+    
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Hide any no-print elements */
+    .no-print {
+        display: none !important;
+    }
+}
