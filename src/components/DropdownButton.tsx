@@ -127,7 +127,7 @@ export default function DropdownButton({
                         <div
                             ref={refs.setFloating}
                             style={floatingStyles}
-                            className={`fixed z-[101] bg-secondary border border-main rounded-none min-w-[120px] max-w-[250px] overflow-y-auto whitespace-nowrap ${dropdownClassName}`}
+                            className={`fixed z-[101] bg-secondary border border-main rounded-none min-w-[120px] max-w-[250px] overflow-y-auto ${dropdownClassName}`}
                             {...getFloatingProps()}
                         >
                             {dropdownContent}
@@ -155,7 +155,7 @@ export function DropdownItem({
     return (
         <button
             type="button"
-            className={`w-full px-3 py-2 text-left focus:outline-none whitespace-nowrap ${
+            className={`w-full px-3 py-2 text-left focus:outline-none block ${
                 selected ? 'bg-main text-secondary' : 'bg-secondary text-main hover:bg-main hover:text-secondary'
             } ${className}`}
             onClick={onClick}

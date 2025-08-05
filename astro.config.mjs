@@ -15,7 +15,7 @@ export default defineConfig({
         }
     },
     server: {
-        port: 4321,
+        port: 2008,
         host: true
     },
     integrations: [
