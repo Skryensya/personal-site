@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { supportedLanguages, languages, type Language } from '@/i18n/ui';
 import { getLangFromUrl, getAlternateUrls } from '@/i18n/utils';
+import DropdownButton, { DropdownItem } from './DropdownButton';
 
 interface LanguageSwitcherProps {
     currentPath?: string;
@@ -8,7 +9,6 @@ interface LanguageSwitcherProps {
 }
 
 export default function LanguageSwitcher({ currentPath, initialLocale }: LanguageSwitcherProps) {
-    const [isOpen, setIsOpen] = React.useState(false);
     const [currentLang, setCurrentLang] = React.useState<Language>(initialLocale || 'es');
 
     React.useEffect(() => {
@@ -34,32 +34,29 @@ export default function LanguageSwitcher({ currentPath, initialLocale }: Languag
         }
     };
 
-    return (
-        <div className="relative">
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="bg-secondary border border-main px-3 py-1 font-mono text-xs font-semibold text-main hover:bg-main hover:text-secondary focus:bg-main focus:text-secondary focus:outline-none uppercase tracking-wider flex items-center gap-2"
-                aria-label="Change language"
-            >
-                {languages[currentLang]}
-                <span className="text-xs">▼</span>
-            </button>
-
-            {isOpen && (
-                <div className="absolute top-full left-0 mt-1 bg-secondary border border-main shadow-none z-50 min-w-full">
-                    {alternateUrls.map(({ lang, url }) => (
-                        <button
-                            key={lang}
-                            onClick={() => handleLanguageSwitch(lang, url)}
-                            className={`block w-full text-left px-3 py-2 font-mono text-xs font-semibold hover:bg-main hover:text-secondary focus:bg-main focus:text-secondary focus:outline-none uppercase tracking-wider ${
-                                lang === currentLang ? 'bg-main text-secondary' : 'text-main'
-                            }`}
-                        >
-                            {languages[lang]}
-                        </button>
-                    ))}
-                </div>
-            )}
+    const dropdownContent = (
+        <div>
+            {alternateUrls.map(({ lang, url }) => (
+                <DropdownItem
+                    key={lang}
+                    selected={lang === currentLang}
+                    onClick={() => handleLanguageSwitch(lang, url)}
+                    className="font-mono text-xs font-semibold uppercase tracking-wider"
+                >
+                    {languages[lang]}
+                </DropdownItem>
+            ))}
         </div>
+    );
+
+    return (
+        <DropdownButton
+            dropdownContent={dropdownContent}
+            className="font-mono text-xs font-semibold uppercase tracking-wider"
+        >
+            <span className="text-main group-hover:text-secondary">
+                {languages[currentLang]}
+            </span>
+        </DropdownButton>
     );
 }

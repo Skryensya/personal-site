@@ -12,9 +12,9 @@ export const ui = {
         // Navigation
         'nav.home': 'Inicio',
         'nav.projects': 'Proyectos',
-        'nav.blog': 'Blog',
+        'nav.showcase': 'Showcase',
+        'nav.cv': 'CV',
         'nav.about': 'Acerca',
-        'nav.contact': 'Contacto',
 
         // Home page sections
         'home.technologies': 'Tecnologías',
@@ -37,6 +37,7 @@ export const ui = {
         'home.seeMore': 'VER MÁS SOBRE MÍ →',
         'home.heroProjectsButton': 'Ver mis proyectos',
         'home.aboutButton': 'Conoce más sobre mí',
+        'home.cvButton': 'Ver mi currículum',
 
         // Stats
         'home.stats.experience': 'Experiencia',
@@ -102,9 +103,9 @@ export const ui = {
         // Navigation
         'nav.home': 'Home',
         'nav.projects': 'Projects',
-        'nav.blog': 'Blog',
+        'nav.showcase': 'Showcase',
+        'nav.cv': 'CV',
         'nav.about': 'About',
-        'nav.contact': 'Contact',
 
         // Home page sections
         'home.technologies': 'Technologies',
@@ -127,6 +128,7 @@ export const ui = {
         'home.seeMore': 'SEE MORE ABOUT ME →',
         'home.heroProjectsButton': 'View my projects',
         'home.aboutButton': 'Learn more about me',
+        'home.cvButton': 'View my CV',
 
         // Stats
         'home.stats.experience': 'Experience',
@@ -192,9 +194,9 @@ export const ui = {
         // Navigation
         'nav.home': 'Hjem',
         'nav.projects': 'Prosjekter',
-        'nav.blog': 'Blogg',
+        'nav.showcase': 'Showcase',
+        'nav.cv': 'CV',
         'nav.about': 'Om',
-        'nav.contact': 'Kontakt',
 
         // Home page sections
         'home.technologies': 'Teknologier',
@@ -217,6 +219,7 @@ export const ui = {
         'home.seeMore': 'SE MER OM MEG →',
         'home.heroProjectsButton': 'Se prosjektene mine',
         'home.aboutButton': 'Lær mer om meg',
+        'home.cvButton': 'Se CV-en min',
 
         // Stats
         'home.stats.experience': 'Erfaring',
