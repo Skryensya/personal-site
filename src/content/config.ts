@@ -50,7 +50,8 @@ const projects = defineCollection({
         isFeatured: z.boolean().default(false),
         seo: seoSchema.optional(),
         color: z.string().optional(),
-        clientLogo: z.string().optional()
+        clientLogo: z.string().optional(),
+        tags: z.array(z.string()).default([])
         // Language is now inferred from the folder structure
         // slug: z.string().optional(), // Base slug for cross-language linking
     })
