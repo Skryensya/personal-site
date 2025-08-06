@@ -1,15 +1,463 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import CV from '@/components/CV.astro';
+import Button from '@/components/Button.astro';
+import DitheredImageReact from '@/components/DitheredImageReact.tsx';
 import { getLangFromUrl, useTranslations } from '@/i18n/utils';
 import { defaultLang } from '@/i18n/ui';
+import { getCollection } from 'astro:content';
 
 const lang = getLangFromUrl(Astro.url);
 const t = useTranslations(lang);
+
+// Get all projects for the current language
+const allProjects = await getCollection('projects', ({ id }) => {
+    return id.startsWith(`${lang}/`);
+});
+
+// Extract technologies from projects
+const extractTechnologiesFromContent = (content: string): string[] => {
+    const techMatches = content.match(/\*\*([^*]+)\*\*/g) || [];
+    const technologies = techMatches
+        .map(match => match.replace(/\*\*/g, '').trim())
+        .filter(tech => {
+            // Filter out non-technical terms
+            const techKeywords = ['JavaScript', 'TypeScript', 'React', 'Vue', 'Node.js', 'PHP', 'Python', 'CSS', 'HTML', 'Astro', 'Next.js', 'Nuxt.js', 'Express', 'PostgreSQL', 'MySQL', 'MongoDB', 'GraphQL', 'REST', 'API', 'Docker', 'AWS', 'Vercel', 'Git', 'GitHub', 'Tailwind', 'SASS', 'SCSS', 'NPM', 'Webpack', 'Rollup', 'Redis', 'Strapi', 'Processwire', 'CMS'];
+            return techKeywords.some(keyword => tech.toLowerCase().includes(keyword.toLowerCase()));
+        });
+    return [...new Set(technologies)];
+};
+
+// Get technologies from all projects (both from tags and content)
+const projectTechnologies = allProjects.flatMap(project => {
+    const { body, data } = project;
+    const contentTechs = extractTechnologiesFromContent(body);
+    const tagTechs = data.tags || [];
+    return [...contentTechs, ...tagTechs];
+});
+
+const uniqueTechnologies = [...new Set(projectTechnologies)];
+
+// Dynamic ATS-friendly keywords (invisible but searchable) from projects + static keywords
+const staticAtsKeywords = [
+    'React Developer', 'TypeScript Developer', 'Frontend Developer', 'Backend Developer',
+    'Full Stack Developer', 'JavaScript Developer', 'Node.js Developer', 'Web Developer',
+    'UI/UX Designer', 'Responsive Design', 'Mobile First', 'Performance Optimization',
+    'SEO Specialist', 'Accessibility Expert', 'WCAG Compliance', 'Cross Browser Compatibility',
+    'Agile Development', 'Scrum Master', 'Code Review', 'Version Control', 'Git Workflow',
+    'API Development', 'REST API', 'GraphQL', 'Database Design', 'PostgreSQL',
+    'AWS Cloud', 'Docker Containers', 'CI/CD Pipeline', 'DevOps', 'Vercel Deployment',
+    'Astro Framework', 'Next.js', 'Tailwind CSS', 'CSS3', 'HTML5', 'ES6+',
+    'React Hooks', 'State Management', 'Component Architecture', 'Testing',
+    'Problem Solving', 'Team Collaboration', 'Project Management', 'Client Communication',
+    'Spanish Native', 'English Advanced', 'Norwegian Intermediate', 'Multilingual',
+    'Santiago Chile', 'Remote Work', 'Freelance', 'Contract Work', 'Available'
+];
+
+// Combine static keywords with project technologies
+const atsKeywords = [...staticAtsKeywords, ...uniqueTechnologies].filter((keyword, index, arr) => 
+    arr.findIndex(k => k.toLowerCase() === keyword.toLowerCase()) === index
+);
 ---
 
 <Layout title={`${t('cv.title')} - ${t('site.title')}`} description={t('about.tldr.description')} lang={lang}>
-    <div class="pt-4 print:pt-0">
-        <CV lang={lang} />
+    
+    <!-- ATS Keywords (invisible but searchable) -->
+    <div class="absolute -left-[9999px] w-px h-px overflow-hidden opacity-0 text-xs leading-none text-transparent" aria-hidden="true">
+        {atsKeywords.join(' ')}
+        Full Stack Web Developer React TypeScript Node.js Astro Tailwind CSS PostgreSQL GraphQL
+        Frontend Backend JavaScript ES6 HTML5 CSS3 Responsive Design Mobile First
+        Performance Optimization SEO Accessibility WCAG Git GitHub Docker AWS Vercel
+        Agile Scrum Code Review API Development REST GraphQL Database Design
+        UI UX Design Problem Solving Team Collaboration Project Management
+        Spanish English Norwegian Multilingual Santiago Chile Remote Freelance
+    </div>
+
+    <!-- Floating Print Button (bottom right) -->
+    <div class="print:hidden fixed bottom-8 right-8 z-50">
+        <Button filled elevated onclick="window.print()">
+            {t('ui.print')}
+        </Button>
+    </div>
+
+    <style>
+        @page {
+            size: A4;
+            margin: 12mm;
+        }
+        
+        @media print {
+            * {
+                box-sizing: border-box;
+            }
+            
+            body {
+                font-size: 9px !important;
+                line-height: 1.2 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+                color: black !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .a4-page {
+                padding: 8mm !important;
+                box-shadow: none !important;
+                border: none !important;
+                width: 100% !important;
+                max-width: none !important;
+                margin: 0 !important;
+                min-height: auto !important;
+                background: white !important;
+                color: black !important;
+            }
+            
+            h1 {
+                font-size: 14px !important;
+                margin-bottom: 2px !important;
+            }
+            
+            h2 {
+                font-size: 10px !important;
+                margin-bottom: 3px !important;
+            }
+            
+            h3 {
+                font-size: 8px !important;
+                margin-bottom: 2px !important;
+                border-bottom: 1px solid black !important;
+                padding-bottom: 1px !important;
+            }
+            
+            h4 {
+                font-size: 7px !important;
+                margin-bottom: 1px !important;
+            }
+            
+            .section-title {
+                font-size: 8px !important;
+                border-bottom: 2px solid black !important;
+                padding-bottom: 2px !important;
+                margin-bottom: 4px !important;
+            }
+            
+            .tech-tag {
+                border: 1px solid black !important;
+                background: white !important;
+                color: black !important;
+                padding: 1px 3px !important;
+                font-size: 6px !important;
+            }
+            
+            .profile-image {
+                width: 12mm !important;
+                height: 12mm !important;
+            }
+            
+            .contact-info {
+                font-size: 6px !important;
+                gap: 2px !important;
+            }
+            
+            .experience-item, .project-item {
+                margin-bottom: 3mm !important;
+                padding: 1mm !important;
+                border-left: 2px solid black !important;
+                padding-left: 3mm !important;
+            }
+            
+            section {
+                margin-bottom: 4mm !important;
+            }
+            
+            ul {
+                margin: 0 !important;
+                padding-left: 8px !important;
+            }
+            
+            li {
+                margin-bottom: 1px !important;
+                font-size: 7px !important;
+            }
+            
+            .grid {
+                display: block !important;
+            }
+            
+            .grid > * {
+                margin-bottom: 2mm !important;
+            }
+        }
+        
+        @media screen {
+            body {
+                background: var(--color-secondary);
+                padding: 2rem 1rem;
+                margin: 0;
+                min-height: 100vh;
+            }
+            
+            /* Hide site navigation on CV page */
+            nav, .navbar, [role="navigation"] {
+                display: none !important;
+            }
+        }
+        
+        /* A4 dimensions optimized for content */
+        .a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            max-width: 100%;
+            margin: 0 auto;
+            box-shadow: 8px 8px 0 var(--color-main);
+            border: 3px solid var(--color-main);
+            overflow: hidden;
+            background: var(--color-secondary);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        @media (max-width: 768px) {
+            .a4-page {
+                width: 100%;
+                margin: 0;
+                box-shadow: none;
+                border: 2px solid var(--color-main);
+            }
+        }
+        
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border-bottom: 2px solid var(--color-main);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--color-main);
+        }
+        
+        .tech-tag {
+            border: 2px solid var(--color-main);
+            background: transparent;
+            color: var(--color-main);
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+    </style>
+
+    <!-- Single Column CV Page -->
+    <div class="a4-page p-8">
+        <!-- Header with Name and Contact -->
+        <header class="flex justify-between items-start mb-6 border-b-2 border-main pb-4">
+            <div class="flex-1">
+                <h1 class="text-3xl font-black text-main mb-1 tracking-tight font-mono uppercase">{t('site.title')}</h1>
+                <h2 class="text-lg text-main opacity-70 mb-3 font-semibold font-mono">{t('site.subtitle')}</h2>
+                
+                <!-- Contact Info - Compact Grid -->
+                <div class="grid grid-cols-2 gap-2 text-xs font-mono contact-info">
+                    <div class="flex items-center gap-1">
+                        <span class="text-main font-bold">✉</span>
+                        <span class="text-main">{t('cv.email')}</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span class="text-main font-bold">📍</span>
+                        <span class="text-main">{t('cv.location')}</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span class="text-main font-bold">🌐</span>
+                        <span class="text-main">{t('cv.website')}</span>
+                    </div>
+                    <div class="flex items-center gap-1">
+                        <span class="text-main font-bold">📱</span>
+                        <span class="text-main">{t('cv.phone')}</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Image -->
+            <div class="ml-4 flex-shrink-0">
+                <div class="w-16 h-16 overflow-hidden border-2 border-main profile-image">
+                    <DitheredImageReact 
+                        src="/Allison.jpeg" 
+                        alt="Allison Peña Profile Photo" 
+                        className="w-full h-full object-cover"
+                        crunch="pixel"
+                        cutoff={0.3}
+                        respectOriginalSize={false}
+                        client:load
+                    />
+                </div>
+            </div>
+        </header>
+
+        <!-- Professional Summary -->
+        <section class="mb-6">
+            <h3 class="section-title">Professional Summary</h3>
+            <p class="text-sm text-main font-mono leading-relaxed">
+                Full-Stack Developer especializado en React, TypeScript, Node.js. 4+ años experiencia desarrollo web moderno, performance optimization, accessibility (WCAG). Passionate about creating accessible, high-performance web applications with modern technologies.
+            </p>
+        </section>
+
+        <!-- Core Skills -->
+        <section class="mb-6">
+            <h3 class="section-title">{t('cv.skills.title')}</h3>
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <h4 class="text-sm font-bold mb-2 font-mono text-main border-l-4 border-main pl-2">Frontend</h4>
+                    <div class="text-xs text-main font-mono leading-relaxed">React • TypeScript • Astro • Tailwind CSS • Next.js • HTML5 • CSS3</div>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold mb-2 font-mono text-main border-l-4 border-main pl-2">Backend</h4>
+                    <div class="text-xs text-main font-mono leading-relaxed">Node.js • PostgreSQL • GraphQL • REST APIs • Prisma • Database Design</div>
+                </div>
+                <div>
+                    <h4 class="text-sm font-bold mb-2 font-mono text-main border-l-4 border-main pl-2">Tools</h4>
+                    <div class="text-xs text-main font-mono leading-relaxed">Git • Docker • AWS • Vercel • Figma • CI/CD</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technology Stack -->
+        <section class="mb-6">
+            <h3 class="section-title">Technology Stack</h3>
+            <div class="flex flex-wrap gap-2">
+                {uniqueTechnologies.length > 0 ? uniqueTechnologies.slice(0, 12).map((tech) => (
+                    <span class="tech-tag">{tech}</span>
+                )) : (
+                    <>
+                        <span class="tech-tag">React</span>
+                        <span class="tech-tag">TypeScript</span>
+                        <span class="tech-tag">Node.js</span>
+                        <span class="tech-tag">Astro</span>
+                        <span class="tech-tag">PostgreSQL</span>
+                        <span class="tech-tag">GraphQL</span>
+                        <span class="tech-tag">Docker</span>
+                        <span class="tech-tag">AWS</span>
+                        <span class="tech-tag">Vercel</span>
+                        <span class="tech-tag">Tailwind</span>
+                    </>
+                )}
+            </div>
+        </section>
+
+        <!-- Professional Experience -->
+        <section class="mb-6">
+            <h3 class="section-title">{t('cv.experience.title')}</h3>
+            <div class="space-y-4">
+                <div class="border-l-4 border-main pl-4 experience-item">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold text-main text-sm font-mono">Full-Stack Developer</h4>
+                        <span class="text-sm text-main font-mono">2021 - Present</span>
+                    </div>
+                    <p class="text-sm text-main mb-2 font-mono font-medium">Freelance & Contract Work</p>
+                    <ul class="text-xs text-main leading-relaxed font-mono space-y-1">
+                        <li>• Desarrollo de aplicaciones web accesibles usando React, TypeScript y Node.js</li>
+                        <li>• Performance optimization, SEO y compliance con estándares WCAG</li>
+                        <li>• Colaboración en equipos Agile y diseño de arquitectura frontend</li>
+                        <li>• Diseño e implementación de APIs RESTful y GraphQL</li>
+                    </ul>
+                </div>
+                
+                <div class="border-l-4 border-main pl-4 experience-item">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold text-main text-sm font-mono">Web Developer</h4>
+                        <span class="text-sm text-main font-mono">2020 - 2021</span>
+                    </div>
+                    <p class="text-sm text-main mb-2 font-mono font-medium">Junior Position</p>
+                    <ul class="text-xs text-main leading-relaxed font-mono space-y-1">
+                        <li>• Mantenimiento y desarrollo de sitios web usando JavaScript, HTML5 y CSS3</li>
+                        <li>• Implementación de mejores prácticas de desarrollo, accessibility y responsive design</li>
+                        <li>• Participación en code reviews, pair programming y testing</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Projects -->
+        <section class="mb-6">
+            <h3 class="section-title">Proyectos Destacados</h3>
+            <div class="grid grid-cols-2 gap-4">
+                {allProjects.length > 0 ? allProjects.filter(project => project.data.isFeatured).slice(0, 4).map((project) => {
+                    const contentTechs = extractTechnologiesFromContent(project.body);
+                    const projectTags = project.data.tags || [];
+                    const allProjectTechs = [...new Set([...contentTechs, ...projectTags])].slice(0, 3);
+                    
+                    return (
+                        <div class="border border-main p-3 project-item">
+                            <div class="flex justify-between items-start mb-2">
+                                <h4 class="font-bold text-main text-sm font-mono">{project.data.title}</h4>
+                                <span class="text-xs text-main font-mono">{new Date(project.data.publishDate).getFullYear()}</span>
+                            </div>
+                            <p class="text-xs text-main mb-2 leading-relaxed font-mono">{project.data.description}</p>
+                            {allProjectTechs.length > 0 && (
+                                <div class="flex flex-wrap gap-1">
+                                    {allProjectTechs.map((tech) => (
+                                        <span class="tech-tag text-xs">{tech}</span>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    );
+                }) : (
+                    <>
+                        <div class="border border-main p-3 project-item">
+                            <h4 class="font-bold text-main mb-2 text-sm font-mono">Portfolio Personal</h4>
+                            <p class="text-xs text-main mb-2 leading-relaxed font-mono">Sitio web con diseño brutalist, sistema multilenguaje (ES/EN/NO), optimizaciones de performance</p>
+                            <div class="flex flex-wrap gap-1">
+                                <span class="tech-tag text-xs">Astro</span>
+                                <span class="tech-tag text-xs">React</span>
+                                <span class="tech-tag text-xs">TypeScript</span>
+                            </div>
+                        </div>
+                        <div class="border border-main p-3 project-item">
+                            <h4 class="font-bold text-main mb-2 text-sm font-mono">E-commerce Platform</h4>
+                            <p class="text-xs text-main mb-2 leading-relaxed font-mono">Plataforma completa de e-commerce con dashboard administrativo y sistema de pagos</p>
+                            <div class="flex flex-wrap gap-1">
+                                <span class="tech-tag text-xs">Next.js</span>
+                                <span class="tech-tag text-xs">PostgreSQL</span>
+                                <span class="tech-tag text-xs">Stripe</span>
+                            </div>
+                        </div>
+                    </>
+                )}
+            </div>
+        </section>
+
+        <!-- Education & Languages -->
+        <div class="grid grid-cols-2 gap-6">
+            <section>
+                <h3 class="section-title">{t('cv.education.title')}</h3>
+                <div class="border-l-4 border-main pl-4">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-bold text-main text-sm font-mono">Autodidacta / Self-Taught</h4>
+                        <span class="text-sm text-main font-mono">2020 - Present</span>
+                    </div>
+                    <p class="text-xs text-main leading-relaxed font-mono">Continuous learning through online resources, documentation, hands-on projects, and professional development courses</p>
+                </div>
+            </section>
+
+            <section>
+                <h3 class="section-title">{t('cv.languages.title')}</h3>
+                <div class="space-y-2">
+                    <div class="border-l-4 border-main pl-4">
+                        <span class="font-bold text-main text-sm font-mono">Español</span>
+                        <span class="text-xs text-main font-mono ml-2">Nativo</span>
+                    </div>
+                    <div class="border-l-4 border-main pl-4">
+                        <span class="font-bold text-main text-sm font-mono">English</span>
+                        <span class="text-xs text-main font-mono ml-2">Avanzado</span>
+                    </div>
+                    <div class="border-l-4 border-main pl-4">
+                        <span class="font-bold text-main text-sm font-mono">Norsk</span>
+                        <span class="text-xs text-main font-mono ml-2">Intermedio</span>
+                    </div>
+                </div>
+            </section>
+        </div>
     </div>
 </Layout>
