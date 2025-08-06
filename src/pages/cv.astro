@@ -1,508 +1,114 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import DitheredImageReact from '@/components/DitheredImageReact.tsx';
-import { getLangFromUrl, useTranslations } from '@/i18n/utils';
-import { getCollection } from 'astro:content';
-import 'primeicons/primeicons.css';
-
-const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
-
-// Get all projects for the current language
-const allProjects = await getCollection('projects', ({ id }) => {
-    return id.startsWith(`${lang}/`);
-});
-
-// Extract technologies from projects
-const extractTechnologiesFromContent = (content: string): string[] => {
-    const techMatches = content.match(/\*\*([^*]+)\*\*/g) || [];
-    const technologies = techMatches
-        .map(match => match.replace(/\*\*/g, '').trim())
-        .filter(tech => {
-            // Filter out non-technical terms
-            const techKeywords = ['JavaScript', 'TypeScript', 'React', 'Vue', 'Node.js', 'PHP', 'Python', 'CSS', 'HTML', 'Astro', 'Next.js', 'Nuxt.js', 'Express', 'PostgreSQL', 'MySQL', 'MongoDB', 'GraphQL', 'REST', 'API', 'Docker', 'AWS', 'Vercel', 'Git', 'GitHub', 'Tailwind', 'SASS', 'SCSS', 'NPM', 'Webpack', 'Rollup', 'Redis', 'Strapi', 'Processwire', 'CMS'];
-            return techKeywords.some(keyword => tech.toLowerCase().includes(keyword.toLowerCase()));
-        });
-    return [...new Set(technologies)];
-};
-
-// Get technologies from all projects (both from tags and content)
-const projectTechnologies = allProjects.flatMap(project => {
-    const { body, data } = project;
-    const contentTechs = extractTechnologiesFromContent(body);
-    const tagTechs = data.tags || [];
-    return [...contentTechs, ...tagTechs];
-});
-
-const uniqueTechnologies = [...new Set(projectTechnologies)];
-
-// Dynamic ATS-friendly keywords (invisible but searchable) from projects + static keywords
-const staticAtsKeywords = [
-    'React Developer', 'TypeScript Developer', 'Frontend Developer', 'Backend Developer',
-    'Full Stack Developer', 'JavaScript Developer', 'Node.js Developer', 'Web Developer',
-    'UI/UX Designer', 'Responsive Design', 'Mobile First', 'Performance Optimization',
-    'SEO Specialist', 'Accessibility Expert', 'WCAG Compliance', 'Cross Browser Compatibility',
-    'Agile Development', 'Scrum Master', 'Code Review', 'Version Control', 'Git Workflow',
-    'API Development', 'REST API', 'GraphQL', 'Database Design', 'PostgreSQL',
-    'AWS Cloud', 'Docker Containers', 'CI/CD Pipeline', 'DevOps', 'Vercel Deployment',
-    'Astro Framework', 'Next.js', 'Tailwind CSS', 'CSS3', 'HTML5', 'ES6+',
-    'React Hooks', 'State Management', 'Component Architecture', 'Testing',
-    'Problem Solving', 'Team Collaboration', 'Project Management', 'Client Communication',
-    'Spanish Native', 'English Advanced', 'Norwegian Intermediate', 'Multilingual',
-    'Santiago Chile', 'Remote Work', 'Freelance', 'Contract Work', 'Available'
-];
-
-// Combine static keywords with project technologies
-const atsKeywords = [...staticAtsKeywords, ...uniqueTechnologies].filter((keyword, index, arr) => 
-    arr.findIndex(k => k.toLowerCase() === keyword.toLowerCase()) === index
-);
-
+import CVPage from '@/components/CVPage.astro';
 ---
 
-<Layout title={`${t('cv.title')} - ${t('site.title')}`} description={t('about.tldr.description')} lang={lang}>
-    
-    <!-- ATS Keywords (invisible but searchable) -->
-    <div class="absolute -left-[9999px] w-px h-px overflow-hidden opacity-0 text-xs leading-none text-transparent" aria-hidden="true">
-        {atsKeywords.join(' ')}
-        Full Stack Web Developer React TypeScript Node.js Astro Tailwind CSS PostgreSQL GraphQL
-        Frontend Backend JavaScript ES6 HTML5 CSS3 Responsive Design Mobile First
-        Performance Optimization SEO Accessibility WCAG Git GitHub Docker AWS Vercel
-        Agile Scrum Code Review API Development REST GraphQL Database Design
-        UI UX Design Problem Solving Team Collaboration Project Management
-        Spanish English Norwegian Multilingual Santiago Chile Remote Freelance
-    </div>
-
+<Layout title="Allison Peña - CV" description="CV de Allison Peña">
     <!-- Floating Print Button (bottom right) -->
     <div class="print:hidden fixed bottom-8 right-8 z-50">
         <button class="bg-main text-secondary border-2 border-main px-4 py-2 font-mono font-bold hover:bg-secondary hover:text-main shadow-[4px_4px_0_var(--color-main)]" onclick="window.print()">
-            {t('ui.print')}
+            Imprimir
         </button>
     </div>
 
     <style>
-        :root {
-            --cv-page-height: 370mm; /* Altura aumentada (era 260mm) */
-            --cv-page-width: 260mm;
-            --cv-padding: 12mm;
-            --cv-content-height: calc(var(--cv-page-height) - calc(var(--cv-padding) * 2));
-        }
-        
-        @page {
-            size: A4;
-            margin: 0.5mm 2mm;
-        }
-        
-        @media print {
-            * {
-                box-sizing: border-box;
-            }
-            
-            body {
-                font-size: 9px !important;
-                line-height: 1.2 !important;
-                margin: 0 !important;
-                padding: 0 !important;
-                background: white !important;
-                color: black !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-            
-            /* Print pagination classes */
-            .print\\:page-break-before {
-                page-break-before: always;
-            }
-            
-            .print\\:page-break-after {
-                page-break-after: always;
-            }
-            
-            .print\\:page-break-after:last-child {
-                page-break-after: auto;
-            }
-            
-            .print\\:break-inside-avoid {
-                break-inside: avoid;
-                page-break-inside: avoid;
-            }
-            
-            .print\\:break-after-avoid {
-                page-break-after: avoid;
-                break-inside: avoid;
-            }
-            
-            .print\\:hidden {
-                display: none !important;
-            }
-            
-            .print\\:block {
-                display: block !important;
+        @layer base {
+            :root {
+                /* Variables para ajustar el tamaño de impresión */
+                --print-width: 100vw;
+                --print-height: 90vh;
+                --print-padding: 0mm;
+                --print-border-width: 2px;
             }
 
-            /* All CV pages have identical fixed dimensions using variables */
-            .cv-page {
-                width: var(--cv-page-width) !important;
-                height: var(--cv-page-height) !important;
-                max-width: var(--cv-page-width) !important;
-                max-height: var(--cv-page-height) !important;
-                min-height: var(--cv-page-height) !important;
-                margin: 0 auto !important;
-                padding: var(--cv-padding) !important;
-                box-sizing: border-box !important;
-                page-break-after: always !important;
-                page-break-before: always !important;
-                page-break-inside: avoid !important;
-                overflow: hidden !important;
-                display: block !important;
-            }
-            
-            .cv-page:first-child {
-                page-break-before: auto !important;
-            }
-            
-            .cv-page:last-child {
-                page-break-after: auto !important;
-            }
-            
-            /* Content has fixed height using variables */
-            .cv-page-content {
-                height: var(--cv-content-height) !important;
-                max-height: var(--cv-content-height) !important;
-                min-height: var(--cv-content-height) !important;
-                overflow: hidden !important;
-                padding: 0 !important;
-            }
-            
-            /* Hide screen-only elements */
-            .print\\:hidden {
-                display: none !important;
-            }
-            
-            /* Override colors for print */
-            .text-main {
-                color: black !important;
-            }
-            
-            .border-main {
-                border-color: black !important;
-            }
-            
-            .bg-secondary {
-                background: white !important;
-            }
-            
-            
-            /* Adjust page numbers for print */
-            .opacity-50 {
-                opacity: 1 !important;
-            }
-            
-            /* Force red borders to print for debugging */
-            .print\\:border-red-500 {
-                border-color: #ef4444 !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            
-            .print\\:border-4 {
-                border-width: 4px !important;
-            }
-            
-            /* Ensure CV header content is visible in print */
-            header {
-                display: block !important;
-                visibility: visible !important;
-                opacity: 1 !important;
-            }
-            
-            header h1, header h2 {
-                font-size: 14px !important;
-                color: black !important;
-                display: block !important;
-            }
-            
-            header .grid {
-                display: grid !important;
-                font-size: 8px !important;
-            }
-            
-            header .pi {
-                color: black !important;
-                opacity: 1 !important;
-            }
-            
-            /* Profile image container */
-            header .w-16 {
-                width: 4rem !important;
-                height: 4rem !important;
-                display: block !important;
+            @page {
+                size: A4;
+                margin: 4mm;
             }
         }
-        
-        @media screen {
-            body {
-                background: var(--color-secondary);
-                padding: 0 !important;
-                margin: 0;
-                min-height: 100vh;
-            }
-            
-            /* Hide site navigation on CV page */
-            nav, .navbar, [role="navigation"] {
-                display: block !important;
-            }
-            
-            /* Remove layout container margins and padding */
-            .layout-container,
-            main {
-                padding: 0 !important;
-                margin: 0 !important;
-            }
-            
-            /* Screen pages match print width for consistency */
-            .cv-page {
-                width: 260mm !important;
-                max-width: 260mm !important;
-                min-width: 260mm !important;
+
+        @layer utilities {
+            .cv-page-print {
+                width: var(--print-width) !important;
+                height: var(--print-height) !important;
+                min-height: var(--print-height) !important;
+                max-height: var(--print-height) !important;
+                /* margin: 0 auto !important; */
+                padding: var(--print-padding) !important;
+                border: var(--print-border-width) solid black !important;
+                box-sizing: border-box !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                background: white !important;
+                color: black !important;
+                font-family: 'Times New Roman', serif !important;
             }
         }
     </style>
 
-    <!-- Static CV Pages -->
-    <div id="cv-container" class="cv-static">
-        <!-- Page 1 -->
-        <div 
-            class="cv-page w-full max-w-[260mm] mx-auto bg-secondary border-[3px] border-main shadow-[8px_8px_0_var(--color-main)] print:cv-page mt-4"
-            data-page="1"
-            id="cv-page-1"
-        >
-            <div class="p-8 pb-12 h-[266mm] min-h-[266mm] max-h-[266mm] print:cv-page-content">
-                <!-- Page Number -->
-                <div class="text-xs font-mono text-main text-right mb-4 opacity-50">
-                    Page 1 of 2
-                </div>
+    <!-- Contenedor de páginas -->
+    <div class="space-y-8 mb-20 print:space-y-0 print:mb-0">
+        <!-- Página 1 -->
+        <CVPage>
+            <h1 class="text-2xl mb-5 text-center text-main font-serif">Allison Peña</h1>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif">Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur.</p>
+        </CVPage>
 
-                <!-- Header -->
-                <header class="print:break-after-avoid flex justify-between items-start mb-6 border-b-2 border-main pb-4">
-                    <div class="flex-1">
-                        <h1 class="text-3xl font-black text-main mb-1 tracking-tight font-mono uppercase">{t('site.title')}</h1>
-                        <h2 class="text-lg text-main opacity-70 mb-3 font-semibold font-mono">{t('site.subtitle')}</h2>
-                        
-                        <div class="grid grid-cols-2 gap-2 text-xs font-mono">
-                            <div class="flex items-center gap-1">
-                                <i class="pi pi-envelope text-main font-bold text-sm"></i>
-                                <span class="text-main">{t('cv.email')}</span>
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <i class="pi pi-map-marker text-main font-bold text-sm"></i>
-                                <span class="text-main">{t('cv.location')}</span>
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <i class="pi pi-globe text-main font-bold text-sm"></i>
-                                <span class="text-main">{t('cv.website')}</span>
-                            </div>
-                            <div class="flex items-center gap-1">
-                                <i class="pi pi-phone text-main font-bold text-sm"></i>
-                                <span class="text-main">{t('cv.phone')}</span>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="ml-4 flex-shrink-0">
-                        <div class="w-16 h-16 overflow-hidden border-2 border-main">
-                            <DitheredImageReact 
-                                src="/Allison.jpeg" 
-                                alt="Allison Peña Profile Photo" 
-                                className="w-full h-full object-cover"
-                                crunch="pixel"
-                                cutoff={0.3}
-                                respectOriginalSize={false}
-                                client:load
-                            />
-                        </div>
-                    </div>
-                </header>
+        <!-- Página 2 -->
+        <CVPage class="print:break-before-page">
+            <h1 class="text-2xl mb-5 text-center text-main font-serif">Página 2</h1>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.</p>
+        </CVPage>
 
-                <!-- Professional Summary -->
-                <section class="print:break-inside-avoid mb-6">
-                    <h3 class="text-base font-bold uppercase tracking-wide border-b-2 border-main pb-2 mb-4 font-mono text-main">Professional Summary</h3>
-                    <p class="text-sm text-main font-mono leading-relaxed">
-                        Full-Stack Developer especializado en React, TypeScript, Node.js. 4+ años experiencia desarrollo web moderno, performance optimization, accessibility (WCAG). Passionate about creating accessible, high-performance web applications with modern technologies.
-                    </p>
-                </section>
+        <CVPage class="print:break-before-page">
+            <h1 class="text-2xl mb-5 text-center text-main font-serif">Página 3</h1>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif">Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>
+        </CVPage>
 
-                <!-- Core Skills -->
-                <section class="print:break-inside-avoid mb-6">
-                    <h3 class="text-base font-bold uppercase tracking-wide border-b-2 border-main pb-2 mb-4 font-mono text-main">{t('cv.skills.title')}</h3>
-                    <div class="grid grid-cols-3 gap-4">
-                        <div>
-                            <h4 class="text-sm font-bold mb-2 font-mono text-main border-l-4 border-main pl-2">Frontend</h4>
-                            <div class="text-xs text-main font-mono leading-relaxed">React • TypeScript • Astro • Tailwind CSS • Next.js • HTML5 • CSS3</div>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold mb-2 font-mono text-main border-l-4 border-main pl-2">Backend</h4>
-                            <div class="text-xs text-main font-mono leading-relaxed">Node.js • PostgreSQL • GraphQL • REST APIs • Prisma • Database Design</div>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold mb-2 font-mono text-main border-l-4 border-main pl-2">Tools</h4>
-                            <div class="text-xs text-main font-mono leading-relaxed">Git • Docker • AWS • Vercel • Figma • CI/CD</div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Technology Stack -->
-                <section class="print:break-inside-avoid mb-6">
-                    <h3 class="text-base font-bold uppercase tracking-wide border-b-2 border-main pb-2 mb-4 font-mono text-main">Technology Stack</h3>
-                    <div class="flex flex-wrap gap-2">
-                        {uniqueTechnologies.length > 0 ? uniqueTechnologies.slice(0, 12).map((tech) => (
-                            <span class="border-2 border-main bg-transparent text-main px-2 py-1 text-xs font-semibold font-mono">{tech}</span>
-                        )) : (
-                            <>
-                                <span class="border-2 border-main bg-transparent text-main px-2 py-1 text-xs font-semibold font-mono">React</span>
-                                <span class="border-2 border-main bg-transparent text-main px-2 py-1 text-xs font-semibold font-mono">TypeScript</span>
-                                <span class="border-2 border-main bg-transparent text-main px-2 py-1 text-xs font-semibold font-mono">Node.js</span>
-                                <span class="border-2 border-main bg-transparent text-main px-2 py-1 text-xs font-semibold font-mono">Astro</span>
-                                <span class="border-2 border-main bg-transparent text-main px-2 py-1 text-xs font-semibold font-mono">PostgreSQL</span>
-                                <span class="border-2 border-main bg-transparent text-main px-2 py-1 text-xs font-semibold font-mono">GraphQL</span>
-                                <span class="border-2 border-main bg-transparent text-main px-2 py-1 text-xs font-semibold font-mono">Docker</span>
-                                <span class="border-2 border-main bg-transparent text-main px-2 py-1 text-xs font-semibold font-mono">AWS</span>
-                                <span class="border-2 border-main bg-transparent text-main px-2 py-1 text-xs font-semibold font-mono">Vercel</span>
-                                <span class="border-2 border-main bg-transparent text-main px-2 py-1 text-xs font-semibold font-mono">Tailwind</span>
-                            </>
-                        )}
-                    </div>
-                </section>
-            </div>
-        </div>
-
-        <!-- Page 2 -->
-        <div 
-            class="cv-page w-full max-w-[260mm] mx-auto bg-secondary border-[3px] border-main shadow-[8px_8px_0_var(--color-main)] print:cv-page mt-12"
-            data-page="2"
-            id="cv-page-2"
-        >
-            <div class="p-8 pb-12 h-[266mm] min-h-[266mm] max-h-[266mm] print:cv-page-content">
-                <!-- Page Number -->
-                <div class="text-xs font-mono text-main text-right mb-4 opacity-50">
-                    Page 2 of 2
-                </div>
-
-                <!-- Professional Experience -->
-                <section class="mb-6">
-                    <h3 class="text-base font-bold uppercase tracking-wide border-b-2 border-main pb-2 mb-4 font-mono text-main">{t('cv.experience.title')}</h3>
-                    <div class="space-y-4">
-                        <div class="print:break-inside-avoid border-l-4 border-main pl-4">
-                            <div class="flex justify-between items-start mb-2">
-                                <h4 class="font-bold text-main text-sm font-mono">Full-Stack Developer</h4>
-                                <span class="text-sm text-main font-mono">2021 - Present</span>
-                            </div>
-                            <p class="text-sm text-main mb-2 font-mono font-medium">Freelance & Contract Work</p>
-                            <ul class="text-xs text-main leading-relaxed font-mono space-y-1">
-                                <li class="flex items-start gap-2"><i class="pi pi-code text-main mt-0.5 text-xs flex-shrink-0"></i> Desarrollo de aplicaciones web accesibles usando React, TypeScript y Node.js</li>
-                                <li class="flex items-start gap-2"><i class="pi pi-chart-line text-main mt-0.5 text-xs flex-shrink-0"></i> Performance optimization, SEO y compliance con estándares WCAG</li>
-                                <li class="flex items-start gap-2"><i class="pi pi-users text-main mt-0.5 text-xs flex-shrink-0"></i> Colaboración en equipos Agile y diseño de arquitectura frontend</li>
-                                <li class="flex items-start gap-2"><i class="pi pi-server text-main mt-0.5 text-xs flex-shrink-0"></i> Diseño e implementación de APIs RESTful y GraphQL</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="print:break-inside-avoid border-l-4 border-main pl-4">
-                            <div class="flex justify-between items-start mb-2">
-                                <h4 class="font-bold text-main text-sm font-mono">Web Developer</h4>
-                                <span class="text-sm text-main font-mono">2020 - 2021</span>
-                            </div>
-                            <p class="text-sm text-main mb-2 font-mono font-medium">Junior Position</p>
-                            <ul class="text-xs text-main leading-relaxed font-mono space-y-1">
-                                <li class="flex items-start gap-2"><i class="pi pi-wrench text-main mt-0.5 text-xs flex-shrink-0"></i> Mantenimiento y desarrollo de sitios web usando JavaScript, HTML5 y CSS3</li>
-                                <li class="flex items-start gap-2"><i class="pi pi-check-circle text-main mt-0.5 text-xs flex-shrink-0"></i> Implementación de mejores prácticas de desarrollo, accessibility y responsive design</li>
-                                <li class="flex items-start gap-2"><i class="pi pi-eye text-main mt-0.5 text-xs flex-shrink-0"></i> Participación en code reviews, pair programming y testing</li>
-                            </ul>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Featured Projects -->
-                <section class="mb-6">
-                    <h3 class="text-base font-bold uppercase tracking-wide border-b-2 border-main pb-2 mb-4 font-mono text-main">Proyectos Destacados</h3>
-                    <div class="grid grid-cols-2 gap-4">
-                        {allProjects.length > 0 ? allProjects.filter(project => project.data.isFeatured).slice(0, 4).map((project) => {
-                            const contentTechs = extractTechnologiesFromContent(project.body);
-                            const projectTags = project.data.tags || [];
-                            const allProjectTechs = [...new Set([...contentTechs, ...projectTags])].slice(0, 3);
-                            
-                            return (
-                                <div class="print:break-inside-avoid border border-main p-3">
-                                    <div class="flex justify-between items-start mb-2">
-                                        <h4 class="font-bold text-main text-sm font-mono">{project.data.title}</h4>
-                                        <span class="text-xs text-main font-mono">{new Date(project.data.publishDate).getFullYear()}</span>
-                                    </div>
-                                    <p class="text-xs text-main mb-2 leading-relaxed font-mono">{project.data.description}</p>
-                                    {allProjectTechs.length > 0 && (
-                                        <div class="flex flex-wrap gap-1">
-                                            {allProjectTechs.map((tech) => (
-                                                <span class="border border-main bg-transparent text-main px-1 py-0.5 text-xs font-mono">{tech}</span>
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
-                            );
-                        }) : (
-                            <>
-                                <div class="print:break-inside-avoid border border-main p-3">
-                                    <h4 class="font-bold text-main mb-2 text-sm font-mono">Portfolio Personal</h4>
-                                    <p class="text-xs text-main mb-2 leading-relaxed font-mono">Sitio web con diseño brutalist, sistema multilenguaje (ES/EN/NO), optimizaciones de performance</p>
-                                    <div class="flex flex-wrap gap-1">
-                                        <span class="border border-main bg-transparent text-main px-1 py-0.5 text-xs font-mono">Astro</span>
-                                        <span class="border border-main bg-transparent text-main px-1 py-0.5 text-xs font-mono">React</span>
-                                        <span class="border border-main bg-transparent text-main px-1 py-0.5 text-xs font-mono">TypeScript</span>
-                                    </div>
-                                </div>
-                                <div class="print:break-inside-avoid border border-main p-3">
-                                    <h4 class="font-bold text-main mb-2 text-sm font-mono">E-commerce Platform</h4>
-                                    <p class="text-xs text-main mb-2 leading-relaxed font-mono">Plataforma completa de e-commerce con dashboard administrativo y sistema de pagos</p>
-                                    <div class="flex flex-wrap gap-1">
-                                        <span class="border border-main bg-transparent text-main px-1 py-0.5 text-xs font-mono">Next.js</span>
-                                        <span class="border border-main bg-transparent text-main px-1 py-0.5 text-xs font-mono">PostgreSQL</span>
-                                        <span class="border border-main bg-transparent text-main px-1 py-0.5 text-xs font-mono">Stripe</span>
-                                    </div>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                </section>
-
-                <!-- Education -->
-                <section class="print:break-inside-avoid mb-6">
-                    <h3 class="text-base font-bold uppercase tracking-wide border-b-2 border-main pb-2 mb-4 font-mono text-main">{t('cv.education.title')}</h3>
-                    <div class="border-l-4 border-main pl-4">
-                        <div class="flex justify-between items-start mb-2">
-                            <h4 class="font-bold text-main text-sm font-mono">Autodidacta / Self-Taught</h4>
-                            <span class="text-sm text-main font-mono">2020 - Present</span>
-                        </div>
-                        <p class="text-xs text-main leading-relaxed font-mono">Continuous learning through online resources, documentation, hands-on projects, and professional development courses</p>
-                    </div>
-                </section>
-
-                <!-- Languages -->
-                <section class="print:break-inside-avoid mb-6">
-                    <h3 class="text-base font-bold uppercase tracking-wide border-b-2 border-main pb-2 mb-4 font-mono text-main">{t('cv.languages.title')}</h3>
-                    <div class="space-y-2">
-                        <div class="border-l-4 border-main pl-4">
-                            <span class="font-bold text-main text-sm font-mono">Español</span>
-                            <span class="text-xs text-main font-mono ml-2">Nativo</span>
-                        </div>
-                        <div class="border-l-4 border-main pl-4">
-                            <span class="font-bold text-main text-sm font-mono">English</span>
-                            <span class="text-xs text-main font-mono ml-2">Avanzado</span>
-                        </div>
-                        <div class="border-l-4 border-main pl-4">
-                            <span class="font-bold text-main text-sm font-mono">Norsk</span>
-                            <span class="text-xs text-main font-mono ml-2">Intermedio</span>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </div>
+        <CVPage class="print:break-before-page">
+            <h1 class="text-2xl mb-5 text-center text-main font-serif">Página 4</h1>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif mb-4">Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.</p>
+            
+            <p class="text-justify leading-relaxed text-main font-serif">Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>
+        </CVPage>
     </div>
-
 
 </Layout>
