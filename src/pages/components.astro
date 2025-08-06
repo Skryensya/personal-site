@@ -1,0 +1,77 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import { defaultLang } from '@/i18n/ui';
+
+const lang = defaultLang;
+
+// Component showcase data with minimal tags (max 3)
+const components = [
+  {
+    name: 'Button',
+    path: '/components/vanilla/button',
+    tags: ['Interactive', 'UI', 'Sound']
+  },
+  {
+    name: 'Card',
+    path: '/components/react/card',
+    tags: ['Layout', 'Reusable', 'Props']
+  },
+  {
+    name: 'Modal',
+    path: '/components/vanilla/modal',
+    tags: ['Overlay', 'Dialog', 'Focus']
+  },
+  {
+    name: 'Counter',
+    path: '/components/react/counter',
+    tags: ['State', 'Interactive', 'Hooks']
+  },
+  {
+    name: 'Dropdown Button',
+    path: '/components/react/dropdown-button',
+    tags: ['Navigation', 'Menu', 'Floating']
+  },
+  {
+    name: 'Language Switcher',
+    path: '/components/react/language-switcher',
+    tags: ['i18n', 'Dropdown', 'Routing']
+  },
+  {
+    name: 'Theme Selector',
+    path: '/components/react/theme-selector',
+    tags: ['Theming', 'Storage', 'Colors']
+  },
+  {
+    name: 'Dithered Image',
+    path: '/components/react/dithered-image',
+    tags: ['Image', 'Canvas', 'Effects']
+  }
+];
+---
+
+<Layout title="Component Showcase" lang={lang}>
+  <main class="px-4 py-8">
+    <h1 class="text-4xl font-bold mb-8 text-main font-mono">Components</h1>
+    
+    <table class="w-full border-collapse">
+      <tbody>
+        {components.map((component) => (
+          <tr class="border-t border-main hover:bg-main hover:text-secondary">
+            <td class="p-0">
+              <a href={component.path} class="flex justify-between items-center font-mono text-main hover:text-secondary px-4 py-3 block w-full">
+                <span>{component.name}</span>
+                <span class="text-sm">
+                  {component.tags.map((tag, index) => (
+                    <span>
+                      {tag}{index < component.tags.length - 1 ? ', ' : ''}
+                    </span>
+                  ))}
+                </span>
+              </a>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </main>
+</Layout>

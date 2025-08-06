@@ -1,0 +1,120 @@
+/* Isolated Modal Styles */
+.showcase-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.showcase-modal {
+  background: #000;
+  border: 2px solid #fff;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.showcase-modal__header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  color: #000;
+}
+
+.showcase-modal__title {
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.showcase-modal__close {
+  background: none;
+  border: none;
+  color: #000;
+  font-size: 1.5rem;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: bold;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.showcase-modal__close:hover {
+  background: #000;
+  color: #fff;
+}
+
+.showcase-modal__body {
+  padding: 1.5rem;
+  color: #fff;
+}
+
+.showcase-modal__footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid #fff;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.showcase-modal__button {
+  background: #fff;
+  color: #000;
+  border: 1px solid #fff;
+  padding: 0.5rem 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.showcase-modal__button:hover {
+  background: #000;
+  color: #fff;
+  outline: 1px solid #fff;
+}
+
+.showcase-modal__button--primary {
+  background: #000;
+  color: #fff;
+}
+
+.showcase-modal__button--primary:hover {
+  background: #fff;
+  color: #000;
+}
+
+.showcase-trigger {
+  background: #000;
+  color: #fff;
+  border: 2px solid #fff;
+  padding: 12px 24px;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: bold;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-size: 14px;
+}
+
+.showcase-trigger:hover {
+  background: #fff;
+  color: #000;
+}

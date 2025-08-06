@@ -24,8 +24,8 @@ const navItems = [
 ---
 
  
-<nav class={`${isCVPage ? 'relative' : 'sticky top-4'} z-[100] flex justify-center mx-auto max-w-[var(--max-w-size)]`}>
-  <div class="max-w-[1280px] w-full px-4">
+<nav class={`${isCVPage ? 'relative' : 'sticky top-0'} z-[100] flex justify-center mx-auto max-w-[var(--max-w-size)]`}>
+  <div class={`max-w-[1280px] w-full px-4 mt-4`}>
     <div class="flex items-start justify-between gap-2 flex-nowrap diagonal-stripe px-4 py-2">
       <div class="flex items-start gap-x-2 gap-y-1 flex-wrap flex-1 mr-2">
         {navItems.map((item, index) => (
