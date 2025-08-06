@@ -1,0 +1,331 @@
+---
+import ComponentShowcaseLayout from '@/layouts/ComponentShowcaseLayout.astro';
+
+const showCode = Astro.url.searchParams.get('code') === 'true';
+---
+
+<ComponentShowcaseLayout 
+  title="Card Component" 
+  componentName="Card" 
+  technology="React"
+>
+  {showCode ? (
+    <div style="padding: 2rem; background: #000; color: #fff; height: 100%; overflow-y: auto;">
+      <h2 style="font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; margin-bottom: 2rem; color: #fff; border-bottom: 2px solid #fff; padding-bottom: 1rem;">
+        Card Component Code
+      </h2>
+      
+      <div style="margin-bottom: 3rem;">
+        <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; margin-bottom: 1rem; color: #fff; background: #fff; color: #000; padding: 0.5rem;">
+          React Component (Card.tsx)
+        </h3>
+        <pre style="background: #111; border: 1px solid #fff; padding: 1.5rem; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; line-height: 1.4; max-height: 400px;"><code>{`import React from 'react';
+import './card.css';
+
+interface CardProps {
+  title: string;
+  description?: string;
+  imageUrl?: string;
+  tags?: string[];
+  variant?: 'default' | 'highlighted' | 'minimal';
+  onClick?: () => void;
+  children?: React.ReactNode;
+}
+
+export function Card({ 
+  title, 
+  description, 
+  imageUrl, 
+  tags = [], 
+  variant = 'default',
+  onClick,
+  children 
+}: CardProps) {
+  return (
+    <div 
+      className={\`showcase-card showcase-card--\${variant} \${onClick ? 'showcase-card--clickable' : ''}\`}
+      onClick={onClick}
+    >
+      {imageUrl && (
+        <div className="showcase-card__image">
+          <img src={imageUrl} alt={title} />
+        </div>
+      )}
+      
+      <div className="showcase-card__content">
+        <h3 className="showcase-card__title">{title}</h3>
+        
+        {description && (
+          <p className="showcase-card__description">{description}</p>
+        )}
+        
+        {children && (
+          <div className="showcase-card__body">
+            {children}
+          </div>
+        )}
+        
+        {tags.length > 0 && (
+          <div className="showcase-card__tags">
+            {tags.map((tag, index) => (
+              <span key={index} className="showcase-card__tag">
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}`}</code></pre>
+      </div>
+      
+      <div style="margin-bottom: 3rem;">
+        <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; margin-bottom: 1rem; color: #fff; background: #fff; color: #000; padding: 0.5rem;">
+          CSS (card.css) - Truncated
+        </h3>
+        <pre style="background: #111; border: 1px solid #fff; padding: 1.5rem; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; line-height: 1.4; max-height: 400px;"><code>{`/* Isolated Card Styles */
+.showcase-card {
+  font-family: 'JetBrains Mono', monospace;
+  background: #000;
+  border: 2px solid #fff;
+  color: #fff;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+.showcase-card--clickable {
+  cursor: pointer;
+}
+
+.showcase-card--clickable:hover {
+  background: #fff;
+  color: #000;
+}
+
+.showcase-card--highlighted {
+  background: #fff;
+  color: #000;
+}
+
+.showcase-card--highlighted:hover {
+  background: #000;
+  color: #fff;
+}
+
+.showcase-card--minimal {
+  border: 1px solid #666;
+  background: transparent;
+}
+
+.showcase-card__image {
+  width: 100%;
+  height: 200px;
+  overflow: hidden;
+  border-bottom: 1px solid #fff;
+}
+
+.showcase-card__content {
+  padding: 1.5rem;
+}
+
+.showcase-card__title {
+  margin: 0 0 1rem 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* ... more styles */`}</code></pre>
+      </div>
+      
+      <div>
+        <h3 style="font-family: 'JetBrains Mono', monospace; font-size: 1.2rem; margin-bottom: 1rem; color: #fff; background: #fff; color: #000; padding: 0.5rem;">
+          Usage Examples
+        </h3>
+        <pre style="background: #111; border: 1px solid #fff; padding: 1.5rem; overflow-x: auto; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; line-height: 1.4;"><code>{`import { Card } from './Card';
+
+// Basic card
+<Card 
+  title="Basic Card"
+  description="A simple card with title and description"
+/>
+
+// Card with tags
+<Card 
+  title="Featured Project"
+  description="An amazing project with multiple technologies"
+  tags={['React', 'TypeScript', 'CSS']}
+  variant="highlighted"
+/>
+
+// Interactive card
+<Card 
+  title="Clickable Card"
+  description="This card responds to clicks"
+  onClick={() => console.log('Card clicked!')}
+  tags={['Interactive', 'Clickable']}
+/>
+
+// Card with custom content
+<Card title="Custom Content">
+  <div>
+    <p>Custom JSX content goes here.</p>
+    <button>Custom Button</button>
+  </div>
+</Card>`}</code></pre>
+      </div>
+    </div>
+  ) : (
+    <div style="padding: 3rem; background: #000; color: #fff; min-height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 2rem;">
+      <h2 style="font-family: 'JetBrains Mono', monospace; font-size: 1.5rem; margin-bottom: 2rem; color: #fff; text-align: center;">
+        React Card Component
+      </h2>
+      
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; width: 100%; max-width: 1200px;">
+        <div id="card-basic"></div>
+        <div id="card-highlighted"></div>
+        <div id="card-minimal"></div>
+        <div id="card-interactive"></div>
+      </div>
+      
+      <p style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: #ccc; text-align: center; margin-top: 2rem;">
+        Four different card configurations:<br/>
+        Basic • Highlighted • Minimal • Interactive (clickable)
+      </p>
+      
+      <script type="module">
+        import React from 'https://esm.sh/react@18';
+        import ReactDOM from 'https://esm.sh/react-dom@18/client';
+        
+        function Card({ 
+          title, 
+          description, 
+          imageUrl, 
+          tags = [], 
+          variant = 'default',
+          onClick,
+          children 
+        }) {
+          const cardStyles = {
+            fontFamily: 'JetBrains Mono, monospace',
+            background: variant === 'highlighted' ? '#fff' : variant === 'minimal' ? 'transparent' : '#000',
+            border: variant === 'minimal' ? '1px solid #666' : '2px solid #fff',
+            color: variant === 'highlighted' ? '#000' : '#fff',
+            maxWidth: '350px',
+            margin: '0 auto',
+            cursor: onClick ? 'pointer' : 'default'
+          };
+
+          const contentStyles = {
+            padding: '1.5rem'
+          };
+
+          const titleStyles = {
+            margin: '0 0 1rem 0',
+            fontSize: '1.2rem',
+            fontWeight: 'bold',
+            textTransform: 'uppercase',
+            letterSpacing: '1px'
+          };
+
+          const descriptionStyles = {
+            margin: '0 0 1rem 0',
+            fontSize: '0.9rem',
+            lineHeight: '1.4',
+            opacity: '0.8'
+          };
+
+          const tagsStyles = {
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: '0.5rem',
+            marginTop: '1rem'
+          };
+
+          const tagStyles = {
+            fontSize: '0.7rem',
+            padding: '0.25rem 0.5rem',
+            border: `1px solid ${variant === 'minimal' ? '#666' : 'currentColor'}`,
+            textTransform: 'uppercase',
+            letterSpacing: '1px',
+            fontWeight: 'bold',
+            background: variant === 'highlighted' ? '#000' : 'transparent',
+            color: variant === 'highlighted' ? '#fff' : variant === 'minimal' ? '#ccc' : 'currentColor'
+          };
+
+          return React.createElement('div', {
+            style: cardStyles,
+            onClick: onClick
+          }, [
+            React.createElement('div', {
+              key: 'content',
+              style: contentStyles
+            }, [
+              React.createElement('h3', {
+                key: 'title',
+                style: titleStyles
+              }, title),
+              
+              description && React.createElement('p', {
+                key: 'description',
+                style: descriptionStyles
+              }, description),
+              
+              children && React.createElement('div', {
+                key: 'body',
+                style: { margin: '1rem 0', fontSize: '0.9rem', lineHeight: '1.4' }
+              }, children),
+              
+              tags.length > 0 && React.createElement('div', {
+                key: 'tags',
+                style: tagsStyles
+              }, tags.map((tag, index) => 
+                React.createElement('span', {
+                  key: index,
+                  style: tagStyles
+                }, tag)
+              ))
+            ])
+          ]);
+        }
+        
+        // Mount card instances
+        const basicRoot = ReactDOM.createRoot(document.getElementById('card-basic'));
+        basicRoot.render(React.createElement(Card, {
+          title: 'Basic Card',
+          description: 'A simple card component with title, description, and tags.',
+          tags: ['Default', 'Basic', 'Simple']
+        }));
+        
+        const highlightedRoot = ReactDOM.createRoot(document.getElementById('card-highlighted'));
+        highlightedRoot.render(React.createElement(Card, {
+          title: 'Highlighted Card',
+          description: 'This card has a highlighted variant with inverted colors.',
+          tags: ['Highlighted', 'Featured', 'Special'],
+          variant: 'highlighted'
+        }));
+        
+        const minimalRoot = ReactDOM.createRoot(document.getElementById('card-minimal'));
+        minimalRoot.render(React.createElement(Card, {
+          title: 'Minimal Card',
+          description: 'A minimal card variant with subtle styling and transparent background.',
+          tags: ['Minimal', 'Subtle', 'Clean'],
+          variant: 'minimal'
+        }));
+        
+        const interactiveRoot = ReactDOM.createRoot(document.getElementById('card-interactive'));
+        interactiveRoot.render(React.createElement(Card, {
+          title: 'Interactive Card',
+          description: 'This card is clickable and responds to user interaction.',
+          tags: ['Interactive', 'Clickable', 'Dynamic'],
+          onClick: () => {
+            console.log('Interactive card clicked!');
+            alert('Card clicked! Check the console for more details.');
+          }
+        }));
+      </script>
+    </div>
+  )}
+</ComponentShowcaseLayout>
