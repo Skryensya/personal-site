@@ -1,7 +1,7 @@
 ---
 import { ViewTransitions } from 'astro:transitions';
 import BaseHead, { type Props as HeadProps } from '../components/BaseHead.astro';
-import Header from '../components/Header.astro';
+import Navbar from '../components/Navbar.astro';
 import Footer from "../components/Footer.astro"
  
 
@@ -94,16 +94,16 @@ const { showHeader = true, headerTitle = null, headerSubtitle = null, lang = 'es
                 animation-timing-function: ease-in-out;
             }
             
-            /* Prevent header from participating in theme view transitions */
-            ::view-transition-old(header),
-            ::view-transition-new(header) {
+            /* Prevent navbar from participating in theme view transitions */
+            ::view-transition-old(navbar),
+            ::view-transition-new(navbar) {
                 animation: none;
                 animation-duration: 0s;
             }
         </style>
     </head>
     <body class="bg-secondary text-main (--max-w-size:1280px) relative">
-        <Header />
+        <Navbar />
         <div class="mt-8 mx-auto max-w-[var(--max-w-size)]">  
         <main class="text-left px-4">
                 <slot />
