@@ -14,7 +14,7 @@ export const ui = {
         'nav.projects': 'Proyectos',
         'nav.showcase': 'Showcase',
         'nav.cv': 'CV',
-        'nav.about': 'Acerca',
+        'nav.about': 'Sobre mí',
 
         // Home page sections
         'home.technologies': 'Tecnologías',
@@ -77,6 +77,29 @@ export const ui = {
         'ui.print': 'IMPRIMIR',
         'ui.backToHome': 'VOLVER AL INICIO',
         
+        // Keyboard shortcuts
+        'ui.shortcuts.themePrev': '[ - Tema anterior',
+        'ui.shortcuts.themeNext': '] - Tema siguiente',
+        
+        // 404 page
+        '404.title': 'Página No Encontrada - Error 404',
+        '404.heading': 'Página no encontrada',
+        '404.description': 'Ups, esta página no existe. ¡Pero hay muchas cosas geniales que ver por aquí!',
+        '404.home': 'Ir al inicio',
+        '404.projects': 'Ver proyectos',
+        '404.goBack': 'Volver atrás',
+        
+        // Showcase page
+        'showcase.title': 'Showcase de Componentes',
+        'showcase.hero.title': 'Componentes UI',
+        'showcase.hero.subtitle': 'Una colección de componentes reutilizables construidos con React y Astro, siguiendo principios de diseño brutalist y accesibilidad.',
+        'showcase.available': 'Componentes disponibles',
+        'showcase.table.component': 'Componente',
+        'showcase.table.technologies': 'Tecnologías',
+        'showcase.button.viewComponents': 'Ver componentes',
+        'showcase.button.myProjects': 'Mis proyectos',
+        'showcase.button.view': 'Ver',
+        
         // CV page
         'cv.title': 'Currículum Vitae',
         'cv.contact': 'Contacto',
@@ -105,7 +128,7 @@ export const ui = {
         'nav.projects': 'Projects',
         'nav.showcase': 'Showcase',
         'nav.cv': 'CV',
-        'nav.about': 'About',
+        'nav.about': 'About me',
 
         // Home page sections
         'home.technologies': 'Technologies',
@@ -167,6 +190,29 @@ export const ui = {
         'ui.loading': 'LOADING...',
         'ui.print': 'PRINT',
         'ui.backToHome': 'BACK TO HOME',
+        
+        // Keyboard shortcuts
+        'ui.shortcuts.themePrev': '[ - Previous theme',
+        'ui.shortcuts.themeNext': '] - Next theme',
+        
+        // 404 page
+        '404.title': 'Page Not Found - Error 404',
+        '404.heading': 'Page not found',
+        '404.description': "Oops, this page doesn't exist. But there's plenty of cool stuff to explore around here!",
+        '404.home': 'Go to home',
+        '404.projects': 'View projects',
+        '404.goBack': 'Go back',
+        
+        // Showcase page
+        'showcase.title': 'Component Showcase',
+        'showcase.hero.title': 'UI Components',
+        'showcase.hero.subtitle': 'A collection of reusable components built with React and Astro, following brutalist design principles and accessibility standards.',
+        'showcase.available': 'Available components',
+        'showcase.table.component': 'Component',
+        'showcase.table.technologies': 'Technologies',
+        'showcase.button.viewComponents': 'View components',
+        'showcase.button.myProjects': 'My projects',
+        'showcase.button.view': 'View',
         
         // CV page
         'cv.title': 'Curriculum Vitae',
@@ -258,6 +304,29 @@ export const ui = {
         'ui.loading': 'LASTER...',
         'ui.print': 'SKRIV UT',
         'ui.backToHome': 'TILBAKE TIL HJEMMESIDE',
+        
+        // Keyboard shortcuts
+        'ui.shortcuts.themePrev': '[ - Forrige tema',
+        'ui.shortcuts.themeNext': '] - Neste tema',
+        
+        // 404 page
+        '404.title': 'Siden ikke funnet - Feil 404',
+        '404.heading': 'Siden ikke funnet',
+        '404.description': 'Oops, denne siden eksisterer ikke. Men det er masse kult å utforske her!',
+        '404.home': 'Gå til hjemmeside',
+        '404.projects': 'Se prosjekter',
+        '404.goBack': 'Gå tilbake',
+        
+        // Showcase page
+        'showcase.title': 'Komponentutstilling',
+        'showcase.hero.title': 'UI-komponenter',
+        'showcase.hero.subtitle': 'En samling gjenbrukbare komponenter bygget med React og Astro, som følger brutalistiske designprinsipper og tilgjengelighetsstandarder.',
+        'showcase.available': 'Tilgjengelige komponenter',
+        'showcase.table.component': 'Komponent',
+        'showcase.table.technologies': 'Teknologier',
+        'showcase.button.viewComponents': 'Se komponenter',
+        'showcase.button.myProjects': 'Mine prosjekter',
+        'showcase.button.view': 'Se',
         
         // CV page
         'cv.title': 'Curriculum Vitae',

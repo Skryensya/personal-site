@@ -209,9 +209,12 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
         }
     }, [currentMode, applyMode, isMounted]);
 
-    // Keyboard shortcuts for theme navigation
+    // Keyboard shortcuts for theme navigation - language aware
     useEffect(() => {
         if (!isMounted || typeof window === 'undefined') return;
+
+        // Get current language from URL
+        const currentLang = getLocaleFromURL();
 
         const handleKeyDown = (event: KeyboardEvent) => {
             // Only trigger if no modifier keys are pressed and not in an input
@@ -225,7 +228,8 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
                 return;
             }
 
-            // Use event.code for more reliable bracket detection
+            // Theme shortcuts using brackets - safe from Konami code
+            // Konami uses: ArrowUp, ArrowDown, ArrowLeft, ArrowRight, KeyB, KeyM
             switch (event.code) {
                 case 'BracketLeft': // [
                     event.preventDefault();
