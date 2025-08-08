@@ -1,22 +1,53 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import GameOfLife from '../components/GameOfLife.astro';
 import siteConfig from '../data/site-config';
+import Button from '../components/Button.astro';
+import { useTranslations } from '../i18n/utils';
+import { getLangFromUrl } from '../i18n/utils';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 ---
 
-<Layout title="404 - Page Not Found" description="Page not found" image={siteConfig.image}>
-    <div class="mb-12 group/section" data-is-404="true">
-        <GameOfLife is404Page={true} />
+<Layout title={t('404.title')} description={t('404.description')} image={siteConfig.image} showGameOfLife={true} lang={lang}>
+    
+    <div class="relative z-10 flex flex-col items-center justify-start min-h-[0dvh] px-4 max-w-2xl mx-auto">
+        <!-- Accessible Title -->
+        <h1 class="sr-only">{t('404.title')}</h1>
         
-        <!-- Home Button -->
-        <div class="flex justify-center mt-8">
-            <a
-                href="/"
-                class="px-8 py-4 border-2 border-main bg-secondary text-main hover:bg-main hover:text-secondary font-mono text-lg font-semibold"
-                title="Go to Home"
-            >
-                BACK TO HOME
-            </a>
+        <!-- ASCII Art 404 - Hidden from screen readers -->
+        <div class="font-mono text-main text-center my-8 " aria-hidden="true">
+            <pre class="text-xs sm:text-sm md:text-lg lg:text-xl xl:text-2xl leading-tight whitespace-pre select-none">
+{` █████ █████      █████    █████ █████   
+░░███ ░░███     ███░░░███ ░░███ ░░███    
+ ░███  ░███ █  ███   ░░███ ░███  ░███ █  
+ ░███████████ ░███    ░███ ░███████████  
+ ░░░░░░░███░█ ░███    ░███ ░░░░░░░███░█  
+       ░███░  ░░███   ███        ░███░   
+       █████   ░░░█████░         █████   
+   ░░░░░      ░░░░░░         ░░░░░`}</pre>
+        </div>
+
+        <!-- Main Content -->
+        <div class="mb-16">
+            <div class="bg-secondary border-2 border-main p-6">
+                <h2 class="text-left font-bold text-main text-2xl md:text-3xl mb-4">{t('404.heading')}</h2>
+                <p class="text-left text-main text-base md:text-lg mb-6 leading-relaxed">
+                    {t('404.description')}
+                </p>
+                
+                <!-- Navigation Button inside the card -->
+                <div class="flex justify-end">
+                    <Button
+                        href={lang === 'es' ? '/' : `/${lang}/`}
+                        size="md"
+                        elevated
+                    >
+                        {t('404.home')}
+                    </Button>
+                </div>
+            </div>
         </div>
     </div>
+
 </Layout>

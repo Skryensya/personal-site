@@ -3,11 +3,12 @@ import { ViewTransitions } from 'astro:transitions';
 import BaseHead, { type Props as HeadProps } from '../components/BaseHead.astro';
 import Navbar from '../components/Navbar.astro';
 import Footer from "../components/Footer.astro"
+import GameOfLifeBackground from '../components/GameOfLifeBackground.astro';
  
 
-export type Props = HeadProps & { showHeader?: boolean; headerTitle?: string, headerSubtitle?: string; lang?: string };
+export type Props = HeadProps & { showHeader?: boolean; headerTitle?: string, headerSubtitle?: string; lang?: string; showGameOfLife?: boolean };
 
-const { showHeader = true, headerTitle = null, headerSubtitle = null, lang = 'es', ...head } = Astro.props;
+const { showHeader = true, headerTitle = null, headerSubtitle = null, lang = 'es', showGameOfLife = false, ...head } = Astro.props;
 ---
 
 <!doctype html>
@@ -103,6 +104,7 @@ const { showHeader = true, headerTitle = null, headerSubtitle = null, lang = 'es
         </style>
     </head>
     <body class="bg-secondary text-main (--max-w-size:1280px) relative">
+        <GameOfLifeBackground is404Page={showGameOfLife} />
         <Navbar />
         <div class="mt-8 mx-auto max-w-[var(--max-w-size)]">  
         <main class="text-left px-4">

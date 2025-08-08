@@ -1,77 +1,98 @@
 ---
 import Layout from '@/layouts/Layout.astro';
-import { defaultLang } from '@/i18n/ui';
+import Button from '@/components/Button.astro';
+import CornersWithCrosses from '@/components/CornersWithCrosses.astro';
+import ComponentsTable from '@/components/ComponentsTable';
+import { useTranslations } from '@/i18n/utils';
+import { getLangFromUrl } from '@/i18n/utils';
 
-const lang = defaultLang;
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
 
-// Component showcase data with minimal tags (max 3)
+// Component showcase data with real tech stack
 const components = [
   {
     name: 'Button',
     path: '/components/vanilla/button',
-    tags: ['Interactive', 'UI', 'Sound']
+    tags: ['Astro', 'Tailwind CSS']
   },
   {
     name: 'Card',
     path: '/components/react/card',
-    tags: ['Layout', 'Reusable', 'Props']
+    tags: ['React', 'TypeScript']
   },
   {
     name: 'Modal',
     path: '/components/vanilla/modal',
-    tags: ['Overlay', 'Dialog', 'Focus']
+    tags: ['Astro', 'JavaScript']
   },
   {
     name: 'Counter',
     path: '/components/react/counter',
-    tags: ['State', 'Interactive', 'Hooks']
+    tags: ['React', 'TypeScript']
   },
   {
     name: 'Dropdown Button',
     path: '/components/react/dropdown-button',
-    tags: ['Navigation', 'Menu', 'Floating']
+    tags: ['React', 'Floating UI']
   },
   {
     name: 'Language Switcher',
     path: '/components/react/language-switcher',
-    tags: ['i18n', 'Dropdown', 'Routing']
+    tags: ['React', 'i18n']
   },
   {
     name: 'Theme Selector',
     path: '/components/react/theme-selector',
-    tags: ['Theming', 'Storage', 'Colors']
+    tags: ['React', 'localStorage']
   },
   {
     name: 'Dithered Image',
     path: '/components/react/dithered-image',
-    tags: ['Image', 'Canvas', 'Effects']
+    tags: ['React', 'Canvas API']
   }
 ];
 ---
 
-<Layout title="Component Showcase" lang={lang}>
-  <main class="px-4 py-8">
-    <h1 class="text-4xl font-bold mb-8 text-main font-mono">Components</h1>
-    
-    <table class="w-full border-collapse">
-      <tbody>
-        {components.map((component) => (
-          <tr class="border-t border-main hover:bg-main hover:text-secondary">
-            <td class="p-0">
-              <a href={component.path} class="flex justify-between items-center font-mono text-main hover:text-secondary px-4 py-3 block w-full">
-                <span>{component.name}</span>
-                <span class="text-sm">
-                  {component.tags.map((tag, index) => (
-                    <span>
-                      {tag}{index < component.tags.length - 1 ? ', ' : ''}
-                    </span>
-                  ))}
-                </span>
-              </a>
-            </td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+<Layout title={t('showcase.title')} lang={lang}>
+  <main class="px-4">
+    <!-- Hero Section -->
+    <section class="hero-section pt-4 pb-20">
+      <div class="grid grid-cols-1 md:grid-cols-2">
+        <!-- Text Content -->
+        <CornersWithCrosses class="flex flex-col justify-start p-4 pr-10">
+          <h1 class="text-4xl md:text-8xl font-bold text-main mb-4 text-balance">{t('showcase.hero.title')}</h1>
+          <div class="mb-8">
+            <p class="font-mono text-sm text-main leading-relaxed">
+              {t('showcase.hero.subtitle')}
+            </p>
+          </div>
+          <div class="flex flex-col md:flex-row gap-4">
+            <Button href="#components" size="md" class='order-1'>{t('showcase.button.viewComponents')}</Button>
+            <Button href="/projects" size="md" filled elevated class='order-2'>{t('showcase.button.myProjects')}</Button>
+          </div>
+        </CornersWithCrosses>
+        
+        <!-- Diagonal Stripes Placeholder -->
+        <CornersWithCrosses class="flex items-center justify-center border border-dashed border-main/20">
+          <div class="w-full h-96 md:h-full flex items-center justify-center bg-secondary relative overflow-hidden">
+            <!-- Diagonal Stripes Pattern -->
+            <div class="absolute inset-0 bg-main" 
+                 style="background-image: repeating-linear-gradient(45deg, var(--color-secondary) 0px, var(--color-secondary) 8px, var(--color-main) 8px, var(--color-main) 16px);">
+            </div>
+            <!-- Center Label -->
+            <div class="relative z-10 bg-secondary border-2 border-main px-6 py-3">
+              <span class="font-mono text-main font-bold text-lg">PREVIEW</span>
+            </div>
+          </div>
+        </CornersWithCrosses>
+      </div>
+    </section>
+
+    <!-- Components Section -->
+    <section id="components" class="w-full">
+      <h2 class="text-2xl font-bold mb-6 text-main font-mono">{t('showcase.available')}</h2>
+      <ComponentsTable data={components} client:load />
+    </section>
   </main>
 </Layout>
