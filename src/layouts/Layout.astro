@@ -16,56 +16,71 @@ const { showHeader = true, headerTitle = null, headerSubtitle = null, lang = 'es
     <head>
         <BaseHead {...head} />
         <script>
-            // Fast theme initialization with validation
-            const validThemes = ['gameboy', 'dos', 'commodore64', 'caution', 'sunset', 'neon', 'ocean', 'forest', 'ember', 'violet'];
-            
-            function applyTheme(themeId: string, isDark: boolean) {
-                document.documentElement.setAttribute('data-theme', themeId);
-                document.documentElement.classList.toggle('dark', isDark);
-            }
-
-            // Load and apply saved theme with validation
-            function initializeTheme() {
+            // Instant theme restoration - optimized for immediate loading
+            (function() {
+                const validThemes = ['gameboy', 'dos', 'commodore64', 'caution', 'sunset', 'neon', 'ocean', 'forest', 'ember', 'violet'];
+                
+                // Pre-read localStorage values synchronously
+                let savedTheme, savedModePreference;
                 try {
-                    const savedModePreference = localStorage.getItem('theme-mode-preference') || 'system';
-                    const savedMode = savedModePreference;
-                    const savedTheme = localStorage.getItem('theme-id') || 'gameboy';
-                    
-                    // Validate theme exists in current theme list
-                    const theme = validThemes.includes(savedTheme) ? savedTheme : 'gameboy';
-                    
-                    // Handle system mode
-                    let isDark = false;
-                    if (savedMode === 'system') {
-                        isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    } else {
-                        isDark = savedMode === 'dark';
-                    }
-                    
-                    applyTheme(theme, isDark);
-                    
-                    // Update localStorage if theme was invalid
-                    if (theme !== savedTheme) {
-                        localStorage.setItem('theme-id', theme);
-                    }
-                    
-                    // Store current applied theme for React components to sync with
-                    window.__APPLIED_THEME__ = theme;
-                    window.__APPLIED_MODE__ = savedMode;
+                    savedTheme = localStorage.getItem('theme-id');
+                    savedModePreference = localStorage.getItem('theme-mode-preference');
                 } catch (e) {
-                    // Fallback if localStorage fails - default to system mode
-                    const isSystemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    applyTheme('gameboy', isSystemDark);
-                    window.__APPLIED_THEME__ = 'gameboy';
-                    window.__APPLIED_MODE__ = 'system';
+                    // localStorage unavailable - will use defaults
                 }
-            }
+                
+                // Validate and set defaults immediately
+                const theme = (savedTheme && validThemes.includes(savedTheme)) ? savedTheme : 'gameboy';
+                const modePreference = savedModePreference || 'system';
+                
+                // Determine dark mode immediately
+                let isDark = false;
+                if (modePreference === 'system') {
+                    isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                } else {
+                    isDark = modePreference === 'dark';
+                }
+                
+                // Apply theme instantly before any rendering
+                const html = document.documentElement;
+                html.setAttribute('data-theme', theme);
+                if (isDark) {
+                    html.classList.add('dark');
+                } else {
+                    html.classList.remove('dark');
+                }
+                
+                // Store globals for React sync
+                window.__APPLIED_THEME__ = theme;
+                window.__APPLIED_MODE__ = modePreference;
+                
+                // Update localStorage if needed (non-blocking)
+                if (savedTheme !== theme) {
+                    try {
+                        localStorage.setItem('theme-id', theme);
+                    } catch (e) {}
+                }
+                if (savedModePreference !== modePreference) {
+                    try {
+                        localStorage.setItem('theme-mode-preference', modePreference);
+                    } catch (e) {}
+                }
+            })();
             
-            // Initialize theme immediately
-            initializeTheme();
-            
-            // Also handle Astro page transitions
-            document.addEventListener('astro:page-load', initializeTheme);
+            // Handle Astro page transitions
+            document.addEventListener('astro:page-load', function() {
+                // Re-apply theme on page transitions to ensure consistency
+                if (window.__APPLIED_THEME__ && window.__APPLIED_MODE__) {
+                    const html = document.documentElement;
+                    html.setAttribute('data-theme', window.__APPLIED_THEME__);
+                    
+                    const isDark = window.__APPLIED_MODE__ === 'system' 
+                        ? window.matchMedia('(prefers-color-scheme: dark)').matches 
+                        : window.__APPLIED_MODE__ === 'dark';
+                    
+                    html.classList.toggle('dark', isDark);
+                }
+            });
         </script>
         <script src="/as-dithered-image.js" is:inline></script>
         <link rel="stylesheet" href="/src/styles/view-transitions.css">
