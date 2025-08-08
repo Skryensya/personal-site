@@ -34,6 +34,14 @@ export default function LanguageSwitcher({ currentPath, initialLocale }: Languag
         }
     };
 
+    const nextLanguage = () => {
+        const currentIndex = supportedLanguages.findIndex(lang => lang === currentLang);
+        const nextIndex = (currentIndex + 1) % supportedLanguages.length;
+        const nextLang = supportedLanguages[nextIndex];
+        const url = alternateUrls.find(alt => alt.lang === nextLang)?.url || '/';
+        handleLanguageSwitch(nextLang, url);
+    };
+
     const dropdownContent = (
         <>
             {supportedLanguages.map((lang) => {
@@ -54,6 +62,7 @@ export default function LanguageSwitcher({ currentPath, initialLocale }: Languag
 
     return (
         <DropdownButton
+            onMainClick={nextLanguage}
             dropdownContent={dropdownContent}
             className="font-mono text-xs font-semibold uppercase tracking-wider"
         >

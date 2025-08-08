@@ -27,14 +27,14 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
         if (typeof window !== 'undefined') {
             const appliedTheme = (window as Window & { __APPLIED_THEME__?: string }).__APPLIED_THEME__;
             if (appliedTheme) {
-                return themes.find((t) => t.id === appliedTheme) || themes[0];
+                return themes.find((t) => t.id === appliedTheme) || themes.find(t => t.id === 'gameboy') || themes[0];
             }
             const savedThemeId = localStorage.getItem('theme-id');
             if (savedThemeId) {
-                return themes.find((t) => t.id === savedThemeId) || themes[0];
+                return themes.find((t) => t.id === savedThemeId) || themes.find(t => t.id === 'gameboy') || themes[0];
             }
         }
-        return themes[0]; // Fallback to first theme
+        return themes.find(t => t.id === 'gameboy') || themes[0]; // Fallback to gameboy theme
     });
     const [currentMode, setCurrentMode] = useState<Mode>(() => {
         // Try to get initial mode immediately if possible
