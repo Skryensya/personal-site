@@ -1,8 +1,7 @@
 import * as React from 'react';
-import DropdownButton, { DropdownItem, DropdownSeparator } from './DropdownButton';
+import DropdownButton, { DropdownItem } from './DropdownButton';
 import { applyTheme } from '../data/themes.js';
-import { supportedLanguages, type Language, defaultLang } from '@/i18n/ui';
-import { useClientTranslations } from '@/i18n/utils';
+import { ui } from '@/i18n/ui';
 
 const { useState, useEffect, useCallback } = React;
 
@@ -21,231 +20,64 @@ interface HeaderControlsProps {
 type Mode = 'light' | 'dark' | 'system';
 
 export default function HeaderControls({ themes }: HeaderControlsProps) {
-    // Initialize with better defaults to reduce loading time
+    
+    // Initialize theme from global state or localStorage
     const [currentTheme, setCurrentTheme] = useState<Theme>(() => {
-        // Try to get initial theme immediately if possible
         if (typeof window !== 'undefined') {
-            const appliedTheme = (window as Window & { __APPLIED_THEME__?: string }).__APPLIED_THEME__;
-            if (appliedTheme) {
-                return themes.find((t) => t.id === appliedTheme) || themes.find(t => t.id === 'gameboy') || themes[0];
+            // Check global state first
+            const globalThemeId = (window as any).__THEME_ID__;
+            if (globalThemeId) {
+                const globalTheme = themes.find((t) => t.id === globalThemeId);
+                if (globalTheme) return globalTheme;
             }
+            
+            // Fallback to localStorage
             const savedThemeId = localStorage.getItem('theme-id');
             if (savedThemeId) {
-                return themes.find((t) => t.id === savedThemeId) || themes.find(t => t.id === 'gameboy') || themes[0];
+                const savedTheme = themes.find((t) => t.id === savedThemeId);
+                if (savedTheme) return savedTheme;
             }
+            
+            // Only set random theme if no theme was previously saved
+            const randomIndex = Math.floor(Math.random() * themes.length);
+            return themes[randomIndex] || themes[0];
         }
-        return themes.find(t => t.id === 'gameboy') || themes[0]; // Fallback to gameboy theme
+        // Fallback for SSR
+        return themes[0];
     });
+    
     const [currentMode, setCurrentMode] = useState<Mode>(() => {
-        // Try to get initial mode immediately if possible
         if (typeof window !== 'undefined') {
-            const appliedMode = (window as Window & { __APPLIED_MODE__?: string }).__APPLIED_MODE__;
-            if (appliedMode) return appliedMode as Mode;
-            const savedMode = localStorage.getItem('theme-mode-preference');
-            if (savedMode) return savedMode as Mode;
+            // Check global state first
+            const globalMode = (window as any).__THEME_MODE__;
+            if (globalMode && (globalMode === 'light' || globalMode === 'dark' || globalMode === 'system')) {
+                return globalMode;
+            }
+            
+            // Fallback to localStorage
+            const savedMode = localStorage.getItem('theme-mode');
+            if (savedMode === 'light' || savedMode === 'dark' || savedMode === 'system') {
+                return savedMode;
+            }
         }
         return 'system';
     });
-    const [isMounted, setIsMounted] = useState(false);
-
-    // Detect locale from URL for loading text
-    const getLocaleFromURL = (): Language => {
-        if (typeof window === 'undefined') return defaultLang;
-        const urlPath = window.location.pathname;
-        const [, possibleLocale] = urlPath.split('/');
-        if (possibleLocale && supportedLanguages.includes(possibleLocale as Language)) {
-            return possibleLocale as Language;
-        }
-        return defaultLang;
+    
+    // Always start mounted for faster loading
+    const [isMounted, setIsMounted] = useState(true);
+    
+    // Get theme name in Spanish (forced for all languages)
+    const getThemeNameInSpanish = (themeId: string): string => {
+        const themeKey = `theme.${themeId}` as keyof typeof ui.es;
+        return ui.es[themeKey] || themeId.toUpperCase();
     };
-
-    // Fast hydration - just set mounted flag
-    useEffect(() => {
-        setIsMounted(true);
-
-        // Quick sync check - only update if values have actually changed
-        if (typeof window !== 'undefined') {
-            try {
-                const appliedTheme = (window as Window & { __APPLIED_THEME__?: string }).__APPLIED_THEME__;
-                const appliedMode = (window as Window & { __APPLIED_MODE__?: string }).__APPLIED_MODE__;
-
-                if (appliedTheme && appliedTheme !== currentTheme.id) {
-                    const theme = themes.find((t) => t.id === appliedTheme);
-                    if (theme) setCurrentTheme(theme);
-                }
-
-                if (appliedMode && appliedMode !== currentMode) {
-                    setCurrentMode(appliedMode as Mode);
-                }
-            } catch (error) {
-                console.warn('Failed to sync theme on mount:', error);
-            }
-        }
-    }, [themes, currentTheme.id, currentMode]);
-
-    // Apply theme to document using the official theme system
-    const applyThemeWithMode = useCallback(
-        (theme: Theme) => {
-            // Only apply if the theme is actually different
-            const currentAppliedTheme = document.documentElement.getAttribute('data-theme');
-            if (currentAppliedTheme === theme.id) {
-                return; // Theme is already applied, skip
-            }
-
-            const isDark = document.documentElement.classList.contains('dark');
-            applyTheme(theme.id, isDark, currentMode as string | null);
-        },
-        [currentMode]
-    );
-
-    // Apply mode to document
-    const applyMode = useCallback(
-        (mode: Mode) => {
-            if (typeof window === 'undefined') return;
-
-            let resolvedMode = mode;
-            if (mode === 'system') {
-                resolvedMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-            }
-
-            const isDark = resolvedMode === 'dark';
-
-            // Use the official theme system
-            if (currentTheme) {
-                applyTheme(currentTheme.id, isDark, mode as string | null);
-            }
-
-            try {
-                localStorage.setItem('theme-mode-preference', mode);
-                localStorage.setItem('theme-mode', resolvedMode);
-                (window as Window & { __APPLIED_MODE__?: string }).__APPLIED_MODE__ = mode;
-            } catch (error) {
-                console.warn('Failed to save mode:', error);
-            }
-        },
-        [currentTheme]
-    );
-
-    // Sync with Astro page transitions
-    useEffect(() => {
-        const handlePageLoad = () => {
-            // Sync React state with what Layout.astro has applied
-            try {
-                const appliedTheme = (window as Window & { __APPLIED_THEME__?: string }).__APPLIED_THEME__;
-                const appliedMode = (window as Window & { __APPLIED_MODE__?: string }).__APPLIED_MODE__;
-
-                if (appliedTheme) {
-                    const theme = themes.find((t) => t.id === appliedTheme);
-                    if (theme && (!currentTheme || theme.id !== currentTheme.id)) {
-                        setCurrentTheme(theme);
-                    }
-                }
-
-                if (appliedMode && appliedMode !== currentMode) {
-                    setCurrentMode(appliedMode as Mode);
-                }
-            } catch (error) {
-                console.warn('Failed to sync theme on page load:', error);
-            }
-        };
-
-        // Handle Astro page transitions
-        document.addEventListener('astro:page-load', handlePageLoad);
-
-        return () => {
-            document.removeEventListener('astro:page-load', handlePageLoad);
-        };
-    }, [themes, currentTheme?.id, currentMode]);
-
-    // Theme navigation functions - defined early for keyboard shortcuts
-    const prevTheme = useCallback(() => {
-        if (!currentTheme) return;
-
-        const currentIndex = themes.findIndex((t) => t.id === currentTheme.id);
-        const prevIndex = currentIndex === 0 ? themes.length - 1 : currentIndex - 1;
-        const newTheme = themes[prevIndex];
-
-        setCurrentTheme(newTheme);
-        applyThemeWithMode(newTheme);
-
-        // Save to localStorage and update window variables
-        try {
-            localStorage.setItem('theme-id', newTheme.id);
-            (window as Window & { __APPLIED_THEME__?: string }).__APPLIED_THEME__ = newTheme.id;
-        } catch (error) {
-            console.warn('Failed to save theme:', error);
-        }
-    }, [currentTheme, themes, applyThemeWithMode]);
-
-    const nextTheme = useCallback(() => {
-        if (!currentTheme) return;
-
-        const currentIndex = themes.findIndex((t) => t.id === currentTheme.id);
-        const nextIndex = (currentIndex + 1) % themes.length;
-        const newTheme = themes[nextIndex];
-
-        setCurrentTheme(newTheme);
-        applyThemeWithMode(newTheme);
-
-        // Save to localStorage and update window variables
-        try {
-            localStorage.setItem('theme-id', newTheme.id);
-            (window as Window & { __APPLIED_THEME__?: string }).__APPLIED_THEME__ = newTheme.id;
-        } catch (error) {
-            console.warn('Failed to save theme:', error);
-        }
-    }, [currentTheme, themes, applyThemeWithMode]);
-
-    // Listen for system preference changes when in system mode
-    useEffect(() => {
-        if (isMounted && currentMode === 'system' && typeof window !== 'undefined') {
-            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-            const handleChange = () => {
-                applyMode('system');
-            };
-
-            mediaQuery.addEventListener('change', handleChange);
-            return () => mediaQuery.removeEventListener('change', handleChange);
-        }
-    }, [currentMode, applyMode, isMounted]);
-
-    // Keyboard shortcuts for theme navigation - language aware
-    useEffect(() => {
-        if (!isMounted || typeof window === 'undefined') return;
-
-        // Get current language from URL
-        const currentLang = getLocaleFromURL();
-
-        const handleKeyDown = (event: KeyboardEvent) => {
-            // Only trigger if no modifier keys are pressed and not in an input
-            if (event.ctrlKey || event.metaKey || event.altKey || event.shiftKey) {
-                return;
-            }
-
-            // Don't trigger if user is typing in an input, textarea, or contenteditable
-            const target = event.target as HTMLElement;
-            if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.contentEditable === 'true') {
-                return;
-            }
-
-            // Theme shortcuts using brackets - safe from Konami code
-            // Konami uses: ArrowUp, ArrowDown, ArrowLeft, ArrowRight, KeyB, KeyM
-            switch (event.code) {
-                case 'BracketLeft': // [
-                    event.preventDefault();
-                    prevTheme();
-                    break;
-                case 'BracketRight': // ]
-                    event.preventDefault();
-                    nextTheme();
-                    break;
-            }
-        };
-
-        document.addEventListener('keydown', handleKeyDown);
-        return () => document.removeEventListener('keydown', handleKeyDown);
-    }, [prevTheme, nextTheme, isMounted]);
-
+    
+    // Get mode name in Spanish (forced for all languages)
+    const getModeNameInSpanish = (mode: Mode): string => {
+        const modeKey = `mode.${mode}` as keyof typeof ui.es;
+        return ui.es[modeKey] || mode.toUpperCase();
+    };
+    
     // Get mode icon
     const getModeIcon = (mode: Mode, className = 'w-3.5 h-3.5') => {
         switch (mode) {
@@ -273,7 +105,127 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
         }
     };
 
-    // Handle mode toggle (main button action) - only toggles between light and dark
+    // Apply theme and mode to document
+    const applyThemeToDocument = useCallback((theme: Theme, mode: Mode) => {
+        if (typeof window === 'undefined') return;
+        
+        let resolvedMode = mode;
+        if (mode === 'system') {
+            resolvedMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        
+        const isDark = resolvedMode === 'dark';
+        applyTheme(theme.id, isDark, null);
+        
+        // Save to localStorage
+        localStorage.setItem('theme-id', theme.id);
+        localStorage.setItem('theme-mode', mode);
+        
+        // Update global state for subsequent page loads
+        (window as any).__THEME_ID__ = theme.id;
+        (window as any).__THEME_MODE__ = mode;
+        (window as any).__THEME_READY__ = true;
+    }, []);
+
+    // Initialize and apply theme/mode immediately
+    useEffect(() => {
+        // Apply the current theme immediately on mount
+        applyThemeToDocument(currentTheme, currentMode);
+        
+        // Save initial theme to localStorage if not already saved
+        if (typeof window !== 'undefined') {
+            const savedThemeId = localStorage.getItem('theme-id');
+            if (!savedThemeId) {
+                localStorage.setItem('theme-id', currentTheme.id);
+            }
+            const savedMode = localStorage.getItem('theme-mode');
+            if (!savedMode) {
+                localStorage.setItem('theme-mode', currentMode);
+            }
+        }
+        
+        // Apply theme immediately on mount and set as ready
+        applyThemeToDocument(currentTheme, currentMode);
+        setIsMounted(true);
+    }, []);
+    
+    // Signal when components are ready - immediate
+    useEffect(() => {
+        if (isMounted && currentTheme && currentMode && typeof window !== 'undefined') {
+            // Set ready immediately and ensure theme is applied
+            document.body.setAttribute('data-header-controls-ready', 'true');
+            applyThemeToDocument(currentTheme, currentMode);
+        }
+    }, [isMounted, currentTheme, currentMode, applyThemeToDocument]);
+
+    // Handle theme selection
+    const handleThemeSelect = useCallback((theme: Theme) => {
+        setCurrentTheme(theme);
+        applyThemeToDocument(theme, currentMode);
+    }, [currentMode, applyThemeToDocument]);
+    
+    // Handle mode change
+    const handleModeChange = useCallback((mode: Mode) => {
+        setCurrentMode(mode);
+        applyThemeToDocument(currentTheme, mode);
+    }, [currentTheme, applyThemeToDocument]);
+    
+    // Previous theme handler
+    const prevTheme = useCallback(() => {
+        if (!currentTheme) return;
+        const currentIndex = themes.findIndex((t) => t.id === currentTheme.id);
+        const prevIndex = currentIndex === 0 ? themes.length - 1 : currentIndex - 1;
+        const newTheme = themes[prevIndex];
+        handleThemeSelect(newTheme);
+    }, [currentTheme, themes, handleThemeSelect]);
+
+    // Next theme handler
+    const nextTheme = useCallback(() => {
+        if (!currentTheme) return;
+        const currentIndex = themes.findIndex((t) => t.id === currentTheme.id);
+        const nextIndex = (currentIndex + 1) % themes.length;
+        const newTheme = themes[nextIndex];
+        handleThemeSelect(newTheme);
+    }, [currentTheme, themes, handleThemeSelect]);
+
+    // Listen for system preference changes when in system mode
+    useEffect(() => {
+        if (isMounted && currentMode === 'system' && typeof window !== 'undefined') {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const handleChange = () => {
+                applyThemeToDocument(currentTheme, 'system');
+            };
+
+            mediaQuery.addEventListener('change', handleChange);
+            return () => mediaQuery.removeEventListener('change', handleChange);
+        }
+    }, [currentMode, currentTheme, applyThemeToDocument, isMounted]);
+
+    // Keyboard shortcuts for theme navigation
+    useEffect(() => {
+        if (!isMounted || typeof window === 'undefined') return;
+
+        const handleKeyDown = (e: KeyboardEvent) => {
+            // Only respond to keyboard shortcuts if no input is focused
+            if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') {
+                return;
+            }
+
+            // Left/Right arrow keys for theme navigation
+            if (e.key === 'ArrowLeft' && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                prevTheme();
+            } else if (e.key === 'ArrowRight' && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                nextTheme();
+            }
+        };
+
+        document.addEventListener('keydown', handleKeyDown);
+        return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [prevTheme, nextTheme, isMounted]);
+
+    // Handle mode toggle (main button action)
     const toggleMode = () => {
         if (!isMounted || typeof window === 'undefined') return;
 
@@ -288,94 +240,33 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
             nextMode = currentMode === 'light' ? 'dark' : 'light';
         }
 
-        setCurrentMode(nextMode);
-        applyMode(nextMode);
+        handleModeChange(nextMode);
     };
 
-    // Handle mode selection from dropdown
+    // Handle mode select from dropdown
     const handleModeSelect = (mode: Mode) => {
-        setCurrentMode(mode);
-        applyMode(mode);
+        handleModeChange(mode);
     };
 
-    // Handle theme change (main button action) - uses the nextTheme function defined above
 
-    // Handle theme selection from dropdown
-    const handleThemeSelect = (theme: Theme) => {
-        setCurrentTheme(theme);
-        applyThemeWithMode(theme);
-
-        // Save to localStorage
-        try {
-            localStorage.setItem('theme-id', theme.id);
-        } catch (error) {
-            console.warn('Failed to save theme:', error);
-        }
-    };
-
-    const randomTheme = () => {
-        const randomIndex = Math.floor(Math.random() * themes.length);
-        const newTheme = themes[randomIndex];
-
-        setCurrentTheme(newTheme);
-        applyThemeWithMode(newTheme);
-
-        // Save to localStorage and update window variables
-        try {
-            localStorage.setItem('theme-id', newTheme.id);
-            (window as Window & { __APPLIED_THEME__?: string }).__APPLIED_THEME__ = newTheme.id;
-        } catch (error) {
-            console.warn('Failed to save theme:', error);
-        }
-    };
-
-    // Show minimal loading state only if really needed
-    if (!isMounted) {
-        const t = useClientTranslations();
-
-        return (
-            <div className="flex justify-end items-center gap-x-4 gap-y-1 pointer-events-auto min-w-0">
-                {/* Placeholder mode button */}
-                <div className="w-7 h-7 md:w-auto md:h-8 bg-secondary border border-main flex items-center justify-center px-3 py-2">
-                    <div className="flex items-center gap-2">
-                        <div className="w-3.5 h-3.5 relative flex-shrink-0">{getModeIcon(currentMode, '')}</div>
-                        <span className="hidden md:block font-mono text-xs font-semibold text-main">{currentMode.toUpperCase()}</span>
-                    </div>
-                </div>
-
-                {/* Placeholder theme button */}
-                <div className="w-7 h-7 md:w-full md:h-8 bg-secondary border border-main flex items-center justify-center px-3 py-2">
-                    <div className="flex items-center gap-2 w-full">
-                        <div
-                            className="w-4 h-4 border border-main flex-shrink-0"
-                            style={{ background: `linear-gradient(135deg, ${currentTheme.colorful} 50%, ${currentTheme.contrasty} 50%)` }}
-                        />
-                        <span className="hidden md:block font-mono text-xs font-semibold text-main flex-1 text-left">{currentTheme.name}</span>
-                    </div>
-                </div>
-            </div>
-        );
-    }
-
-    return (
-        <div className="flex justify-end items-center gap-x-4 gap-y-1 pointer-events-auto min-w-0">
-            {/* Theme Switcher */}
-            <DropdownButton
-                onMainClick={nextTheme}
-                dropdownContent={
+    const renderThemeControls = () => (
+        <DropdownButton
+            onMainClick={isMounted ? nextTheme : () => {}}
+            disabled={!isMounted}
+            dropdownContent={
                     <div>
                         {themes.map((theme) => (
                             <DropdownItem
                                 key={theme.id}
-                                onClick={() => handleThemeSelect(theme)}
+                                onClick={isMounted ? () => handleThemeSelect(theme) : () => {}}
                                 selected={currentTheme?.id === theme.id}
-                                className="flex items-center gap-2 border-b border-main last:border-b-0"
+                                className="flex items-center gap-0 last:border-b-0 !px-2 !py-1"
                             >
                                 <div
-                                    className="w-3 h-3 border border-main flex-shrink-0"
+                                    className="w-6 h-6 aspect-square flex-shrink-0 border border-main"
                                     style={{ background: `linear-gradient(135deg, ${theme.colorful} 50%, ${theme.contrasty} 50%)` }}
                                 />
-                                <span className="flex-1 px-1 font-mono text-xs font-semibold">{theme.name}</span>
+                                <span className="flex-1 px-2 py-2 font-mono text-xs font-semibold">{getThemeNameInSpanish(theme.id)}</span>
                                 <div className="w-4 h-4 flex items-center justify-center">
                                     {currentTheme?.id === theme.id && (
                                         <svg
@@ -383,17 +274,14 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
                                             fill="none"
                                             stroke="currentColor"
                                             strokeWidth="2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
                                             viewBox="0 0 24 24"
                                         >
-                                            <path d="M20 6 9 17l-5-5" />
+                                            <polyline points="20,6 9,17 4,12" />
                                         </svg>
                                     )}
                                 </div>
                             </DropdownItem>
                         ))}
-                        <DropdownSeparator />
                     </div>
                 }
                 className="w-7 h-7 md:w-full md:h-8"
@@ -403,40 +291,44 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
                         className="w-4 h-4 border border-main theme-preview-current flex-shrink-0"
                         style={{ background: `linear-gradient(135deg, ${currentTheme.colorful} 50%, ${currentTheme.contrasty} 50%)` }}
                     />
-                    <span className="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary flex-1 text-left">
-                        {currentTheme.name}
+                    <span className="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary truncate">
+                        {getThemeNameInSpanish(currentTheme.id)}
                     </span>
                 </div>
             </DropdownButton>
+    );
 
-            {/* Mode Toggle */}
-            <DropdownButton
-                onMainClick={toggleMode}
-                dropdownContent={
+    const renderModeControls = () => (
+        <DropdownButton
+            onMainClick={isMounted ? toggleMode : () => {}}
+            disabled={!isMounted}
+            dropdownContent={
                     <div>
-                        {(['light', 'dark', 'system'] as const).map((mode) => (
+                        {(['light', 'dark', 'system'] as Mode[]).map((mode) => (
                             <DropdownItem
                                 key={mode}
-                                onClick={() => handleModeSelect(mode)}
                                 selected={currentMode === mode}
-                                className="flex items-center gap-2 border-b border-main last:border-b-0"
+                                onClick={isMounted ? () => handleModeSelect(mode) : () => {}}
+                                className="font-mono text-xs font-semibold uppercase tracking-wider"
                             >
-                                {getModeIcon(mode, 'w-3 h-3')}
-                                <span className="flex-1 px-1 font-mono text-xs font-semibold">{mode.toUpperCase()}</span>
-                                <div className="w-4 h-4 flex items-center justify-center">
-                                    {currentMode === mode && (
-                                        <svg
-                                            className="w-4 h-4"
-                                            fill="none"
-                                            stroke="currentColor"
-                                            strokeWidth="2"
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            viewBox="0 0 24 24"
-                                        >
-                                            <path d="M20 6 9 17l-5-5" />
-                                        </svg>
-                                    )}
+                                <div className="flex items-center gap-2">
+                                    <div className="w-3.5 h-3.5 relative flex-shrink-0">{getModeIcon(mode, '')}</div>
+                                    <span>
+                                        {getModeNameInSpanish(mode)}
+                                    </span>
+                                    <div className="w-4 h-4 flex items-center justify-center">
+                                        {currentMode === mode && (
+                                            <svg
+                                                className="w-4 h-4"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                strokeWidth="2"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <polyline points="20,6 9,17 4,12" />
+                                            </svg>
+                                        )}
+                                    </div>
                                 </div>
                             </DropdownItem>
                         ))}
@@ -446,9 +338,15 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
             >
                 <div className="flex items-center gap-2">
                     <div className="w-3.5 h-3.5 relative flex-shrink-0">{getModeIcon(currentMode, '')}</div>
-                    <span className="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary">{currentMode.toUpperCase()}</span>
+                    <span className="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary">{getModeNameInSpanish(currentMode)}</span>
                 </div>
             </DropdownButton>
-        </div>
+    );
+
+    return (
+        <>
+            {renderThemeControls()}
+            {renderModeControls()}
+        </>
     );
 }
