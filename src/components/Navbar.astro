@@ -24,8 +24,60 @@ const navItems = [
 
 ---
 
- 
-<nav class={`${isCVPage ? 'relative' : 'sticky top-0'} z-[100] flex justify-center mx-auto max-w-[var(--max-w-size)]`} style="--navbar-height: 76px;">
+<!-- Apply theme immediately from localStorage before any rendering -->
+<script>
+  // Immediate theme application - no delays, no waiting for React
+  (function() {
+    if (typeof window === 'undefined') return;
+    
+    const savedThemeId = localStorage.getItem('theme-id');
+    const savedMode = localStorage.getItem('theme-mode') || 'system';
+    
+    // Apply theme immediately if we have one saved
+    if (savedThemeId) {
+      // Import theme data inline to avoid module loading delays
+      const themes = {
+        'void': { colorful: '#00ff00', contrasty: '#000000' },
+        'phantom': { colorful: '#ff00ff', contrasty: '#000000' },
+        'azure': { colorful: '#0080ff', contrasty: '#ffffff' },
+        'ember': { colorful: '#ff4500', contrasty: '#000000' },
+        'violet': { colorful: '#8a2be2', contrasty: '#ffffff' },
+        'crimson': { colorful: '#dc143c', contrasty: '#ffffff' },
+        'forest': { colorful: '#228b22', contrasty: '#ffffff' }
+      };
+      
+      const theme = themes[savedThemeId];
+      if (theme) {
+        // Determine if dark mode should be applied
+        let isDark = false;
+        if (savedMode === 'dark') {
+          isDark = true;
+        } else if (savedMode === 'system') {
+          isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        }
+        
+        // Apply theme colors immediately
+        const root = document.documentElement;
+        if (isDark) {
+          root.style.setProperty('--color-main', theme.contrasty);
+          root.style.setProperty('--color-secondary', theme.colorful);
+          root.classList.add('dark');
+        } else {
+          root.style.setProperty('--color-main', theme.colorful);
+          root.style.setProperty('--color-secondary', theme.contrasty);
+          root.classList.remove('dark');
+        }
+        
+        // Set global state for React components
+        window.__THEME_ID__ = savedThemeId;
+        window.__THEME_MODE__ = savedMode;
+        window.__THEME_READY__ = true;
+      }
+    }
+  })();
+</script>
+
+<nav class={`${isCVPage ? 'relative' : 'sticky top-0'} z-[300] flex justify-center mx-auto max-w-[var(--max-w-size)]`} style="--navbar-height: 76px;">
   <div class={`max-w-[1280px] w-full px-4 mt-4`}>
     <div class="flex items-start justify-between gap-2 flex-nowrap diagonal-stripe px-4 py-2">
       <!-- Desktop Navigation -->
@@ -33,7 +85,7 @@ const navItems = [
         {navItems.map((item, index) => (
           <a 
             href={item.href}
-            class="flex items-center gap-1.5 px-2 py-1 h-7 md:h-8 bg-secondary border border-main font-grotesk text-sm !font-thin text-main no-underline pointer-events-auto hover:bg-main hover:text-secondary active:bg-main active:text-secondary nav-link"
+            class="flex items-center gap-1.5 px-2 py-1 h-7 md:h-8 bg-secondary border-double border-2 border-main font-grotesk text-sm !font-thin text-main no-underline pointer-events-auto hover:bg-main hover:text-secondary active:bg-main active:text-secondary nav-link font-bold uppercase tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)]"
             data-hotkey={item.hotkey}
             aria-label={item.hotkey ? `${item.label} (Press ${item.hotkey.toUpperCase()})` : item.label}
           >
@@ -47,33 +99,108 @@ const navItems = [
       <div class="md:hidden flex items-center flex-1 relative">
         <a 
           href="/"
-          class="font-grotesk text-sm font-semibold text-main no-underline"
+          class="flex items-center gap-1.5 px-2 py-1 h-8 bg-secondary border-double border-2 border-main font-grotesk text-sm !font-thin text-main no-underline pointer-events-auto hover:bg-main hover:text-secondary active:bg-main active:text-secondary font-bold uppercase tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)]"
         >
-          ALLISON PEÑA
+          <span class="font-semibold">ALLISON PEÑA</span>
         </a>
         <button
           id="mobile-menu-trigger"
-          class="ml-auto px-2 py-1 h-8 bg-secondary border border-main text-main hover:bg-main hover:text-secondary flex items-center gap-1"
-          onclick="window.dispatchEvent(new CustomEvent('mobile-menu-open'))"
+          class="ml-auto px-2 py-1 h-8 bg-secondary border-double border-2 border-main text-main hover:bg-main hover:text-secondary flex items-center gap-1 font-bold uppercase tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)]"
         >
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <svg id="hamburger-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <line x1="4" x2="20" y1="12" y2="12"/>
             <line x1="4" x2="20" y1="6" y2="6"/>
             <line x1="4" x2="20" y1="18" y2="18"/>
           </svg>
+          <svg id="close-icon" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <line x1="18" x2="6" y1="6" y2="18"/>
+            <line x1="6" x2="18" y1="6" y2="18"/>
+          </svg>
           <span class="font-mono text-xs font-bold">MENU</span>
         </button>
-        
-        <!-- Mobile Menu Component -->
-        <MobileMenu navItems={navItems} themes={themes} currentLocale={currentLocale} client:load />
       </div>
 
-      <div class="hidden md:flex items-center gap-2 flex-shrink-0">
-        <!-- Static placeholder buttons that match React component dimensions -->
-        <div class="flex justify-end items-center gap-x-4 gap-y-1 pointer-events-none" id="header-controls-placeholder">
+      <!-- Desktop Header Controls - Container with fixed positioning to prevent CLS -->
+      <div class="hidden md:flex items-center gap-2 flex-shrink-0 relative">
+        <!-- Placeholder layer - absolute positioned with constant opacity -->
+        <div class="absolute top-0 right-0 h-full flex items-center gap-x-4 gap-y-1 pointer-events-none" id="header-controls-placeholder">
+          <!-- Theme Switcher Placeholder -->
+          <div class="w-7 h-7 md:w-full md:h-8 inline-flex">
+            <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
+              <div class="flex items-center gap-2 w-full">
+                <div class="w-4 h-4 border border-main flex-shrink-0 animate-pulse" style="background: linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%)"></div>
+                <span class="hidden md:block font-mono text-xs font-semibold text-main flex-1 text-left animate-pulse">{t('ui.loading')}</span>
+              </div>
+            </div>
+            <div class="hidden md:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
+              <svg class="w-4 h-4 text-main animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
+
           <!-- Mode Toggle Placeholder -->
           <div class="w-7 h-7 md:w-auto md:h-8 inline-flex">
-            <div class="flex items-center justify-center px-3 py-2 bg-secondary border border-main">
+            <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
+              <div class="flex items-center gap-2">
+                <div class="w-3.5 h-3.5 flex-shrink-0 animate-pulse">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                  </svg>
+                </div>
+                <span class="hidden md:block font-mono text-xs font-semibold text-main animate-pulse">{t('ui.loading')}</span>
+              </div>
+            </div>
+            <div class="hidden md:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
+              <svg class="w-4 h-4 text-main animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
+          
+          <!-- Language Switcher Placeholder -->
+          <div class="w-7 h-7 md:w-auto md:h-8 inline-flex">
+            <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
+              <div class="flex items-center gap-2">
+                <span class="font-mono text-xs font-semibold text-main animate-pulse">ES</span>
+              </div>
+            </div>
+            <div class="hidden md:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
+              <svg class="w-4 h-4 text-main animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
+        </div>
+        
+        <!-- React components layer - absolute positioned to match exactly -->
+        <div class="absolute top-0 right-0 h-full flex items-center gap-x-4 gap-y-1 pointer-events-auto" id="header-controls-react" style="opacity: 0;">
+          <HeaderControls themes={themes} client:load />
+          <LanguageSwitcher initialLocale={currentLocale} client:load />
+        </div>
+        
+        <!-- Invisible spacer to reserve space -->
+        <div class="flex items-center gap-x-4 gap-y-1 opacity-0 pointer-events-none">
+          <!-- Spacer for Theme Switcher -->
+          <div class="w-7 h-7 md:w-full md:h-8 inline-flex">
+            <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
+              <div class="flex items-center gap-2 w-full">
+                <div class="w-4 h-4 border border-main flex-shrink-0"></div>
+                <span class="hidden md:block font-mono text-xs font-semibold text-main flex-1 text-left">{t('ui.loading')}</span>
+              </div>
+            </div>
+            <div class="hidden md:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
+              <svg class="w-4 h-4 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </div>
+          </div>
+          
+          <!-- Spacer for Mode Toggle -->
+          <div class="w-7 h-7 md:w-auto md:h-8 inline-flex">
+            <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
               <div class="flex items-center gap-2">
                 <div class="w-3.5 h-3.5 flex-shrink-0">
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
@@ -82,55 +209,60 @@ const navItems = [
                     <line x1="12" y1="17" x2="12" y2="21"></line>
                   </svg>
                 </div>
-                <span class="hidden md:block font-mono text-xs font-semibold text-main">SYSTEM</span>
+                <span class="hidden md:block font-mono text-xs font-semibold text-main">{t('ui.loading')}</span>
               </div>
             </div>
-            <div class="hidden md:flex items-center justify-center w-8 bg-secondary border border-main border-l-0">
+            <div class="hidden md:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
               <svg class="w-4 h-4 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
               </svg>
             </div>
           </div>
           
-          <!-- Theme Switcher Placeholder -->
-          <div class="w-7 h-7 md:w-full md:h-8 inline-flex">
-            <div class="flex items-center justify-center px-3 py-2 bg-secondary border border-main">
-              <div class="flex items-center gap-2 w-full">
-                <div class="w-4 h-4 border border-main flex-shrink-0 bg-secondary"></div>
-                <span class="hidden md:block font-mono text-xs font-semibold text-main flex-1 text-left">VOID</span>
-              </div>
-            </div>
-            <div class="hidden md:flex items-center justify-center w-8 bg-secondary border border-main border-l-0">
-              <svg class="w-4 h-4 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </div>
-          </div>
-          
-          <!-- Language Switcher Placeholder -->
+          <!-- Spacer for Language Switcher -->
           <div class="w-7 h-7 md:w-auto md:h-8 inline-flex">
-            <div class="flex items-center justify-center px-3 py-2 bg-secondary border border-main">
+            <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
               <div class="flex items-center gap-2">
                 <span class="font-mono text-xs font-semibold text-main">ES</span>
               </div>
             </div>
-            <div class="hidden md:flex items-center justify-center w-8 bg-secondary border border-main border-l-0">
+            <div class="hidden md:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
               <svg class="w-4 h-4 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
               </svg>
             </div>
           </div>
         </div>
-        
-        <!-- React components replace placeholders when loaded -->
-        <div class="flex justify-end items-center gap-x-4 gap-y-1 pointer-events-auto" id="header-controls-react" style="display: none;">
-          <HeaderControls themes={themes} client:load />
-          <LanguageSwitcher initialLocale={currentLocale} client:load />
-        </div>
       </div>
     </div>
-  
-  </nav>
+  </div>
+</nav>
+
+<!-- Mobile Menu Overlay positioned outside nav but with lower z-index -->
+<div 
+  id="mobile-menu-overlay"
+  class="fixed inset-0 z-[250] opacity-0 pointer-events-none"
+  style="background: 
+    radial-gradient(ellipse 150% 100% at 102% 0%, color-mix(in srgb, var(--color-main) 70%, transparent) 0%, color-mix(in srgb, var(--color-main) 30%, transparent) 40%, transparent 70%),
+    radial-gradient(ellipse 120% 80% at 85% 20%, color-mix(in srgb, var(--color-secondary) 60%, transparent) 0%, color-mix(in srgb, var(--color-secondary) 20%, transparent) 50%, transparent 80%),
+    repeating-linear-gradient(45deg, transparent 0px, color-mix(in srgb, var(--color-main) 4%, transparent) 1px, transparent 2px, color-mix(in srgb, var(--color-secondary) 3%, transparent) 3px, transparent 4px),
+    repeating-linear-gradient(-45deg, transparent 0px, color-mix(in srgb, var(--color-secondary) 3%, transparent) 1px, transparent 3px, color-mix(in srgb, var(--color-main) 2%, transparent) 4px, transparent 5px);
+    background-size: 100% 100%, 100% 100%, 8px 8px, 6px 6px;
+    transition: opacity 0.6s ease-out;"
+>
+  <div class="flex flex-col items-end gap-3 px-8 w-full max-w-sm ml-auto mr-8" style="padding-top: calc(var(--navbar-height, 76px) + 2px);">
+    <!-- Navigation Items -->
+    {navItems.slice(1).map((item, index) => (
+      <a
+        href={item.href}
+        class="mobile-nav-item inline-flex items-center px-3 py-2 h-8 bg-secondary border-double border-2 border-main font-grotesk text-sm font-semibold text-main no-underline hover:bg-main hover:text-secondary active:bg-main active:text-secondary mobile-nav-link opacity-0 transform translate-y-4 pointer-events-auto font-bold uppercase tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)]"
+        style={`transition-delay: ${(index + 1) * 150}ms; transition: opacity 0.4s ease-out, transform 0.4s ease-out;`}
+      >
+        {item.label}
+      </a>
+    ))}
+  </div>
+</div>
   
 
  
@@ -141,14 +273,6 @@ const navItems = [
     const placeholder = document.getElementById('header-controls-placeholder');
     if (placeholder) {
       placeholder.style.display = 'none';
-    }
-  }
-
-  // Show static placeholders if React components fail to load
-  function showStaticPlaceholders() {
-    const placeholder = document.getElementById('header-controls-placeholder');
-    if (placeholder) {
-      placeholder.style.display = 'flex';
     }
   }
 
@@ -163,30 +287,159 @@ const navItems = [
     }
   }
 
-  // Check if React components are ready
-  function checkReactComponents() {
-    const reactContainer = document.getElementById('header-controls-react');
-    if (reactContainer && reactContainer.children.length > 0) {
-      // Check if any React component has actual content (not just loading state)
-      const hasContent = Array.from(reactContainer.children).some(child => 
-        child.querySelector('button') !== null
-      );
-      if (hasContent) {
-        showReactComponents();
-      } else {
-        // React components are loading, try again soon
-        setTimeout(checkReactComponents, 50);
-      }
+  // Initialize global theme state from localStorage immediately
+  function initializeGlobalTheme() {
+    if (typeof window === 'undefined') return;
+    
+    // Set global theme state that React components can read immediately
+    const savedThemeId = localStorage.getItem('theme-id');
+    const savedMode = localStorage.getItem('theme-mode') || 'system';
+    
+    // Only mark as ready if we have a saved theme (not first visit)
+    if (savedThemeId) {
+      (window as any).__THEME_ID__ = savedThemeId;
+      (window as any).__THEME_MODE__ = savedMode;
+      (window as any).__THEME_READY__ = true;
     } else {
-      // React components not ready, try again
-      setTimeout(checkReactComponents, 50);
+      // First visit - let React component handle random theme selection
+      (window as any).__THEME_MODE__ = savedMode;
+      (window as any).__THEME_READY__ = false;
     }
   }
 
-  // Keep only navigation keyboard shortcuts
+  // Instant transition from placeholder to React components
+  function showReactComponentsImmediately() {
+    const placeholder = document.getElementById('header-controls-placeholder');
+    const reactContainer = document.getElementById('header-controls-react');
+    
+    if (placeholder && reactContainer) {
+      // Instant swap - no transitions or opacity changes for placeholder
+      placeholder.style.display = 'none';
+      reactContainer.style.opacity = '1';
+    }
+  }
+
+  // Mobile menu functionality
   document.addEventListener('astro:page-load', () => {
-    // Start checking for React components
-    checkReactComponents();
+    // Mobile menu elements
+    const mobileMenuTrigger = document.getElementById('mobile-menu-trigger');
+    const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+    let isMenuOpen = false;
+
+    // Function to toggle mobile menu
+    function toggleMobileMenu() {
+      const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
+      const hamburgerIcon = document.getElementById('hamburger-icon');
+      const closeIcon = document.getElementById('close-icon');
+      
+      isMenuOpen = !isMenuOpen;
+      
+      if (isMenuOpen) {
+        // Block scroll but keep header sticky
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${window.scrollY}px`;
+        document.body.style.width = '100%';
+        
+        // Toggle icons
+        hamburgerIcon?.classList.add('hidden');
+        closeIcon?.classList.remove('hidden');
+        
+        // Show overlay
+        mobileMenuOverlay?.classList.remove('pointer-events-none');
+        mobileMenuOverlay?.classList.add('pointer-events-auto');
+        
+        
+        // Start background fade in
+        if (mobileMenuOverlay) {
+          mobileMenuOverlay.style.opacity = '0';
+          requestAnimationFrame(() => {
+            mobileMenuOverlay.style.opacity = '1';
+          });
+        }
+        
+        // Show items one by one
+        mobileNavItems.forEach(item => {
+          item.classList.remove('opacity-0', 'translate-y-4');
+          item.classList.add('opacity-100', 'translate-y-0');
+        });
+        
+      } else {
+        // Restore scroll and position
+        const scrollY = document.body.style.top;
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.overflow = '';
+        document.body.style.width = '';
+        window.scrollTo(0, parseInt(scrollY || '0') * -1);
+        
+        // Toggle icons back
+        hamburgerIcon?.classList.remove('hidden');
+        closeIcon?.classList.add('hidden');
+        
+        // Hide items immediately
+        mobileNavItems.forEach(item => {
+          item.classList.remove('opacity-100', 'translate-y-0');
+          item.classList.add('opacity-0', 'translate-y-4');
+        });
+        
+        
+        // Hide overlay after animation
+        if (mobileMenuOverlay) {
+          mobileMenuOverlay.style.opacity = '0';
+          setTimeout(() => {
+            mobileMenuOverlay?.classList.remove('pointer-events-auto');
+            mobileMenuOverlay?.classList.add('pointer-events-none');
+          }, 600); // Wait for background fade out
+        }
+      }
+    }
+
+    // Mobile menu trigger click
+    mobileMenuTrigger?.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleMobileMenu();
+    });
+
+    // Close menu when clicking outside content area
+    mobileMenuOverlay?.addEventListener('click', (e) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.max-w-sm')) {
+        toggleMobileMenu();
+      }
+    });
+
+    // Close menu when clicking nav links
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+    mobileNavLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        if (isMenuOpen) {
+          toggleMobileMenu();
+        }
+      });
+    });
+
+    // Close menu with Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && isMenuOpen) {
+        toggleMobileMenu();
+      }
+    });
+
+    // Initialize global theme state (theme already applied by inline script)
+    initializeGlobalTheme();
+    
+    // Show React components immediately
+    showReactComponentsImmediately();
+    
+    // Listen for when React components are ready and show them instantly
+    const observer = new MutationObserver(() => {
+      if (document.body.hasAttribute('data-header-controls-ready')) {
+        showReactComponentsImmediately();
+        observer.disconnect();
+      }
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ['data-header-controls-ready'] });
     
     
     // Navigation elements
@@ -244,6 +497,16 @@ const navItems = [
 </script>
 
 <style>
+  /* Ensure navbar stays sticky even when mobile overlay is active */
+  nav {
+    position: sticky !important;
+    top: 0 !important;
+  }
+  
+  nav.relative {
+    position: relative !important;
+  }
+
 
   /* Theme previews using CSS variables */
   .void-preview { 

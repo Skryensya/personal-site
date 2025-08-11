@@ -13,7 +13,7 @@ export const ui = {
         'nav.home': 'Inicio',
         'nav.projects': 'Proyectos',
         'nav.showcase': 'Showcase',
-        'nav.cv': 'CV',
+        'nav.cv': 'Currículum',
         'nav.about': 'Sobre mí',
 
         // Home page sections
@@ -66,6 +66,10 @@ export const ui = {
         'about.keyFeature3': 'Performance optimizada',
         'about.tldr.title': 'Resumen Profesional',
         'about.tldr.description': 'Desarrolladora full-stack con 3+ años de experiencia especializada en React, TypeScript y Node.js. Enfocada en crear experiencias web accesibles, optimizadas y funcionalmente complejas. Expertise en performance optimization, developer experience y UI/UX design.',
+        'about.specialties.title': 'ESPECIALIDADES',
+        'about.stack.title': 'STACK PRINCIPAL',
+        'about.collaboration.title': '¿INTERESADO EN COLABORAR?',
+        'about.collaboration.subtitle': 'Disponible para proyectos y oportunidades',
 
         // Site metadata
         'site.title': 'Allison Peña',
@@ -74,6 +78,23 @@ export const ui = {
 
         // UI text
         'ui.loading': 'CARGANDO...',
+        
+        // Theme names (forced Spanish for all languages)
+        'theme.gameboy': 'GAME BOY',
+        'theme.dos': 'MS-DOS', 
+        'theme.c64': 'COMMODORE 64',
+        'theme.caution': 'PRECAUCIÓN',
+        'theme.sunset': 'ATARDECER', 
+        'theme.neon': 'NEÓN',
+        'theme.ocean': 'OCÉANO',
+        'theme.forest': 'BOSQUE',
+        'theme.ember': 'BRASA',
+        'theme.violet': 'VIOLETA',
+        
+        // Mode names (forced Spanish for all languages)
+        'mode.light': 'CLARO',
+        'mode.dark': 'OSCURO',
+        'mode.system': 'SISTEMA',
         'ui.print': 'IMPRIMIR',
         'ui.backToHome': 'VOLVER AL INICIO',
         
@@ -127,7 +148,7 @@ export const ui = {
         'nav.home': 'Home',
         'nav.projects': 'Projects',
         'nav.showcase': 'Showcase',
-        'nav.cv': 'CV',
+        'nav.cv': 'Resume',
         'nav.about': 'About me',
 
         // Home page sections
@@ -180,6 +201,10 @@ export const ui = {
         'about.keyFeature3': 'Optimized performance',
         'about.tldr.title': 'Professional Summary',
         'about.tldr.description': 'Full-stack developer with 3+ years of experience specialized in React, TypeScript and Node.js. Focused on creating accessible, optimized and functionally complex web experiences. Expert in performance optimization, developer experience and UI/UX design.',
+        'about.specialties.title': 'SPECIALTIES',
+        'about.stack.title': 'MAIN STACK',
+        'about.collaboration.title': 'INTERESTED IN COLLABORATING?',
+        'about.collaboration.subtitle': 'Available for projects and opportunities',
 
         // Site metadata
         'site.title': 'Allison Peña',
@@ -188,6 +213,23 @@ export const ui = {
 
         // UI text
         'ui.loading': 'LOADING...',
+        
+        // Theme names (forced Spanish for all languages)
+        'theme.gameboy': 'GAME BOY',
+        'theme.dos': 'MS-DOS', 
+        'theme.c64': 'COMMODORE 64',
+        'theme.caution': 'PRECAUCIÓN',
+        'theme.sunset': 'ATARDECER', 
+        'theme.neon': 'NEÓN',
+        'theme.ocean': 'OCÉANO',
+        'theme.forest': 'BOSQUE',
+        'theme.ember': 'BRASA',
+        'theme.violet': 'VIOLETA',
+        
+        // Mode names (forced Spanish for all languages)
+        'mode.light': 'CLARO',
+        'mode.dark': 'OSCURO',
+        'mode.system': 'SISTEMA',
         'ui.print': 'PRINT',
         'ui.backToHome': 'BACK TO HOME',
         
@@ -241,7 +283,7 @@ export const ui = {
         'nav.home': 'Hjem',
         'nav.projects': 'Prosjekter',
         'nav.showcase': 'Showcase',
-        'nav.cv': 'CV',
+        'nav.cv': 'Curriculum Vitae',
         'nav.about': 'Om',
 
         // Home page sections
@@ -294,6 +336,10 @@ export const ui = {
         'about.keyFeature3': 'Optimalisert ytelse',
         'about.tldr.title': 'Profesjonelt Sammendrag',
         'about.tldr.description': 'Fullstack-utvikler med 3+ års erfaring spesialisert på React, TypeScript og Node.js. Fokusert på å skape tilgjengelige, optimaliserte og funksjonelt komplekse webopplevelser. Ekspert på ytelsesoptimalisering, utvikleropplevelse og UI/UX design.',
+        'about.specialties.title': 'SPESIALITETER',
+        'about.stack.title': 'HOVEDTEKNOLOGIER',
+        'about.collaboration.title': 'INTERESSERT I SAMARBEID?',
+        'about.collaboration.subtitle': 'Tilgjengelig for prosjekter og muligheter',
 
         // Site metadata
         'site.title': 'Allison Peña',
@@ -302,6 +348,23 @@ export const ui = {
 
         // UI text
         'ui.loading': 'LASTER...',
+        
+        // Theme names (forced Spanish for all languages)
+        'theme.gameboy': 'GAME BOY',
+        'theme.dos': 'MS-DOS', 
+        'theme.c64': 'COMMODORE 64',
+        'theme.caution': 'PRECAUCIÓN',
+        'theme.sunset': 'ATARDECER', 
+        'theme.neon': 'NEÓN',
+        'theme.ocean': 'OCÉANO',
+        'theme.forest': 'BOSQUE',
+        'theme.ember': 'BRASA',
+        'theme.violet': 'VIOLETA',
+        
+        // Mode names (forced Spanish for all languages)
+        'mode.light': 'CLARO',
+        'mode.dark': 'OSCURO',
+        'mode.system': 'SISTEMA',
         'ui.print': 'SKRIV UT',
         'ui.backToHome': 'TILBAKE TIL HJEMMESIDE',
         

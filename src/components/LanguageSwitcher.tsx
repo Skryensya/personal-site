@@ -64,7 +64,7 @@ export default function LanguageSwitcher({ currentPath, initialLocale }: Languag
         <DropdownButton
             onMainClick={nextLanguage}
             dropdownContent={dropdownContent}
-            className="font-mono text-xs font-semibold uppercase tracking-wider"
+            className="w-7 h-7 md:w-auto md:h-8 font-mono text-xs font-semibold uppercase tracking-wider"
         >
             <span className="text-main group-hover:text-secondary">
                 {currentLang.toUpperCase()}

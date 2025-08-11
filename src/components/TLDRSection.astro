@@ -1,51 +1,21 @@
 ---
-import Button from './Button.astro';
-import { useTranslations } from '@/i18n/utils';
-import { defaultLang, type Language } from '@/i18n/ui';
-
 interface Props {
-    lang?: Language;
-    showCTA?: boolean;
     className?: string;
 }
 
-const { lang = defaultLang, showCTA = true, className = '' } = Astro.props;
-const t = useTranslations(lang);
+const { className = '' } = Astro.props;
 ---
 
-<div class={`bg-secondary ${className}`} style="view-transition-name: tldr-content;">
+<div class={className} style="view-transition-name: tldr-content;">
     
-    <!-- TLDR Header -->
-    <h3 class="font-mono text-lg font-bold text-main mb-4 uppercase tracking-wider" style="view-transition-name: tldr-title;">
-        {t('about.tldr.title')}
-    </h3>
-    
-    <!-- TLDR Description -->
-    <p class="font-mono text-sm text-main leading-relaxed mb-6" style="view-transition-name: tldr-description;">
-        {t('about.tldr.description')}
-    </p>
-    
-    <!-- Key Skills in compact format -->
-    <div class="flex flex-wrap gap-2 mb-6" style="view-transition-name: tldr-skills;">
-        <span class="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary">{t('about.keyFeature1')}</span>
-        <span class="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary">{t('about.keyFeature2')}</span>
-        <span class="bg-main border border-main px-3 py-1 font-mono text-xs font-bold text-secondary">{t('about.keyFeature3')}</span>
+    <!-- Description paragraphs only -->
+    <div style="view-transition-name: tldr-description;">
+        <p class="font-mono text-base text-main mb-4" style="max-width: var(--paragraph-max-width);">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </p>
+        <p class="font-mono text-base text-main" style="max-width: var(--paragraph-max-width);">
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+        </p>
     </div>
-    
-    <!-- Status and CTA -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div class="flex items-center gap-3">
-            <div class="flex items-center gap-2">
-                <div class="w-2 h-2 bg-green-400 rounded-full"></div>
-                <span class="font-mono text-xs font-semibold text-main uppercase tracking-wider">{t('home.stats.available')}</span>
-            </div>
-            <div class="font-mono text-xs text-main">Santiago, Chile</div>
-        </div>
-        
-        {showCTA && (
-            <Button href="/about" size="sm" filled={false} style="view-transition-name: tldr-cta;">
-                {t('home.aboutButton')}
-            </Button>
-        )}
-    </div>
+
 </div>
