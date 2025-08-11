@@ -214,6 +214,62 @@
     /* border: 1px solid var(--color-main); */
 }
 
+/* Prose content styling for project pages */
+.prose {
+    & h1 {
+        font-size: 2.5rem !important;
+        line-height: 1.2 !important;
+        margin-top: 2rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    & h2 {
+        font-size: 2rem !important;
+        line-height: 1.3 !important;
+        margin-top: 2rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    & h3 {
+        font-size: 1.5rem !important;
+        line-height: 1.4 !important;
+        margin-top: 1.5rem !important;
+        margin-bottom: 1rem !important;
+    }
+    
+    & h4 {
+        font-size: 1.25rem !important;
+        line-height: 1.4 !important;
+        margin-top: 1.5rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    & p {
+        margin-top: 1.5rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    & ul, & ol {
+        margin-top: 1.5rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    & li {
+        margin-top: 0.5rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    & blockquote {
+        margin-top: 2rem !important;
+        margin-bottom: 2rem !important;
+    }
+    
+    & pre, & img {
+        margin-top: 2rem !important;
+        margin-bottom: 2rem !important;
+    }
+}
+
 /* Global print styles - hide site navigation header and footer on all pages */
 @media print {
     header:not(.cv-header),

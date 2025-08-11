@@ -24,7 +24,7 @@ const featuredProjects = (await getFeaturedProjectsByLanguage(lang))
     <h2 class="font-mono text-3xl font-bold text-main mb-12">{t('home.featuredProjects')}</h2>
     
     <PointerTypeProvider client:load>
-      <div class="grid gap-8 items-start" style="grid-template-columns: repeat(auto-fit, minmax(300px, 350px)); justify-content: center;">
+      <div class="flex items-center justify-start gap-4 flex-wrap" >
         {featuredProjects.map((project, index) => (
           <ProjectCardReact
             client:load

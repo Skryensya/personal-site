@@ -1,0 +1,165 @@
+---
+import { type CollectionEntry } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import { sortItemsByDateDesc } from '../utils/data-utils';
+import { getProjectsByLanguage, getSlugFromId, getAlternativeLanguages } from '@/utils/content-utils';
+import DitheredImageReact from './DitheredImageReact';
+
+interface Props {
+    projectsByLang: Record<string, CollectionEntry<'projects'>>;
+    slug: string;
+    currentLocale: string;
+    language?: string;
+}
+
+const { projectsByLang, slug, currentLocale, language } = Astro.props as {
+    projectsByLang: Record<string, CollectionEntry<'projects'>>;
+    slug: string;
+    currentLocale: "es" | "en" | "no";
+    language?: string;
+};
+
+// Get the project for the current language, fallback to Spanish if not available
+const project = projectsByLang[currentLocale] || projectsByLang['es'] || Object.values(projectsByLang)[0];
+
+if (!project) {
+    return Astro.redirect('/404');
+}
+
+// Get projects in the current language for navigation
+const projectsInLanguage = (await getProjectsByLanguage(currentLocale)).sort(sortItemsByDateDesc);
+const currentIndex = projectsInLanguage.findIndex(p => getSlugFromId(p.id) === slug);
+// 
+
+// Get alternative language versions
+const alternatives = await getAlternativeLanguages('projects', slug, currentLocale);
+
+const { title, description, seo, clientLogo } = project.data;
+const { Content } = await project.render();
+---
+
+<Layout title={seo?.title ?? title} description={seo?.description ?? description} image={seo?.image} pageType="article" showHeader={true} lang={currentLocale}>
+    <article class="py-12 sm:py-16 lg:py-24">
+        <header class="flex flex-col lg:flex-row gap-8 mb-12 sm:mb-16 lg:mb-20 min-h-[60vh] items-center">
+            <!-- Hero content - Left side -->
+            <div class="flex-1 flex flex-col justify-center">
+                <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold leading-tight font-mono mb-8 sm:mb-12" style={`view-transition-name: project-content-${project.slug}`}>
+                    {title}
+                </h1>
+                {description && (
+                    <p class="text-xl sm:text-2xl leading-relaxed text-secondary opacity-80 font-light">
+                        {description}
+                    </p>
+                )}
+            </div>
+            
+            <!-- Image - Right side -->
+            {clientLogo && (
+                <div class="flex-shrink-0 w-64 sm:w-80 lg:w-96" style={`view-transition-name: project-logo-${project.slug}`} data-client-logo={clientLogo}>
+                    <DitheredImageReact 
+                        src={clientLogo} 
+                        alt={`Logo del cliente - ${title}`}
+                        className="w-full h-auto object-contain"
+                        respectOriginalSize={true}
+                        client:load
+                    />
+                </div>
+            )}
+        </header>
+        
+        <div class="flex gap-4 flex-grow-1" id="project-content-container">
+            <div class="w-[180px] min-h-8 border-r flex-col items-start flex-start hidden md:flex" id="project-sidebar">
+                <div class="sticky top-24 bg-secondary border-b border-main p-2 w-full">
+                    <h2 class="text-xs font-mono font-medium text-main leading-tight text-right" id="current-heading">{project.data.title}</h2>
+                </div>
+     
+            </div>
+            <div class="w-full" id="project-content">
+                <div class="prose max-w-(--paragraph-max-width)">
+                    <Content />
+                </div>
+            </div>
+        </div>
+
+        <script>
+            function matchSidebarHeight() {
+                const sidebar = document.getElementById('project-sidebar');
+                const content = document.getElementById('project-content');
+                
+                if (sidebar && content) {
+                    // Reset height to get natural content height
+                    sidebar.style.height = 'auto';
+                    
+                    // Match the height of the content area
+                    const contentHeight = content.scrollHeight;
+                    sidebar.style.height = contentHeight + 'px';
+                }
+            }
+
+            function updateCurrentHeading() {
+                const headings = document.querySelectorAll('#project-content h1, #project-content h2, #project-content h3, #project-content h4, #project-content h5, #project-content h6');
+                const currentHeadingElement = document.getElementById('current-heading');
+                
+                if (!headings.length || !currentHeadingElement) return;
+                
+                let currentHeading = null;
+                const scrollPosition = window.scrollY + 100; // Offset for sticky header
+                
+                // Find the current visible heading
+                for (let i = 0; i < headings.length; i++) {
+                    const heading = headings[i];
+                    const headingTop = heading.offsetTop;
+                    
+                    if (scrollPosition >= headingTop) {
+                        currentHeading = heading;
+                    } else {
+                        break;
+                    }
+                }
+                
+                // Update the sticky heading text instantly
+                const newText = currentHeading ? currentHeading.textContent : '{project.data.title}';
+                currentHeadingElement.textContent = newText;
+            }
+
+            function initPage() {
+                matchSidebarHeight();
+                updateCurrentHeading();
+                
+                // Update heading on scroll
+                let scrollTimeout;
+                window.addEventListener('scroll', () => {
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(updateCurrentHeading, 10);
+                });
+            }
+
+            // Run on page load
+            document.addEventListener('DOMContentLoaded', initPage);
+            
+            // Run on Astro page transitions
+            document.addEventListener('astro:page-load', initPage);
+            
+            // Run when content changes (for dynamic content)
+            if (window.ResizeObserver) {
+                const observer = new ResizeObserver(matchSidebarHeight);
+                const content = document.getElementById('project-content');
+                if (content) {
+                    observer.observe(content);
+                }
+            }
+        </script>
+    </article>
+    {
+        // (prevProject || nextProject) && (
+        //     <div class="my-16 sm:my-24 ">
+        //         <h2 class="mb-12 text-xl font-serif italic sm:mb-16 sm:text-2xl">Sigue leyendo</h2>
+        //         {nextProject && <ProjectPreview project={nextProject} class="mb-10 sm:mb-12" headingLevel="h3" />}
+        //         {prevProject && <ProjectPreview project={prevProject} class="mb-10 sm:mb-12" headingLevel="h3" />}
+        //     </div>
+        // )
+    }
+</Layout>
+
+<!-- Preload client logo -->
+{clientLogo && <link rel="preload" as="image" href={clientLogo} />}

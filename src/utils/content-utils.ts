@@ -10,10 +10,12 @@ export function getLanguageFromId(id: string): Language {
     return 'es'; // Default fallback
 }
 
-// Extract slug from collection entry id (e.g., "es/project-slug" -> "project-slug")
+// Extract slug from collection entry id (e.g., "es/project-slug.mdx" -> "project-slug")
 export function getSlugFromId(id: string): string {
     const [, ...slugParts] = id.split('/');
-    return slugParts.join('/');
+    const fullSlug = slugParts.join('/');
+    // Remove file extension if present
+    return fullSlug.replace(/\.(md|mdx)$/, '');
 }
 
 // Get all entries for a specific language from blog collection

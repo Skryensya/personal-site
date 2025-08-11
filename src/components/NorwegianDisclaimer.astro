@@ -1,0 +1,108 @@
+---
+import { useTranslations } from '@/i18n/utils';
+import { type Language } from '@/i18n/ui';
+import Button from './Button.astro';
+
+interface Props {
+    lang: Language;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+// Only show banner for Norwegian language
+if (lang !== 'no') {
+    return null;
+}
+---
+
+<div id="norwegian-disclaimer" class="fixed bottom-0 left-0 right-0 bg-main text-secondary border-t border-secondary z-50 select-none" style="display: none;">
+    <div class="relative overflow-hidden h-10 flex items-center">
+        <div class="marquee-container flex items-center h-full">
+            <div class="marquee-content flex items-center whitespace-nowrap text-base font-mono font-medium">
+                <span class="pr-16">{t('disclaimer.norwegian.compact')}</span>
+                <span class="pr-16">{t('disclaimer.norwegian.compact')}</span>
+                <span class="pr-16">{t('disclaimer.norwegian.compact')}</span>
+            </div>
+        </div>
+        <div class="absolute right-2 z-10" id="close-norwegian-disclaimer">
+            <Button 
+                size="sm" 
+                class="!w-8 !h-8 !px-0 !text-xs !min-w-0" 
+                style="position: static;"
+            >
+                ✕
+            </Button>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes marquee {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-33.333%);
+        }
+    }
+    
+    .marquee-content {
+        animation: marquee 20s linear infinite;
+    }
+    
+    .marquee-container {
+        width: 100%;
+    }
+</style>
+
+<script>
+    function initNorwegianDisclaimer() {
+        const banner = document.getElementById('norwegian-disclaimer');
+        const closeButtonContainer = document.getElementById('close-norwegian-disclaimer');
+        
+        if (!banner || !closeButtonContainer) return;
+        
+        // The Button.astro component creates a button inside a div, so we need to find the actual button
+        const closeButton = closeButtonContainer.querySelector('button');
+        if (!closeButton) return;
+        
+        const STORAGE_KEY = 'norwegian-disclaimer-dismissed';
+        const DISMISS_DURATION = 30 * 60 * 1000; // 30 minutes in milliseconds
+        
+        // Check if banner was dismissed recently
+        function isBannerDismissed() {
+            try {
+                const dismissedTime = localStorage.getItem(STORAGE_KEY);
+                if (!dismissedTime) return false;
+                
+                const now = Date.now();
+                const dismissed = parseInt(dismissedTime, 10);
+                return (now - dismissed) < DISMISS_DURATION;
+            } catch (e) {
+                return false;
+            }
+        }
+        
+        // Show banner if not dismissed
+        if (!isBannerDismissed()) {
+            banner.style.display = 'block';
+        }
+        
+        // Handle close button click
+        closeButton.addEventListener('click', function() {
+            try {
+                localStorage.setItem(STORAGE_KEY, Date.now().toString());
+            } catch (e) {
+                // localStorage unavailable - continue anyway
+            }
+            banner.style.display = 'none';
+        });
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', initNorwegianDisclaimer);
+    
+    // Re-initialize on Astro page transitions
+    document.addEventListener('astro:page-load', initNorwegianDisclaimer);
+</script>

@@ -6,6 +6,9 @@
 
     --color-main: var(--color-main);
     --color-secondary: var(--color-secondary);
+    
+    /* Container sizes for native container queries */
+    --container-6xl: 72rem;
 }
 
 @layer utilities {

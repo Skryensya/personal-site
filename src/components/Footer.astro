@@ -6,11 +6,18 @@ const currentYear = new Date().getFullYear();
 
  
 
-<footer class="bg-main">
-    <div class="mx-auto max-w-[var(--max-w-size)] pt-8">
+<footer class="bg-main px-4 relative overflow-hidden">
+    <!-- Large name background -->
+    <div class="absolute inset-0 flex justify-start items-end overflow-hidden">
+        <h2 class="text-[clamp(6rem,20vw,25rem)] font-bold text-secondary select-none leading-none whitespace-nowrap opacity-20 -rotate-90 origin-bottom-left">
+            {siteConfig.title}
+        </h2>
+    </div>
+
+    <div class="mx-auto max-w-[var(--max-w-size)] pt-8 relative z-10">
 
     <!-- Enlaces y contenido arriba -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12 ">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12 text-right md:text-left">
         <!-- Navegación -->
         <div>
             <h3 class="font-mono text-xs font-semibold text-secondary mb-4 uppercase">Sitio</h3>
@@ -96,10 +103,5 @@ const currentYear = new Date().getFullYear();
             © {currentYear} {siteConfig.title}. Todos los derechos reservados.
         </p>
     </div> -->
-    </div>
-    <div class="relative mx-auto w-full flex justify-center overflow-hidden">
-        <h2 class="text-[clamp(4rem,15vw,20rem)] font-bold text-secondary select-none leading-none whitespace-nowrap translate-y-3/12">
-            {siteConfig.title}
-        </h2>
     </div>
 </footer>
