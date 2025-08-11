@@ -1,7 +1,6 @@
 import * as React from 'react';
 import DropdownButton, { DropdownItem } from './DropdownButton';
 import { applyTheme } from '../data/themes.js';
-import { ui } from '@/i18n/ui';
 
 const { useState, useEffect, useCallback } = React;
 
@@ -24,7 +23,7 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
     // Initialize theme from global state or localStorage
     const [currentTheme, setCurrentTheme] = useState<Theme>(() => {
         if (typeof window !== 'undefined') {
-            // Check global state first
+            // Check global state first (set by navbar script)
             const globalThemeId = (window as any).__THEME_ID__;
             if (globalThemeId) {
                 const globalTheme = themes.find((t) => t.id === globalThemeId);
@@ -38,11 +37,21 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
                 if (savedTheme) return savedTheme;
             }
             
-            // Only set random theme if no theme was previously saved
-            const randomIndex = Math.floor(Math.random() * themes.length);
-            return themes[randomIndex] || themes[0];
+            // Only set random theme if no theme was previously saved AND not already marked as ready
+            if (!(window as any).__THEME_READY__) {
+                const randomIndex = Math.floor(Math.random() * themes.length);
+                const randomTheme = themes[randomIndex] || themes[0];
+                
+                // Save the random theme immediately so placeholder can use it
+                localStorage.setItem('theme-id', randomTheme.id);
+                (window as any).__THEME_ID__ = randomTheme.id;
+                (window as any).__THEME_READY__ = true;
+                
+                return randomTheme;
+            }
         }
-        // Fallback for SSR
+        
+        // Fallback for SSR or if no theme found
         return themes[0];
     });
     
@@ -63,19 +72,36 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
         return 'system';
     });
     
-    // Always start mounted for faster loading
-    const [isMounted, setIsMounted] = useState(true);
+    // Start unmounted to prevent flash of first theme
+    const [isMounted, setIsMounted] = useState(false);
     
     // Get theme name in Spanish (forced for all languages)
     const getThemeNameInSpanish = (themeId: string): string => {
-        const themeKey = `theme.${themeId}` as keyof typeof ui.es;
-        return ui.es[themeKey] || themeId.toUpperCase();
+        // Use same mapping as navbar placeholder to ensure consistency
+        const themeNames: { [key: string]: string } = {
+            'gameboy': 'GAMEBOY',
+            'dos': 'TERMINAL', 
+            'commodore64': 'COMMODORE',
+            'caution': 'PRECAUCION',
+            'sunset': 'ATARDECER',
+            'neon': 'NEON',
+            'ocean': 'OCEANO',
+            'forest': 'BOSQUE',
+            'ember': 'BRASA',
+            'violet': 'VIOLETA'
+        };
+        return themeNames[themeId] || themeId.toUpperCase();
     };
     
     // Get mode name in Spanish (forced for all languages)
     const getModeNameInSpanish = (mode: Mode): string => {
-        const modeKey = `mode.${mode}` as keyof typeof ui.es;
-        return ui.es[modeKey] || mode.toUpperCase();
+        // Use same mapping as navbar placeholder to ensure consistency
+        const modeNames: { [key: string]: string } = {
+            'light': 'CLARO',
+            'dark': 'OSCURO',
+            'system': 'SISTEMA'
+        };
+        return modeNames[mode] || mode.toUpperCase();
     };
     
     // Get mode icon
@@ -127,13 +153,13 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
         (window as any).__THEME_READY__ = true;
     }, []);
 
-    // Initialize and apply theme/mode immediately
+    // Initialize and apply theme/mode, then mount
     useEffect(() => {
-        // Apply the current theme immediately on mount
-        applyThemeToDocument(currentTheme, currentMode);
-        
-        // Save initial theme to localStorage if not already saved
         if (typeof window !== 'undefined') {
+            // Apply the current theme immediately
+            applyThemeToDocument(currentTheme, currentMode);
+            
+            // Save initial theme to localStorage if not already saved
             const savedThemeId = localStorage.getItem('theme-id');
             if (!savedThemeId) {
                 localStorage.setItem('theme-id', currentTheme.id);
@@ -142,19 +168,30 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
             if (!savedMode) {
                 localStorage.setItem('theme-mode', currentMode);
             }
+            
+            // Wait a tiny bit to ensure theme is applied before mounting
+            requestAnimationFrame(() => {
+                setIsMounted(true);
+            });
         }
-        
-        // Apply theme immediately on mount and set as ready
-        applyThemeToDocument(currentTheme, currentMode);
-        setIsMounted(true);
     }, []);
     
-    // Signal when components are ready - immediate
+    // Signal when components are ready - only after theme is correctly applied and rendered
     useEffect(() => {
         if (isMounted && currentTheme && currentMode && typeof window !== 'undefined') {
-            // Set ready immediately and ensure theme is applied
-            document.body.setAttribute('data-header-controls-ready', 'true');
+            // Apply theme first
             applyThemeToDocument(currentTheme, currentMode);
+            
+            // Wait for next frame to ensure React has rendered with correct theme
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    // Signal that React components are ready to be shown
+                    const event = new CustomEvent('react-header-ready', {
+                        detail: { themeId: currentTheme.id, mode: currentMode }
+                    });
+                    window.dispatchEvent(event);
+                });
+            });
         }
     }, [isMounted, currentTheme, currentMode, applyThemeToDocument]);
 
@@ -250,113 +287,122 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
     };
 
 
-    const renderThemeControls = () => (
-        <DropdownButton
-            onMainClick={isMounted ? nextTheme : () => {}}
-            disabled={!isMounted}
-            dropdownContent={
-                    <div>
-                        {themes.map((theme) => (
-                            <button
-                                key={theme.id}
-                                type="button"
-                                onClick={isMounted ? () => {
-                                    console.log('Theme clicked:', theme.id);
-                                    handleThemeSelect(theme);
-                                } : () => {}}
-                                className={`w-full px-2 py-1 text-left focus:outline-none block cursor-pointer relative z-10 ${
-                                    currentTheme?.id === theme.id ? 'bg-main text-secondary' : 'bg-secondary text-main hover:bg-main hover:text-secondary'
-                                }`}
-                                style={{ minHeight: '40px' }}
-                            >
-                                <div className="flex items-center gap-0 pointer-events-none">
-                                    <div
-                                        className="w-6 h-6 aspect-square flex-shrink-0 border border-main pointer-events-none"
-                                        style={{ 
-                                            background: `linear-gradient(135deg, ${theme.colorful} 50%, ${theme.contrasty} 50%)`,
-                                            boxShadow: `inset 0 0 0 1px ${theme.contrasty}`
-                                        }}
-                                    />
-                                    <span className="flex-1 px-2 py-2 font-mono text-xs font-semibold pointer-events-none select-none">{getThemeNameInSpanish(theme.id)}</span>
-                                    <div className="w-4 h-4 flex items-center justify-center pointer-events-none">
-                                        {currentTheme?.id === theme.id && (
-                                            <svg
-                                                className="w-4 h-4 pointer-events-none"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <polyline points="20,6 9,17 4,12" />
-                                            </svg>
-                                        )}
+    const renderThemeControls = () => {
+        // Don't render anything until fully mounted and ready
+        if (!isMounted) return null;
+        
+        return (
+            <DropdownButton
+                onMainClick={nextTheme}
+                disabled={false}
+                dropdownContent={
+                        <div>
+                            {themes.map((theme) => (
+                                <button
+                                    key={theme.id}
+                                    type="button"
+                                    onClick={() => {
+                                        console.log('Theme clicked:', theme.id);
+                                        handleThemeSelect(theme);
+                                    }}
+                                    className={`w-full px-2 py-1 text-left focus:outline-none block cursor-pointer relative z-10 ${
+                                        currentTheme?.id === theme.id ? 'bg-main text-secondary' : 'bg-secondary text-main hover:bg-main hover:text-secondary'
+                                    }`}
+                                    style={{ minHeight: '40px' }}
+                                >
+                                    <div className="flex items-center gap-0 pointer-events-none">
+                                        <div
+                                            className="w-6 h-6 aspect-square flex-shrink-0 border border-main pointer-events-none"
+                                            style={{ 
+                                                background: `linear-gradient(135deg, ${theme.colorful} 50%, ${theme.contrasty} 50%)`,
+                                                boxShadow: `inset 0 0 0 1px ${theme.contrasty}`
+                                            }}
+                                        />
+                                        <span className="flex-1 px-2 py-2 font-mono text-xs font-semibold pointer-events-none select-none">{getThemeNameInSpanish(theme.id)}</span>
+                                        <div className="w-4 h-4 flex items-center justify-center pointer-events-none">
+                                            {currentTheme?.id === theme.id && (
+                                                <svg
+                                                    className="w-4 h-4 pointer-events-none"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    strokeWidth="2"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <polyline points="20,6 9,17 4,12" />
+                                                </svg>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            </button>
-                        ))}
+                                </button>
+                            ))}
+                        </div>
+                    }
+                    className="w-7 h-7 md:w-full md:h-8"
+                >
+                    <div className="flex items-center gap-2 w-full">
+                        <div
+                            className="w-4 h-4 border border-main theme-preview-current flex-shrink-0"
+                            style={{ 
+                                background: `linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%)`
+                            }}
+                        />
+                        <span className="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary truncate">
+                            {getThemeNameInSpanish(currentTheme.id)}
+                        </span>
                     </div>
-                }
-                className="w-7 h-7 md:w-full md:h-8"
-            >
-                <div className="flex items-center gap-2 w-full">
-                    <div
-                        className="w-4 h-4 border border-main theme-preview-current flex-shrink-0"
-                        style={{ 
-                            background: `linear-gradient(135deg, ${currentTheme.colorful} 50%, ${currentTheme.contrasty} 50%)`,
-                            boxShadow: `inset 0 0 0 1px ${currentTheme.contrasty}`
-                        }}
-                    />
-                    <span className="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary truncate">
-                        {getThemeNameInSpanish(currentTheme.id)}
-                    </span>
-                </div>
-            </DropdownButton>
-    );
+                </DropdownButton>
+        );
+    };
 
-    const renderModeControls = () => (
-        <DropdownButton
-            onMainClick={isMounted ? toggleMode : () => {}}
-            disabled={!isMounted}
-            dropdownContent={
-                    <div>
-                        {(['light', 'dark', 'system'] as Mode[]).map((mode) => (
-                            <DropdownItem
-                                key={mode}
-                                selected={currentMode === mode}
-                                onClick={isMounted ? () => handleModeSelect(mode) : () => {}}
-                                className="font-mono text-xs font-semibold uppercase tracking-wider"
-                            >
-                                <div className="flex items-center gap-2">
-                                    <div className="w-3.5 h-3.5 relative flex-shrink-0">{getModeIcon(mode, '')}</div>
-                                    <span>
-                                        {getModeNameInSpanish(mode)}
-                                    </span>
-                                    <div className="w-4 h-4 flex items-center justify-center">
-                                        {currentMode === mode && (
-                                            <svg
-                                                className="w-4 h-4"
-                                                fill="none"
-                                                stroke="currentColor"
-                                                strokeWidth="2"
-                                                viewBox="0 0 24 24"
-                                            >
-                                                <polyline points="20,6 9,17 4,12" />
-                                            </svg>
-                                        )}
+    const renderModeControls = () => {
+        // Don't render anything until fully mounted and ready
+        if (!isMounted) return null;
+        
+        return (
+            <DropdownButton
+                onMainClick={toggleMode}
+                disabled={false}
+                dropdownContent={
+                        <div>
+                            {(['light', 'dark', 'system'] as Mode[]).map((mode) => (
+                                <DropdownItem
+                                    key={mode}
+                                    selected={currentMode === mode}
+                                    onClick={() => handleModeSelect(mode)}
+                                    className="font-mono text-xs font-semibold uppercase tracking-wider"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-3.5 h-3.5 relative flex-shrink-0">{getModeIcon(mode, '')}</div>
+                                        <span>
+                                            {getModeNameInSpanish(mode)}
+                                        </span>
+                                        <div className="w-4 h-4 flex items-center justify-center">
+                                            {currentMode === mode && (
+                                                <svg
+                                                    className="w-4 h-4"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    strokeWidth="2"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <polyline points="20,6 9,17 4,12" />
+                                                </svg>
+                                            )}
+                                        </div>
                                     </div>
-                                </div>
-                            </DropdownItem>
-                        ))}
+                                </DropdownItem>
+                            ))}
+                        </div>
+                    }
+                    className="w-7 h-7 md:w-auto md:h-8"
+                >
+                    <div className="flex items-center gap-2">
+                        <div className="w-3.5 h-3.5 relative flex-shrink-0">{getModeIcon(currentMode, '')}</div>
+                        <span className="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary">{getModeNameInSpanish(currentMode)}</span>
                     </div>
-                }
-                className="w-7 h-7 md:w-auto md:h-8"
-            >
-                <div className="flex items-center gap-2">
-                    <div className="w-3.5 h-3.5 relative flex-shrink-0">{getModeIcon(currentMode, '')}</div>
-                    <span className="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary">{getModeNameInSpanish(currentMode)}</span>
-                </div>
-            </DropdownButton>
-    );
+                </DropdownButton>
+        );
+    };
 
     return (
         <>

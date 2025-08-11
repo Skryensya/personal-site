@@ -76,12 +76,12 @@ const navItems = [
           <div class="w-7 h-7 md:w-full md:h-8 inline-flex">
             <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
               <div class="flex items-center gap-2 w-full">
-                <div class="w-4 h-4 border border-main flex-shrink-0 animate-pulse" style="background: linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%)"></div>
-                <span class="hidden md:block font-mono text-xs font-semibold text-main flex-1 text-left animate-pulse">{t('ui.loading')}</span>
+                <div id="theme-placeholder-preview" class="w-4 h-4 border border-main flex-shrink-0" style="background: linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%)"></div>
+                <span id="theme-placeholder-text" class="hidden md:block font-mono text-xs font-semibold text-main flex-1 text-left">{t('ui.loading').toUpperCase()}</span>
               </div>
             </div>
             <div class="hidden md:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
-              <svg class="w-4 h-4 text-main animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
               </svg>
             </div>
@@ -91,18 +91,18 @@ const navItems = [
           <div class="w-7 h-7 md:w-auto md:h-8 inline-flex">
             <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
               <div class="flex items-center gap-2">
-                <div class="w-3.5 h-3.5 flex-shrink-0 animate-pulse">
+                <div class="w-3.5 h-3.5 flex-shrink-0">
                   <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
                     <line x1="8" y1="21" x2="16" y2="21"></line>
                     <line x1="12" y1="17" x2="12" y2="21"></line>
                   </svg>
                 </div>
-                <span class="hidden md:block font-mono text-xs font-semibold text-main animate-pulse">{t('ui.loading')}</span>
+                <span id="mode-placeholder-text" class="hidden md:block font-mono text-xs font-semibold text-main">{t('ui.loading').toUpperCase()}</span>
               </div>
             </div>
             <div class="hidden md:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
-              <svg class="w-4 h-4 text-main animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
               </svg>
             </div>
@@ -112,11 +112,11 @@ const navItems = [
           <div class="w-7 h-7 md:w-auto md:h-8 inline-flex">
             <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
               <div class="flex items-center gap-2">
-                <span class="font-mono text-xs font-semibold text-main animate-pulse">ES</span>
+                <span class="font-mono text-xs font-semibold text-main">ES</span>
               </div>
             </div>
             <div class="hidden md:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
-              <svg class="w-4 h-4 text-main animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
               </svg>
             </div>
@@ -124,7 +124,7 @@ const navItems = [
         </div>
         
         <!-- React components layer - absolute positioned to match exactly -->
-        <div class="absolute top-0 right-0 h-full flex items-center gap-x-4 gap-y-1 pointer-events-auto" id="header-controls-react" style="opacity: 0;">
+        <div class="absolute top-0 right-0 h-full flex items-center gap-x-4 gap-y-1 pointer-events-auto" id="header-controls-react" style="display: none;">
           <HeaderControls themes={themes} client:load />
           <LanguageSwitcher initialLocale={currentLocale} client:load />
         </div>
@@ -235,15 +235,18 @@ const navItems = [
     }
   }
 
-  // Initialize global theme state from localStorage immediately
+  // Initialize global theme state from localStorage immediately and update placeholder
   function initializeGlobalTheme() {
     if (typeof window === 'undefined') return;
     
-    // Set global theme state that React components can read immediately
+    // Get theme and mode from localStorage
     const savedThemeId = localStorage.getItem('theme-id');
     const savedMode = localStorage.getItem('theme-mode') || 'system';
     
-    // Only mark as ready if we have a saved theme (not first visit)
+    // The theme preview should always use CSS variables, no need to update colors
+    // This maintains consistency with the design system
+    
+    // Set global theme state that React components can read immediately
     if (savedThemeId) {
       (window as any).__THEME_ID__ = savedThemeId;
       (window as any).__THEME_MODE__ = savedMode;
@@ -261,9 +264,9 @@ const navItems = [
     const reactContainer = document.getElementById('header-controls-react');
     
     if (placeholder && reactContainer) {
-      // Instant swap - no transitions or opacity changes for placeholder
+      // Instant swap - hide placeholder and show React with display
       placeholder.style.display = 'none';
-      reactContainer.style.opacity = '1';
+      reactContainer.style.display = 'flex';
     }
   }
 
@@ -377,17 +380,21 @@ const navItems = [
     // Initialize global theme state (theme already applied by inline script)
     initializeGlobalTheme();
     
-    // Show React components immediately
-    showReactComponentsImmediately();
+    // Listen for when React components are ready with the correct theme
+    const handleReactReady = (event: any) => {
+      console.log('React header ready with theme:', event.detail);
+      showReactComponentsImmediately();
+    };
     
-    // Listen for when React components are ready and show them instantly
-    const observer = new MutationObserver(() => {
-      if (document.body.hasAttribute('data-header-controls-ready')) {
-        showReactComponentsImmediately();
-        observer.disconnect();
-      }
-    });
-    observer.observe(document.body, { attributes: true, attributeFilter: ['data-header-controls-ready'] });
+    window.addEventListener('react-header-ready', handleReactReady);
+    
+    // Cleanup function for page navigation
+    const cleanup = () => {
+      window.removeEventListener('react-header-ready', handleReactReady);
+    };
+    
+    // Clean up on navigation
+    document.addEventListener('astro:before-preparation', cleanup);
     
     
     // Navigation elements
