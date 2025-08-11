@@ -42,7 +42,7 @@ export default function ProjectCardReact({ title, description = '', href, slug, 
 
     return (
         <div
-            className="w-full aspect-[2/3] relative group"
+            className="w-[clamp(200px,23vw,350px)] aspect-[2/3] relative group"
             style={{
                 viewTransitionName: `project-card-${slug}`,
                 ...containerStyle

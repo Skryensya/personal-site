@@ -1,42 +1,51 @@
 ---
 title: 'Kit Digital UC'
-description: 'El Kit Digital UC es una librería de componentes reutilizables, creada para garantizar una identidad visual coherente y mejorar la usabilidad en los sitios web de la Universidad Católica de Chile.'
-publishDate: '05/10/2024'
+client: 'Pontificia Universidad Católica de Chile'
+tldr: 'Biblioteca de componentes reutilizables adoptada en más de 100 sitios web de la UC, mejorando significativamente la accesibilidad, SEO y rendimiento.'
+description: 'Kit Digital UC es una biblioteca de componentes diseñada para garantizar consistencia visual, accesibilidad y escalabilidad en el ecosistema web de la universidad.'
+publishDate: '10/05/2024'
 seo:
   image:
     src: '/kit-digital-uc.png'
-    alt: Previsualización del proyecto
-    caption: Diferentes componentes del Kit Digital UC
+    alt: Vista previa del proyecto Kit Digital UC
+    caption: Varios componentes del Kit Digital UC
 isFeatured: true
 color: '#173F8A'
 clientLogo: '/uc_logo.png'
-tags: ['JavaScript', 'CSS', 'SASS', 'SCSS', 'Rollup', 'NPM', 'Vue', 'Nuxt.js', 'React', 'Next.js', 'Strapi', 'Accessibility', 'CDN', 'Component Library']
+tags: ['JavaScript', 'CSS', 'SASS', 'SCSS', 'Rollup', 'NPM', 'Vue', 'Nuxt.js', 'React', 'Next.js', 'Strapi', 'Accesibilidad', 'AWS S3', 'Biblioteca de Componentes']
 ---
 
-### **TL;DR**
+# Optimización de Accesibilidad, SEO y Rendimiento en Más de 100 Sitios Web Institucionales
 
-El **Kit Digital UC** es una **librería de componentes** que asegura una **identidad visual consistente** y mejor **usabilidad** en los sitios web de la **Universidad Católica**. Distribuido por **CDN**, se utiliza en más de **100 sitios**. Desde **2022**, he trabajado en la **creación y mejora de componentes**, enfocándome en seguir **mejores prácticas de accesibilidad**. El principal desafío ha sido mantener la **compatibilidad con versiones anteriores** mientras actualizamos y optimizamos los componentes clave.
+## Contexto
 
-## **Descripción**
+Kit Digital UC es una biblioteca de componentes centralizada que busca unificar la experiencia visual y funcional en el ecosistema web de la Pontificia Universidad Católica de Chile. La biblioteca actualmente soporta más de 100 sitios web, desde portales académicos hasta herramientas internas.
+El principal desafío ha sido mantener la retrocompatibilidad debido a la distribución vía AWS S3 y CDN, mientras se introducen mejoras continuas en accesibilidad, rendimiento y escalabilidad. Lograr este equilibrio es crítico para evitar interrumpir servicios activos y asegurar una evolución sostenible.
 
-Consiste de una **librería de componentes reutilizables**, creados para mantener una **identidad visual uniforme** y una **experiencia de usuario optimizada** en todos los sitios de la **Universidad Católica**. Abarca desde elementos básicos como **cards**, **buttons** y **forms**, hasta componentes más avanzados como la **global topbar** y el **agenda widget**, facilitando el desarrollo de interfaces coherentes en múltiples sitios.
+## Mi Contribución
 
-El Kit se distribuye principalmente por **CDN**, lo que permite su adopción en más de **100 sitios**, y el objetivo es que todos los desarrollos futuros lo implementen. Para apoyar a los desarrolladores, también existe un **sitio de documentación**, que originalmente fue desarrollado con **Vue (Nuxt.js)** y está en proceso de migración a **React (Next.js)** con un **CMS en Strapi**. Esta transición agilizará las actualizaciones y mejorará la gestión de la información.
+Desde que me uní al proyecto a fines de 2022, realicé una auditoría integral de los componentes existentes para identificar brechas críticas de accesibilidad y semántica. Luego lideré la implementación de soluciones específicas, incluyendo:
 
-## **Mi aporte**
+- Migración de imágenes de fondo (`background-image`) a elementos `<img>`, permitiendo la inclusión de atributos `alt` significativos que mejoran el soporte de tecnologías asistivas y el SEO.
+- Implementación de importaciones dinámicas para cargar solo los componentes necesarios por página, reduciendo el tamaño total del bundle y mejorando los tiempos de carga inicial.
+- Refactorización de la navegación por teclado en menús, acordeones y modales para cumplir con estándares WCAG y mejorar la accesibilidad para usuarios con movilidad reducida.
 
-Desde que me uní al proyecto a finales de **2022**, comencé con tareas de **corrección y mantenimiento** de componentes existentes, lo que me permitió familiarizarme con la estructura del Kit. Poco después, me encargué de **crear nuevos componentes** y optimizar implementaciones previas. Uno de mis logros más significativos fue cambiar el uso de **background-image** a elementos `<img>`, mejorando tanto la **accesibilidad** como el **SEO** al poder utilizar el atributo `alt` en las imágenes. Esta mejora también añade **semántica al código**, beneficiando la **usabilidad** y la **experiencia del usuario**.
+Adicionalmente, colaboré estrechamente con equipos de diseño y desarrollo para alinear nuevos componentes con guías de estilo institucionales y asegurar una integración fluida en proyectos multifuncionales como Portal UC y Agenda UC.
 
-A lo largo del tiempo, nuevas necesidades han surgido en los proyectos oficiales como el **Portal UC** y **Agenda UC**, y hemos trabajado en equipo para implementar esos cambios en el Kit, beneficiando a los futuros desarrollos.
+## Desafíos Enfrentados
 
-## **Desafíos del Proyecto**
+Mantener la retrocompatibilidad fue uno de los desafíos más significativos, ya que cualquier cambio requería evaluación cuidadosa para prevenir interrupciones en sitios que dependían de versiones anteriores del Kit. Diseñamos estrategias de despliegue progresivo y aprovechamos las importaciones dinámicas como solución clave.
+Abordar las malas prácticas de accesibilidad involucró no solo correcciones técnicas sino también generar conciencia y documentar estándares para fomentar una cultura de desarrollo más inclusiva.
+Trabajar a través de múltiples frameworks y tecnologías (Vue/Nuxt para documentación existente, React/Next para la nueva plataforma) requirió coordinar migraciones sin interrumpir la continuidad del proyecto.
 
-Uno de los principales retos del proyecto es mantener la **compatibilidad con versiones anteriores**, ya que el Kit está distribuido por **CDN** y muchos sitios dependen de versiones antiguas de los componentes. Esto hace que deprecar o modificar un componente sea complicado, ya que cualquier cambio podría afectar negativamente a sitios que aún lo utilizan. Para mitigar este riesgo, implementamos **dynamic imports**, permitiendo que solo los componentes necesarios se carguen en función de su presencia en el **DOM**, mejorando significativamente el **rendimiento** y evitando que el tamaño del **bundle** aumente innecesariamente.
+## Resultados y Aprendizajes
 
-Otro desafío ha sido **mejorar la accesibilidad** del Kit. Cuando me uní, muchos de los componentes no seguían las **mejores prácticas**, por ejemplo, había enlaces que funcionaban como botones, lo cual afectaba tanto la **semántica del código** como la **accesibilidad** para los usuarios. Desde entonces, hemos trabajado en corregir estos problemas, además de mejorar la **navegación por teclado** en elementos como **headers**, **accordions** y **modals**, lo que ha permitido que el Kit evolucione manteniendo altos estándares de **usabilidad** y **accesibilidad**.
+Las mejoras implementadas entregaron una experiencia de usuario más fluida y accesible, validada a través de pruebas internas y métricas de rendimiento. La carga condicional de componentes redujo significativamente el tamaño del bundle, impactando positivamente los Core Web Vitals y el SEO.
+Este proyecto reforzó la importancia de tratar la accesibilidad como un proceso continuo integrado a lo largo del diseño, desarrollo y mantenimiento. También destacó la necesidad de planificación cuidadosa al evolucionar tecnología en ecosistemas distribuidos, priorizando estabilidad y compatibilidad.
 
-## **Stack tecnológico**
+## Stack Tecnológico
 
-- **Librería:** JavaScript, CSS (SASS/SCSS), Rollup y NPM.
-- **Documentación actual:** Vue (Nuxt.js).
-- **Nueva documentación:** React (Next.js), Strapi CMS.
+- **Lenguajes y estilos:** JavaScript, CSS (SASS/SCSS)
+- **Herramientas de build:** Rollup, NPM
+- **Frameworks:** Vue (Nuxt.js) para documentación existente, migrando a React (Next.js) con Strapi CMS
+- **Infraestructura de distribución:** AWS S3 y CDN para entregar paquetes del Kit Digital UC

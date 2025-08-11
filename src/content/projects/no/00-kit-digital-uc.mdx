@@ -1,34 +1,51 @@
 ---
-title: 'UC Digital Kit'
-description: 'UC Digital Kit er et gjenbrukbart komponentbibliotek, laget for å sikre konsistent visuell identitet og forbedre brukervennlighet på nettsidene til Universidad Católica de Chile.'
-publishDate: '05/10/2024'
+title: 'Kit Digital UC'
+client: 'Det pavelige katolske universitetet i Chile'
+tldr: 'Gjenbrukbart komponentbibliotek brukt på over 100 nettsider ved UC, med betydelige forbedringer innen tilgjengelighet, SEO og ytelse.'
+description: 'Kit Digital UC er et komponentbibliotek designet for å sikre visuell konsistens, tilgjengelighet og skalerbarhet i universitetets digitale økosystem.'
+publishDate: '05.10.2024'
 seo:
   image:
     src: '/kit-digital-uc.png'
-    alt: Prosjektforhåndsvisning
-    caption: Ulike komponenter fra UC Digital Kit
+    alt: Forhåndsvisning av prosjektet Kit Digital UC
+    caption: Ulike komponenter fra Kit Digital UC
 isFeatured: true
 color: '#173F8A'
 clientLogo: '/uc_logo.png'
+tags: ['JavaScript', 'CSS', 'SASS', 'SCSS', 'Rollup', 'NPM', 'Vue', 'Nuxt.js', 'React', 'Next.js', 'Strapi', 'Tilgjengelighet', 'AWS S3', 'Komponentbibliotek']
 ---
 
-### **TL;DR**
+# Optimalisering av tilgjengelighet, SEO og ytelse på over 100 institusjonelle nettsider
 
-**UC Digital Kit** er et **komponentbibliotek** som sikrer **konsistent visuell identitet** og bedre **brukervennlighet** på **Universidad Católica** nettsider. Distribuert via **CDN**, brukes det på over **100 nettsider**. Since **2022** har jeg jobbet med **opprettelse og forbedring av komponenter**, med fokus på å følge **beste tilgjengelighetspraksis**. Den største utfordringen har vært å opprettholde **bakoverkompatibilitet** mens vi oppdaterer og optimaliserer nøkkelkomponenter.
+## Kontekst
 
-## **Beskrivelse**
+Kit Digital UC er et sentralisert komponentbibliotek som skal forene den visuelle og funksjonelle opplevelsen i det digitale økosystemet til Det pavelige katolske universitetet i Chile. Biblioteket støtter i dag over 100 nettsider, fra akademiske portaler til interne verktøy.  
+Hovedutfordringen har vært å opprettholde bakoverkompatibilitet grunnet distribusjon via AWS S3 og CDN, samtidig som det kontinuerlig introduseres forbedringer innen tilgjengelighet, ytelse og skalerbarhet. Å balansere dette er avgjørende for å unngå avbrudd i aktive tjenester og sikre en bærekraftig utvikling.
 
-Det består av et **gjenbrukbart komponentbibliotek**, laget for å opprettholde **enhetlig visuell identitet** og **optimalisert brukeropplevelse** på alle **Universidad Católica** nettsider. Det dekker alt fra grunnleggende elementer som **kort**, **knapper** og **skjemaer**, til mer avanserte komponenter som **global topplinjen** og **agenda-widget**, noe som gjør det lettere å utvikle konsistente grensesnitt på tvers av flere nettsider.
+## Mitt bidrag
 
-Kit-et distribueres hovedsakelig via **CDN**, som muliggjør bruk på over **100 nettsider**, med målet at alle fremtidige utviklinger implementerer det. For å støtte utviklere finnes det også en **dokumentasjonsside**, opprinnelig utviklet med **Vue (Nuxt.js)** og som for tiden migreres til **React (Next.js)** med et **Strapi CMS**. Denne overgangen vil fremskynde oppdateringer og forbedre informasjonshåndtering.
+Da jeg begynte i prosjektet sent i 2022, gjennomførte jeg en grundig revisjon av eksisterende komponenter for å identifisere kritiske mangler innen tilgjengelighet og semantikk. Jeg ledet deretter implementeringen av målrettede løsninger, inkludert:
 
-## **Mitt Bidrag**
+- Migrasjon fra bruk av bakgrunnsbilder (`background-image`) til `<img>`-elementer, noe som muliggjorde meningsfulle `alt`-attributter som forbedrer støtte for hjelpemiddelsteknologi og SEO.
+- Implementering av dynamiske imports for å laste kun nødvendige komponenter per side, noe som reduserte total bundle-størrelse og forbedret lastetider.
+- Refaktorering av tastaturnavigasjon i menyer, akkordeoner og modaler for å sikre samsvar med WCAG-standarder og forbedre tilgjengeligheten for brukere med nedsatt bevegelighet.
 
-Siden **2022** har jeg vært del av teamet som er ansvarlig for å **opprette, forbedre og vedlikeholde** komponentene i Digital Kit. Mitt arbeid har fokusert på:
+Jeg samarbeidet også tett med design- og utviklingsteam for å sikre at nye komponenter samsvarte med den institusjonelle stilguiden og integrerte sømløst i tverrfaglige prosjekter som Portal UC og Agenda UC.
 
-- **Komponentutvikling**: Opprette nye gjenbrukbare komponenter som følger designretningslinjer og beste tilgjengelighetspraksis.
-- **Optimalisering og oppdateringer**: Forbedre eksisterende komponenter for bedre ytelse og brukervennlighet.
-- **Dokumentasjon**: Samarbeide om dokumentasjonssiden for å sikre at utviklere har klare og oppdaterte ressurser.
-- **Nettleserkompatibilitet**: Sikre at komponenter fungerer korrekt på tvers av ulike nettlesere og enheter.
+## Utfordringer
 
-Den største utfordringen har vært å opprettholde **bakoverkompatibilitet** mens vi implementerer forbedringer, og sikre at oppdateringer ikke ødelegger eksisterende implementeringer på de 100+ nettstedene som bruker biblioteket.
+Å opprettholde bakoverkompatibilitet var en av de største utfordringene, da enhver endring måtte evalueres nøye for å unngå funksjonsbrudd på nettsteder som fortsatt benyttet eldre versjoner av biblioteket. Vi utviklet progressive utrullingsstrategier og benyttet dynamiske imports som en sentral løsning.  
+Å rette opp i dårlig tilgjengelighetspraksis krevde ikke bare tekniske endringer, men også bevisstgjøring og dokumentasjon for teamet, noe som bidro til en mer inkluderende utviklingskultur.  
+I tillegg krevde arbeidet med flere rammeverk og teknologier (Vue/Nuxt for eksisterende dokumentasjon, React/Next for ny plattform) koordinering av migrasjoner uten å forstyrre prosjektets kontinuitet.
+
+## Resultater og læring
+
+De implementerte forbedringene resulterte i en jevnere og mer tilgjengelig brukeropplevelse, bekreftet gjennom interne tester og ytelsesmålinger. Kondisjonell lasting av komponenter reduserte bundlestørrelsen betydelig, noe som hadde en positiv effekt på Core Web Vitals og SEO.  
+Prosjektet bekreftet viktigheten av å behandle tilgjengelighet som en kontinuerlig prosess integrert i design, utvikling og vedlikehold. Det fremhevet også behovet for nøye planlegging når man utvikler teknologi i distribuerte økosystemer, med prioritering av stabilitet og kompatibilitet.
+
+## Teknologistack
+
+- **Språk og stil:** JavaScript, CSS (SASS/SCSS)
+- **Build-verktøy:** Rollup, NPM
+- **Rammeverk:** Vue (Nuxt.js) for eksisterende dokumentasjon, migrerer til React (Next.js) med Strapi CMS
+- **Distribusjonsinfrastruktur:** AWS S3 og CDN for levering av Kit Digital UC-pakker

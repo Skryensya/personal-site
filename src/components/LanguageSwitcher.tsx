@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { supportedLanguages, languages, type Language } from '@/i18n/ui';
-import { getLangFromUrl, getAlternateUrls } from '@/i18n/utils';
+import { getLangFromUrl, getAlternateUrls, addLocaleToUrl, removeLocaleFromUrl } from '@/i18n/utils';
 import DropdownButton, { DropdownItem } from './DropdownButton';
 
 interface LanguageSwitcherProps {
@@ -19,13 +19,27 @@ export default function LanguageSwitcher({ currentPath, initialLocale }: Languag
     }, []);
 
     const alternateUrls = React.useMemo(() => {
+        let pathname = '';
         if (typeof window !== 'undefined') {
-            return getAlternateUrls(window.location.pathname);
+            pathname = window.location.pathname;
+        } else if (currentPath) {
+            pathname = currentPath;
         }
-        if (currentPath) {
-            return getAlternateUrls(currentPath);
+
+        // Handle project-specific routing
+        const isProjectPage = pathname.includes('/projects/');
+        if (isProjectPage) {
+            // For project pages, we need to ensure the project exists in all languages
+            // Use the same slug but different language prefix
+            const cleanPath = removeLocaleFromUrl(pathname);
+            return supportedLanguages.map((lang) => ({
+                lang,
+                url: addLocaleToUrl(cleanPath, lang)
+            }));
         }
-        return [];
+
+        // Default behavior for other pages
+        return getAlternateUrls(pathname);
     }, [currentPath]);
 
     const handleLanguageSwitch = (lang: Language, url: string) => {
@@ -64,7 +78,7 @@ export default function LanguageSwitcher({ currentPath, initialLocale }: Languag
         <DropdownButton
             onMainClick={nextLanguage}
             dropdownContent={dropdownContent}
-            className="w-7 h-7 md:w-auto md:h-8 font-mono text-xs font-semibold uppercase tracking-wider"
+            className="w-7 h-7 @6xl:w-auto @6xl:h-8 font-mono text-xs font-semibold uppercase tracking-wider"
         >
             <span className="text-main group-hover:text-secondary">
                 {currentLang.toUpperCase()}

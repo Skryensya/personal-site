@@ -2,11 +2,12 @@
 import { type CollectionEntry, getCollection } from 'astro:content';
 import { getLangFromUrl } from '@/i18n/utils';
 import { getSlugFromId, getLanguageFromId } from '@/utils/content-utils';
-import ProjectPage from '../../components/ProjectPage.astro';
+import ProjectPage from '../../../components/ProjectPage.astro';
 
 export async function getStaticPaths() {
     const allProjects = await getCollection('projects');
     const paths: any[] = [];
+    const languages = ['en', 'no'] as const; // Only non-default languages need explicit paths
     
     // Group projects by slug
     const projectsBySlug = new Map();
@@ -21,18 +22,19 @@ export async function getStaticPaths() {
         projectsBySlug.get(slug)[language] = project;
     });
     
-    // Generate paths - this will handle Spanish (no prefix) routes only
-    // Non-default languages (en, no) are handled by [...lang]/projects/[slug].astro
+    // Generate paths for non-default languages only
     for (const [slug, projectsByLang] of projectsBySlug) {
-        // Only generate if Spanish version exists
-        if (projectsByLang['es']) {
-            paths.push({
-                params: { slug },
-                props: { 
-                    projectsByLang,
-                    slug
-                }
-            });
+        for (const lang of languages) {
+            if (projectsByLang[lang]) { // Only create path if project exists in this language
+                paths.push({
+                    params: { lang, slug },
+                    props: { 
+                        projectsByLang,
+                        slug,
+                        language: lang
+                    }
+                });
+            }
         }
     }
     
@@ -42,9 +44,10 @@ export async function getStaticPaths() {
 type Props = { 
     projectsByLang: Record<string, CollectionEntry<'projects'>>;
     slug: string;
+    language: string;
 };
 
-const { projectsByLang, slug } = Astro.props;
+const { projectsByLang, slug, language } = Astro.props;
 const currentLocale = getLangFromUrl(Astro.url);
 ---
 
@@ -52,4 +55,5 @@ const currentLocale = getLangFromUrl(Astro.url);
     projectsByLang={projectsByLang}
     slug={slug}
     currentLocale={currentLocale}
+    language={language}
 />

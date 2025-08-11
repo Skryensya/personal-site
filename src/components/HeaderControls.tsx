@@ -337,7 +337,7 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
                             ))}
                         </div>
                     }
-                    className="w-7 h-7 md:w-full md:h-8"
+                    className="w-7 h-7 @6xl:w-full @6xl:h-8"
                 >
                     <div className="flex items-center gap-2 w-full">
                         <div
@@ -346,7 +346,7 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
                                 background: `linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%)`
                             }}
                         />
-                        <span className="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary truncate">
+                        <span className="hidden @6xl:block font-mono text-xs font-semibold text-main group-hover:text-secondary truncate">
                             {getThemeNameInSpanish(currentTheme.id)}
                         </span>
                     </div>
@@ -394,11 +394,11 @@ export default function HeaderControls({ themes }: HeaderControlsProps) {
                             ))}
                         </div>
                     }
-                    className="w-7 h-7 md:w-auto md:h-8"
+                    className="w-7 h-7 @6xl:w-auto @6xl:h-8"
                 >
                     <div className="flex items-center gap-2">
                         <div className="w-3.5 h-3.5 relative flex-shrink-0">{getModeIcon(currentMode, '')}</div>
-                        <span className="hidden md:block font-mono text-xs font-semibold text-main group-hover:text-secondary">{getModeNameInSpanish(currentMode)}</span>
+                        <span className="hidden @6xl:block font-mono text-xs font-semibold text-main group-hover:text-secondary">{getModeNameInSpanish(currentMode)}</span>
                     </div>
                 </DropdownButton>
         );

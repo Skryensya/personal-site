@@ -14,7 +14,7 @@ const { title, description = "", href, slug, dataIndex, dataImage, dataImageAlt,
 ---
 
 <div 
-    class="w-full aspect-[2/3] relative group mobile-card-height" 
+    class="w-[clamp(100px,20vw,100px)] aspect-[2/3] relative group mobile-card-height" 
     style={`view-transition-name: project-card-${slug};`}
 >
     <div 
@@ -82,19 +82,12 @@ const { title, description = "", href, slug, dataIndex, dataImage, dataImageAlt,
                         --triangle-text: calc(var(--triangle-inner) - 30px);
                     }
 
-                    /* Always natural height based on individual content */
-                    .mobile-card-height {
-                        height: auto;
-                        align-self: start;
-                    }
+                   
+                 
 
                     /* Desktop: perspective and transforms */
                     @media (min-width: 1024px) {
-                        .mobile-card-height {
-                            perspective: 1000px;
-                            height: auto;
-                        }
-                        
+               
                         .desktop-transforms {
                             transform-style: preserve-3d;
                             transform-origin: right center;

@@ -141,7 +141,10 @@ export const ui = {
         'cv.languages.title': 'Idiomas',
         'cv.languages.spanish': 'Español (Nativo)',
         'cv.languages.english': 'Inglés (Avanzado)',
-        'cv.languages.norwegian': 'Noruego (Intermedio)'
+        'cv.languages.norwegian': 'Noruego (Intermedio)',
+        
+        // Norwegian disclaimer banner
+        'disclaimer.norwegian.compact': 'Estoy aprendiendo noruego como objetivo personal, pero para una comunicación más clara, no dudes en contactarme en inglés o español.'
     },
     en: {
         // Navigation
@@ -276,7 +279,10 @@ export const ui = {
         'cv.languages.title': 'Languages',
         'cv.languages.spanish': 'Spanish (Native)',
         'cv.languages.english': 'English (Advanced)',
-        'cv.languages.norwegian': 'Norwegian (Intermediate)'
+        'cv.languages.norwegian': 'Norwegian (Intermediate)',
+        
+        // Norwegian disclaimer banner
+        'disclaimer.norwegian.compact': 'I am learning Norwegian as a personal goal, but for clearer communication, feel free to contact me in English or Spanish.'
     },
     no: {
         // Navigation
@@ -411,7 +417,10 @@ export const ui = {
         'cv.languages.title': 'Språk',
         'cv.languages.spanish': 'Spansk (Morsmål)',
         'cv.languages.english': 'Engelsk (Avansert)',
-        'cv.languages.norwegian': 'Norsk (Middels)'
+        'cv.languages.norwegian': 'Norsk (Middels)',
+        
+        // Norwegian disclaimer banner
+        'disclaimer.norwegian.compact': 'Jeg lærer norsk som et personlig mål, men for tydeligere kommunikasjon, kontakt meg gjerne på engelsk eller spansk.'
     }
 } as const;
 
