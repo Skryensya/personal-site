@@ -16,22 +16,26 @@ This file provides comprehensive guidance to Claude Code (claude.ai/code) when w
 
 ## Development Commands
 
+**IMPORTANT: DO NOT run these commands unless explicitly requested by the user:**
+
 ```bash
-# Start development server (localhost:4321)
+# Start development server (localhost:4321) - ONLY if user requests
 npm run dev
 
-# Build for production
+# Build for production - ONLY if user requests
 npm run build
 
-# Preview production build
+# Preview production build - ONLY if user requests
 npm run preview
 
-# Run Astro CLI commands
+# Run Astro CLI commands - ONLY if user requests
 npm run astro -- <command>
 
-# Performance analysis
+# Performance analysis - ONLY if user requests
 npm run unlighthouse
 ```
+
+**Default behavior: Make code changes only. Do not start servers or build unless specifically asked.**
 
 ## Project Architecture
 
@@ -335,7 +339,7 @@ const { useState, useEffect } = React;
 ```
 
 ### Testing Strategy
-- **Build verification**: `npm run build` for syntax checking
+- **Build verification**: Only when explicitly requested by user
 - **Performance testing**: Lighthouse CI integration
 - **Accessibility testing**: Built-in Astro checks
 - **Cross-browser compatibility**: Modern evergreen browsers
@@ -367,7 +371,7 @@ PUBLIC_ANALYTICS_ID=your-analytics-id
 ### Content Updates
 1. Add new content to appropriate collection (`blog/`, `projects/`)
 2. Update featured flags for homepage display
-3. Verify build passes: `npm run build`
+3. Verify code implementation is correct (do not run build unless requested)
 4. Check all language versions display correctly
 
 ### Design System Updates
@@ -399,11 +403,11 @@ PUBLIC_ANALYTICS_ID=your-analytics-id
 
 ## Quick Reference
 
-### Essential Commands
+### Essential Commands (Only run when user explicitly requests)
 ```bash
-npm run dev          # Development server
-npm run build        # Production build
-npm run astro add    # Add integrations
+npm run dev          # Development server - ONLY if requested
+npm run build        # Production build - ONLY if requested  
+npm run astro add    # Add integrations - ONLY if requested
 ```
 
 ### Key File Locations

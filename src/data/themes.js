@@ -14,17 +14,6 @@ function getCSSVariable(variableName) {
 
 export const themes = [
     {
-        id: 'gameboy',
-        name: 'GAME BOY',
-        description: 'Monochrome LCD legend',
-        get colorful() {
-            return getCSSVariable('--gameboy-colorful') || '#9bbc0f';
-        },
-        get contrasty() {
-            return getCSSVariable('--gameboy-contrasty') || '#081f08';
-        }
-    },
-    {
         id: 'dos',
         name: 'MS-DOS',
         description: 'Command line interface',
@@ -33,6 +22,17 @@ export const themes = [
         },
         get contrasty() {
             return getCSSVariable('--dos-contrasty') || '#000000';
+        }
+    },
+    {
+        id: 'gameboy',
+        name: 'GAME BOY',
+        description: 'Monochrome LCD legend',
+        get colorful() {
+            return getCSSVariable('--gameboy-colorful') || '#9bbc0f';
+        },
+        get contrasty() {
+            return getCSSVariable('--gameboy-contrasty') || '#081f08';
         }
     },
     {
@@ -129,17 +129,26 @@ export const themeKeys = themes.map((theme) => theme.id);
 
 // Simple theme management with localStorage optimization
 export function applyTheme(themeId, isDark = false, mode = null) {
-    document.documentElement.setAttribute('data-theme', themeId);
-    document.documentElement.classList.toggle('dark', isDark);
-
-    // console.log('Applied theme:', themeId, 'isDark:', isDark, 'mode:', mode);
+    const root = document.documentElement;
+    
+    // Set theme data attribute
+    root.setAttribute('data-theme', themeId);
+    
+    // Get theme colors
+    const theme = themes.find(t => t.id === themeId) || themes[0];
+    
+    // Apply dark class
+    root.classList.toggle('dark', isDark);
+    
+    // Set CSS custom properties - the CSS file handles the rest via :root[data-theme] and html.dark selectors
+    root.style.setProperty('--theme-colorful', theme.colorful);
+    root.style.setProperty('--theme-contrasty', theme.contrasty);
+    
+    // Theme applied successfully
 
     // Persist to localStorage with error handling
     try {
         localStorage.setItem('theme-id', themeId);
-        if (mode) {
-            localStorage.setItem('theme-mode-preference', mode);
-        }
         localStorage.setItem('theme-mode', isDark ? 'dark' : 'light');
     } catch (e) {
         console.warn('Failed to save theme to localStorage:', e);
@@ -156,18 +165,17 @@ export function loadThemeFromStorage() {
     try {
         const savedThemeId = localStorage.getItem('theme-id');
         const savedMode = localStorage.getItem('theme-mode');
-        const savedModePreference = localStorage.getItem('theme-mode-preference');
 
         // Validate saved theme exists in current theme list
         const theme = savedThemeId && themes.find((t) => t.id === savedThemeId) ? savedThemeId : themes[0].id;
 
         const isDark = savedMode === 'dark';
-        const mode = savedModePreference || (isDark ? 'dark' : 'light');
+        const mode = isDark ? 'dark' : 'light';
 
         return { themeId: theme, isDark, mode };
     } catch (e) {
         console.warn('Failed to load theme from localStorage:', e);
-        return { themeId: themes[0].id, isDark: false, mode: 'light' };
+        return { themeId: 'dos', isDark: false, mode: 'light' };
     }
 }
 

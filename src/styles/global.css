@@ -5,7 +5,7 @@
     :root {
         --main-hue: 0;
         --selection-opacity: 0.8;
-        --user-selection-color: hsl(var(--main-hue), 80%, 50%);
+        --selection-color: #ff0080; /* Will be animated */
         --max-w-size: 1280px;
         --paragraph-max-width: 80ch;
     }
@@ -61,13 +61,13 @@
     }
 
     ::selection {
-        background: var(--user-selection-color);
+        background: var(--selection-color);
         color: var(--color-secondary);
         font-weight: 700 !important;
     }
 
     a::selection {
-        background: var(--user-selection-color);
+        background: var(--selection-color);
         color: var(--color-secondary);
     }
 

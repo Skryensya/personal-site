@@ -24,58 +24,6 @@ const navItems = [
 
 ---
 
-<!-- Apply theme immediately from localStorage before any rendering -->
-<script>
-  // Immediate theme application - no delays, no waiting for React
-  (function() {
-    if (typeof window === 'undefined') return;
-    
-    const savedThemeId = localStorage.getItem('theme-id');
-    const savedMode = localStorage.getItem('theme-mode') || 'system';
-    
-    // Apply theme immediately if we have one saved
-    if (savedThemeId) {
-      // Import theme data inline to avoid module loading delays
-      const themes = {
-        'void': { colorful: '#00ff00', contrasty: '#000000' },
-        'phantom': { colorful: '#ff00ff', contrasty: '#000000' },
-        'azure': { colorful: '#0080ff', contrasty: '#ffffff' },
-        'ember': { colorful: '#ff4500', contrasty: '#000000' },
-        'violet': { colorful: '#8a2be2', contrasty: '#ffffff' },
-        'crimson': { colorful: '#dc143c', contrasty: '#ffffff' },
-        'forest': { colorful: '#228b22', contrasty: '#ffffff' }
-      };
-      
-      const theme = themes[savedThemeId];
-      if (theme) {
-        // Determine if dark mode should be applied
-        let isDark = false;
-        if (savedMode === 'dark') {
-          isDark = true;
-        } else if (savedMode === 'system') {
-          isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        }
-        
-        // Apply theme colors immediately
-        const root = document.documentElement;
-        if (isDark) {
-          root.style.setProperty('--color-main', theme.contrasty);
-          root.style.setProperty('--color-secondary', theme.colorful);
-          root.classList.add('dark');
-        } else {
-          root.style.setProperty('--color-main', theme.colorful);
-          root.style.setProperty('--color-secondary', theme.contrasty);
-          root.classList.remove('dark');
-        }
-        
-        // Set global state for React components
-        window.__THEME_ID__ = savedThemeId;
-        window.__THEME_MODE__ = savedMode;
-        window.__THEME_READY__ = true;
-      }
-    }
-  })();
-</script>
 
 <nav class={`${isCVPage ? 'relative' : 'sticky top-0'} z-[300] flex justify-center mx-auto max-w-[var(--max-w-size)]`} style="--navbar-height: 76px;">
   <div class={`max-w-[1280px] w-full px-4 mt-4`}>
@@ -509,17 +457,37 @@ const navItems = [
 
 
   /* Theme previews using CSS variables */
-  .void-preview { 
-    background: linear-gradient(45deg, var(--void-colorful) 50%, var(--void-contrasty) 50%); 
-    border-color: var(--void-contrasty) !important;
+  .gameboy-preview { 
+    background: linear-gradient(45deg, var(--gameboy-colorful) 50%, var(--gameboy-contrasty) 50%); 
+    border-color: var(--gameboy-contrasty) !important;
   }
-  .phantom-preview { 
-    background: linear-gradient(45deg, var(--phantom-colorful) 50%, var(--phantom-contrasty) 50%); 
-    border-color: var(--phantom-contrasty) !important;
+  .dos-preview { 
+    background: linear-gradient(45deg, var(--dos-colorful) 50%, var(--dos-contrasty) 50%); 
+    border-color: var(--dos-contrasty) !important;
   }
-  .azure-preview { 
-    background: linear-gradient(45deg, var(--azure-colorful) 50%, var(--azure-contrasty) 50%); 
-    border-color: var(--azure-contrasty) !important;
+  .commodore64-preview { 
+    background: linear-gradient(45deg, var(--commodore64-colorful) 50%, var(--commodore64-contrasty) 50%); 
+    border-color: var(--commodore64-contrasty) !important;
+  }
+  .caution-preview { 
+    background: linear-gradient(45deg, var(--caution-colorful) 50%, var(--caution-contrasty) 50%); 
+    border-color: var(--caution-contrasty) !important;
+  }
+  .sunset-preview { 
+    background: linear-gradient(45deg, var(--sunset-colorful) 50%, var(--sunset-contrasty) 50%); 
+    border-color: var(--sunset-contrasty) !important;
+  }
+  .neon-preview { 
+    background: linear-gradient(45deg, var(--neon-colorful) 50%, var(--neon-contrasty) 50%); 
+    border-color: var(--neon-contrasty) !important;
+  }
+  .ocean-preview { 
+    background: linear-gradient(45deg, var(--ocean-colorful) 50%, var(--ocean-contrasty) 50%); 
+    border-color: var(--ocean-contrasty) !important;
+  }
+  .forest-preview { 
+    background: linear-gradient(45deg, var(--forest-colorful) 50%, var(--forest-contrasty) 50%); 
+    border-color: var(--forest-contrasty) !important;
   }
   .ember-preview { 
     background: linear-gradient(45deg, var(--ember-colorful) 50%, var(--ember-contrasty) 50%); 
@@ -528,14 +496,6 @@ const navItems = [
   .violet-preview { 
     background: linear-gradient(45deg, var(--violet-colorful) 50%, var(--violet-contrasty) 50%); 
     border-color: var(--violet-contrasty) !important;
-  }
-  .crimson-preview { 
-    background: linear-gradient(45deg, var(--crimson-colorful) 50%, var(--crimson-contrasty) 50%); 
-    border-color: var(--crimson-contrasty) !important;
-  }
-  .forest-preview { 
-    background: linear-gradient(45deg, var(--forest-colorful) 50%, var(--forest-contrasty) 50%); 
-    border-color: var(--forest-contrasty) !important;
   }
 
   /* Mode icon states */

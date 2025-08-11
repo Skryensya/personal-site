@@ -9,8 +9,8 @@
 
 /* Base theme variables structure */
 :root {
-    --theme-colorful: #9bbc0f; /* Default: GAME BOY colorful */
-    --theme-contrasty: #081f08; /* Default: GAME BOY contrasty */
+    --theme-colorful: #ffffff; /* Default: MS-DOS colorful */
+    --theme-contrasty: #000000; /* Default: MS-DOS contrasty */
 
     /* Light mode: contrasty text on colorful background */
     --color-main: var(--theme-contrasty);
@@ -47,17 +47,17 @@ html.dark {
 
 /* Tech-Themed Retro Computing Definitions - 10 Iconic Color Themes */
 
-/* Game Boy theme - LCD dot matrix display (1989) - DEFAULT */
+/* MS-DOS theme - Command line interface (1981-1995) - DEFAULT */
 :root,
-:root[data-theme='gameboy'] {
-    --theme-colorful: var(--gameboy-colorful);
-    --theme-contrasty: var(--gameboy-contrasty);
-}
-
-/* MS-DOS theme - Command line interface (1981-1995) */
 :root[data-theme='dos'] {
     --theme-colorful: var(--dos-colorful);
     --theme-contrasty: var(--dos-contrasty);
+}
+
+/* Game Boy theme - LCD dot matrix display (1989) */
+:root[data-theme='gameboy'] {
+    --theme-colorful: var(--gameboy-colorful);
+    --theme-contrasty: var(--gameboy-contrasty);
 }
 
 /* Commodore 64 theme - Blue screen computing legend (1982) */
