@@ -78,7 +78,7 @@ export default function ProjectCardReact({ title, description = '', href, slug, 
                 >
                     {/* Card face */}
                     <div
-                        className="absolute w-full h-full bg-main border-2 border-main transition-all duration-200 ease-out"
+                        className="absolute w-full h-full bg-main border-2 border-main"
                         style={{
                             transform: 'translateZ(25px)',
                             clipPath: 'polygon(0 0, calc(100% - var(--triangle-outer)) 0, 100% var(--triangle-outer), 100% 100%, 0 100%)'
@@ -93,7 +93,7 @@ export default function ProjectCardReact({ title, description = '', href, slug, 
 
                         {/* Inner content container with opposite color */}
                         <div
-                            className="absolute inset-0.5 top-12 bg-secondary border-2 border-main transition-all duration-200 ease-out"
+                            className="absolute inset-0.5 top-12 bg-secondary border-2 border-main"
                             style={{
                                 clipPath: 'polygon(0 0, calc(100% - var(--triangle-inner)) 0, 100% var(--triangle-inner), 100% 100%, 0 100%)'
                             }}
