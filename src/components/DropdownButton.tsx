@@ -53,11 +53,11 @@ export default function DropdownButton({
                 fallbackPlacements: ['top-start', 'bottom-end', 'top-end']
             }),
             shift({
-                padding: 16
+                padding: 8
             })
         ],
         whileElementsMounted: autoUpdate,
-        placement: 'bottom-end',
+        placement: 'bottom-start',
         strategy: 'fixed'
     });
 
@@ -67,7 +67,9 @@ export default function DropdownButton({
 
     const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss, role]);
 
-    const handleMainClick = () => {
+    const handleMainClick = (event: React.MouseEvent) => {
+        event.preventDefault();
+        event.stopPropagation();
         if (onMainClick && !disabled) {
             onMainClick();
         }
@@ -100,7 +102,7 @@ export default function DropdownButton({
                     type="button"
                     onClick={handleDropdownClick}
                     disabled={disabled}
-                    className="hidden md:flex items-center justify-center min-w-8 w-8 h-8 bg-secondary border-double border-2 border-main hover:bg-main hover:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold uppercase tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)]"
+                    className="flex items-center justify-center min-w-8 w-8 h-8 bg-secondary border-double border-2 border-main hover:bg-main hover:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold uppercase tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)]"
                     aria-haspopup="true"
                     aria-expanded={isOpen}
                     {...getReferenceProps()}

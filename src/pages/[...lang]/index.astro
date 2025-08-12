@@ -19,7 +19,7 @@ const t = useTranslations(currentLocale);
 ---
 
 <Layout description={siteConfig.description} image={siteConfig.image}>
-    <Hero />
+    <Hero lang={currentLocale} />
 
     <BigSectionContainer title={t('home.technologies')} id="tecnologia" style="view-transition-name: technologies-section;"> 
         <MarqueeSection
@@ -82,5 +82,5 @@ const t = useTranslations(currentLocale);
     </BigSectionContainer>
 
     <!-- PROYECTOS DESTACADOS -->
-    <ProjectsSection /> 
+    <ProjectsSection lang={currentLocale} /> 
 </Layout>
