@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { applyTheme } from '../data/themes.js';
+import { applyTheme, themes as defaultThemes } from '@/config/themes';
 
 const { useState, useEffect, useCallback } = React;
 
@@ -13,7 +13,7 @@ export interface Theme {
 
 export type Mode = 'light' | 'dark' | 'system';
 
-export function useThemeMode(themes: Theme[]) {
+export function useThemeMode(themes: Theme[] = defaultThemes) {
     // Initialize theme from global state or localStorage
     const [currentTheme, setCurrentTheme] = useState<Theme>(() => {
         if (typeof window !== 'undefined') {
