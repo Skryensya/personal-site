@@ -1,8 +1,8 @@
 --- 
 import { themes } from '../data/themes.js';
 import HeaderControls from './HeaderControls.tsx';
-import LanguageSwitcher from './LanguageSwitcher.tsx';
-import MobileMenu from './MobileMenu.tsx';
+import LanguageSwitcher from './LanguageSwitcher.tsx'; 
+import Button from './Button.astro';
 import { getLangFromUrl } from '@/i18n/utils';
 import { useTranslations } from '@/i18n/utils';
 import { defaultLang } from '@/i18n/ui';
@@ -125,9 +125,13 @@ const navItems = [
         </div>
         
         <!-- React components layer - absolute positioned to match exactly -->
-        <div class="absolute top-0 right-0 h-full flex items-center gap-x-4 gap-y-1 pointer-events-auto" id="header-controls-react" style="display: none;">
-          <HeaderControls themes={themes} client:load />
-          <LanguageSwitcher initialLocale={currentLocale} client:load />
+        <div class="absolute top-0 right-0 h-full flex flex-row items-center gap-x-4 gap-y-1 pointer-events-auto" id="header-controls-react" style="display: none;">
+          <div data-theme-control class="flex flex-row items-center gap-x-4">
+            <HeaderControls themes={themes} client:load />
+          </div>
+          <div data-lang-control>
+            <LanguageSwitcher initialLocale={currentLocale} client:load />
+          </div>
         </div>
         
         <!-- Invisible spacer to reserve space -->
@@ -187,30 +191,116 @@ const navItems = [
   </div>
 </nav>
 
-<!-- Mobile Dropdown Menu - Simple like desktop dropdowns -->
+<!-- Mobile Dropdown Menu -->
 <div 
   id="mobile-dropdown"
-  class="@6xl:hidden fixed right-4 bg-red-500 border-4 border-black z-[9999] opacity-0 pointer-events-none"
-  style="top: 100px; min-width: 250px; max-width: 90vw;"
+  class="@6xl:hidden fixed z-[9999] opacity-0 pointer-events-none"
+  style="top: calc(var(--navbar-height) + 1rem); right: calc(1rem + 16px);"
 >
-  <div class="p-3">
-    <!-- Navigation Links -->
-    {navItems.slice(1).map((item) => (
-      <a
-        href={item.href}
-        class="mobile-nav-link block px-3 py-2 text-sm font-bold text-main hover:bg-main hover:text-secondary border border-main mb-2 uppercase tracking-wide text-center"
-      >
-        {item.label}
-      </a>
-    ))}
-    
-    <!-- Divider -->
-    <div class="border-t border-main my-3"></div>
-    
-    <!-- Controls -->
-    <div class="space-y-3">
-      <HeaderControls themes={themes} client:load />
-      <LanguageSwitcher initialLocale={currentLocale} client:load />
+  <!-- Simple backdrop for click-to-close -->
+  <div 
+    class="fixed inset-0 -z-10"
+    id="mobile-backdrop"
+  ></div>
+  
+  <!-- Menu content -->
+  <div class="w-[210px] max-w-[85vw]">
+    <div class="bg-secondary border-double border-2 border-main">
+      <!-- Navigation Links -->
+      <div class="p-2 flex flex-col space-y-1">
+        {navItems.slice(1).map((item) => (
+          <div class="w-full [&>div]:!w-full [&>div]:!block">
+            <Button 
+              href={item.href} 
+              size="sm" 
+              class="!w-full !flex !items-center !justify-center font-mono text-sm"
+            >
+              {item.label}
+            </Button>
+          </div>
+        ))}
+      </div>
+      
+      <!-- Divider -->
+      <div class="border-t border-main"></div>
+      
+      <!-- Controls -->
+      <div class="p-2 space-y-2">
+        <!-- Theme Control -->
+        <div class="w-full flex bg-secondary border border-main">
+          <button 
+            class="aspect-square h-8 flex items-center justify-center bg-main text-secondary border-r border-main hover:bg-secondary hover:text-main"
+            id="mobile-theme-prev"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left">
+              <path d="m15 18-6-6 6-6"/>
+            </svg>
+          </button>
+          <div class="flex-1 flex items-center justify-center gap-2 px-3 py-2 font-mono text-xs font-bold uppercase tracking-wide">
+            <div class="w-4 h-4 border border-main" style="background: linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%);"></div>
+            <span id="mobile-theme-label">TEMA</span>
+          </div>
+          <button 
+            class="aspect-square h-8 flex items-center justify-center bg-main text-secondary border-l border-main hover:bg-secondary hover:text-main"
+            id="mobile-theme-next"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right-icon lucide-chevron-right">
+              <path d="m9 18 6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Mode Control -->
+        <div class="w-full flex bg-secondary border border-main">
+          <button 
+            class="aspect-square h-8 flex items-center justify-center bg-main text-secondary border-r border-main hover:bg-secondary hover:text-main"
+            id="mobile-mode-prev"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left">
+              <path d="m15 18-6-6 6-6"/>
+            </svg>
+          </button>
+          <div class="flex-1 flex items-center justify-center gap-2 px-3 py-2 font-mono text-xs font-bold uppercase tracking-wide">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" id="mobile-mode-icon">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+            <span id="mobile-mode-label">MODO</span>
+          </div>
+          <button 
+            class="aspect-square h-8 flex items-center justify-center bg-main text-secondary border-l border-main hover:bg-secondary hover:text-main"
+            id="mobile-mode-next"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right-icon lucide-chevron-right">
+              <path d="m9 18 6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Language Control -->
+        <div class="w-full flex bg-secondary border border-main">
+          <button 
+            class="aspect-square h-8 flex items-center justify-center bg-main text-secondary border-r border-main hover:bg-secondary hover:text-main"
+            id="mobile-lang-prev"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-left-icon lucide-chevron-left">
+              <path d="m15 18-6-6 6-6"/>
+            </svg>
+          </button>
+          <div class="flex-1 flex items-center justify-center gap-2 px-3 py-2 font-mono text-xs font-bold uppercase tracking-wide">
+            <span id="mobile-lang-label">{currentLocale === 'es' ? 'ESPAÑOL' : currentLocale === 'en' ? 'ENGLISH' : 'NORSK'}</span>
+          </div>
+          <button 
+            class="aspect-square h-8 flex items-center justify-center bg-main text-secondary border-l border-main hover:bg-secondary hover:text-main"
+            id="mobile-lang-next"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chevron-right-icon lucide-chevron-right">
+              <path d="m9 18 6-6-6-6"/>
+            </svg>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -360,48 +450,230 @@ const navItems = [
     function setupMobileMenu() {
       const button = document.getElementById('mobile-menu-trigger');
       const dropdown = document.getElementById('mobile-dropdown');
+      const backdrop = document.getElementById('mobile-backdrop');
+      const hamburgerIcon = document.getElementById('hamburger-icon');
+      const closeIcon = document.getElementById('close-icon');
       
-      console.log('setupMobileMenu called:', { button, dropdown });
+      console.log('setupMobileMenu called:', { button, dropdown, backdrop });
       
-      if (!button || !dropdown) {
-        console.error('Mobile menu elements not found!', { button, dropdown });
+      if (!button || !dropdown || !backdrop) {
+        console.error('Mobile menu elements not found!', { button, dropdown, backdrop });
         return;
       }
 
       let isOpen = false;
 
-      button.onclick = function(e) {
+      function closeMenu() {
+        isOpen = false;
+        dropdown.style.opacity = '0';
+        dropdown.style.pointerEvents = 'none';
+        hamburgerIcon?.classList.remove('hidden');
+        closeIcon?.classList.add('hidden');
+        console.log('Closing dropdown...');
+      }
+
+      function openMenu() {
+        isOpen = true;
+        dropdown.style.opacity = '1';
+        dropdown.style.pointerEvents = 'auto';
+        hamburgerIcon?.classList.add('hidden');
+        closeIcon?.classList.remove('hidden');
+        console.log('Opening dropdown...');
+      }
+
+      function handleToggle(e) {
         e.preventDefault();
         e.stopPropagation();
         
         console.log('BUTTON CLICKED! isOpen:', isOpen);
         
-        isOpen = !isOpen;
-        
         if (isOpen) {
-          console.log('Opening dropdown...');
-          dropdown.style.opacity = '1';
-          dropdown.style.pointerEvents = 'auto';
-          dropdown.style.display = 'block';
+          closeMenu();
         } else {
-          console.log('Closing dropdown...');
-          dropdown.style.opacity = '0';
-          dropdown.style.pointerEvents = 'none';
+          openMenu();
+        }
+      }
+
+      button.onclick = handleToggle;
+
+      // Close menu when clicking on the gradient backdrop
+      backdrop.onclick = function(e) {
+        e.preventDefault();
+        closeMenu();
+      };
+
+      // Also close when clicking anywhere in the dropdown container except menu content
+      dropdown.onclick = function(e) {
+        // Only close if clicking on the dropdown container itself, not its children
+        if (e.target === dropdown) {
+          closeMenu();
         }
       };
       
-      // Also try touch events for mobile
-      button.addEventListener('touchstart', function(e) {
+      // Handle touch events for mobile without conflicts
+      button.addEventListener('touchend', function(e) {
         e.preventDefault();
-        console.log('TOUCH EVENT!');
-        button.onclick(e);
-      });
+        e.stopPropagation();
+        console.log('TOUCH END EVENT!');
+        handleToggle(e);
+      }, { passive: false });
 
       console.log('Mobile menu setup complete!');
     }
 
     // Call setup function
     setupMobileMenu();
+
+    // Mobile control buttons functionality
+    function setupMobileControlButtons() {
+      const themePrev = document.getElementById('mobile-theme-prev');
+      const themeNext = document.getElementById('mobile-theme-next');
+      const modePrev = document.getElementById('mobile-mode-prev');
+      const modeNext = document.getElementById('mobile-mode-next');
+      const langPrev = document.getElementById('mobile-lang-prev');
+      const langNext = document.getElementById('mobile-lang-next');
+      
+      // Theme navigation
+      if (themePrev) {
+        themePrev.onclick = function() {
+          // Use keyboard shortcut for previous theme
+          const event = new KeyboardEvent('keydown', { 
+            key: 'ArrowLeft', 
+            metaKey: true 
+          });
+          document.dispatchEvent(event);
+          setTimeout(updateMobileThemeDisplay, 10);
+        };
+      }
+      
+      if (themeNext) {
+        themeNext.onclick = function() {
+          // Use keyboard shortcut for next theme
+          const event = new KeyboardEvent('keydown', { 
+            key: 'ArrowRight', 
+            metaKey: true 
+          });
+          document.dispatchEvent(event);
+          setTimeout(updateMobileThemeDisplay, 10);
+        };
+      }
+
+      // Mode navigation
+      if (modePrev) {
+        modePrev.onclick = function() {
+          const desktopModeButton = document.querySelector('[data-theme-control] .inline-flex:nth-child(2) button:first-child');
+          if (desktopModeButton) {
+            desktopModeButton.click();
+            setTimeout(updateMobileModeDisplay, 10);
+          }
+        };
+      }
+      
+      if (modeNext) {
+        modeNext.onclick = function() {
+          const desktopModeButton = document.querySelector('[data-theme-control] .inline-flex:nth-child(2) button:first-child');
+          if (desktopModeButton) {
+            desktopModeButton.click();
+            setTimeout(updateMobileModeDisplay, 10);
+          }
+        };
+      }
+
+      // Language navigation
+      if (langPrev) {
+        langPrev.onclick = function() {
+          const desktopLangButton = document.querySelector('[data-lang-control] .inline-flex button:first-child');
+          if (desktopLangButton) {
+            desktopLangButton.click();
+          }
+        };
+      }
+      
+      if (langNext) {
+        langNext.onclick = function() {
+          const desktopLangButton = document.querySelector('[data-lang-control] .inline-flex button:first-child');
+          if (desktopLangButton) {
+            desktopLangButton.click();
+          }
+        };
+      }
+    }
+
+    // Update mobile theme display to show current theme name
+    function updateMobileThemeDisplay() {
+      const themeLabel = document.getElementById('mobile-theme-label');
+      if (themeLabel) {
+        // Get current theme from localStorage
+        const currentThemeId = localStorage.getItem('theme-id');
+        if (currentThemeId) {
+          const themeNames = {
+            'gameboy': 'GAMEBOY',
+            'dos': 'TERMINAL', 
+            'commodore64': 'COMMODORE',
+            'caution': 'PRECAUCION',
+            'sunset': 'ATARDECER',
+            'neon': 'NEON',
+            'ocean': 'OCEANO',
+            'forest': 'BOSQUE',
+            'ember': 'BRASA',
+            'violet': 'VIOLETA'
+          };
+          themeLabel.textContent = themeNames[currentThemeId] || currentThemeId.toUpperCase();
+        }
+      }
+    }
+
+    // Update mobile mode display to show current mode name and icon
+    function updateMobileModeDisplay() {
+      const modeLabel = document.getElementById('mobile-mode-label');
+      const modeIcon = document.getElementById('mobile-mode-icon');
+      
+      if (modeLabel && modeIcon) {
+        // Get current mode from localStorage
+        const currentMode = localStorage.getItem('theme-mode') || 'system';
+        
+        const modeNames = {
+          'light': 'CLARO',
+          'dark': 'OSCURO',
+          'system': 'SISTEMA'
+        };
+        
+        modeLabel.textContent = modeNames[currentMode] || currentMode.toUpperCase();
+        
+        // Update icon based on mode
+        switch(currentMode) {
+          case 'light':
+            modeIcon.innerHTML = '<circle cx="12" cy="12" r="5" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />';
+            break;
+          case 'dark':
+            modeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />';
+            break;
+          case 'system':
+          default:
+            modeIcon.innerHTML = '<rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line>';
+            break;
+        }
+      }
+    }
+
+    // Initialize mobile controls
+    setupMobileControlButtons();
+    
+    // Update displays on page load
+    setTimeout(() => {
+      updateMobileThemeDisplay();
+      updateMobileModeDisplay();
+    }, 50);
+    
+    // Listen for theme changes to update mobile display
+    window.addEventListener('storage', function(e) {
+      if (e.key === 'theme-id') {
+        updateMobileThemeDisplay();
+      }
+      if (e.key === 'theme-mode') {
+        updateMobileModeDisplay();
+      }
+    });
 
     // Initialize global theme state (theme already applied by inline script)
     initializeGlobalTheme();
@@ -553,6 +825,8 @@ const navItems = [
   }
 
  
+
+
 
   /* Hide hotkeys on mobile devices */
   @media (max-width: 768px) {
