@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { useThemeMode, type Theme } from './useThemeMode';
+import { themes as defaultThemes } from '@/config/themes';
 import ThemeButton from './ThemeButton';
 import ModeButton from './ModeButton';
 
 interface HeaderControlsProps {
-    themes: Theme[];
+    themes?: Theme[];
 }
 
-export default function HeaderControls({ themes }: HeaderControlsProps) {
+export default function HeaderControls({ themes = defaultThemes }: HeaderControlsProps) {
     const {
         currentTheme,
         currentMode,

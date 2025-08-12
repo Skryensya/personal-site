@@ -1,6 +1,14 @@
 /* 
  * Tech-Themed Retro Computing System - 10 Iconic Computing & Gaming Themes
  * 
+ * CENTRALIZED CONFIGURATION: /src/config/themes.ts
+ * 
+ * Edit theme colors, names, and effects in the centralized config file:
+ * /src/config/themes.ts - Single source of truth for all theme data
+ * 
+ * This CSS file provides the styling implementation.
+ * Color values are defined in the TypeScript config and applied via CSS custom properties.
+ * 
  * Inspired by legendary computers, consoles, and tech culture
  * Maximum nostalgia factor with authentic colors from computing history
  * High contrast ratios for accessibility (WCAG AA compliance)
