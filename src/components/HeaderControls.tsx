@@ -1,8 +1,7 @@
-import * as React from 'react';
-import DropdownButton, { DropdownItem } from './DropdownButton';
+import React, { useState, useEffect, useCallback } from 'react';
+import DropdownButton from './DropdownButton';
 import { applyTheme, themes } from '../data/themes.js';
-
-const { useState, useEffect, useCallback } = React;
+import { useClientTranslations } from '../i18n/utils';
 
 interface Theme {
     id: string;
@@ -23,6 +22,7 @@ interface HeaderControlsProps {
 type Mode = 'light' | 'dark' | 'system';
 
 export default function HeaderControls({}: HeaderControlsProps = {}) {
+    const t = useClientTranslations();
     
     // Initialize theme from global state or localStorage
     const [currentTheme, setCurrentTheme] = useState<Theme>(() => {
@@ -79,33 +79,11 @@ export default function HeaderControls({}: HeaderControlsProps = {}) {
     // Start unmounted to prevent flash of first theme
     const [isMounted, setIsMounted] = useState(false);
     
-    // Get theme name in Spanish (forced for all languages)
-    const getThemeNameInSpanish = (themeId: string): string => {
-        // Use same mapping as navbar placeholder to ensure consistency
-        const themeNames: { [key: string]: string } = {
-            'gameboy': 'GAME BOY',
-            'dos': 'MS-DOS', 
-            'commodore64': 'COMMODORE 64',
-            'caution': 'CAUTION',
-            'windows95': 'WINDOWS 95',
-            'nickelodeon': 'NICKELODEON',
-            'msnmessenger': 'MSN MESSENGER',
-            'shrek': 'SHREK',
-            'spiderman': 'SPIDER-MAN',
-            'matrix': 'MATRIX'
-        };
-        return themeNames[themeId] || themeId.toUpperCase();
-    };
+    // Theme names are now taken directly from theme.name property
     
-    // Get mode name in Spanish (forced for all languages)
-    const getModeNameInSpanish = (mode: Mode): string => {
-        // Use same mapping as navbar placeholder to ensure consistency
-        const modeNames: { [key: string]: string } = {
-            'light': 'CLARO',
-            'dark': 'OSCURO',
-            'system': 'SISTEMA'
-        };
-        return modeNames[mode] || mode.toUpperCase();
+    // Get mode name in current language
+    const getModeName = (mode: Mode): string => {
+        return t(`mode.${mode}` as any) || mode.charAt(0).toUpperCase() + mode.slice(1);
     };
     
     // Get mode icon
@@ -309,20 +287,27 @@ export default function HeaderControls({}: HeaderControlsProps = {}) {
                                         console.log('Theme clicked:', theme.id);
                                         handleThemeSelect(theme);
                                     }}
-                                    className={`w-full px-2 py-1 text-left focus:outline-none block cursor-pointer relative z-10 ${
+                                    className={`w-full px-1 py-0.5 text-left focus:outline-none block cursor-pointer relative z-10 ${
                                         currentTheme?.id === theme.id ? 'bg-main text-secondary' : 'bg-secondary text-main hover:bg-main hover:text-secondary'
                                     }`}
-                                    style={{ minHeight: '40px' }}
+                                    style={{ minHeight: '32px' }}
                                 >
                                     <div className="flex items-center gap-0 pointer-events-none">
                                         <div
-                                            className="w-6 h-6 aspect-square flex-shrink-0 border border-main pointer-events-none"
+                                            className="w-6 h-6 aspect-square flex-shrink-0 pointer-events-none p-0.5"
                                             style={{ 
-                                                background: `linear-gradient(135deg, ${theme.colorful} 50%, ${theme.contrasty} 50%)`,
-                                                boxShadow: `inset 0 0 0 1px ${theme.contrasty}`
+                                                backgroundColor: `var(--color-secondary)`,
+                                                border: `1px solid ${theme.colorful}`
                                             }}
-                                        />
-                                        <span className="flex-1 px-2 py-2 font-mono text-xs font-semibold pointer-events-none select-none">{getThemeNameInSpanish(theme.id)}</span>
+                                        >
+                                            <div
+                                                className="w-full h-full"
+                                                style={{ 
+                                                    background: `linear-gradient(135deg, ${theme.colorful} 50%, ${theme.contrasty} 50%)`
+                                                }}
+                                            />
+                                        </div>
+                                        <span className="flex-1 px-1 py-1 font-mono text-xs font-semibold pointer-events-none select-none">{theme.name}</span>
                                         <div className="w-4 h-4 flex items-center justify-center pointer-events-none">
                                             {currentTheme?.id === theme.id && (
                                                 <svg
@@ -350,8 +335,8 @@ export default function HeaderControls({}: HeaderControlsProps = {}) {
                                 background: `linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%)`
                             }}
                         />
-                        <span className="hidden @6xl:block font-mono text-xs font-semibold text-main group-hover:text-secondary truncate">
-                            {getThemeNameInSpanish(currentTheme.id)}
+                        <span className="hidden @6xl:block font-mono text-xs font-semibold text-main group-hover:text-secondary truncate capitalize">
+                            {currentTheme.name}
                         </span>
                     </div>
                 </DropdownButton>
@@ -369,21 +354,24 @@ export default function HeaderControls({}: HeaderControlsProps = {}) {
                 dropdownContent={
                         <div>
                             {(['light', 'dark', 'system'] as Mode[]).map((mode) => (
-                                <DropdownItem
+                                <button
                                     key={mode}
-                                    selected={currentMode === mode}
+                                    type="button"
                                     onClick={() => handleModeSelect(mode)}
-                                    className="font-mono text-xs font-semibold uppercase tracking-wider"
+                                    className={`w-full px-1 py-0.5 text-left focus:outline-none block cursor-pointer relative z-10 ${
+                                        currentMode === mode ? 'bg-main text-secondary' : 'bg-secondary text-main hover:bg-main hover:text-secondary'
+                                    }`}
+                                    style={{ minHeight: '32px' }}
                                 >
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-3.5 h-3.5 relative flex-shrink-0">{getModeIcon(mode, '')}</div>
-                                        <span>
-                                            {getModeNameInSpanish(mode)}
+                                    <div className="flex items-center gap-0 pointer-events-none">
+                                        <div className="w-3.5 h-3.5 relative flex-shrink-0 ml-1">{getModeIcon(mode, '')}</div>
+                                        <span className="flex-1 px-1 py-1 font-mono text-xs font-semibold pointer-events-none select-none">
+                                            {getModeName(mode)}
                                         </span>
-                                        <div className="w-4 h-4 flex items-center justify-center">
+                                        <div className="w-4 h-4 flex items-center justify-center pointer-events-none">
                                             {currentMode === mode && (
                                                 <svg
-                                                    className="w-4 h-4"
+                                                    className="w-4 h-4 pointer-events-none"
                                                     fill="none"
                                                     stroke="currentColor"
                                                     strokeWidth="2"
@@ -394,7 +382,7 @@ export default function HeaderControls({}: HeaderControlsProps = {}) {
                                             )}
                                         </div>
                                     </div>
-                                </DropdownItem>
+                                </button>
                             ))}
                         </div>
                     }
@@ -402,7 +390,7 @@ export default function HeaderControls({}: HeaderControlsProps = {}) {
                 >
                     <div className="flex items-center gap-2">
                         <div className="w-3.5 h-3.5 relative flex-shrink-0">{getModeIcon(currentMode, '')}</div>
-                        <span className="hidden @6xl:block font-mono text-xs font-semibold text-main group-hover:text-secondary">{getModeNameInSpanish(currentMode)}</span>
+                        <span className="hidden @6xl:block font-mono text-xs font-semibold text-main group-hover:text-secondary">{getModeName(currentMode)}</span>
                     </div>
                 </DropdownButton>
         );

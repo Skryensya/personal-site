@@ -77,7 +77,7 @@ export const ui = {
         'site.description': 'Portfolio personal de Allison Peña, desarrolladora full-stack especializada en React, TypeScript y experiencias web accesibles.',
 
         // UI text
-        'ui.loading': 'CARGANDO...',
+        'ui.loading': 'Cargando...',
         
         // Theme names (forced Spanish for all languages)
         'theme.gameboy': 'GAME BOY',
@@ -91,10 +91,10 @@ export const ui = {
         'theme.spiderman': 'Spider-Man',
         'theme.matrix': 'Matrix',
         
-        // Mode names (forced Spanish for all languages)
-        'mode.light': 'CLARO',
-        'mode.dark': 'OSCURO',
-        'mode.system': 'SISTEMA',
+        // Mode names in Spanish
+        'mode.light': 'Claro',
+        'mode.dark': 'Oscuro',
+        'mode.system': 'Sistema',
         'ui.print': 'IMPRIMIR',
         'ui.backToHome': 'VOLVER AL INICIO',
         
@@ -215,7 +215,7 @@ export const ui = {
         'site.description': 'Personal portfolio of Allison Peña, full-stack developer specialized in React, TypeScript and accessible web experiences.',
 
         // UI text
-        'ui.loading': 'LOADING...',
+        'ui.loading': 'Loading...',
         
         // Theme names (forced Spanish for all languages)
         'theme.gameboy': 'GAME BOY',
@@ -229,10 +229,10 @@ export const ui = {
         'theme.spiderman': 'Spider-Man',
         'theme.matrix': 'Matrix',
         
-        // Mode names (forced Spanish for all languages)
-        'mode.light': 'CLARO',
-        'mode.dark': 'OSCURO',
-        'mode.system': 'SISTEMA',
+        // Mode names in English
+        'mode.light': 'Light',
+        'mode.dark': 'Dark',
+        'mode.system': 'System',
         'ui.print': 'PRINT',
         'ui.backToHome': 'BACK TO HOME',
         
@@ -353,7 +353,7 @@ export const ui = {
         'site.description': 'Personlig portefølje til Allison Peña, fullstack-utvikler spesialisert på React, TypeScript og tilgjengelige webopplevelser.',
 
         // UI text
-        'ui.loading': 'LASTER...',
+        'ui.loading': 'Laster...',
         
         // Theme names (forced Spanish for all languages)
         'theme.gameboy': 'GAME BOY',
@@ -367,10 +367,10 @@ export const ui = {
         'theme.spiderman': 'Spider-Man',
         'theme.matrix': 'Matrix',
         
-        // Mode names (forced Spanish for all languages)
-        'mode.light': 'CLARO',
-        'mode.dark': 'OSCURO',
-        'mode.system': 'SISTEMA',
+        // Mode names in Norwegian
+        'mode.light': 'Lys',
+        'mode.dark': 'Mørk',
+        'mode.system': 'System',
         'ui.print': 'SKRIV UT',
         'ui.backToHome': 'TILBAKE TIL HJEMMESIDE',
         
