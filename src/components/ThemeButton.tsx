@@ -1,6 +1,6 @@
 import * as React from 'react';
 import DropdownButton from './DropdownButton';
-import { type Theme } from './useThemeMode';
+import { type Theme } from '../types/theme';
 
 interface ThemeButtonProps {
     currentTheme: Theme;

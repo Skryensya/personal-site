@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import DropdownButton, { DropdownItem, DropdownSeparator } from './DropdownButton';
+import { themes } from '../data/themes.js';
 
 interface Theme {
     id: string;
     name: string;
+    description: string;
+    colors: {
+        colorful: string;
+        contrasty: string;
+    };
+    // Backwards compatibility getters
     colorful: string;
     contrasty: string;
 }
 
 interface ThemeSelectorProps {
-    themes: Theme[];
     className?: string;
 }
 
-export default function ThemeSelector({ themes, className }: ThemeSelectorProps) {
+export default function ThemeSelector({ className }: ThemeSelectorProps) {
     const [currentTheme, setCurrentTheme] = useState<Theme | null>(null);
     const [currentMode, setCurrentMode] = useState<'light' | 'dark' | 'system'>('light');
 

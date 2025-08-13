@@ -1,15 +1,9 @@
 import * as React from 'react';
-import { applyTheme, themes as defaultThemes } from '@/config/themes';
+import { applyTheme, themes as defaultThemes } from '../data/themes.js';
 
 const { useState, useEffect, useCallback } = React;
 
-export interface Theme {
-    id: string;
-    name: string;
-    description: string;
-    colorful: string;
-    contrasty: string;
-}
+export type { Theme } from '../types/theme';
 
 export type Mode = 'light' | 'dark' | 'system';
 

@@ -6,6 +6,7 @@ import Footer from "../components/Footer.astro"
 import GameOfLifeBackground from '../components/GameOfLifeBackground.astro';
 import NorwegianDisclaimer from '../components/NorwegianDisclaimer.astro';
 import { type Language } from '../i18n/ui';
+import { themes } from '../data/themes.js';
 
 export interface Props extends HeadProps {
     showHeader?: boolean;
@@ -24,6 +25,22 @@ const {
     ...head 
 } = Astro.props;
 
+// Generate theme data for the client script
+const validThemes = themes.map(t => t.id);
+const themeColors = themes.reduce((acc, theme) => {
+    acc[theme.id] = {
+        colorful: theme.colorful, // Using backwards compatibility getters
+        contrasty: theme.contrasty
+    };
+    return acc;
+}, {} as Record<string, { colorful: string; contrasty: string }>);
+
+// Get the default theme (first theme in themes.js) colors
+const defaultTheme = themes[0]; // Use first theme from themes.js
+const defaultColorful = defaultTheme.colorful;
+const defaultContrasty = defaultTheme.contrasty;
+const defaultThemeId = defaultTheme.id;
+
 
 declare global {
     interface Window {
@@ -37,38 +54,29 @@ declare global {
 <!doctype html>
 <html lang={lang} class="antialiased break-words">
     <head>
-        <BaseHead {...head} />
-        <script>
-            // Instant theme restoration - optimized for immediate loading
+        <!-- INSTANT theme application - runs BEFORE any CSS -->
+        <script is:inline define:vars={{ validThemes, themeColors, defaultColorful, defaultContrasty, defaultThemeId }}>
+            // BLOCKING script - applies theme from localStorage instantly before any CSS
             (function() {
-                const validThemes = ['dos', 'gameboy', 'commodore64', 'caution', 'sunset', 'neon', 'ocean', 'forest', 'ember', 'violet'];
-                const themeColors = {
-                    'dos': { colorful: '#ffffff', contrasty: '#000000' },
-                    'gameboy': { colorful: '#9bbc0f', contrasty: '#081f08' },
-                    'commodore64': { colorful: '#b8d4f0', contrasty: '#0d0d1f' },
-                    'caution': { colorful: '#ffff00', contrasty: '#000000' },
-                    'sunset': { colorful: '#ff6600', contrasty: '#1a0800' },
-                    'neon': { colorful: '#ff0080', contrasty: '#0a0008' },
-                    'ocean': { colorful: '#00ccff', contrasty: '#001a33' },
-                    'forest': { colorful: '#00ff00', contrasty: '#001100' },
-                    'ember': { colorful: '#ff3300', contrasty: '#1a0500' },
-                    'violet': { colorful: '#9966ff', contrasty: '#0f0a1a' }
-                };
-                
-                // Pre-read localStorage values synchronously
+                // Get theme from localStorage immediately
                 let savedTheme, savedMode;
                 try {
                     savedTheme = localStorage.getItem('theme-id');
                     savedMode = localStorage.getItem('theme-mode');
                 } catch (e) {
-                    // localStorage unavailable - will use defaults
+                    // localStorage unavailable
                 }
                 
-                // Validate and set defaults immediately
-                const themeId = (savedTheme && validThemes.includes(savedTheme)) ? savedTheme : 'dos';
+                const themeId = (savedTheme && validThemes.includes(savedTheme)) ? savedTheme : defaultThemeId;
                 const mode = savedMode || 'system';
                 
-                // Determine dark mode immediately
+                // Get theme colors from embedded data
+                const theme = themeColors[themeId] || { 
+                    colorful: defaultColorful, 
+                    contrasty: defaultContrasty 
+                };
+                
+                // Determine dark mode
                 let isDark = false;
                 if (mode === 'system') {
                     isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -76,24 +84,43 @@ declare global {
                     isDark = mode === 'dark';
                 }
                 
-                // Apply theme instantly before any rendering
+                // Apply theme INSTANTLY to HTML
                 const html = document.documentElement;
                 html.setAttribute('data-theme', themeId);
                 html.classList.toggle('dark', isDark);
                 
-                // Set theme custom properties immediately
-                const theme = themeColors[themeId as keyof typeof themeColors];
-                if (theme) {
-                    html.style.setProperty('--theme-colorful', theme.colorful);
-                    html.style.setProperty('--theme-contrasty', theme.contrasty);
-                }
+                // INJECT CSS variables immediately into HTML
+                html.style.setProperty('--theme-colorful', theme.colorful);
+                html.style.setProperty('--theme-contrasty', theme.contrasty);
+                html.style.setProperty('--color-main', isDark ? theme.colorful : theme.contrasty);
+                html.style.setProperty('--color-secondary', isDark ? theme.contrasty : theme.colorful);
                 
-                // Store globals for React sync
+                // Store for React components
                 window.__THEME_ID__ = themeId;
                 window.__THEME_MODE__ = mode;
                 window.__THEME_READY__ = true;
- 
+                
+                // Debug: log theme application
+                console.log('🎨 Theme applied instantly:', themeId, 'colors:', theme);
             })();
+        </script>
+        
+        <!-- CSS loads AFTER theme is already applied -->
+        <style>
+            /* Base structure - colors already set by script above */
+            :root {
+                /* Colors will be overridden by script above */
+                --color-main: var(--theme-contrasty);
+                --color-secondary: var(--theme-colorful);
+            }
+            html.dark {
+                --color-main: var(--theme-colorful);
+                --color-secondary: var(--theme-contrasty);
+            }
+        </style>
+        
+        <script is:inline define:vars={{ validThemes, themeColors, defaultColorful, defaultContrasty, defaultThemeId }}>
+            // Additional functionality - theme already applied above
             
             // Start global selection color animation
             (function() {
@@ -161,16 +188,31 @@ declare global {
                 // Re-apply theme on page transitions to ensure consistency
                 if (window.__THEME_ID__ && window.__THEME_MODE__) {
                     const html = document.documentElement;
-                    html.setAttribute('data-theme', window.__THEME_ID__);
+                    const themeId = window.__THEME_ID__;
+                    html.setAttribute('data-theme', themeId);
+                    
+                    // Get theme colors from embedded data
+                    const theme = themeColors[themeId] || { 
+                        colorful: defaultColorful, 
+                        contrasty: defaultContrasty 
+                    };
                     
                     const isDark = window.__THEME_MODE__ === 'system' 
                         ? window.matchMedia('(prefers-color-scheme: dark)').matches 
                         : window.__THEME_MODE__ === 'dark';
                     
                     html.classList.toggle('dark', isDark);
+                    
+                    // Re-apply theme colors
+                    html.style.setProperty('--theme-colorful', theme.colorful);
+                    html.style.setProperty('--theme-contrasty', theme.contrasty);
+                    html.style.setProperty('--color-main', isDark ? theme.colorful : theme.contrasty);
+                    html.style.setProperty('--color-secondary', isDark ? theme.contrasty : theme.colorful);
                 }
             });
         </script>
+        
+        <BaseHead {...head} />
         <script src="/as-dithered-image.js" is:inline></script>
         <link rel="stylesheet" href="/src/styles/view-transitions.css">
         <ViewTransitions />

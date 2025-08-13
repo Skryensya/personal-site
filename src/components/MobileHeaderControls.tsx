@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useThemeMode, type Theme } from './useThemeMode';
-import { themes as defaultThemes } from '@/config/themes';
+import { themes as defaultThemes } from '../data/themes.js';
 import ThemeButton from './ThemeButton';
 import ModeButton from './ModeButton';
 

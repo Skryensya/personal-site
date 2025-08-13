@@ -1,0 +1,103 @@
+{
+  "themes": [
+    {
+      "id": "dos",
+      "name": "MS-DOS",
+      "description": "Command line interface",
+      "colors": {
+        "colorful": "#e5e5e6",
+        "contrasty": "#000000"
+      }
+    },
+    {
+      "id": "gameboy",
+      "name": "GameBoy",
+      "description": "Monochrome LCD legend",
+      "colors": {
+        "colorful": "#A4D110",
+        "contrasty": "#044F27"
+      }
+    },
+    {
+      "id": "commodore64",
+      "name": "Commodore",
+      "description": "Blue screen computing legend",
+      "colors": {
+        "colorful": "#BFDDF5",
+        "contrasty": "#0A0A1C"
+      }
+    },
+    {
+      "id": "pacman",
+      "name": "Pac-Man",
+      "description": "Warning tape industrial",
+      "colors": {
+        "colorful": "#FFD600",
+        "contrasty": "#020123"
+      }
+    },
+    {
+      "id": "win95",
+      "name": "Windows 95",
+      "description": "Classic desktop experience",
+      "colors": {
+        "colorful": "#dedede",
+        "contrasty": "#0065a8"
+      }
+    },
+    {
+      "id": "nick",
+      "name": "Nick",
+      "description": "Orange splat network",
+      "colors": {
+        "colorful": "#F5782A",
+        "contrasty": "#265B3E"
+      }
+    },
+    {
+      "id": "msn",
+      "name": "MSN",
+      "description": "Instant messaging nostalgia",
+      "colors": {
+        "colorful": "#BCDDAB",
+        "contrasty": "#3c67d6"
+      }
+    },
+    {
+      "id": "shrek",
+      "name": "Shrek",
+      "description": "Swamp green ogre",
+      "colors": {
+        "colorful": "#C5EE7D",
+        "contrasty": "#5C452D"
+      }
+    },
+    {
+      "id": "spiderman",
+      "name": "Spidey",
+      "description": "Web-slinger red and blue",
+      "colors": {
+        "colorful": "#ff3845",
+        "contrasty": "#030f6d"
+      }
+    },
+    {
+      "id": "matrix",
+      "name": "Matrix",
+      "description": "Digital rain terminal",
+      "colors": {
+        "colorful": "#A4F644",
+        "contrasty": "#0D0408"
+      }
+    },
+    {
+      "id": "kurumi",
+      "name": "Kurumi",
+      "description": "Flow Kuromi",
+      "colors": {
+        "colorful": "#FA7FB5",
+        "contrasty": "#0A0A0A"
+      }
+    }
+  ]
+}
