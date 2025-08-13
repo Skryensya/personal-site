@@ -3,50 +3,52 @@ import { cn } from '@/lib/utils';
 
 export interface Props {
   href?: string;
+  variant?: 'normal' | 'outline';
   filled?: boolean;
-  size?: 'sm' | 'md' | 'lg';
   elevated?: boolean;
   class?: string;
   style?: string;
+  onClick?: string;
+  type?: 'button' | 'submit' | 'reset';
+  disabled?: boolean;
 }
 
 const {
   href,
+  variant = 'normal',
   filled = false,
-  size: rawSize = 'md',
   elevated = false,
   class: className,
   style,
+  onClick,
+  type = 'button',
+  disabled = false,
 } = Astro.props;
 
-const size = ['sm', 'md', 'lg'].includes(rawSize) ? rawSize : 'md';
-const variant = filled ? 'filled' : 'outline';
 
 const Tag = href ? 'a' : 'button';
 
-const sizeClasses = {
-  sm: 'px-3 text-xs h-8',
-  md: 'px-6 text-sm h-12',
-  lg: 'px-8 text-base h-16',
-};
 
 const buttonClasses = cn(
-  'font-bold uppercase tracking-wide cursor-pointer border-double border-2 whitespace-nowrap flex items-center justify-center',
-  'no-underline',
+  'px-6 text-sm h-12 font-bold uppercase tracking-wide cursor-pointer border-double border-2 whitespace-nowrap flex items-center justify-center no-underline',
   {
-    'absolute -top-3 -left-3 active:top-0 active:left-0 z-30 border-double border-2': elevated,
-    'relative top-0 left-0 z-20': !elevated,
-    'bg-main text-secondary border-main shadow-[inset_0_0_0_2px_var(--color-secondary)]': variant === 'filled',
-    'bg-secondary text-main border-main shadow-[inset_0_0_0_2px_var(--color-secondary)] hover:bg-main hover:text-secondary cursor-pointer': variant === 'outline',
+    'relative top-0 left-0 z-20': !elevated && variant !== 'outline',
+    'absolute -top-3 -left-3 active:top-0 active:left-0 z-30': elevated && variant !== 'outline',
+    'relative top-0 left-0 z-30 active:top-0 active:left-0': variant === 'outline' && !elevated,
+    'relative top-0 left-0 z-30 border-0': variant === 'outline' && elevated,
+    'bg-main text-secondary border-main shadow-[inset_0_0_0_2px_var(--color-secondary)]': filled,
+    'bg-secondary text-main border-main shadow-[inset_0_0_0_2px_var(--color-secondary)] hover:bg-main hover:text-secondary': !filled && variant !== 'outline',
+    'bg-secondary text-main border-transparent overflow-hidden group': variant === 'outline',
   },
-  sizeClasses[size],
   className
 );
 
 const shadowClasses = cn(
-  'relative border-2 whitespace-nowrap pointer-events-none font-bold uppercase tracking-wide flex items-center justify-center',
+  'px-6 text-sm h-12 absolute top-0 left-0 border-2 whitespace-nowrap pointer-events-none font-bold uppercase tracking-wide flex items-center justify-center',
   'bg-secondary bg-opacity-60 z-10',
-  sizeClasses[size]
+  {
+        'px-[22px]': variant === 'outline' && elevated,
+  }
 );
 ---
 
@@ -54,11 +56,42 @@ const shadowClasses = cn(
   'isolate z-30': elevated,
   'z-20': !elevated 
 })}>
-  <Tag class={cn(buttonClasses, { 'button-with-sound': elevated })} href={href} style={style}>
-    <slot />
-  </Tag>
+  {variant === 'outline' && elevated ? (
+    <div class="relative w-fit h-fit">
+      <!-- Fixed shadow at base position -->
+      <div class="absolute top-0 left-0 z-10">
+        <div
+          class={shadowClasses}
+          style="border-color: color-mix(in srgb, var(--color-main) 60%, transparent); background-image: repeating-linear-gradient(315deg, color-mix(in srgb, var(--color-main) 60%, transparent) 0, color-mix(in srgb, var(--color-main) 60%, transparent) 1px, transparent 0, transparent 50%); background-size: 8px 8px;"
+          aria-hidden="true"
+        >
+          <span class="invisible">
+            <slot />
+          </span>
+        </div>
+      </div>
+      <!-- Movable button -->
+      <div class="outline-elevated-button relative z-20">
+        <Tag class={cn(buttonClasses, 'group outline-animated-button', { 'button-with-sound': elevated })} href={href} style={style} onclick={onClick} type={type} disabled={disabled}>
+          <slot />
+        </Tag>
+      </div>
+    </div>
+  ) : (
+    <Tag class={cn(buttonClasses, { 'button-with-sound': elevated })} href={href} style={style} onclick={onClick} type={type} disabled={disabled}>
+      {variant === 'outline' && (
+        <>
+          <div class="absolute top-0 left-0 w-full h-0 border-t-2 border-double border-main transform -translate-x-full group-hover:translate-x-0 group-hover:delay-0 transition-transform duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] delay-600"></div>
+          <div class="absolute top-0 right-0 w-0 h-full border-r-2 border-double border-main transform -translate-y-full group-hover:translate-y-0 group-hover:delay-200 transition-transform duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] delay-400"></div>
+          <div class="absolute bottom-0 right-0 w-full h-0 border-b-2 border-double border-main transform translate-x-full group-hover:translate-x-0 group-hover:delay-400 transition-transform duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] delay-200"></div>
+          <div class="absolute bottom-0 left-0 w-0 h-full border-l-2 border-double border-main transform translate-y-full group-hover:translate-y-0 group-hover:delay-600 transition-transform duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] delay-0"></div>
+        </>
+      )}
+      <slot />
+    </Tag>
+  )}
 
-  {elevated && (
+  {elevated && variant !== 'outline' && (
     <div
       class={shadowClasses}
       style="border-color: color-mix(in srgb, var(--color-main) 60%, transparent); background-image: repeating-linear-gradient(315deg, color-mix(in srgb, var(--color-main) 60%, transparent) 0, color-mix(in srgb, var(--color-main) 60%, transparent) 1px, transparent 0, transparent 50%); background-size: 8px 8px;"
@@ -96,6 +129,217 @@ const shadowClasses = cn(
       button.addEventListener('click', () => {
         playClickSound();
       });
+    });
+
+    // Handle outline elevated animation
+    const outlineElevatedButtons = document.querySelectorAll('.outline-elevated-button');
+    console.log('Found outline elevated buttons:', outlineElevatedButtons.length);
+    
+    outlineElevatedButtons.forEach((buttonWrapper, index) => {
+      const actualButton = buttonWrapper.querySelector('button, a');
+      console.log(`Button wrapper ${index}:`, buttonWrapper);
+      console.log(`Actual button ${index}:`, actualButton);
+      
+      let showTimeouts: number[] = [];
+      let isAnimating = false;
+      let isLocked = false;
+      let isCurrentlyHovering = false;
+      let hoverTimeout: number | null = null;
+      
+      if (actualButton) {
+        // Create border elements dynamically
+        const borderTop = document.createElement('div');
+        borderTop.className = 'absolute top-0 left-0 w-full h-0 border-t-2 border-double border-main';
+        borderTop.style.transform = 'translateX(-105%)';
+        
+        const borderRight = document.createElement('div');
+        borderRight.className = 'absolute top-0 right-0 w-0 h-full border-r-2 border-double border-main';
+        borderRight.style.transform = 'translateY(-105%)';
+        
+        const borderBottom = document.createElement('div');
+        borderBottom.className = 'absolute bottom-0 right-0 w-full h-0 border-b-2 border-double border-main';
+        borderBottom.style.transform = 'translateX(105%)';
+        
+        const borderLeft = document.createElement('div');
+        borderLeft.className = 'absolute bottom-0 left-0 w-0 h-full border-l-2 border-double border-main';
+        borderLeft.style.transform = 'translateY(105%)';
+        
+        // Add borders to button
+        actualButton.appendChild(borderTop);
+        actualButton.appendChild(borderRight);
+        actualButton.appendChild(borderBottom);
+        actualButton.appendChild(borderLeft);
+        
+        console.log('Border elements created and added:', { borderTop, borderRight, borderBottom, borderLeft });
+        
+        // Function to show borders sequentially
+        function showBordersSequential() {
+          console.log('Starting sequential border show animation');
+          
+          // Don't start if already animating or locked
+          if (isAnimating || isLocked) {
+            console.log('Animation in progress or button locked, skipping');
+            return;
+          }
+          
+          isAnimating = true;
+          
+          // Clear any existing show timeouts
+          showTimeouts.forEach(timeout => clearTimeout(timeout));
+          showTimeouts = [];
+          
+          // Reset all borders to hidden state first
+          borderTop.style.transition = 'none';
+          borderRight.style.transition = 'none';
+          borderBottom.style.transition = 'none';
+          borderLeft.style.transition = 'none';
+          
+          borderTop.style.transform = 'translateX(-100%)';
+          borderRight.style.transform = 'translateY(-100%)';
+          borderBottom.style.transform = 'translateX(100%)';
+          borderLeft.style.transform = 'translateY(100%)';
+          
+          // Force reflow
+          borderTop.offsetHeight;
+          
+          // Top border first
+          const timeout1 = window.setTimeout(() => {
+            if (borderTop) {
+              borderTop.style.transition = 'transform 250ms ease-out';
+              borderTop.style.transform = 'translateX(0)';
+            }
+          }, 30);
+          showTimeouts.push(timeout1);
+          
+          // Right border after top completes
+          const timeout2 = window.setTimeout(() => {
+            if (borderRight) {
+              borderRight.style.transition = 'transform 250ms ease-out';
+              borderRight.style.transform = 'translateY(0)';
+            }
+          }, 280);
+          showTimeouts.push(timeout2);
+          
+          // Bottom border after right completes  
+          const timeout3 = window.setTimeout(() => {
+            if (borderBottom) {
+              borderBottom.style.transition = 'transform 250ms ease-out';
+              borderBottom.style.transform = 'translateX(0)';
+            }
+          }, 530);
+          showTimeouts.push(timeout3);
+          
+          // Left border after bottom completes
+          const timeout4 = window.setTimeout(() => {
+            if (borderLeft) {
+              borderLeft.style.transition = 'transform 250ms ease-out';
+              borderLeft.style.transform = 'translateY(0)';
+            }
+          }, 780);
+          showTimeouts.push(timeout4);
+          
+          // Mark animation as complete and lock the button
+          const timeout5 = window.setTimeout(() => {
+            isAnimating = false;
+            isLocked = true;
+            
+            // Hide dynamic borders
+            if (borderTop) borderTop.style.display = 'none';
+            if (borderRight) borderRight.style.display = 'none';
+            if (borderBottom) borderBottom.style.display = 'none';
+            if (borderLeft) borderLeft.style.display = 'none';
+            
+            // Add border double and shadow to the actual button
+            if (actualButton) {
+              actualButton.classList.add('border-double', 'border-2', 'border-main', 'shadow-[inset_0_0_0_2px_var(--color-secondary)]');
+              actualButton.classList.remove('border-transparent');
+              
+              // If mouse is still hovering when animation completes, activate hover
+              if (isCurrentlyHovering) {
+                actualButton.classList.remove('bg-secondary', 'text-main');
+                actualButton.classList.add('bg-main', 'text-secondary');
+                console.log('Applied hover styles after animation completion');
+              }
+            }
+            
+            console.log('Show animation completed - button locked with border');
+          }, 1030); // After last border completes (780ms + 250ms)
+          showTimeouts.push(timeout5);
+        }
+        
+        
+        
+        actualButton.addEventListener('mouseenter', () => {
+          console.log('Mouse enter detected on button');
+          
+          // Clear any existing hover timeout
+          if (hoverTimeout) {
+            clearTimeout(hoverTimeout);
+          }
+          
+          // Set hover state after 500ms delay
+          hoverTimeout = window.setTimeout(() => {
+            isCurrentlyHovering = true;
+            console.log('isCurrentlyHovering set to true after 500ms delay');
+          }, 500);
+          
+          if (isLocked) {
+            // Button is locked - apply normal hover styles immediately
+            actualButton.classList.remove('bg-secondary', 'text-main');
+            actualButton.classList.add('bg-main', 'text-secondary');
+            console.log('Applied hover styles to locked button');
+            return;
+          }
+          
+          // Start animation sequence
+          showBordersSequential();
+          
+          // Elevate after sequence completes - always happens regardless of hover state
+          setTimeout(() => {
+            (buttonWrapper as HTMLElement).style.transform = 'translate(-12px, -12px)';
+            (buttonWrapper as HTMLElement).style.transition = 'transform 200ms ease-out';
+            console.log('Button elevated after border animation completed');
+          }, 1030);
+        });
+        
+        actualButton.addEventListener('mouseleave', () => {
+          console.log('Mouse leave detected on button');
+          
+          // Clear hover timeout and reset state
+          if (hoverTimeout) {
+            clearTimeout(hoverTimeout);
+            hoverTimeout = null;
+          }
+          isCurrentlyHovering = false;
+          
+          if (isLocked) {
+            // Remove hover styles from locked button
+            actualButton.classList.remove('bg-main', 'text-secondary');
+            actualButton.classList.add('bg-secondary', 'text-main');
+            console.log('Removed hover styles from locked button');
+            return;
+          }
+          
+          // Do nothing on mouse leave - button stays elevated and locked
+          console.log('Button stays elevated and locked');
+        });
+        
+        actualButton.addEventListener('mousedown', () => {
+          if (isLocked) {
+            // Quick down animation like other elevated buttons - no transition for instant effect
+            (buttonWrapper as HTMLElement).style.transform = 'translate(0px, 0px)';
+            (buttonWrapper as HTMLElement).style.transition = 'none';
+          }
+        });
+        
+        actualButton.addEventListener('mouseup', () => {
+          if (isLocked) {
+            // Return to elevated position - no transition for instant effect  
+            (buttonWrapper as HTMLElement).style.transform = 'translate(-12px, -12px)';
+            (buttonWrapper as HTMLElement).style.transition = 'none';
+          }
+        });
+      }
     });
   });
 </script>

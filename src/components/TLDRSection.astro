@@ -1,21 +1,35 @@
 ---
+import { useTranslations } from '@/i18n/utils';
+import { defaultLang, type Language } from '@/i18n/ui';
+import Button from './Button.astro';
+
 interface Props {
     className?: string;
+    lang?: Language;
 }
 
-const { className = '' } = Astro.props;
+const { className = '', lang = defaultLang } = Astro.props;
+const t = useTranslations(lang);
 ---
 
 <div class={className} style="view-transition-name: tldr-content;">
     
-    <!-- Description paragraphs only -->
+    <!-- Professional summary -->
     <div style="view-transition-name: tldr-description;">
-        <p class="font-mono text-base text-main mb-4" style="max-width: var(--paragraph-max-width);">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        <p class="text-base text-main mb-6" style="max-width: var(--paragraph-max-width);">
+            {t('about.tldr.description')}
         </p>
-        <p class="font-mono text-base text-main" style="max-width: var(--paragraph-max-width);">
-            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-        </p>
+        
+        <!-- Interactive CTA button -->
+        <div class="mt-8">
+            <Button 
+                variant="outline"
+                elevated
+                onClick="document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' })"
+            >
+                {t('about.collaboration.title')}
+            </Button>
+        </div>
     </div>
 
 </div>

@@ -48,14 +48,14 @@ export default function DropdownButton({
         middleware: [
             offset(4),
             flip({
-                fallbackPlacements: ['top-start', 'bottom-end', 'top-end']
+                fallbackPlacements: ['top-end', 'bottom-start', 'top-start']
             }),
             shift({
                 padding: 8
             })
         ],
         whileElementsMounted: autoUpdate,
-        placement: 'bottom-start',
+        placement: 'bottom-end',
         strategy: 'fixed'
     });
 

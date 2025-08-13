@@ -1,14 +1,15 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import CVPage from '@/components/CVPage.astro';
+import Button from '@/components/Button.astro';
 ---
 
 <Layout title="Allison Peña - CV" description="CV de Allison Peña">
     <!-- Floating Print Button (bottom right) -->
     <div class="print:hidden fixed bottom-8 right-8 z-50">
-        <button class="bg-main text-secondary border-2 border-main px-4 py-2 font-mono font-bold hover:bg-secondary hover:text-main shadow-[4px_4px_0_var(--color-main)]" onclick="window.print()">
+        <Button variant="elevated" size="md" onClick="window.print()">
             Imprimir
-        </button>
+        </Button>
     </div>
 
     <style>

@@ -4,104 +4,175 @@ import siteConfig from '@/data/site-config';
 const currentYear = new Date().getFullYear();
 ---
 
- 
+<footer class="bg-main px-4 border-t-2 border-secondary">
+    <div class="mx-auto max-w-[var(--max-w-size)] py-12">
+        <!-- Main content grid -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <!-- Navigation -->
+            <div>
+                <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text="Navigation">
+                    Navigation
+                </h3>
+                <nav class="space-y-2">
+                    {siteConfig.footerNavLinks?.map((link) => (
+                        <a
+                            href={link.href}
+                            target={link.target}
+                            class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text"
+                            data-text={link.text}
+                        >
+                            {link.text}
+                        </a>
+                    ))}
+                </nav>
+            </div>
 
-<footer class="bg-main px-4 relative overflow-hidden">
-    <!-- Large name background -->
-    <div class="absolute inset-0 flex justify-start items-end overflow-hidden">
-        <h2 class="text-[clamp(6rem,20vw,25rem)] font-bold text-secondary select-none leading-none whitespace-nowrap opacity-20 -rotate-90 origin-bottom-left">
-            {siteConfig.title}
-        </h2>
-    </div>
-
-    <div class="mx-auto max-w-[var(--max-w-size)] pt-8 relative z-10">
-
-    <!-- Enlaces y contenido arriba -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12 text-right md:text-left">
-        <!-- Navegación -->
-        <div>
-            <h3 class="font-mono text-xs font-semibold text-secondary mb-4 uppercase">Sitio</h3>
-            <nav class="space-y-2">
-                {siteConfig.footerNavLinks?.map((link) => (
+            <!-- Social -->
+            <div>
+                <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text="Connect">
+                    Connect
+                </h3>
+                <nav class="space-y-2">
+                    {siteConfig.socialLinks?.map((link) => (
+                        <a
+                            href={link.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text"
+                            data-text={`${link.text} ↗`}
+                        >
+                            {link.text} ↗
+                        </a>
+                    ))}
                     <a
-                        href={link.href}
-                        target={link.target}
-                        class="block font-mono text-xs text-secondary px-2 py-1 border border-transparent hover:border-main"
+                        href="mailto:contact@allisonpena.dev"
+                        class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text"
+                        data-text="Email"
                     >
-                        {link.text}
+                        Email
                     </a>
-                ))}
-            </nav>
-        </div>
-
-        <!-- Enlaces sociales -->
-        <div>
-            <h3 class="font-mono text-xs font-semibold text-secondary mb-4 uppercase">Social</h3>
-            <nav class="space-y-2">
-                {siteConfig.socialLinks?.map((link) => (
                     <a
-                        href={link.href}
+                        href="/resume.pdf"
                         target="_blank"
-                        rel="noopener noreferrer"
-                        class="block font-mono text-xs text-secondary px-2 py-1 border border-transparent hover:border-main"
+                        class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text"
+                        data-text="Resume ↗"
                     >
-                        {link.text} ↗
+                        Resume ↗
                     </a>
-                ))}
-                <a
-                    href="mailto:contact@allisonpena.dev"
-                    class="block font-mono text-xs text-secondary px-2 py-1 border border-transparent hover:border-main"
-                >
-                    Email
-                </a>
-                <a
-                    href="/resume.pdf"
-                    target="_blank"
-                    class="block font-mono text-xs text-secondary px-2 py-1 border border-transparent hover:border-main"
-                >
-                    CV/Resume ↗
-                </a>
-            </nav>
-        </div>
+                </nav>
+            </div>
 
-        <!-- Info -->
-        <div>
-            <h3 class="font-mono text-xs font-semibold text-secondary mb-4 uppercase">Info</h3>
-            <div class="space-y-2">
-                <p class="font-mono text-xs text-secondary px-2 py-1">
-                    {siteConfig.subtitle}
-                </p>
-                <p class="font-mono text-xs text-secondary px-2 py-1">
-                    Santiago, Chile
-                </p>
-                <p class="font-mono text-xs text-secondary px-2 py-1">
-                    Disponible para proyectos
-                </p>
+            <!-- Info -->
+            <div>
+                <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text="About">
+                    About
+                </h3>
+                <div class="space-y-2">
+                    <p class="font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text={siteConfig.subtitle}>
+                        {siteConfig.subtitle}
+                    </p>
+                    <p class="font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text="Santiago, Chile">
+                        Santiago, Chile
+                    </p>
+                    <p class="font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text="Available for projects">
+                        Available for projects
+                    </p>
+                </div>
+            </div>
+
+            <!-- Resources -->
+            <div>
+                <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text="Resources">
+                    Resources
+                </h3>
+                <div class="space-y-2">
+                    <p class="font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text="Astro + Tailwind">
+                        Astro + Tailwind
+                    </p>
+                    <a href="/sitemap-index.xml" class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text" data-text="Sitemap">
+                        Sitemap
+                    </a>
+                    <a href="/rss.xml" class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text" data-text="RSS Feed">
+                        RSS Feed
+                    </a>
+                </div>
             </div>
         </div>
 
-        <!-- Sistema -->
-        <div>
-            <h3 class="font-mono text-xs font-semibold text-secondary mb-4 uppercase">Sistema</h3>
-            <div class="space-y-2">
-                <p class="font-mono text-xs text-secondary px-2 py-1">
-                    Astro + Tailwind
+        <!-- Copyright -->
+        <div class="border-t-2 border-secondary pt-6">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="font-mono text-sm text-secondary scramble-text" data-text={`© ${currentYear} ${siteConfig.title}. All rights reserved.`}>
+                    © {currentYear} {siteConfig.title}. All rights reserved.
                 </p>
-                <a href="/sitemap-index.xml" class="block font-mono text-xs text-secondary px-2 py-1 border border-transparent hover:border-main">
-                    Sitemap
-                </a>
-                <a href="/rss.xml" class="block font-mono text-xs text-secondary px-2 py-1 border border-transparent hover:border-main">
-                    RSS
-                </a>
+                <p class="font-mono text-sm text-secondary scramble-text" data-text={`Built with ❤️ and code`}>
+                    Built with ❤️ and code
+                </p>
             </div>
         </div>
-    </div>
-
-    <!-- Copyright -->
-    <!-- <div class="border-t border-main pt-6 mb-8">
-        <p class="font-mono text-xs text-secondary text-center">
-            © {currentYear} {siteConfig.title}. Todos los derechos reservados.
-        </p>
-    </div> -->
     </div>
 </footer>
+
+<script>
+    document.addEventListener('astro:page-load', () => {
+        // Track if footer animation has already happened
+        let footerAnimated = false;
+        
+        // Scramble animation function
+        function scrambleText(element, originalText, duration = 800) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+            let iterations = 0;
+            
+            const interval = setInterval(() => {
+                element.textContent = originalText
+                    .split('')
+                    .map((char, index) => {
+                        if (index < iterations) {
+                            return originalText[index];
+                        }
+                        return chars[Math.floor(Math.random() * chars.length)];
+                    })
+                    .join('');
+                
+                iterations++;
+                
+                if (iterations >= originalText.length) {
+                    clearInterval(interval);
+                    element.textContent = originalText;
+                }
+            }, 30);
+        }
+
+        // Set up intersection observer for scramble animation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !footerAnimated) {
+                    footerAnimated = true;
+                    
+                    // Animate all footer text elements at once
+                    const elements = document.querySelectorAll('.scramble-text');
+                    elements.forEach((element, index) => {
+                        const originalText = element.dataset.text || element.textContent;
+                        const delay = index * 50; // Staggered effect
+                        
+                        setTimeout(() => {
+                            scrambleText(element, originalText);
+                        }, delay);
+                    });
+                    
+                    // Stop observing after first animation
+                    observer.disconnect();
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '50px'
+        });
+
+        // Observe the footer container instead of individual elements
+        const footer = document.querySelector('footer');
+        if (footer) {
+            observer.observe(footer);
+        }
+    });
+</script>
