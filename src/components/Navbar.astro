@@ -4,7 +4,7 @@ import LanguageSwitcher from './LanguageSwitcher.tsx';
 import Button from './Button.astro';
 import { getLangFromUrl } from '@/i18n/utils';
 import { useTranslations } from '@/i18n/utils';
-import { defaultLang } from '@/i18n/ui';
+import { themes } from '../data/themes.js';
 
 const currentLocale = getLangFromUrl(Astro.url);
 const currentPath = Astro.url.pathname;
@@ -13,30 +13,45 @@ const t = useTranslations(currentLocale);
 // Check if current page is CV to make header non-sticky
 const isCVPage = currentPath.includes('/cv');
 
+// Prepare theme data for client-side JavaScript
+const themeNames = themes.reduce((acc, theme) => {
+  acc[theme.id] = theme.name;
+  return acc;
+}, {} as Record<string, string>);
+
+const themeColors = themes.reduce((acc, theme) => {
+  acc[theme.id] = {
+    colorful: theme.colorful,
+    contrasty: theme.contrasty
+  };
+  return acc;
+}, {} as Record<string, { colorful: string; contrasty: string }>);
+
 const navItems = [
-  { label: 'ALLISON PEÑA', href: '/', hotkey: null },
-  { label: t('nav.projects').toUpperCase(), href: '/projects', hotkey: 'p' },
-  { label: t('nav.showcase').toUpperCase(), href: '/components', hotkey: 's' },
-  { label: t('nav.cv').toUpperCase(), href: '/cv', hotkey: 'c' },
-  { label: t('nav.about').toUpperCase(), href: '/about', hotkey: 'm' }
+  { label: 'Allison Peña', href: '/', hotkey: null },
+  { label: t('nav.projects'), href: '/projects', hotkey: 'p' },
+  { label: t('nav.showcase'), href: '/components', hotkey: 's' },
+  { label: t('nav.cv'), href: '/cv', hotkey: 'c' },
+  { label: t('nav.about'), href: '/about', hotkey: 'm' }
 ];
 
 ---
 
 
-<nav class={`${isCVPage ? 'relative' : 'sticky top-0'} z-[300] flex justify-center mx-auto max-w-[var(--max-w-size)] @container`} style="--navbar-height: 76px;">
+<nav class={`${isCVPage ? '!relative' : '!sticky !top-0'} z-[300] flex justify-center mx-auto max-w-[var(--max-w-size)] @container`} style="--navbar-height: 76px;">
   <div class={`max-w-[1280px] w-full px-4 mt-4`}>
-    <div class="flex items-start justify-between gap-2 flex-nowrap diagonal-stripe px-4 py-2">
+    <div class="flex items-start justify-between gap-2 flex-nowrap px-4 py-2" style="width: 100%; background-image: repeating-linear-gradient(315deg, var(--color-main) 0 1px, var(--color-secondary) 1px 2px, transparent 2px 50%); background-size: 10px 10px; background-attachment: local; background-repeat: repeat;">
       <!-- Desktop Navigation -->
       <div class="hidden @6xl:flex items-start gap-x-2 gap-y-1 flex-wrap flex-1 mr-2">
-        {navItems.map((item, index) => (
+        {navItems.map((item) => (
           <a 
             href={item.href}
-            class="flex items-center gap-1.5 px-2 py-1 h-7 @6xl:h-8 bg-secondary border-double border-2 border-main font-grotesk text-sm !font-thin text-main no-underline pointer-events-auto hover:bg-main hover:text-secondary active:bg-main active:text-secondary nav-link font-bold uppercase tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)]"
+            class="flex items-center gap-1.5 px-2 py-1 h-7 @6xl:h-8 bg-secondary border-double border-2 border-main font-grotesk text-sm !font-thin text-main no-underline pointer-events-auto hover:bg-main hover:text-secondary active:bg-main active:text-secondary font-bold tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)]"
+            data-nav-link
             data-hotkey={item.hotkey}
             aria-label={item.hotkey ? `${item.label} (Press ${item.hotkey.toUpperCase()})` : item.label}
           >
-            {item.hotkey && <span class="text-xs font-bold font-mono">[{item.hotkey.toUpperCase()}]</span>}
+            {item.hotkey && <span class="text-xs font-bold font-mono hidden md:inline">[{item.hotkey.toUpperCase()}]</span>}
             <span class="font-semibold">{item.label}</span>
           </a>
         ))}
@@ -46,14 +61,14 @@ const navItems = [
       <div class="@6xl:hidden flex items-center flex-1 relative">
         <a 
           href="/"
-          class="flex items-center gap-1.5 px-2 py-1 h-8 bg-secondary border-double border-2 border-main font-grotesk text-sm !font-thin text-main no-underline pointer-events-auto hover:bg-main hover:text-secondary active:bg-main active:text-secondary font-bold uppercase tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)]"
+          class="flex items-center gap-1.5 px-2 py-1 h-8 bg-secondary border-double border-2 border-main font-grotesk text-sm !font-thin text-main no-underline pointer-events-auto hover:bg-main hover:text-secondary active:bg-main active:text-secondary font-bold tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)]"
         >
-          <span class="font-semibold">ALLISON PEÑA</span>
+          <span class="font-semibold">Allison Peña</span>
         </a>
         <button
           type="button"
           id="mobile-menu-trigger"
-          class="@6xl:hidden ml-auto px-2 py-1 h-8 bg-secondary border-double border-2 border-main text-main hover:bg-main hover:text-secondary flex items-center gap-1 font-bold uppercase tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)]"
+          class="@6xl:hidden ml-auto px-2 py-1 h-8 bg-secondary border-double border-2 border-main text-main hover:bg-main hover:text-secondary flex items-center gap-1 font-bold tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)]"
         >
           <svg id="hamburger-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <line x1="4" x2="20" y1="12" y2="12"/>
@@ -64,7 +79,7 @@ const navItems = [
             <line x1="18" x2="6" y1="6" y2="18"/>
             <line x1="6" x2="18" y1="6" y2="18"/>
           </svg>
-          <span class="font-mono text-xs font-bold">MENU</span>
+          <span class="font-mono text-xs font-bold">Menu</span>
         </button>
       </div>
 
@@ -77,7 +92,7 @@ const navItems = [
             <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
               <div class="flex items-center gap-2 w-full">
                 <div id="theme-placeholder-preview" class="w-4 h-4 border border-main flex-shrink-0" style="background: linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%)"></div>
-                <span id="theme-placeholder-text" class="hidden @6xl:block font-mono text-xs font-semibold text-main flex-1 text-left">{t('ui.loading').toUpperCase()}</span>
+                <span id="theme-placeholder-text" class="hidden @6xl:block font-mono text-xs font-semibold text-main flex-1 text-left">{t('ui.loading')}</span>
               </div>
             </div>
             <div class="hidden @6xl:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
@@ -98,7 +113,7 @@ const navItems = [
                     <line x1="12" y1="17" x2="12" y2="21"></line>
                   </svg>
                 </div>
-                <span id="mode-placeholder-text" class="hidden @6xl:block font-mono text-xs font-semibold text-main">{t('ui.loading').toUpperCase()}</span>
+                <span id="mode-placeholder-text" class="hidden @6xl:block font-mono text-xs font-semibold text-main">{t('ui.loading')}</span>
               </div>
             </div>
             <div class="hidden @6xl:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
@@ -112,7 +127,7 @@ const navItems = [
           <div class="w-7 h-7 @6xl:w-auto @6xl:h-8 inline-flex">
             <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
               <div class="flex items-center gap-2">
-                <span class="font-mono text-xs font-semibold text-main">ES</span>
+                <span class="font-mono text-xs font-semibold text-main">{t('ui.loading')}</span>
               </div>
             </div>
             <div class="hidden @6xl:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
@@ -124,12 +139,12 @@ const navItems = [
         </div>
         
         <!-- React components layer - absolute positioned to match exactly -->
-        <div class="absolute top-0 right-0 h-full flex flex-row items-center gap-x-4 gap-y-1 pointer-events-auto" id="header-controls-react" style="display: none;">
+        <div class="absolute top-0 right-0 h-full flex flex-row items-center gap-x-4 gap-y-1 pointer-events-auto" id="header-controls-react" style="visibility: hidden;">
           <div data-theme-control class="flex flex-row items-center gap-x-4">
-            <HeaderControls client:load />
+            <HeaderControls client:idle />
           </div>
           <div data-lang-control>
-            <LanguageSwitcher initialLocale={currentLocale} client:load />
+            <LanguageSwitcher initialLocale={currentLocale} client:idle />
           </div>
         </div>
         
@@ -175,7 +190,7 @@ const navItems = [
           <div class="w-7 h-7 @6xl:w-auto @6xl:h-8 inline-flex">
             <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
               <div class="flex items-center gap-2">
-                <span class="font-mono text-xs font-semibold text-main">ES</span>
+                <span class="font-mono text-xs font-semibold text-main">{t('ui.loading')}</span>
               </div>
             </div>
             <div class="hidden @6xl:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
@@ -235,10 +250,15 @@ const navItems = [
               <path d="m15 18-6-6 6-6"/>
             </svg>
           </button>
-          <div class="flex-1 flex items-center justify-center gap-2 px-3 py-2 font-mono text-xs font-bold uppercase tracking-wide">
-            <div class="w-4 h-4 border border-main" style="background: linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%);"></div>
-            <span id="mobile-theme-label">TEMA</span>
-          </div>
+          <button 
+            class="flex-1 flex items-center justify-center gap-2 px-3 py-2 font-mono text-xs font-bold tracking-wide bg-secondary hover:bg-main hover:text-secondary border-0 cursor-pointer"
+            id="mobile-theme-center"
+          >
+            <div class="w-4 h-4 mobile-theme-preview-container p-0.5" style="background-color: var(--color-secondary); border: 1px solid var(--color-main);">
+              <div class="w-full h-full mobile-theme-preview" style="background: linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%);"></div>
+            </div>
+            <span id="mobile-theme-label">Tema</span>
+          </button>
           <button 
             class="aspect-square h-8 flex items-center justify-center bg-main text-secondary border-l border-main hover:bg-secondary hover:text-main"
             id="mobile-theme-next"
@@ -259,14 +279,17 @@ const navItems = [
               <path d="m15 18-6-6 6-6"/>
             </svg>
           </button>
-          <div class="flex-1 flex items-center justify-center gap-2 px-3 py-2 font-mono text-xs font-bold uppercase tracking-wide">
+          <button 
+            class="flex-1 flex items-center justify-center gap-2 px-3 py-2 font-mono text-xs font-bold tracking-wide bg-secondary hover:bg-main hover:text-secondary border-0 cursor-pointer"
+            id="mobile-mode-center"
+          >
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" id="mobile-mode-icon">
               <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
               <line x1="8" y1="21" x2="16" y2="21"></line>
               <line x1="12" y1="17" x2="12" y2="21"></line>
             </svg>
-            <span id="mobile-mode-label">MODO</span>
-          </div>
+            <span id="mobile-mode-label">Modo</span>
+          </button>
           <button 
             class="aspect-square h-8 flex items-center justify-center bg-main text-secondary border-l border-main hover:bg-secondary hover:text-main"
             id="mobile-mode-next"
@@ -287,9 +310,12 @@ const navItems = [
               <path d="m15 18-6-6 6-6"/>
             </svg>
           </button>
-          <div class="flex-1 flex items-center justify-center gap-2 px-3 py-2 font-mono text-xs font-bold uppercase tracking-wide">
-            <span id="mobile-lang-label">{currentLocale === 'es' ? 'ESPAÑOL' : currentLocale === 'en' ? 'ENGLISH' : 'NORSK'}</span>
-          </div>
+          <button 
+            class="flex-1 flex items-center justify-center gap-2 px-3 py-2 font-mono text-xs font-bold tracking-wide bg-secondary hover:bg-main hover:text-secondary border-0 cursor-pointer"
+            id="mobile-lang-center"
+          >
+            <span id="mobile-lang-label">{currentLocale === 'es' ? 'Español' : currentLocale === 'en' ? 'English' : 'Norsk'}</span>
+          </button>
           <button 
             class="aspect-square h-8 flex items-center justify-center bg-main text-secondary border-l border-main hover:bg-secondary hover:text-main"
             id="mobile-lang-next"
@@ -307,25 +333,7 @@ const navItems = [
 
  
 
-<script>
-  // Hide static placeholders when React components mount
-  function hideStaticPlaceholders() {
-    const placeholder = document.getElementById('header-controls-placeholder');
-    if (placeholder) {
-      placeholder.style.display = 'none';
-    }
-  }
-
-  // Show React components and hide placeholders
-  function showReactComponents() {
-    const placeholder = document.getElementById('header-controls-placeholder');
-    const reactContainer = document.getElementById('header-controls-react');
-    
-    if (placeholder && reactContainer) {
-      placeholder.style.display = 'none';
-      reactContainer.style.display = 'flex';
-    }
-  }
+<script define:vars={{ themeNames, themeColors }}>
 
   // Initialize global theme state from localStorage immediately and update placeholder
   function initializeGlobalTheme() {
@@ -340,25 +348,25 @@ const navItems = [
     
     // Set global theme state that React components can read immediately
     if (savedThemeId) {
-      (window as any).__THEME_ID__ = savedThemeId;
-      (window as any).__THEME_MODE__ = savedMode;
-      (window as any).__THEME_READY__ = true;
+      window.__THEME_ID__ = savedThemeId;
+      window.__THEME_MODE__ = savedMode;
+      window.__THEME_READY__ = true;
     } else {
       // First visit - let React component handle random theme selection
-      (window as any).__THEME_MODE__ = savedMode;
-      (window as any).__THEME_READY__ = false;
+      window.__THEME_MODE__ = savedMode;
+      window.__THEME_READY__ = false;
     }
   }
 
-  // Instant transition from placeholder to React components
+  // Instant transition from placeholder to React components  
   function showReactComponentsImmediately() {
     const placeholder = document.getElementById('header-controls-placeholder');
     const reactContainer = document.getElementById('header-controls-react');
     
     if (placeholder && reactContainer) {
-      // Instant swap - hide placeholder and show React with display
+      // Instant swap - hide placeholder and show React components
       placeholder.style.display = 'none';
-      reactContainer.style.display = 'flex';
+      reactContainer.style.visibility = 'visible';
     }
   }
 
@@ -366,77 +374,7 @@ const navItems = [
   document.addEventListener('astro:page-load', () => {
     // Mobile menu elements
     const mobileMenuTrigger = document.getElementById('mobile-menu-trigger');
-    const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
-    let isMenuOpen = false;
 
-    // Function to toggle mobile menu
-    function toggleMobileMenu() {
-      const mobileNavItems = document.querySelectorAll('.mobile-nav-item');
-      const hamburgerIcon = document.getElementById('hamburger-icon');
-      const closeIcon = document.getElementById('close-icon');
-      
-      isMenuOpen = !isMenuOpen;
-      
-      if (isMenuOpen) {
-        // Block scroll but keep header sticky
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.top = `-${window.scrollY}px`;
-        document.body.style.width = '100%';
-        
-        // Toggle icons
-        hamburgerIcon?.classList.add('hidden');
-        closeIcon?.classList.remove('hidden');
-        
-        // Show overlay
-        mobileMenuOverlay?.classList.remove('pointer-events-none');
-        mobileMenuOverlay?.classList.add('pointer-events-auto');
-        
-        
-        // Start background fade in
-        if (mobileMenuOverlay) {
-          mobileMenuOverlay.style.opacity = '0';
-          requestAnimationFrame(() => {
-            mobileMenuOverlay.style.opacity = '1';
-          });
-        }
-        
-        // Show items one by one
-        mobileNavItems.forEach(item => {
-          item.classList.remove('opacity-0', 'translate-y-4');
-          item.classList.add('opacity-100', 'translate-y-0');
-        });
-        
-      } else {
-        // Restore scroll and position
-        const scrollY = document.body.style.top;
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.overflow = '';
-        document.body.style.width = '';
-        window.scrollTo(0, parseInt(scrollY || '0') * -1);
-        
-        // Toggle icons back
-        hamburgerIcon?.classList.remove('hidden');
-        closeIcon?.classList.add('hidden');
-        
-        // Hide items immediately
-        mobileNavItems.forEach(item => {
-          item.classList.remove('opacity-100', 'translate-y-0');
-          item.classList.add('opacity-0', 'translate-y-4');
-        });
-        
-        
-        // Hide overlay after animation
-        if (mobileMenuOverlay) {
-          mobileMenuOverlay.style.opacity = '0';
-          setTimeout(() => {
-            mobileMenuOverlay?.classList.remove('pointer-events-auto');
-            mobileMenuOverlay?.classList.add('pointer-events-none');
-          }, 600); // Wait for background fade out
-        }
-      }
-    }
 
     // Debug mobile menu setup
     console.log('=== MOBILE MENU DEBUG ===');
@@ -527,10 +465,13 @@ const navItems = [
     function setupMobileControlButtons() {
       const themePrev = document.getElementById('mobile-theme-prev');
       const themeNext = document.getElementById('mobile-theme-next');
+      const themeCenter = document.getElementById('mobile-theme-center');
       const modePrev = document.getElementById('mobile-mode-prev');
       const modeNext = document.getElementById('mobile-mode-next');
+      const modeCenter = document.getElementById('mobile-mode-center');
       const langPrev = document.getElementById('mobile-lang-prev');
       const langNext = document.getElementById('mobile-lang-next');
+      const langCenter = document.getElementById('mobile-lang-center');
       
       // Theme navigation
       if (themePrev) {
@@ -548,6 +489,18 @@ const navItems = [
       if (themeNext) {
         themeNext.onclick = function() {
           // Use keyboard shortcut for next theme
+          const event = new KeyboardEvent('keydown', { 
+            key: 'ArrowRight', 
+            metaKey: true 
+          });
+          document.dispatchEvent(event);
+          setTimeout(updateMobileThemeDisplay, 10);
+        };
+      }
+      
+      if (themeCenter) {
+        themeCenter.onclick = function() {
+          // Use keyboard shortcut for next theme (same as next button)
           const event = new KeyboardEvent('keydown', { 
             key: 'ArrowRight', 
             metaKey: true 
@@ -577,6 +530,16 @@ const navItems = [
           }
         };
       }
+      
+      if (modeCenter) {
+        modeCenter.onclick = function() {
+          const desktopModeButton = document.querySelector('[data-theme-control] .inline-flex:nth-child(2) button:first-child');
+          if (desktopModeButton) {
+            desktopModeButton.click();
+            setTimeout(updateMobileModeDisplay, 10);
+          }
+        };
+      }
 
       // Language navigation
       if (langPrev) {
@@ -596,28 +559,35 @@ const navItems = [
           }
         };
       }
+      
+      if (langCenter) {
+        langCenter.onclick = function() {
+          const desktopLangButton = document.querySelector('[data-lang-control] .inline-flex button:first-child');
+          if (desktopLangButton) {
+            desktopLangButton.click();
+          }
+        };
+      }
     }
 
     // Update mobile theme display to show current theme name
     function updateMobileThemeDisplay() {
       const themeLabel = document.getElementById('mobile-theme-label');
+      const themePreview = document.querySelector('.mobile-theme-preview');
+      
       if (themeLabel) {
         // Get current theme from localStorage
         const currentThemeId = localStorage.getItem('theme-id');
         if (currentThemeId) {
-          const themeNames = {
-            'gameboy': 'GAME BOY',
-            'dos': 'MS-DOS', 
-            'commodore64': 'COMMODORE 64',
-            'caution': 'CAUTION',
-            'windows95': 'WINDOWS 95',
-            'nickelodeon': 'NICKELODEON',
-            'msnmessenger': 'MSN MESSENGER',
-            'shrek': 'SHREK',
-            'spiderman': 'SPIDER-MAN',
-            'matrix': 'MATRIX'
-          };
-          themeLabel.textContent = themeNames[currentThemeId] || currentThemeId.toUpperCase();
+          themeLabel.textContent = themeNames[currentThemeId] || currentThemeId.charAt(0).toUpperCase() + currentThemeId.slice(1);
+          
+          // Update mobile theme preview with theme's own colorful color border
+          const themePreviewContainer = document.querySelector('.mobile-theme-preview-container');
+          if (themePreview && themePreviewContainer && themeColors[currentThemeId]) {
+            const colors = themeColors[currentThemeId];
+            themePreview.style.background = `linear-gradient(135deg, ${colors.colorful} 50%, ${colors.contrasty} 50%)`;
+            themePreviewContainer.style.borderColor = colors.colorful;
+          }
         }
       }
     }
@@ -631,13 +601,23 @@ const navItems = [
         // Get current mode from localStorage
         const currentMode = localStorage.getItem('theme-mode') || 'system';
         
-        const modeNames = {
-          'light': 'CLARO',
-          'dark': 'OSCURO',
-          'system': 'SISTEMA'
+        // Get current language from URL or localStorage
+        const currentLang = (() => {
+          const path = window.location.pathname;
+          if (path.startsWith('/en/')) return 'en';
+          if (path.startsWith('/no/')) return 'no';
+          return 'es';
+        })();
+        
+        const modeTranslations = {
+          'es': { 'light': 'Claro', 'dark': 'Oscuro', 'system': 'Sistema' },
+          'en': { 'light': 'Light', 'dark': 'Dark', 'system': 'System' },
+          'no': { 'light': 'Lys', 'dark': 'Mørk', 'system': 'System' }
         };
         
-        modeLabel.textContent = modeNames[currentMode] || currentMode.toUpperCase();
+        const modeNames = modeTranslations[currentLang] || modeTranslations['es'];
+        
+        modeLabel.textContent = modeNames[currentMode] || (currentMode.charAt(0).toUpperCase() + currentMode.slice(1));
         
         // Update icon based on mode
         switch(currentMode) {
@@ -678,7 +658,7 @@ const navItems = [
     initializeGlobalTheme();
     
     // Listen for when React components are ready with the correct theme
-    const handleReactReady = (event: any) => {
+    const handleReactReady = (event) => {
       console.log('React header ready with theme:', event.detail);
       showReactComponentsImmediately();
     };
@@ -695,7 +675,7 @@ const navItems = [
     
     
     // Navigation elements
-    const navLinks = document.querySelectorAll('.nav-link');
+    const navLinks = document.querySelectorAll('[data-nav-link]');
     const currentPath = window.location.pathname;
 
     // Navigation: Set active state based on current page
@@ -706,7 +686,7 @@ const navItems = [
       }
       
       // Prevent default click behavior and handle on mouseup
-      link.addEventListener('click', (e: Event) => {
+      link.addEventListener('click', (e) => {
         e.preventDefault();
       });
       
@@ -719,13 +699,13 @@ const navItems = [
     });
 
     // Keyboard navigation for main nav only
-    function handleKeydown(e: KeyboardEvent) {
+    function handleKeydown(e) {
       // Only trigger if not typing in an input
-      const target = e.target as HTMLElement;
+      const target = e.target;
       if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
       
       const key = e.key.toLowerCase();
-      const navLink = document.querySelector(`[data-hotkey="${key}"]`) as HTMLElement;
+      const navLink = document.querySelector(`[data-hotkey="${key}"]`);
       
       if (navLink && navLink.dataset.hotkey && !e.ctrlKey && !e.metaKey && !e.altKey) {
         e.preventDefault();
@@ -759,84 +739,12 @@ const navItems = [
     position: relative !important;
   }
 
-
-  /* Theme previews using CSS variables */
-  .gameboy-preview { 
-    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
-    border-color: var(--theme-contrasty) !important;
-  }
-  .dos-preview { 
-    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
-    border-color: var(--theme-contrasty) !important;
-  }
-  .commodore64-preview { 
-    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
-    border-color: var(--theme-contrasty) !important;
-  }
-  .caution-preview { 
-    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
-    border-color: var(--theme-contrasty) !important;
-  }
-  .windows95-preview { 
-    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
-    border-color: var(--theme-contrasty) !important;
-  }
-  .nickelodeon-preview { 
-    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
-    border-color: var(--theme-contrasty) !important;
-  }
-  .msnmessenger-preview { 
-    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
-    border-color: var(--theme-contrasty) !important;
-  }
-  .shrek-preview { 
-    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
-    border-color: var(--theme-contrasty) !important;
-  }
-  .spiderman-preview { 
-    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
-    border-color: var(--theme-contrasty) !important;
-  }
-  .matrix-preview { 
-    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
-    border-color: var(--theme-contrasty) !important;
-  }
-
-  /* Mode icon states */
-  html:not(.dark) .sun-icon {
-    opacity: 1;
-  }
-
-  html:not(.dark) .moon-icon {
-    opacity: 0;
-  }
-
-  html.dark .sun-icon {
-    opacity: 0;
-  }
-
-  html.dark .moon-icon {
-    opacity: 1;
-  }
-
-  .system-icon {
-    opacity: 0;
-  }
-
- 
-
-
-
   /* Hide hotkeys on mobile devices */
   @media (max-width: 768px) {
     /* Hide navigation hotkeys */
-    .nav-link .text-xs.font-bold.font-mono {
+    [data-nav-link] .text-xs.font-bold.font-mono {
       display: none;
     }
     
-    /* Hide theme dropdown hotkeys */
-    .theme-dropdown .border-t.border-main {
-      display: none;
-    }
   }
 </style>

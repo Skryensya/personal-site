@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import {
     useFloating,
     autoUpdate,
@@ -12,8 +12,6 @@ import {
     FloatingPortal,
     FloatingFocusManager
 } from '@floating-ui/react';
-
-const { useState } = React;
 
 interface DropdownButtonProps {
     // Contenido del botón principal (lado izquierdo)
@@ -91,7 +89,7 @@ export default function DropdownButton({
                     type="button"
                     onClick={handleMainClick}
                     disabled={disabled}
-                    className="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0 hover:bg-main hover:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold uppercase tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)]"
+                    className="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0 hover:bg-main hover:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)]"
                 >
                     {children}
                 </button>
@@ -102,7 +100,7 @@ export default function DropdownButton({
                     type="button"
                     onClick={handleDropdownClick}
                     disabled={disabled}
-                    className="flex items-center justify-center min-w-8 w-8 h-8 bg-secondary border-double border-2 border-main hover:bg-main hover:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold uppercase tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)]"
+                    className="flex items-center justify-center min-w-8 w-8 h-8 bg-secondary border-double border-2 border-main hover:bg-main hover:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)]"
                     aria-haspopup="true"
                     aria-expanded={isOpen}
                     {...getReferenceProps()}
