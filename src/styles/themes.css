@@ -24,27 +24,8 @@
     --color-main: var(--theme-contrasty);
     --color-secondary: var(--theme-colorful);
 
-    /* All theme color variables defined globally */
-    --gameboy-colorful: #9bbc0f;
-    --gameboy-contrasty: #081f08;
-    --dos-colorful: #ffffff;
-    --dos-contrasty: #000000;
-    --commodore64-colorful: #b8d4f0;
-    --commodore64-contrasty: #0d0d1f;
-    --caution-colorful: #ffff00;
-    --caution-contrasty: #000000;
-    --sunset-colorful: #ff6600;
-    --sunset-contrasty: #1a0800;
-    --neon-colorful: #ff0080;
-    --neon-contrasty: #0a0008;
-    --ocean-colorful: #00ccff;
-    --ocean-contrasty: #001a33;
-    --forest-colorful: #00ff00;
-    --forest-contrasty: #001100;
-    --ember-colorful: #ff3300;
-    --ember-contrasty: #1a0500;
-    --violet-colorful: #9966ff;
-    --violet-contrasty: #0f0a1a;
+    /* Theme colors are now dynamically set from themes.json via Layout.astro */
+    /* No need for individual theme color variables - they're set at runtime */
 }
 
 html.dark {
@@ -55,65 +36,58 @@ html.dark {
 
 /* Tech-Themed Retro Computing Definitions - 10 Iconic Color Themes */
 
+/* Theme-specific styling - colors are dynamically set via Layout.astro from themes.json */
+/* These selectors are kept for theme-specific features and effects */
+
 /* MS-DOS theme - Command line interface (1981-1995) - DEFAULT */
 :root,
 :root[data-theme='dos'] {
-    --theme-colorful: var(--dos-colorful);
-    --theme-contrasty: var(--dos-contrasty);
+    /* Colors set dynamically from JSON */
 }
 
 /* Game Boy theme - LCD dot matrix display (1989) */
 :root[data-theme='gameboy'] {
-    --theme-colorful: var(--gameboy-colorful);
-    --theme-contrasty: var(--gameboy-contrasty);
+    /* Colors set dynamically from JSON */
 }
 
 /* Commodore 64 theme - Blue screen computing legend (1982) */
 :root[data-theme='commodore64'] {
-    --theme-colorful: var(--commodore64-colorful);
-    --theme-contrasty: var(--commodore64-contrasty);
+    /* Colors set dynamically from JSON */
 }
 
-/* Caution theme - Warning tape industrial (Industrial design) */
+/* Caution theme - Warning tape industrial */
 :root[data-theme='caution'] {
-    --theme-colorful: var(--caution-colorful);
-    --theme-contrasty: var(--caution-contrasty);
+    /* Colors set dynamically from JSON */
 }
 
-/* Sunset theme - Warm orange retro sunset */
-:root[data-theme='sunset'] {
-    --theme-colorful: var(--sunset-colorful);
-    --theme-contrasty: var(--sunset-contrasty);
+/* Windows 95 theme - Classic desktop experience */
+:root[data-theme='windows95'] {
+    /* Colors set dynamically from JSON */
 }
 
-/* Neon theme - Electric pink cyberpunk */
-:root[data-theme='neon'] {
-    --theme-colorful: var(--neon-colorful);
-    --theme-contrasty: var(--neon-contrasty);
+/* Nickelodeon theme - Orange splat network */
+:root[data-theme='nickelodeon'] {
+    /* Colors set dynamically from JSON */
 }
 
-/* Ocean theme - Deep cyan retro waves */
-:root[data-theme='ocean'] {
-    --theme-colorful: var(--ocean-colorful);
-    --theme-contrasty: var(--ocean-contrasty);
+/* MSN Messenger theme - Instant messaging nostalgia */
+:root[data-theme='msnmessenger'] {
+    /* Colors set dynamically from JSON */
 }
 
-/* Forest theme - Classic green terminal */
-:root[data-theme='forest'] {
-    --theme-colorful: var(--forest-colorful);
-    --theme-contrasty: var(--forest-contrasty);
+/* Shrek theme - Swamp green ogre */
+:root[data-theme='shrek'] {
+    /* Colors set dynamically from JSON */
 }
 
-/* Ember theme - Burning red retro fire */
-:root[data-theme='ember'] {
-    --theme-colorful: var(--ember-colorful);
-    --theme-contrasty: var(--ember-contrasty);
+/* Spider-Man theme - Web-slinger red and blue */
+:root[data-theme='spiderman'] {
+    /* Colors set dynamically from JSON */
 }
 
-/* Violet theme - Purple retro synthwave */
-:root[data-theme='violet'] {
-    --theme-colorful: var(--violet-colorful);
-    --theme-contrasty: var(--violet-contrasty);
+/* Matrix theme - Digital rain terminal */
+:root[data-theme='matrix'] {
+    /* Colors set dynamically from JSON */
 }
 
 /* Enhanced syntax highlighting colors for better readability */
@@ -126,38 +100,26 @@ html.dark {
     --syntax-operator: color-mix(in srgb, var(--color-main) 80%, var(--theme-colorful) 20%);
 }
 
-/* Special tech glow effects for neon themes */
-:root[data-theme='neon'] {
+/* Special tech glow effects for nostalgic themes */
+:root[data-theme='matrix'] {
     --tech-glow: drop-shadow(0 0 8px var(--theme-colorful));
 }
 
-:root[data-theme='ocean'] {
+:root[data-theme='msnmessenger'] {
     --tech-glow: drop-shadow(0 0 6px var(--theme-colorful));
 }
 
-:root[data-theme='violet'] {
-    --tech-glow: drop-shadow(0 0 10px var(--theme-colorful));
-}
-
-:root[data-theme='forest'] {
-    --tech-glow: drop-shadow(0 0 4px var(--theme-colorful));
-}
-
-:root[data-theme='ember'] {
+:root[data-theme='spiderman'] {
     --tech-glow: drop-shadow(0 0 6px var(--theme-colorful));
 }
 
 /* Apply tech glow to headings in appropriate themes */
-:root[data-theme='neon'] h1,
-:root[data-theme='neon'] h2,
-:root[data-theme='ocean'] h1,
-:root[data-theme='ocean'] h2,
-:root[data-theme='violet'] h1,
-:root[data-theme='violet'] h2,
-:root[data-theme='forest'] h1,
-:root[data-theme='forest'] h2,
-:root[data-theme='ember'] h1,
-:root[data-theme='ember'] h2 {
+:root[data-theme='matrix'] h1,
+:root[data-theme='matrix'] h2,
+:root[data-theme='msnmessenger'] h1,
+:root[data-theme='msnmessenger'] h2,
+:root[data-theme='spiderman'] h1,
+:root[data-theme='spiderman'] h2 {
     filter: var(--tech-glow);
 }
 
@@ -181,12 +143,12 @@ html.dark {
     --scan-lines: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.03) 2px, rgba(0, 0, 0, 0.03) 4px);
 }
 
-/* Sunset warm glow effects */
-:root[data-theme='sunset'] {
-    --warm-glow: drop-shadow(0 0 8px var(--theme-colorful));
+/* Windows 95 classic styling */
+:root[data-theme='windows95'] {
+    --win95-border: inset 2px solid var(--theme-contrasty);
 }
 
-/* Neon pulse effects */
-:root[data-theme='neon'] {
-    --neon-pulse: drop-shadow(0 0 12px var(--theme-colorful)) drop-shadow(0 0 20px var(--theme-colorful));
+/* Matrix digital rain effects */
+:root[data-theme='matrix'] {
+    --matrix-pulse: drop-shadow(0 0 12px var(--theme-colorful)) drop-shadow(0 0 20px var(--theme-colorful));
 }

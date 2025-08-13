@@ -606,16 +606,16 @@ const navItems = [
         const currentThemeId = localStorage.getItem('theme-id');
         if (currentThemeId) {
           const themeNames = {
-            'gameboy': 'GAMEBOY',
-            'dos': 'TERMINAL', 
-            'commodore64': 'COMMODORE',
-            'caution': 'PRECAUCION',
-            'sunset': 'ATARDECER',
-            'neon': 'NEON',
-            'ocean': 'OCEANO',
-            'forest': 'BOSQUE',
-            'ember': 'BRASA',
-            'violet': 'VIOLETA'
+            'gameboy': 'GAME BOY',
+            'dos': 'MS-DOS', 
+            'commodore64': 'COMMODORE 64',
+            'caution': 'CAUTION',
+            'windows95': 'WINDOWS 95',
+            'nickelodeon': 'NICKELODEON',
+            'msnmessenger': 'MSN MESSENGER',
+            'shrek': 'SHREK',
+            'spiderman': 'SPIDER-MAN',
+            'matrix': 'MATRIX'
           };
           themeLabel.textContent = themeNames[currentThemeId] || currentThemeId.toUpperCase();
         }
@@ -762,44 +762,44 @@ const navItems = [
 
   /* Theme previews using CSS variables */
   .gameboy-preview { 
-    background: linear-gradient(45deg, var(--gameboy-colorful) 50%, var(--gameboy-contrasty) 50%); 
-    border-color: var(--gameboy-contrasty) !important;
+    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
+    border-color: var(--theme-contrasty) !important;
   }
   .dos-preview { 
-    background: linear-gradient(45deg, var(--dos-colorful) 50%, var(--dos-contrasty) 50%); 
-    border-color: var(--dos-contrasty) !important;
+    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
+    border-color: var(--theme-contrasty) !important;
   }
   .commodore64-preview { 
-    background: linear-gradient(45deg, var(--commodore64-colorful) 50%, var(--commodore64-contrasty) 50%); 
-    border-color: var(--commodore64-contrasty) !important;
+    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
+    border-color: var(--theme-contrasty) !important;
   }
   .caution-preview { 
-    background: linear-gradient(45deg, var(--caution-colorful) 50%, var(--caution-contrasty) 50%); 
-    border-color: var(--caution-contrasty) !important;
+    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
+    border-color: var(--theme-contrasty) !important;
   }
-  .sunset-preview { 
-    background: linear-gradient(45deg, var(--sunset-colorful) 50%, var(--sunset-contrasty) 50%); 
-    border-color: var(--sunset-contrasty) !important;
+  .windows95-preview { 
+    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
+    border-color: var(--theme-contrasty) !important;
   }
-  .neon-preview { 
-    background: linear-gradient(45deg, var(--neon-colorful) 50%, var(--neon-contrasty) 50%); 
-    border-color: var(--neon-contrasty) !important;
+  .nickelodeon-preview { 
+    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
+    border-color: var(--theme-contrasty) !important;
   }
-  .ocean-preview { 
-    background: linear-gradient(45deg, var(--ocean-colorful) 50%, var(--ocean-contrasty) 50%); 
-    border-color: var(--ocean-contrasty) !important;
+  .msnmessenger-preview { 
+    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
+    border-color: var(--theme-contrasty) !important;
   }
-  .forest-preview { 
-    background: linear-gradient(45deg, var(--forest-colorful) 50%, var(--forest-contrasty) 50%); 
-    border-color: var(--forest-contrasty) !important;
+  .shrek-preview { 
+    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
+    border-color: var(--theme-contrasty) !important;
   }
-  .ember-preview { 
-    background: linear-gradient(45deg, var(--ember-colorful) 50%, var(--ember-contrasty) 50%); 
-    border-color: var(--ember-contrasty) !important;
+  .spiderman-preview { 
+    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
+    border-color: var(--theme-contrasty) !important;
   }
-  .violet-preview { 
-    background: linear-gradient(45deg, var(--violet-colorful) 50%, var(--violet-contrasty) 50%); 
-    border-color: var(--violet-contrasty) !important;
+  .matrix-preview { 
+    background: linear-gradient(45deg, var(--theme-colorful) 50%, var(--theme-contrasty) 50%); 
+    border-color: var(--theme-contrasty) !important;
   }
 
   /* Mode icon states */

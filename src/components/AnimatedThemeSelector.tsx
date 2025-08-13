@@ -1,25 +1,17 @@
 import * as React from 'react';
 import { animateSmoothRandomColors, animateToTargetColor, hexToHSL } from '../utils/colorAnimation';
+import { themes } from '../data/themes.js';
+import { type Theme } from '../types/theme';
 
 const { useEffect, useRef, useState } = React;
 
-interface Theme {
-    id: string;
-    name: string;
-    description: string;
-    colorful: string;
-    contrasty: string;
-}
-
 interface AnimatedThemeSelectorProps {
-    themes: Theme[];
     currentTheme: Theme;
     onThemeSelect: (theme: Theme) => void;
     className?: string;
 }
 
 export default function AnimatedThemeSelector({ 
-    themes, 
     currentTheme, 
     onThemeSelect, 
     className = "" 
