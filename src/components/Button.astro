@@ -296,8 +296,9 @@ const shadowClasses = cn(
           
           // Elevate after sequence completes - always happens regardless of hover state
           setTimeout(() => {
-            (buttonWrapper as HTMLElement).style.transform = 'translate(-12px, -12px)';
-            (buttonWrapper as HTMLElement).style.transition = 'transform 200ms ease-out';
+            const htmlButtonWrapper = buttonWrapper as HTMLElement;
+            htmlButtonWrapper.style.transform = 'translate(-12px, -12px)';
+            htmlButtonWrapper.style.transition = 'transform 200ms ease-out';
             console.log('Button elevated after border animation completed');
           }, 1030);
         });
@@ -327,16 +328,18 @@ const shadowClasses = cn(
         actualButton.addEventListener('mousedown', () => {
           if (isLocked) {
             // Quick down animation like other elevated buttons - no transition for instant effect
-            (buttonWrapper as HTMLElement).style.transform = 'translate(0px, 0px)';
-            (buttonWrapper as HTMLElement).style.transition = 'none';
+            const htmlButtonWrapper = buttonWrapper as HTMLElement;
+            htmlButtonWrapper.style.transform = 'translate(0px, 0px)';
+            htmlButtonWrapper.style.transition = 'none';
           }
         });
         
         actualButton.addEventListener('mouseup', () => {
           if (isLocked) {
             // Return to elevated position - no transition for instant effect  
-            (buttonWrapper as HTMLElement).style.transform = 'translate(-12px, -12px)';
-            (buttonWrapper as HTMLElement).style.transition = 'none';
+            const htmlButtonWrapper = buttonWrapper as HTMLElement;
+            htmlButtonWrapper.style.transform = 'translate(-12px, -12px)';
+            htmlButtonWrapper.style.transition = 'none';
           }
         });
       }
@@ -346,29 +349,30 @@ const shadowClasses = cn(
     const elevatedButtons = document.querySelectorAll('.elevated-button');
     
     elevatedButtons.forEach((button) => {
+      const htmlButton = button as HTMLElement;
       let hasElevated = false;
       
       // Elevate after 1 second on page load
       setTimeout(() => {
-        if (!hasElevated) {
-          button.style.transform = 'translate(-12px, -12px)';
-          button.style.transition = 'transform 200ms ease-out';
+        if (!hasElevated && htmlButton.style) {
+          htmlButton.style.transform = 'translate(-12px, -12px)';
+          htmlButton.style.transition = 'transform 200ms ease-out';
           hasElevated = true;
         }
       }, 1000);
       
       // Handle press animation when elevated
-      button.addEventListener('mousedown', () => {
-        if (hasElevated) {
-          button.style.transform = 'translate(0px, 0px)';
-          button.style.transition = 'none';
+      htmlButton.addEventListener('mousedown', () => {
+        if (hasElevated && htmlButton.style) {
+          htmlButton.style.transform = 'translate(0px, 0px)';
+          htmlButton.style.transition = 'none';
         }
       });
       
-      button.addEventListener('mouseup', () => {
-        if (hasElevated) {
-          button.style.transform = 'translate(-12px, -12px)';
-          button.style.transition = 'none';
+      htmlButton.addEventListener('mouseup', () => {
+        if (hasElevated && htmlButton.style) {
+          htmlButton.style.transform = 'translate(-12px, -12px)';
+          htmlButton.style.transition = 'none';
         }
       });
     });

@@ -1,6 +1,5 @@
 --- 
-import HeaderControls from './HeaderControls.tsx';
-import LanguageSwitcher from './LanguageSwitcher.tsx'; 
+import NavbarControls from './NavbarControls.tsx';
 import Button from './Button.astro';
 import { getLangFromUrl } from '@/i18n/utils';
 import { useTranslations } from '@/i18n/utils';
@@ -45,12 +44,12 @@ const navItems = [
         {navItems.map((item) => (
           <a 
             href={item.href}
-            class="flex items-center gap-1.5 px-2 py-1 h-7 @6xl:h-8 bg-secondary border-double border-2 border-main font-grotesk text-sm !font-thin text-main no-underline pointer-events-auto hover:bg-main hover:text-secondary active:bg-main active:text-secondary font-bold tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)]"
+            class="flex items-center gap-1.5 px-2 pb-1 pt-1.5 h-7 @6xl:h-8 bg-secondary border-double border-2 border-main font-grotesk text-sm text-main no-underline pointer-events-auto hover:bg-main hover:text-secondary active:bg-main active:text-secondary font-bold tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)] uppercase"
             data-nav-link
             data-hotkey={item.hotkey}
             aria-label={item.hotkey ? `${item.label} (Press ${item.hotkey.toUpperCase()})` : item.label}
           >
-            {item.hotkey && <span class="text-xs font-bold font-mono hidden md:inline">[{item.hotkey.toUpperCase()}]</span>}
+            {item.hotkey && <span class="font-bold font-mono hidden md:inline">[{item.hotkey.toUpperCase()}]</span>}
             <span class="font-semibold">{item.label}</span>
           </a>
         ))}
@@ -60,7 +59,7 @@ const navItems = [
       <div class="@6xl:hidden flex items-center flex-1 relative">
         <a 
           href={getHomeUrl(currentLocale)}
-          class="flex items-center gap-1.5 px-2 py-1 h-8 bg-secondary border-double border-2 border-main font-grotesk text-sm !font-thin text-main no-underline pointer-events-auto hover:bg-main hover:text-secondary active:bg-main active:text-secondary font-bold tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)]"
+          class="flex items-center gap-1.5 px-2 py-1 h-8 bg-secondary border-double border-2 border-main font-grotesk text-sm text-main no-underline pointer-events-auto hover:bg-main hover:text-secondary active:bg-main active:text-secondary font-bold tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)] uppercase"
         >
           <span class="font-semibold">Allison Peña</span>
         </a>
@@ -78,20 +77,20 @@ const navItems = [
             <line x1="18" x2="6" y1="6" y2="18"/>
             <line x1="6" x2="18" y1="6" y2="18"/>
           </svg>
-          <span class="font-mono text-xs font-bold">Menu</span>
+          <span class="font-grotesk text-xs font-bold uppercase">Menu</span>
         </button>
       </div>
 
-      <!-- Desktop Header Controls - Container with fixed positioning to prevent CLS -->
+      <!-- Desktop Navbar Controls - Container with fixed positioning to prevent CLS -->
       <div class="hidden @6xl:flex items-center gap-2 flex-shrink-0 relative">
         <!-- Placeholder layer - absolute positioned with constant opacity -->
-        <div class="absolute top-0 right-0 h-full flex items-center gap-x-2 gap-y-1 pointer-events-none" id="header-controls-placeholder">
+        <div class="absolute top-0 right-0 h-full flex items-center gap-x-2 gap-y-1 pointer-events-none" id="navbar-controls-placeholder">
           <!-- Theme Switcher Placeholder -->
           <div class="w-7 h-7 @6xl:w-full @6xl:h-8 inline-flex">
             <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
               <div class="flex items-center gap-2 w-full">
                 <div id="theme-placeholder-preview" class="w-4 h-4 border border-main flex-shrink-0" style="background: linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%)"></div>
-                <span id="theme-placeholder-text" class="hidden @6xl:block font-mono text-xs font-semibold text-main flex-1 text-left">{t('ui.loading')}</span>
+                <span id="theme-placeholder-text" class="hidden @6xl:block font-grotesk text-xs font-semibold text-main flex-1 text-left uppercase">{t('ui.loading')}</span>
               </div>
             </div>
             <div class="hidden @6xl:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
@@ -112,7 +111,7 @@ const navItems = [
                     <line x1="12" y1="17" x2="12" y2="21"></line>
                   </svg>
                 </div>
-                <span id="mode-placeholder-text" class="hidden @6xl:block font-mono text-xs font-semibold text-main">{t('ui.loading')}</span>
+                <span id="mode-placeholder-text" class="hidden @6xl:block font-grotesk text-xs font-semibold text-main uppercase">{t('ui.loading')}</span>
               </div>
             </div>
             <div class="hidden @6xl:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
@@ -126,7 +125,7 @@ const navItems = [
           <div class="w-7 h-7 @6xl:w-auto @6xl:h-8 inline-flex">
             <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
               <div class="flex items-center gap-2">
-                <span class="font-mono text-xs font-semibold text-main">{t('ui.loading')}</span>
+                <span class="font-grotesk text-xs font-semibold text-main uppercase">{t('ui.loading')}</span>
               </div>
             </div>
             <div class="hidden @6xl:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
@@ -138,12 +137,9 @@ const navItems = [
         </div>
         
         <!-- React components layer - absolute positioned to match exactly -->
-        <div class="absolute top-0 right-0 h-full flex flex-row items-center gap-x-2 gap-y-1 pointer-events-auto" id="header-controls-react" style="visibility: hidden;">
+        <div class="absolute top-0 right-0 h-full flex flex-row items-center gap-x-2 gap-y-1 pointer-events-auto" id="navbar-controls-react" style="visibility: hidden;">
           <div data-theme-control class="flex flex-row items-center gap-x-2">
-            <HeaderControls client:idle />
-          </div>
-          <div data-lang-control>
-            <LanguageSwitcher initialLocale={currentLocale} client:idle />
+            <NavbarControls currentPath={Astro.url.pathname} initialLocale={currentLocale} client:idle />
           </div>
         </div>
         
@@ -189,7 +185,7 @@ const navItems = [
           <div class="w-7 h-7 @6xl:w-auto @6xl:h-8 inline-flex">
             <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
               <div class="flex items-center gap-2">
-                <span class="font-mono text-xs font-semibold text-main">{t('ui.loading')}</span>
+                <span class="font-grotesk text-xs font-semibold text-main uppercase">{t('ui.loading')}</span>
               </div>
             </div>
             <div class="hidden @6xl:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
@@ -217,7 +213,7 @@ const navItems = [
   ></div>
   
   <!-- Menu content -->
-  <div class="w-[210px] max-w-[85vw]">
+  <div class="w-[220px] max-w-[85vw]">
     <div class="bg-secondary border-double border-2 border-main">
       <!-- Navigation Links -->
       <div class="p-2 flex flex-col space-y-1">
@@ -225,7 +221,7 @@ const navItems = [
           <div class="w-full [&>div]:!w-full [&>div]:!block">
             <Button 
               href={item.href}  
-              class="!w-full !flex !items-center !justify-center font-mono text-sm"
+              class="!w-full !flex !items-center !justify-center font-grotesk text-sm uppercase"
             >
               {item.label}
             </Button>
@@ -249,7 +245,7 @@ const navItems = [
             </svg>
           </button>
           <button 
-            class="flex-1 flex items-center justify-center gap-2 px-3 py-2 font-mono text-xs font-bold tracking-wide bg-secondary hover:bg-main hover:text-secondary border-0 cursor-pointer"
+            class="flex-1 flex items-center justify-center gap-2 px-3 h-8 font-grotesk text-xs font-bold tracking-wide bg-secondary hover:bg-main hover:text-secondary border-0 cursor-pointer uppercase"
             id="mobile-theme-center"
           >
           <div class="border border-main">
@@ -280,7 +276,7 @@ const navItems = [
             </svg>
           </button>
           <button 
-            class="flex-1 flex items-center justify-center gap-2 px-3 py-2 font-mono text-xs font-bold tracking-wide bg-secondary hover:bg-main hover:text-secondary border-0 cursor-pointer"
+            class="flex-1 flex items-center justify-center gap-2 px-3 h-8 font-grotesk text-xs font-bold tracking-wide bg-secondary hover:bg-main hover:text-secondary border-0 cursor-pointer uppercase"
             id="mobile-mode-center"
           >
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" id="mobile-mode-icon">
@@ -311,7 +307,7 @@ const navItems = [
             </svg>
           </button>
           <button 
-            class="flex-1 flex items-center justify-center gap-2 px-3 py-2 font-mono text-xs font-bold tracking-wide bg-secondary hover:bg-main hover:text-secondary border-0 cursor-pointer"
+            class="flex-1 flex items-center justify-center gap-2 px-3 h-8 font-grotesk text-xs font-bold tracking-wide bg-secondary hover:bg-main hover:text-secondary border-0 cursor-pointer uppercase"
             id="mobile-lang-center"
           >
             <span id="mobile-lang-label">{currentLocale === 'en' ? 'English' : currentLocale === 'es' ? 'Español' : 'Norsk'}</span>
@@ -360,8 +356,8 @@ const navItems = [
 
   // Instant transition from placeholder to React components  
   function showReactComponentsImmediately() {
-    const placeholder = document.getElementById('header-controls-placeholder');
-    const reactContainer = document.getElementById('header-controls-react');
+    const placeholder = document.getElementById('navbar-controls-placeholder');
+    const reactContainer = document.getElementById('navbar-controls-react');
     
     if (placeholder && reactContainer) {
       // Instant swap - hide placeholder and show React components
@@ -376,12 +372,6 @@ const navItems = [
     const mobileMenuTrigger = document.getElementById('mobile-menu-trigger');
 
 
-    // Debug mobile menu setup
-    console.log('=== MOBILE MENU DEBUG ===');
-    console.log('mobileMenuTrigger:', mobileMenuTrigger);
-    console.log('mobile-dropdown element:', document.getElementById('mobile-dropdown'));
-    console.log('hamburger-icon:', document.getElementById('hamburger-icon'));
-    console.log('close-icon:', document.getElementById('close-icon'));
 
     // Create the simplest possible mobile menu toggle
     function setupMobileMenu() {

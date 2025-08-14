@@ -1,136 +1,89 @@
 ---
-export interface Props {
+import Button from './Button.astro';
+interface Props {
     title: string;
     description?: string;
     href: string;
     slug?: string;
     dataIndex?: number;
-    dataImage?: string;
-    dataImageAlt?: string;
-    minimal?: boolean;
+    tags?: string[];
+    publishDate?: string;
+    lang?: string;
 }
 
-const { title, description = "", href, slug, dataIndex, dataImage, dataImageAlt, minimal = false } = Astro.props;
+const { 
+    title, 
+    description = '', 
+    href, 
+    slug, 
+    dataIndex,
+    tags,
+    publishDate,
+    lang 
+} = Astro.props;
 ---
 
 <div 
-    class="w-[clamp(100px,20vw,100px)] aspect-[2/3] relative group mobile-card-height" 
-    style={`view-transition-name: project-card-${slug};`}
+    class="w-full max-w-sm aspect-[2/3] relative group mx-auto"
+    style={{ viewTransitionName: `project-card-${slug}`, perspective: '1000px' }}
 >
-    <div 
-        class="relative w-full h-full transition-all duration-300 ease-out desktop-transforms"
-    >
-        <!-- Large arrow icon aligned with card edge -->
-        <div class="absolute top-2 right-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 lg:group-focus-within:opacity-100 transition-all duration-300 ease-out hover:scale-105 cursor-pointer z-40">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" class="text-main">
-                <path d="M7 17L17 7M17 7H7M17 7V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <div class="relative w-full h-full [transform-style:preserve-3d] [transform-origin:right_center] [transform:rotateY(-8deg)_translateZ(15px)_translateY(-5px)] transition-transform duration-300 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] group-hover:[transform:rotateY(0deg)_translateZ(5px)_translateY(2px)] group-focus-within:[transform:rotateY(0deg)_translateZ(5px)_translateY(2px)]">
+        <!-- Arrow icon -->
+        <div class="absolute top-2 right-2 z-40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] flex items-center justify-center">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" class="text-main">
+                <path 
+                    d="M7 17L17 7M17 7H7M17 7V17" 
+                    stroke="currentColor" 
+                    stroke-width="2" 
+                    stroke-linecap="round" 
+                    stroke-linejoin="round" 
+                />
             </svg>
         </div>
 
-        <a 
-            href={href} 
-            class="relative block w-full h-full cursor-pointer z-10"
-            onfocus="this.parentElement.style.transform = 'rotateY(0deg) translateZ(5px) translateY(2px)'"
-            onblur="this.parentElement.style.transform = 'rotateY(-8deg) translateZ(15px) translateY(-5px)'"
+        <a
+            href={href}
+            class="relative block w-full h-full cursor-pointer z-10 focus:outline-none focus-within:opacity-100"
             data-project-index={dataIndex}
-            data-project-image={dataImage}
-            data-project-image-alt={dataImageAlt}
             data-project-title={title}
             data-project-description={description}
         >
-        <!-- Card face -->
-        <div 
-            class="absolute w-full h-full bg-main border-2 border-main"
-            style="transform: translateZ(25px); clip-path: polygon(0 0, calc(100% - var(--triangle-outer)) 0, 100% var(--triangle-outer), 100% 100%, 0 100%);"
-        >
-            <!-- Title in outer card -->
-            <div class="px-4 py-2">
-                <h3 class="font-sans text-2xl font-bold mb-3 text-secondary" style={`view-transition-name: project-content-${slug}`}>
-                    {title}
-                </h3>
-            </div>
-
-
-            <!-- Inner content container with opposite color -->
-            <div 
-                class="absolute inset-0.5 top-12 bg-secondary border-2 border-main"
-                style="clip-path: polygon(0 0, calc(100% - var(--triangle-inner)) 0, 100% var(--triangle-inner), 100% 100%, 0 100%);"
+            <!-- Card face -->
+            <div
+                class="absolute w-full h-full bg-main border-2 border-main [transform:translateZ(25px)] [clip-path:polygon(0_0,calc(100%_-_95px)_0,100%_95px,100%_100%,0_100%)]"
             >
-
-                <!-- Content with CSS exclusions -->
-                <div class="px-3 py-2 h-full flex flex-col">
-                    {description && (
-                      <p class="text-base text-main leading-relaxed line-clamp-10 triangle-text-wrap text-pretty flex-1">
-                          {description}
-                      </p>
-                    )}
-                    
-                    <!-- Project number at bottom left -->
-                    <div class="mt-auto pt-4">
-                        <span class="text-main font-mono text-4xl font-bold">
-                            #{String(dataIndex || 0).padStart(2, '0')}
-                        </span>
-                    </div>
+                <!-- Title in outer card -->
+                <div class="px-4 py-2">
+                    <h3 
+                        class="font-sans text-2xl font-bold mb-3 text-secondary" 
+                        style={{ viewTransitionName: `project-content-${slug}` }}
+                    >
+                        {title}
+                    </h3>
                 </div>
 
-                <style>
-                    :root {
-                        --triangle-base: 95px;
-                        --triangle-padding: 2px;
-                        --triangle-outer: var(--triangle-base);
-                        --triangle-inner: calc(var(--triangle-base) - var(--triangle-padding) * 22);
-                        --triangle-text: calc(var(--triangle-inner) - 30px);
-                    }
+                <!-- Inner content container with opposite color -->
+                <div
+                    class="absolute inset-0.5 top-12 bg-secondary border-2 border-main [clip-path:polygon(0_0,calc(100%_-_51px)_0,100%_51px,100%_100%,0_100%)]"
+                >
+                    <!-- Content with CSS exclusions -->
+                    <div class="px-3 py-2 h-full flex flex-col">
+                        {description && (
+                            <p class="text-base text-main leading-relaxed line-clamp-10 text-pretty flex-1 mr-0 before:content-[''] before:float-right before:w-[21px] before:h-[21px] before:[shape-outside:polygon(0%_0%,100%_0%,100%_100%)] before:[clip-path:polygon(0%_0%,100%_0%,100%_100%)]">
+                                {description}
+                            </p>
+                        )}
 
-                   
-                 
-
-                    /* Desktop: perspective and transforms */
-                    @media (min-width: 1024px) {
-               
-                        .desktop-transforms {
-                            transform-style: preserve-3d;
-                            transform-origin: right center;
-                            transform: rotateY(-8deg) translateZ(15px) translateY(-5px);
-                        }
-
-                        .desktop-transforms:hover {
-                            transform: rotateY(0deg) translateZ(5px) translateY(2px);
-                        }
-
-                        .group:focus-within .desktop-transforms {
-                            transform: rotateY(0deg) translateZ(5px) translateY(2px);
-                        }
-                    }
-                    
-                    /* Mobile: no transforms */
-                    @media (max-width: 1023px) {
-                        .desktop-transforms {
-                            transform: none !important;
-                        }
-                        
-                        .desktop-transforms:hover {
-                            transform: none !important;
-                        }
-                    }
-                    
-                    .triangle-text-wrap {
-                        --triangle-size: var(--triangle-text);
-                        margin-right: 0;
-                    }
-                    
-                    .triangle-text-wrap::before {
-                        content: '';
-                        float: right;
-                        width: var(--triangle-size);
-                        height: var(--triangle-size);
-                        shape-outside: polygon(0% 0%, 100% 0%, 100% 100%);
-                  
-                        clip-path: polygon(0% 0%, 100% 0%, 100% 100%);
-                    }
-                </style>
+                        <!-- Project number at bottom left -->
+                        <div class="mt-auto pt-4 flex justify-between">
+                            <span class="text-main font-mono text-4xl font-bold">
+                                #{String(dataIndex || 0).padStart(2, '0')}
+                            </span>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
-    </a>
+        </a>
+    </div>
 </div>
 

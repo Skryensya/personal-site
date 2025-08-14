@@ -227,7 +227,8 @@ export default function MarqueeSection({ links }: Props) {
                 </div>
             </div>
 
-            <style>{`
+            <style dangerouslySetInnerHTML={{
+                __html: `
         @keyframes marquee {
           0% {
             transform: translateX(0);
@@ -257,7 +258,7 @@ export default function MarqueeSection({ links }: Props) {
         }
         
         .tag-item.selected::before {
-          content: '►';
+          content: '\\25BA';
           position: absolute;
           left: -8px;
           top: 50%;
@@ -294,7 +295,8 @@ export default function MarqueeSection({ links }: Props) {
         .has-keyboard-focus {
           padding: 8px 0;
         }
-      `}</style>
+        `
+            }} />
         </div>
     );
 }

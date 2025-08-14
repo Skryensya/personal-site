@@ -1,0 +1,41 @@
+---
+import ProjectCard from '../ProjectCard.astro';
+import { getFeaturedProjectsByLanguage, getSlugFromId } from '@/utils/content-utils';
+import { useTranslations } from '@/i18n/utils';
+import { defaultLang, type Language } from '@/i18n/ui';
+import { getLocalizedUrl } from '@/utils/localized-routes';
+
+interface Props {
+    lang?: Language;
+}
+
+const { lang = defaultLang } = Astro.props;
+const t = useTranslations(lang);
+
+// Get first 4 featured projects in the current language
+const featuredProjects = (await getFeaturedProjectsByLanguage(lang))
+  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime())
+  .slice(0, 4);
+---
+
+<section class="py-20 bg-secondary">
+  <div class="max-w-7xl mx-auto px-4">
+    <h2 class="font-mono text-3xl font-bold text-main mb-12">{t('home.featuredProjects')}</h2>
+    
+    <div class="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4 xl:gap-6">
+      {featuredProjects.map((project, index) => (
+        <ProjectCard
+          title={project.data.title}
+          description={project.data.description}
+          href={getLocalizedUrl(lang, 'projects', getSlugFromId(project.id))}
+          slug={getSlugFromId(project.id)}
+          dataIndex={index + 1}
+          tags={project.data.tags}
+          publishDate={project.data.publishDate.toISOString()}
+          lang={lang}
+        />
+      ))}
+    </div>
+  
+  </div>
+</section>
