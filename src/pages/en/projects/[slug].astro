@@ -1,7 +1,7 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
 import { getSlugFromId, getLanguageFromId } from '@/utils/content-utils';
-import ProjectPage from '../../components/ProjectPage.astro';
+import ProjectPage from '../../../components/ProjectPage.astro';
 
 export async function getStaticPaths() {
     const allProjects = await getCollection('projects');

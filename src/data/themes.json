@@ -51,8 +51,8 @@
             "name": "Nick",
             "description": "Orange splat network",
             "colors": {
-                "colorful": "#F5782A",
-                "contrasty": "#265B3E"
+                "colorful": "#ff8438",
+                "contrasty": "#014621"
             }
         },
         {

@@ -5,6 +5,7 @@ import AsciiGrid from './AsciiGrid.astro';
 import CornersWithCrosses from './CornersWithCrosses.astro';
 import { useTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
+import { getLocalizedUrl } from '@/utils/localized-routes';
 
 interface Props {
     lang?: Language;
@@ -26,8 +27,8 @@ const t = useTranslations(lang);
                 />
             </div>
             <div class="flex flex-col md:flex-row gap-4">
-                <Button href="/projects" class='order-2 md:order-1'>{t('home.heroProjectsButton')}</Button>
-                <Button href="/cv" filled elevated class='order-1 md:order-2'>{t('home.cvButton')}</Button>
+                <Button href={getLocalizedUrl(lang, 'projects')} class='order-2 md:order-1'>{t('home.heroProjectsButton')}</Button>
+                <Button href={getLocalizedUrl(lang, 'resume')} filled elevated class='order-1 md:order-2'>{t('home.cvButton')}</Button>
             </div>
         </CornersWithCrosses>
         
