@@ -5,6 +5,7 @@ import { PointerTypeProvider } from '../contexts/PointerTypeProvider';
 import { getFeaturedProjectsByLanguage, getSlugFromId } from '@/utils/content-utils';
 import { useTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
+import { getLocalizedUrl } from '@/utils/localized-routes';
 
 interface Props {
     lang?: Language;
@@ -30,7 +31,7 @@ const featuredProjects = (await getFeaturedProjectsByLanguage(lang))
             client:load
             title={project.data.title}
             description={project.data.description}
-            href={`/projects/${getSlugFromId(project.id)}`}
+            href={getLocalizedUrl(lang, 'projects', getSlugFromId(project.id))}
             slug={getSlugFromId(project.id)}
             dataIndex={index + 1}
           />
@@ -40,7 +41,7 @@ const featuredProjects = (await getFeaturedProjectsByLanguage(lang))
     
     <div class="text-center mt-12">
       <a 
-        href="/projects"
+        href={getLocalizedUrl(lang, 'projects')}
         class="inline-block bg-main text-secondary px-6 py-3 font-mono text-sm font-bold border border-main hover:bg-secondary hover:text-main"
       >
         {t('nav.projects')}

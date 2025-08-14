@@ -1,6 +1,7 @@
 import React from 'react';
 import { supportedLanguages, languages, type Language } from '@/i18n/ui';
-import { getLangFromUrl, getAlternateUrls, addLocaleToUrl, removeLocaleFromUrl } from '@/i18n/utils';
+import { getLangFromUrl } from '@/i18n/utils';
+import { getEquivalentPage } from '@/utils/localized-routes';
 import DropdownButton from './DropdownButton';
 
 interface LanguageSwitcherProps {
@@ -9,7 +10,7 @@ interface LanguageSwitcherProps {
 }
 
 export default function LanguageSwitcher({ currentPath, initialLocale }: LanguageSwitcherProps) {
-    const [currentLang, setCurrentLang] = React.useState<Language>(initialLocale || 'es');
+    const [currentLang, setCurrentLang] = React.useState<Language>(initialLocale || 'en');
 
     // Get language name in its native language
     const getNativeLanguageName = (lang: Language): string => {
@@ -41,24 +42,17 @@ export default function LanguageSwitcher({ currentPath, initialLocale }: Languag
             pathname = currentPath;
         }
 
-        // Handle project-specific routing
-        const isProjectPage = pathname.includes('/projects/');
-        if (isProjectPage) {
-            // For project pages, we need to ensure the project exists in all languages
-            // Use the same slug but different language prefix
-            const cleanPath = removeLocaleFromUrl(pathname);
-            return supportedLanguages.map((lang) => ({
-                lang,
-                url: addLocaleToUrl(cleanPath, lang)
-            }));
-        }
-
-        // Default behavior for other pages
-        return getAlternateUrls(pathname);
+        // Use the pages dictionary to get the correct equivalent page for each language
+        return supportedLanguages.map((lang) => ({
+            lang,
+            url: getEquivalentPage(pathname, lang)
+        }));
     }, [currentPath]);
 
     const handleLanguageSwitch = (lang: Language, url: string) => {
         if (typeof window !== 'undefined') {
+            // Save language choice to localStorage
+            localStorage.setItem('langChoice', lang);
             window.location.href = url;
         }
     };

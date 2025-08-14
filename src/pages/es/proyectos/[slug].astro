@@ -1,7 +1,7 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
 import { getSlugFromId, getLanguageFromId } from '@/utils/content-utils';
-import ProjectPage from '../../components/ProjectPage.astro';
+import ProjectPage from '../../../components/ProjectPage.astro';
 
 export async function getStaticPaths() {
     const allProjects = await getCollection('projects');
@@ -20,10 +20,10 @@ export async function getStaticPaths() {
         projectsBySlug.get(slug)[language] = project;
     });
     
-    // Generate paths for English projects
+    // Generate paths for Spanish projects
     for (const [slug, projectsByLang] of projectsBySlug) {
-        // Only generate if English version exists
-        if (projectsByLang['en']) {
+        // Only generate if Spanish version exists
+        if (projectsByLang['es']) {
             paths.push({
                 params: { slug },
                 props: { 
@@ -43,7 +43,7 @@ type Props = {
 };
 
 const { projectsByLang, slug } = Astro.props;
-const currentLocale = 'en';
+const currentLocale = 'es';
 ---
 
 <ProjectPage 

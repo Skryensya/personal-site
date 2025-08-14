@@ -5,6 +5,7 @@ import Button from './Button.astro';
 import { getLangFromUrl } from '@/i18n/utils';
 import { useTranslations } from '@/i18n/utils';
 import { themes } from '../data/themes.js';
+import { getLocalizedUrl, getHomeUrl } from '@/utils/localized-routes';
 
 const currentLocale = getLangFromUrl(Astro.url);
 const currentPath = Astro.url.pathname;
@@ -28,11 +29,9 @@ const themeColors = themes.reduce((acc, theme) => {
 }, {} as Record<string, { colorful: string; contrasty: string }>);
 
 const navItems = [
-  { label: 'Allison Peña', href: '/', hotkey: null },
-  { label: t('nav.projects'), href: '/projects', hotkey: 'p' },
-  { label: t('nav.showcase'), href: '/components', hotkey: 's' },
-  { label: t('nav.cv'), href: '/cv', hotkey: 'c' },
-  { label: t('nav.about'), href: '/about', hotkey: 'm' }
+  { label: 'Allison Peña', href: getHomeUrl(currentLocale), hotkey: null },
+  { label: t('nav.projects'), href: getLocalizedUrl(currentLocale, 'projects'), hotkey: 'p' },
+  { label: t('nav.cv'), href: getLocalizedUrl(currentLocale, 'resume'), hotkey: 'c' },
 ];
 
 ---
@@ -60,7 +59,7 @@ const navItems = [
       <!-- Mobile Navigation -->
       <div class="@6xl:hidden flex items-center flex-1 relative">
         <a 
-          href="/"
+          href={getHomeUrl(currentLocale)}
           class="flex items-center gap-1.5 px-2 py-1 h-8 bg-secondary border-double border-2 border-main font-grotesk text-sm !font-thin text-main no-underline pointer-events-auto hover:bg-main hover:text-secondary active:bg-main active:text-secondary font-bold tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)]"
         >
           <span class="font-semibold">Allison Peña</span>
@@ -86,7 +85,7 @@ const navItems = [
       <!-- Desktop Header Controls - Container with fixed positioning to prevent CLS -->
       <div class="hidden @6xl:flex items-center gap-2 flex-shrink-0 relative">
         <!-- Placeholder layer - absolute positioned with constant opacity -->
-        <div class="absolute top-0 right-0 h-full flex items-center gap-x-4 gap-y-1 pointer-events-none" id="header-controls-placeholder">
+        <div class="absolute top-0 right-0 h-full flex items-center gap-x-2 gap-y-1 pointer-events-none" id="header-controls-placeholder">
           <!-- Theme Switcher Placeholder -->
           <div class="w-7 h-7 @6xl:w-full @6xl:h-8 inline-flex">
             <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
@@ -139,8 +138,8 @@ const navItems = [
         </div>
         
         <!-- React components layer - absolute positioned to match exactly -->
-        <div class="absolute top-0 right-0 h-full flex flex-row items-center gap-x-4 gap-y-1 pointer-events-auto" id="header-controls-react" style="visibility: hidden;">
-          <div data-theme-control class="flex flex-row items-center gap-x-4">
+        <div class="absolute top-0 right-0 h-full flex flex-row items-center gap-x-2 gap-y-1 pointer-events-auto" id="header-controls-react" style="visibility: hidden;">
+          <div data-theme-control class="flex flex-row items-center gap-x-2">
             <HeaderControls client:idle />
           </div>
           <div data-lang-control>
@@ -149,7 +148,7 @@ const navItems = [
         </div>
         
         <!-- Invisible spacer to reserve space -->
-        <div class="flex items-center gap-x-4 gap-y-1 opacity-0 pointer-events-none">
+        <div class="flex items-center gap-x-2 gap-y-1 opacity-0 pointer-events-none">
           <!-- Spacer for Theme Switcher -->
           <div class="w-7 h-7 @6xl:w-full @6xl:h-8 inline-flex">
             <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
@@ -315,7 +314,7 @@ const navItems = [
             class="flex-1 flex items-center justify-center gap-2 px-3 py-2 font-mono text-xs font-bold tracking-wide bg-secondary hover:bg-main hover:text-secondary border-0 cursor-pointer"
             id="mobile-lang-center"
           >
-            <span id="mobile-lang-label">{currentLocale === 'es' ? 'Español' : currentLocale === 'en' ? 'English' : 'Norsk'}</span>
+            <span id="mobile-lang-label">{currentLocale === 'en' ? 'English' : currentLocale === 'es' ? 'Español' : 'Norsk'}</span>
           </button>
           <button 
             class="aspect-square h-8 flex items-center justify-center bg-main text-secondary border-l border-main hover:bg-secondary hover:text-main"
@@ -602,12 +601,12 @@ const navItems = [
         // Get current mode from localStorage
         const currentMode = localStorage.getItem('theme-mode') || 'system';
         
-        // Get current language from URL or localStorage
+        // Get current language from URL - English has no prefix
         const currentLang = (() => {
           const path = window.location.pathname;
-          if (path.startsWith('/en/')) return 'en';
+          if (path.startsWith('/es/')) return 'es';
           if (path.startsWith('/no/')) return 'no';
-          return 'es';
+          return 'en'; // Default to English for root paths
         })();
         
         const modeTranslations = {

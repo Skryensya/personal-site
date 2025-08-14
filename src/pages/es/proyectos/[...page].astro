@@ -4,31 +4,23 @@ import { type CollectionEntry, getCollection } from 'astro:content';
 import Layout from '../../../layouts/Layout.astro'; 
 import siteConfig from '../../../data/site-config';
 import { sortItemsByDateDesc } from '../../../utils/data-utils';
-import { getLangFromUrl } from '@/i18n/utils';
-import { getProjectsByLanguage, getSlugFromId } from '@/utils/content-utils';
+import { getSlugFromId } from '@/utils/content-utils';
 import { useTranslations } from '@/i18n/utils';
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
-    // Generate paginated paths for all non-default languages
     const allProjects = await getCollection('projects');
-    const languages = ['en', 'no'] as const; // Only non-default languages need explicit paths
+    const lang = 'es';
     
-    const paths = [];
-    for (const lang of languages) {
-        const projectsInLang = allProjects
-            .filter(project => project.id.startsWith(`${lang}/`))
-            .sort(sortItemsByDateDesc);
-        
-        const paginatedPaths = paginate(projectsInLang, { 
-            pageSize: siteConfig.projectsPerPage || 10,
-            params: { lang },
-            props: { language: lang }
-        });
-        
-        paths.push(...paginatedPaths);
-    }
+    const projectsInLang = allProjects
+        .filter(project => project.id.startsWith(`${lang}/`))
+        .sort(sortItemsByDateDesc);
     
-    return paths;
+    const paginatedPaths = paginate(projectsInLang, { 
+        pageSize: siteConfig.projectsPerPage || 10,
+        props: { language: lang }
+    });
+    
+    return paginatedPaths;
 }
 
 type Props = { 
@@ -37,7 +29,7 @@ type Props = {
 };
 
 const { page, language } = Astro.props;
-const currentLocale = getLangFromUrl(Astro.url);
+const currentLocale = 'es';
 const t = useTranslations(currentLocale);
 
 const portfolio = page.data;
@@ -57,7 +49,7 @@ const portfolio = page.data;
             <article class="border border-main bg-secondary p-4 hover:bg-main hover:text-secondary group">
                 <div class="mb-4">
                     <h2 class="text-xl font-mono font-bold mb-2 group-hover:text-secondary">
-                        <a href={`/${currentLocale}/projects/${getSlugFromId(project.id)}`} class="no-underline">
+                        <a href={`/es/proyectos/${getSlugFromId(project.id)}`} class="no-underline">
                             {project.data.title}
                         </a>
                     </h2>
@@ -82,7 +74,7 @@ const portfolio = page.data;
                     </div>
                 )}
                 <div class="text-xs font-mono opacity-70 group-hover:text-secondary">
-                    {new Date(project.data.publishDate).toLocaleDateString(currentLocale === 'es' ? 'es-ES' : currentLocale === 'en' ? 'en-US' : 'no-NO')}
+                    {new Date(project.data.publishDate).toLocaleDateString('es-ES')}
                 </div>
             </article>
         ))}
@@ -92,19 +84,19 @@ const portfolio = page.data;
         <nav class="flex justify-between items-center my-8 sm:my-12">
             {page.url.prev ? (
                 <a href={page.url.prev} class="px-4 py-2 border border-main bg-secondary hover:bg-main hover:text-secondary font-mono text-sm">
-                    ← {t('pagination.previous') || 'Previous'}
+                    ← {t('pagination.previous') || 'Anterior'}
                 </a>
             ) : (
                 <div></div>
             )}
             
             <span class="font-mono text-sm">
-                {t('pagination.page') || 'Page'} {page.currentPage} {t('pagination.of') || 'of'} {page.lastPage}
+                {t('pagination.page') || 'Página'} {page.currentPage} {t('pagination.of') || 'de'} {page.lastPage}
             </span>
             
             {page.url.next ? (
                 <a href={page.url.next} class="px-4 py-2 border border-main bg-secondary hover:bg-main hover:text-secondary font-mono text-sm">
-                    {t('pagination.next') || 'Next'} →
+                    {t('pagination.next') || 'Siguiente'} →
                 </a>
             ) : (
                 <div></div>

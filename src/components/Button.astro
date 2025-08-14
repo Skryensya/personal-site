@@ -33,7 +33,7 @@ const buttonClasses = cn(
   'px-6 text-sm h-12 font-bold uppercase tracking-wide cursor-pointer border-double border-2 whitespace-nowrap flex items-center justify-center no-underline',
   {
     'relative top-0 left-0 z-20': !elevated && variant !== 'outline',
-    'absolute -top-3 -left-3 active:top-0 active:left-0 z-30': elevated && variant !== 'outline',
+    'absolute top-0 left-0 z-30 elevated-button': elevated && variant !== 'outline',
     'relative top-0 left-0 z-30 active:top-0 active:left-0': variant === 'outline' && !elevated,
     'relative top-0 left-0 z-30 border-0': variant === 'outline' && elevated,
     'bg-main text-secondary border-main shadow-[inset_0_0_0_2px_var(--color-secondary)]': filled,
@@ -340,6 +340,37 @@ const shadowClasses = cn(
           }
         });
       }
+    });
+
+    // Handle regular elevated button animation (start pressed, then elevate after 1 second)
+    const elevatedButtons = document.querySelectorAll('.elevated-button');
+    
+    elevatedButtons.forEach((button) => {
+      let hasElevated = false;
+      
+      // Elevate after 1 second on page load
+      setTimeout(() => {
+        if (!hasElevated) {
+          button.style.transform = 'translate(-12px, -12px)';
+          button.style.transition = 'transform 200ms ease-out';
+          hasElevated = true;
+        }
+      }, 1000);
+      
+      // Handle press animation when elevated
+      button.addEventListener('mousedown', () => {
+        if (hasElevated) {
+          button.style.transform = 'translate(0px, 0px)';
+          button.style.transition = 'none';
+        }
+      });
+      
+      button.addEventListener('mouseup', () => {
+        if (hasElevated) {
+          button.style.transform = 'translate(-12px, -12px)';
+          button.style.transition = 'none';
+        }
+      });
     });
   });
 </script>

@@ -1,13 +1,11 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
-import { getLangFromUrl } from '@/i18n/utils';
 import { getSlugFromId, getLanguageFromId } from '@/utils/content-utils';
 import ProjectPage from '../../../components/ProjectPage.astro';
 
 export async function getStaticPaths() {
     const allProjects = await getCollection('projects');
     const paths: any[] = [];
-    const languages = ['en', 'no'] as const; // Only non-default languages need explicit paths
     
     // Group projects by slug
     const projectsBySlug = new Map();
@@ -22,19 +20,17 @@ export async function getStaticPaths() {
         projectsBySlug.get(slug)[language] = project;
     });
     
-    // Generate paths for non-default languages only
+    // Generate paths for Norwegian projects
     for (const [slug, projectsByLang] of projectsBySlug) {
-        for (const lang of languages) {
-            if (projectsByLang[lang]) { // Only create path if project exists in this language
-                paths.push({
-                    params: { lang, slug },
-                    props: { 
-                        projectsByLang,
-                        slug,
-                        language: lang
-                    }
-                });
-            }
+        // Only generate if Norwegian version exists
+        if (projectsByLang['no']) {
+            paths.push({
+                params: { slug },
+                props: { 
+                    projectsByLang,
+                    slug
+                }
+            });
         }
     }
     
@@ -44,16 +40,14 @@ export async function getStaticPaths() {
 type Props = { 
     projectsByLang: Record<string, CollectionEntry<'projects'>>;
     slug: string;
-    language: string;
 };
 
-const { projectsByLang, slug, language } = Astro.props;
-const currentLocale = getLangFromUrl(Astro.url);
+const { projectsByLang, slug } = Astro.props;
+const currentLocale = 'no';
 ---
 
 <ProjectPage 
     projectsByLang={projectsByLang}
     slug={slug}
     currentLocale={currentLocale}
-    language={language}
 />

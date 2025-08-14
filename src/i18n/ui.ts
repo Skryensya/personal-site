@@ -4,7 +4,7 @@ export const languages = {
     no: 'Norsk'
 } as const;
 
-export const defaultLang = 'es' as const;
+export const defaultLang = 'en' as const;
 export const supportedLanguages = Object.keys(languages) as Array<keyof typeof languages>;
 
 export const ui = {

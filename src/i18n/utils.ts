@@ -6,11 +6,16 @@ import { ui, defaultLang, supportedLanguages, type Language, type UIKeys } from 
  * @returns Language code or default language
  */
 export function getLangFromUrl(url: URL): Language {
-    const [, lang] = url.pathname.split('/');
-    if (lang && supportedLanguages.includes(lang as Language)) {
-        return lang as Language;
+    const [, firstSegment] = url.pathname.split('/');
+    
+    // Check if first segment is a supported language code (es, no)
+    // English (en) has no prefix, so paths like /, /projects, /resume are English
+    if (firstSegment && supportedLanguages.includes(firstSegment as Language) && firstSegment !== 'en') {
+        return firstSegment as Language;
     }
-    return defaultLang;
+    
+    // Default to English for all other paths (/, /projects, /resume, etc.)
+    return defaultLang; // 'en'
 }
 
 /**
@@ -20,9 +25,13 @@ export function getLangFromUrl(url: URL): Language {
  */
 export function removeLocaleFromUrl(pathname: string): string {
     const [, possibleLang, ...rest] = pathname.split('/');
-    if (possibleLang && supportedLanguages.includes(possibleLang as Language)) {
+    
+    // Check if first segment is a non-English language prefix (es, no)
+    if (possibleLang && supportedLanguages.includes(possibleLang as Language) && possibleLang !== 'en') {
         return '/' + rest.join('/');
     }
+    
+    // For English or non-language paths, return as-is
     return pathname;
 }
 
@@ -30,12 +39,16 @@ export function removeLocaleFromUrl(pathname: string): string {
  * Add language prefix to pathname
  * @param pathname - Clean pathname
  * @param lang - Target language
- * @returns Pathname with language prefix (unless default language)
+ * @returns Pathname with language prefix (unless default language English)
  */
 export function addLocaleToUrl(pathname: string, lang: Language): string {
-    if (lang === defaultLang) {
-        return pathname;
+    // English (en) gets no prefix
+    if (lang === 'en') {
+        const cleanPath = removeLocaleFromUrl(pathname);
+        return cleanPath;
     }
+    
+    // Other languages get their prefix
     const cleanPath = removeLocaleFromUrl(pathname);
     return `/${lang}${cleanPath === '/' ? '' : cleanPath}`;
 }
