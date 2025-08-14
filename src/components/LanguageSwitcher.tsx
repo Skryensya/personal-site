@@ -81,10 +81,10 @@ export default function LanguageSwitcher({ currentPath, initialLocale }: Languag
                     >
                         <div className="flex items-center gap-0 pointer-events-none">
                             <div className="flex-1 px-1 py-1 pointer-events-none select-none">
-                                <div className="font-mono text-xs font-semibold">
+                                <div className="font-grotesk text-base font-semibold uppercase">
                                     {getNativeLanguageName(lang)}
                                 </div>
-                                <div className="font-mono text-xs opacity-70 mt-0.5" style={{ fontSize: '10px' }}>
+                                <div className="font-grotesk text-sm opacity-70 mt-0.5 uppercase">
                                     {getLanguageNameInCurrent(lang)}
                                 </div>
                             </div>
@@ -115,7 +115,7 @@ export default function LanguageSwitcher({ currentPath, initialLocale }: Languag
             className="w-7 h-7 @6xl:w-auto @6xl:h-8"
         >
             <div className="flex items-center gap-2">
-                <span className="font-mono text-xs font-semibold text-main group-hover:text-secondary capitalize">
+                <span className="font-grotesk text-base pt-0.5 font-semibold text-main group-hover:text-secondary uppercase">
                     {getNativeLanguageName(currentLang)}
                 </span>
             </div>

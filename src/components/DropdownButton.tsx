@@ -89,7 +89,7 @@ export default function DropdownButton({
                     type="button"
                     onClick={handleMainClick}
                     disabled={disabled}
-                    className="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0 hover:bg-main hover:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)]"
+                    className="flex items-center justify-center px-3 h-8 bg-secondary border-double border-2 border-main border-r-0 hover:bg-main hover:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)]"
                 >
                     {children}
                 </button>
