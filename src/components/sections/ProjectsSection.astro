@@ -21,12 +21,11 @@ const featuredProjects = (await getFeaturedProjectsByLanguage(lang))
 <section class="py-20 bg-secondary">
   <div class="max-w-7xl mx-auto px-4">
     <h2 class="font-mono text-3xl font-bold text-main mb-12">{t('home.featuredProjects')}</h2>
-    
-    <div class="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4 xl:gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 lg:grid-cols-3 gap-x-2 xl:grid-cols-4 ">
       {featuredProjects.map((project, index) => (
         <ProjectCard
-          title={project.data.title}
-          description={project.data.description}
+          name={project.data.name}
+          hook={project.data.hook}
           href={getLocalizedUrl(lang, 'projects', getSlugFromId(project.id))}
           slug={getSlugFromId(project.id)}
           dataIndex={index + 1}
@@ -36,6 +35,5 @@ const featuredProjects = (await getFeaturedProjectsByLanguage(lang))
         />
       ))}
     </div>
-  
   </div>
 </section>

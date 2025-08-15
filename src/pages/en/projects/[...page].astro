@@ -50,12 +50,12 @@ const portfolio = page.data;
                 <div class="mb-4">
                     <h2 class="text-xl font-mono font-bold mb-2 group-hover:text-secondary">
                         <a href={`/en/projects/${getSlugFromId(project.id)}`} class="no-underline">
-                            {project.data.title}
+                            {project.data.name}
                         </a>
                     </h2>
-                    {project.data.description && (
+                    {project.data.hook && (
                         <p class="text-sm leading-relaxed opacity-80 group-hover:text-secondary">
-                            {project.data.description}
+                            {project.data.hook}
                         </p>
                     )}
                 </div>

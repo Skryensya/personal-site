@@ -44,8 +44,8 @@ const pages = defineCollection({
 const projects = defineCollection({
     type: 'content',
     schema: z.object({
-        title: z.string(),
-        description: z.string().optional(),
+        name: z.string(),
+        hook: z.string().optional(),
         publishDate: z.coerce.date(),
         isFeatured: z.boolean().default(false),
         seo: seoSchema.optional(),

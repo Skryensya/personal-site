@@ -1,0 +1,51 @@
+---
+name: 'Ecosistema web UC'
+hook: 'Contribuí a la evolución del Kit Digital, el Portal y la Agenda UC, mejorando la accesibilidad, la usabilidad y el rendimiento del ecosistema, sin perder compatibilidad ni coherencia institucional.'
+publishDate: '12/08/2025'
+isFeatured: true
+---
+
+## Contexto
+
+El Ecosistema Digital UC es la base tecnológica que integra los sitios, aplicaciones y servicios de la Pontificia Universidad Católica de Chile bajo una identidad visual y estándares de usabilidad comunes.
+En el centro de esta red está el Kit Digital UC, una librería de componentes que aporta coherencia y funcionalidad a todo el entorno digital.
+
+A su alrededor se desarrollan proyectos clave como el Portal UC, principal punto de acceso a la información y servicios universitarios, y la Agenda UC, que concentra y organiza las actividades y eventos de la institución.
+
+Trabajar en este ecosistema significa que cada mejora en diseño, rendimiento o accesibilidad no solo impacta en un proyecto, sino que se propaga y beneficia a toda la red de plataformas que lo componen. Este efecto multiplicador es el motor de su estrategia digital.
+
+## Kit Digital UC
+
+El **Kit Digital UC** es la columna vertebral del ecosistema. Se trata de una librería de componentes utilizada en más de 100 sitios de la universidad. Reúne desde elementos básicos como botones y formularios hasta módulos complejos como barras de navegación y agendas de eventos.
+
+Está disponible por CDN y NPM, lo que facilita su integración en proyectos nuevos y existentes, pero exige mantener compatibilidad con versiones anteriores de forma continua.
+
+Mi trabajo comenzó con la corrección de errores puntuales —muchos de ellos relacionados con accesibilidad o implementación técnica— y con el tiempo evolucionó hacia tareas más amplias de desarrollo y optimización.
+
+Una mejora clave fue la **implementación de dynamic imports** en la distribución por CDN. Antes, cada sitio cargaba la librería completa (528 KB) aunque solo usara unos pocos componentes. Con el nuevo sistema, se carga un script inicial de 2 KB que analiza el DOM, detecta los componentes necesarios y descarga únicamente lo indispensable. Esto redujo en promedio un 35 % el tiempo de carga inicial, mejorando notablemente la experiencia de navegación en todo el ecosistema.
+
+Otro cambio significativo fue reemplazar el uso de `background-image` por elementos `<img>` con atributos `alt` en más de 50 componentes y variantes. Esto no solo mejoró la accesibilidad (permitiendo que usuarios de lectores de pantalla recibieran contexto), sino también el SEO y la semántica del código.
+
+Hoy, el gran desafío es **elevar el nivel de accesibilidad del Kit de forma integral**, revisando cada componente para cumplir con las pautas WCAG y garantizar que las mejoras se reflejen de inmediato en proyectos como el Portal UC y la Agenda UC.
+
+## Portal UC
+
+El **Portal UC** es el sitio web principal de la Pontificia Universidad Católica de Chile. Reúne información, noticias y accesos a servicios para toda la comunidad universitaria.  
+Su diseño y funcionamiento dependen directamente del Kit Digital UC, por lo que cualquier cambio en la librería repercute de inmediato en el portal.
+
+Desde mi llegada, he trabajado en la creación de nuevas secciones y en la mejora de otras ya existentes, siempre adaptando el contenido y la presentación a las necesidades del momento. También he participado en el mantenimiento general para mantener el sitio estable y operativo.
+
+Al ser un proyecto constante, siempre hay mejoras en lista de espera. Algunas —como optimizaciones de rendimiento o pequeños rediseños— han debido postergarse por cambios de prioridades y recursos, lo que obliga a planificar con cuidado cada intervención.
+
+El reto más importante hoy es **mejorar la accesibilidad**: optimizar la navegación por teclado, asegurar compatibilidad con lectores de pantalla y ajustar secciones específicas. Este trabajo requiere coordinación con el equipo del Kit Digital UC para que las mejoras se propaguen a todo el ecosistema.
+
+## Agenda UC
+
+La **Agenda UC** es el sistema central para publicar actividades y eventos académicos, culturales y administrativos. Está compuesta por una API en Strapi y un frontend en React (Next.js), lo que permite filtrar y explorar información de forma sencilla.
+
+En backend, participé en la **definición y estructuración del modelo de datos** de la API: representación de actividades, manejo de múltiples fechas y relaciones entre eventos y conjuntos de actividades. El objetivo fue crear una base flexible capaz de manejar desde eventos simples hasta otros con horarios y recurrencias complejas. También optimicé consultas para mejorar el rendimiento y la coherencia de los datos.
+
+En frontend, desarrollé el sitio completo utilizando componentes del Kit Digital UC para garantizar coherencia visual y estándares de accesibilidad. Cuando fue necesario, creé componentes personalizados siguiendo fielmente las definiciones y lineamientos del equipo de diseño, asegurando un traspaso preciso de maquetas a implementación y una experiencia consistente con la identidad institucional.
+
+El **Ecosistema Digital UC** demuestra cómo una base tecnológica común puede potenciar proyectos individuales y, al mismo tiempo, fortalecer toda la presencia digital de una institución.  
+Cada ajuste técnico, optimización de rendimiento o mejora en accesibilidad no solo resuelve un problema puntual: amplifica su impacto en decenas de sitios que comparten la misma columna vertebral.

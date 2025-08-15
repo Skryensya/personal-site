@@ -11,6 +11,7 @@ export interface Props {
   onClick?: string;
   type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
+  id?: string;
 }
 
 const {
@@ -23,6 +24,7 @@ const {
   onClick,
   type = 'button',
   disabled = false,
+  id,
 } = Astro.props;
 
 
@@ -35,7 +37,7 @@ const buttonClasses = cn(
     'relative top-0 left-0 z-20': !elevated && variant !== 'outline',
     'absolute top-0 left-0 z-30 elevated-button': elevated && variant !== 'outline',
     'relative top-0 left-0 z-30 active:top-0 active:left-0': variant === 'outline' && !elevated,
-    'relative top-0 left-0 z-30 border-0': variant === 'outline' && elevated,
+    'relative top-0 left-0 z-30 border-secondary': variant === 'outline' && elevated,
     'bg-main text-secondary border-main shadow-[inset_0_0_0_2px_var(--color-secondary)]': filled,
     'bg-secondary text-main border-main shadow-[inset_0_0_0_2px_var(--color-secondary)] hover:bg-main hover:text-secondary': !filled && variant !== 'outline',
     'bg-secondary text-main border-transparent overflow-hidden group': variant === 'outline',
@@ -46,9 +48,7 @@ const buttonClasses = cn(
 const shadowClasses = cn(
   'px-6 text-sm h-12 absolute top-0 left-0 border-2 whitespace-nowrap pointer-events-none font-bold uppercase tracking-wide flex items-center justify-center',
   'bg-secondary bg-opacity-60 z-10',
-  {
-        'px-[22px]': variant === 'outline' && elevated,
-  }
+ 
 );
 ---
 
@@ -72,13 +72,13 @@ const shadowClasses = cn(
       </div>
       <!-- Movable button -->
       <div class="outline-elevated-button relative z-20">
-        <Tag class={cn(buttonClasses, 'group outline-animated-button', { 'button-with-sound': elevated })} href={href} style={style} onclick={onClick} type={type} disabled={disabled}>
+        <Tag class={cn(buttonClasses, 'group outline-animated-button', { 'button-with-sound': elevated })} href={href} style={style} onclick={onClick} type={type} disabled={disabled} id={id}>
           <slot />
         </Tag>
       </div>
     </div>
   ) : (
-    <Tag class={cn(buttonClasses, { 'button-with-sound': elevated })} href={href} style={style} onclick={onClick} type={type} disabled={disabled}>
+    <Tag class={cn(buttonClasses, { 'button-with-sound': elevated })} href={href} style={style} onclick={onClick} type={type} disabled={disabled} id={id}>
       {variant === 'outline' && (
         <>
           <div class="absolute top-0 left-0 w-full h-0 border-t-2 border-double border-main transform -translate-x-full group-hover:translate-x-0 group-hover:delay-0 transition-transform duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] delay-600"></div>
@@ -249,17 +249,21 @@ const shadowClasses = cn(
             if (borderBottom) borderBottom.style.display = 'none';
             if (borderLeft) borderLeft.style.display = 'none';
             
-            // Add border double and shadow to the actual button
+            // Add border-double to the button itself
             if (actualButton) {
-              actualButton.classList.add('border-double', 'border-2', 'border-main', 'shadow-[inset_0_0_0_2px_var(--color-secondary)]');
-              actualButton.classList.remove('border-transparent');
-              
-              // If mouse is still hovering when animation completes, activate hover
-              if (isCurrentlyHovering) {
-                actualButton.classList.remove('bg-secondary', 'text-main');
-                actualButton.classList.add('bg-main', 'text-secondary');
-                console.log('Applied hover styles after animation completion');
-              }
+              actualButton.classList.remove('border-transparent', 'border-0');
+              actualButton.classList.add('border-double', 'border-2', 'border-main');
+              (actualButton as HTMLElement).style.boxSizing = 'border-box';
+              // Force border via inline styles to ensure visibility
+              (actualButton as HTMLElement).style.border = '2px double var(--color-main)';
+              console.log('Added border-double and box-sizing to button');
+            }
+            
+            // If mouse is still hovering when animation completes, activate hover
+            if (actualButton && isCurrentlyHovering) {
+              actualButton.classList.remove('bg-secondary', 'text-main', 'border-transparent');
+              actualButton.classList.add('bg-main', 'text-secondary', 'border-double', 'border-main', 'shadow-[inset_0_0_0_2px_var(--color-secondary)]');
+              console.log('Applied hover styles after animation completion');
             }
             
             console.log('Show animation completed - button locked with border');
@@ -277,16 +281,10 @@ const shadowClasses = cn(
             clearTimeout(hoverTimeout);
           }
           
-          // Set hover state after 500ms delay
-          hoverTimeout = window.setTimeout(() => {
-            isCurrentlyHovering = true;
-            console.log('isCurrentlyHovering set to true after 500ms delay');
-          }, 500);
-          
           if (isLocked) {
             // Button is locked - apply normal hover styles immediately
-            actualButton.classList.remove('bg-secondary', 'text-main');
-            actualButton.classList.add('bg-main', 'text-secondary');
+            actualButton.classList.remove('bg-secondary', 'text-main', 'border-transparent');
+            actualButton.classList.add('bg-main', 'text-secondary', 'border-double', 'border-main', 'shadow-[inset_0_0_0_2px_var(--color-secondary)]');
             console.log('Applied hover styles to locked button');
             return;
           }
@@ -315,8 +313,8 @@ const shadowClasses = cn(
           
           if (isLocked) {
             // Remove hover styles from locked button
-            actualButton.classList.remove('bg-main', 'text-secondary');
-            actualButton.classList.add('bg-secondary', 'text-main');
+            actualButton.classList.remove('bg-main', 'text-secondary', 'border-double', 'border-main', 'shadow-[inset_0_0_0_2px_var(--color-secondary)]');
+            actualButton.classList.add('bg-secondary', 'text-main', 'border-transparent');
             console.log('Removed hover styles from locked button');
             return;
           }

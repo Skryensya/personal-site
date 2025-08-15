@@ -1,8 +1,8 @@
 ---
 import Button from './Button.astro';
 interface Props {
-    title: string;
-    description?: string;
+    name: string;
+    hook?: string;
     href: string;
     slug?: string;
     dataIndex?: number;
@@ -12,14 +12,11 @@ interface Props {
 }
 
 const { 
-    title, 
-    description = '', 
+    name, 
+    hook = '', 
     href, 
     slug, 
     dataIndex,
-    tags,
-    publishDate,
-    lang 
 } = Astro.props;
 ---
 
@@ -45,20 +42,20 @@ const {
             href={href}
             class="relative block w-full h-full cursor-pointer z-10 focus:outline-none focus-within:opacity-100"
             data-project-index={dataIndex}
-            data-project-title={title}
-            data-project-description={description}
+            data-project-name={name}
+            data-project-hook={hook}
         >
             <!-- Card face -->
             <div
                 class="absolute w-full h-full bg-main border-2 border-main [transform:translateZ(25px)] [clip-path:polygon(0_0,calc(100%_-_95px)_0,100%_95px,100%_100%,0_100%)]"
             >
                 <!-- Title in outer card -->
-                <div class="px-4 py-2">
+                <div class="px-2 py-2.5">
                     <h3 
-                        class="font-sans text-2xl font-bold mb-3 text-secondary" 
+                        class="font-sans text-xl font-bold mb-3 text-secondary" 
                         style={{ viewTransitionName: `project-content-${slug}` }}
                     >
-                        {title}
+                        {name}
                     </h3>
                 </div>
 
@@ -68,9 +65,9 @@ const {
                 >
                     <!-- Content with CSS exclusions -->
                     <div class="px-3 py-2 h-full flex flex-col">
-                        {description && (
+                        {hook && (
                             <p class="text-base text-main leading-relaxed line-clamp-10 text-pretty flex-1 mr-0 before:content-[''] before:float-right before:w-[21px] before:h-[21px] before:[shape-outside:polygon(0%_0%,100%_0%,100%_100%)] before:[clip-path:polygon(0%_0%,100%_0%,100%_100%)]">
-                                {description}
+                                {hook}
                             </p>
                         )}
 
