@@ -8,130 +8,147 @@ interface Props {
 
 const { lang = defaultLang } = Astro.props;
 const t = useTranslations(lang);
-
-// Icon definitions for better readability
-const ICONS = {
-    globe: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-globe-icon lucide-globe w-5 h-5"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></svg>`,
-    mail: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail-icon lucide-mail w-5 h-5"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>`,
-    phone: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone-icon lucide-phone w-5 h-5"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1 2-2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg>`,
-    linkedin: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-linkedin-icon lucide-linkedin w-5 h-5"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>`,
-    mapPin: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pin-icon lucide-map-pin w-5 h-5"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>`
-};
-
-// Contact information with corresponding icons
-const CONTACT_LINKS = [
-    {
-        icon: ICONS.globe,
-        url: "https://skryensya.dev",
-        label: "Skryensya.dev"
-    },
-    {
-        icon: ICONS.mail,
-        url: "mailto:allison@skryensya.dev",
-        label: "allison@skryensya.dev"
-    },
-    {
-        icon: ICONS.linkedin,
-        url: "https://linkedin.com/in/allison-pena",
-        label: "linkedin.com/in/skryensya"
-    },
-    {
-        icon: ICONS.mapPin,
-        url: "#",
-        label: "Santiago, Chile"
-    }
-];
-
-// Language list
-const LANGUAGES = [
-    t('cv.languages.spanish'),
-    t('cv.languages.english'), 
-    t('cv.languages.norwegian')
-];
-
-// References data
-const REFERENCES = [
-    {
-        name: "Jorge Vega",
-        title: "Senior Developer / Mentor",
-        email: "jorgeivegab+rf@gmail.com"
-    },
-    {
-        name: "Elias Leyton",
-        title: "Senior Developer / Mentor", 
-        email: "Elias.leyton+rf@gmail.com"
-    }
-];
-
-// Certificates data
-const CERTIFICATES = [
-    "WAI0.1x: Introduction to Web Accessibility"
-];
 ---
 
-<div class="grid grid-cols-12 gap-4 h-full pb-8 print:pb-0">
-    <div class="col-span-4 bg-white text-black border-r border-secondary">
-        <div class="flex flex-col justify-between h-full">
-            <div>
-                <h1 class="text-4xl mb-2 uppercase text-left">Allison Josué Peña Barrios</h1>
-                <p class="uppercase text-base font-mono letter-spacing">Full-Stack Developer</p>
+<div class="h-full p-6 print:p-4 bg-secondary text-main">
+    <div class="max-w-none">
+        
+        <!-- Professional Header -->
+        <header class="mb-6 print:mb-4">
+            <div class="text-center mb-6">
+                <h1 class="text-3xl font-bold mb-2">ALLISON JOSUÉ PEÑA BARRIOS</h1>
+                <p class="text-xl font-semibold">Desarrollador Full-Stack</p>
+                <div class="w-24 h-px bg-main mx-auto mt-4"></div>
             </div>
-            <div class="flex flex-col justify-around h-full">
-                    <div>
-                    <h2 class="text-xl border-b border-secondary">{t('cv.contact')}</h2>
-                    <ul class="py-2 space-y-2">
-                        {CONTACT_LINKS.map((contact) => (
-                            <li class="flex gap-1 items-center">
-                                <div set:html={contact.icon}></div>
-                                <div>
-                                    <a href={contact.url} class="hover:underline text-sm capitalize font-mono">
-                                        {contact.label}
-                                    </a>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-                    <div>
-                    <h2 class="text-xl border-b border-secondary">{t('cv.languages.title')}</h2>
-                    <ul class="py-2 space-y-1">
-                        {LANGUAGES.map((language) => (
-                            <li>
-                                <span class="text-sm font-mono">{language}</span>
-                            </li>
-                        ))}
-                    </ul>
+        </header>
+
+        <!-- Contact Information -->
+        <section class="mb-6">
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center text-sm">
+                <div>
+                    <p class="font-semibold">Email</p>
+                    <p>Allison.jpb+cv@gmail.com</p>
                 </div>
                 <div>
-                    <h2 class="text-xl border-b border-secondary">{t('cv.references.title')}</h2>
-                    <ul class="py-2 space-y-3">
-                        {REFERENCES.map((reference) => (
-                            <li class="text-sm">
-                                <div class="font-mono font-semibold">{reference.name}</div>
-                                <div class="font-mono text-xs opacity-75">{reference.title}</div>
-                                <div class="font-mono text-xs">
-                                    <a href={`mailto:${reference.email}`} class="hover:underline">
-                                        {reference.email}
-                                    </a>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
+                    <p class="font-semibold">Teléfono</p>
+                    <p>+56 9 9812 0052</p>
                 </div>
                 <div>
-                    <h2 class="text-xl border-b border-secondary">{t('cv.certificates.title')}</h2>
-                    <ul class="py-2 space-y-2">
-                        {CERTIFICATES.map((certificate) => (
-                            <li>
-                                <span class="text-sm font-mono">{certificate}</span>
-                            </li>
-                        ))}
-                    </ul>
+                    <p class="font-semibold">LinkedIn</p>
+                    <p>linkedin.com/in/skryensya</p>
+                </div>
+                <div>
+                    <p class="font-semibold">Portafolio</p>
+                    <p>Skryensya.dev</p>
+                </div>
+                <div>
+                    <p class="font-semibold">Ubicación</p>
+                    <p>Santiago de Chile</p>
                 </div>
             </div>
-        </div>
-    </div>
-    <div class="col-span-8">
-        <!-- Main content area - can be expanded in the future -->
+        </section>
+
+        <!-- Professional Profile -->
+        <section class="mb-6">
+            <h2 class="text-xl font-bold uppercase border-b-2 border-main pb-2 mb-4">
+                PERFIL PROFESIONAL
+            </h2>
+            <p class="text-sm leading-relaxed">
+                Desarrollador frontend especializado en diseñar soluciones digitales accesibles y efectivas. 
+                Con experiencia en crear interfaces intuitivas que mejoran la experiencia del usuario. 
+                Comprometido con la mejora continua y el aprendizaje de las mejores prácticas del sector. 
+                He colaborado en proyectos que optimizan la usabilidad y busco contribuir a iniciativas 
+                con impacto positivo en la comunidad tecnológica.
+            </p>
+        </section>
+
+        <!-- Experience -->
+        <section class="mb-6">
+            <h2 class="text-xl font-bold uppercase border-b-2 border-main pb-2 mb-4">
+                EXPERIENCIA PROFESIONAL
+            </h2>
+            <div class="mb-4">
+                <div class="flex justify-between items-baseline mb-1">
+                    <h3 class="text-lg font-bold">Desarrollador Full-Stack</h3>
+                    <span class="text-sm">Febrero 2022 - Presente</span>
+                </div>
+                <p class="text-base font-semibold mb-2">Asimov Consultores, Santiago de Chile</p>
+                <p class="text-sm leading-relaxed">
+                    Desarrollo soluciones digitales completas, transformando conceptos en código funcional. 
+                    Colaborador clave en proyectos que mejoran la identidad digital y experiencia de usuario 
+                    de nuestros clientes, implementando interfaces y sistemas backend efectivos en todo el 
+                    ciclo de desarrollo.
+                </p>
+            </div>
+        </section>
+
+        <!-- Skills in Two Columns -->
+        <section class="mb-6">
+            <h2 class="text-xl font-bold uppercase border-b-2 border-main pb-2 mb-4">
+                COMPETENCIAS TÉCNICAS
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-semibold mb-2">Desarrollo Frontend</h3>
+                    <p class="text-sm leading-relaxed">
+                        JavaScript (ES6+), TypeScript, React, Next.js, Vue.js, Nuxt.js, HTML5, CSS3, 
+                        SASS/SCSS, Tailwind CSS, Astro.js
+                    </p>
+                </div>
+                <div>
+                    <h3 class="font-semibold mb-2">Backend y Herramientas</h3>
+                    <p class="text-sm leading-relaxed">
+                        Node.js, AdonisJS, PHP, Processwire CMS, MySQL, Strapi CMS, Python, Pandas, 
+                        Git, WCAG 2.1 AA
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Languages and Certifications in Two Columns -->
+        <section class="mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-lg font-bold border-b border-main pb-2 mb-3">IDIOMAS</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span>Español</span>
+                            <span class="font-semibold">Nativo</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span>Inglés</span>
+                            <span class="font-semibold">Avanzado</span>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-bold border-b border-main pb-2 mb-3">CERTIFICACIONES</h3>
+                    <div class="text-sm">
+                        <p class="font-semibold">WAIO.1x</p>
+                        <p>Introduction to Web Accessibility</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- References -->
+        <section>
+            <h2 class="text-xl font-bold uppercase border-b-2 border-main pb-2 mb-4">
+                REFERENCIAS PROFESIONALES
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="border border-main p-3">
+                    <p class="font-bold">Jorge Vega</p>
+                    <p class="text-sm">Senior Developer / Mentor</p>
+                    <p class="text-xs">jorgevegab+rf@gmail.com</p>
+                </div>
+                <div class="border border-main p-3">
+                    <p class="font-bold">Elias Leyton</p>
+                    <p class="text-sm">Senior Developer / Mentor</p>
+                    <p class="text-xs">Elias.leyton+rf@gmail.com</p>
+                </div>
+            </div>
+        </section>
+
     </div>
 </div>

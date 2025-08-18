@@ -74,13 +74,15 @@ export default function DropdownButton({
     const listNavigation = useListNavigation(context, {
         listRef,
         activeIndex,
-        onNavigate: setActiveIndex,
+        onNavigate: (index: number | null) => {
+            setActiveIndex(index ?? -1);
+        },
         virtual: true,
         loop: true,
         enabled: false // Disable Floating UI navigation completely
     });
 
-    const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss, role, listNavigation]);
+    const { getReferenceProps } = useInteractions([click, dismiss, role, listNavigation]);
 
     // Store item click handlers for auto-selection
     const itemClickHandlers = useRef<Array<(() => void) | null>>([]);
@@ -116,20 +118,43 @@ export default function DropdownButton({
             case ' ':
                 event.preventDefault();
                 event.stopPropagation();
-                console.log('🔥 Enter/Space pressed!', { activeIndex, isOpen, itemsLength: items.length });
+                console.log('🔥 DROPDOWN: Enter/Space pressed!', { 
+                    activeIndex, 
+                    isOpen, 
+                    itemsLength: items.length,
+                    items: items.map(item => ({ tagName: item.tagName, className: item.className }))
+                });
                 
                 if (activeIndex >= 0 && activeIndex < items.length) {
                     const activeItem = items[activeIndex] as HTMLElement;
-                    console.log('🎯 Clicking item at index:', activeIndex, activeItem);
+                    console.log('🎯 DROPDOWN: About to click item:', { 
+                        activeIndex, 
+                        activeItem: {
+                            tagName: activeItem.tagName,
+                            className: activeItem.className,
+                            textContent: activeItem.textContent?.substring(0, 50)
+                        }
+                    });
                     if (activeItem) {
-                        activeItem.click();
+                        // Create a custom click event to better identify it as keyboard-triggered
+                        const clickEvent = new MouseEvent('click', {
+                            bubbles: true,
+                            cancelable: true,
+                            detail: 0,  // This identifies it as keyboard-triggered
+                            clientX: 0,
+                            clientY: 0,
+                            screenX: 0,
+                            screenY: 0
+                        });
+                        console.log('🚀 DROPDOWN: Dispatching click event');
+                        activeItem.dispatchEvent(clickEvent);
                     }
+                } else {
+                    console.log('❌ DROPDOWN: Invalid activeIndex or no items');
                 }
                 
-                // Close dropdown after selection
-                setIsOpen(false);
-                setActiveIndex(-1);
-                buttonRef.current?.focus();
+                // Don't close dropdown here - let the handleItemClick wrapper handle it
+                // This prevents race conditions between keyboard and click handlers
                 break;
                 
             case 'Escape':
@@ -180,7 +205,6 @@ export default function DropdownButton({
         } else {
             // Ensure we start with a valid index
             const validIndex = Math.max(0, initialSelectedIndex || 0);
-            console.log('🚀 Setting activeIndex to:', validIndex);
             setActiveIndex(validIndex);
         }
     }, [isOpen, initialSelectedIndex]);
@@ -284,7 +308,7 @@ export default function DropdownButton({
                 <button
                     ref={(node) => {
                         refs.setReference(node);
-                        buttonRef.current = node;
+                        (buttonRef as React.MutableRefObject<HTMLButtonElement | null>).current = node;
                     }}
                     type="button"
                     onClick={handleDropdownClick}
@@ -323,7 +347,7 @@ export default function DropdownButton({
                         <div
                             ref={(node) => {
                                 refs.setFloating(node);
-                                dropdownRef.current = node;
+                                (dropdownRef as React.MutableRefObject<HTMLDivElement | null>).current = node;
                             }}
                             style={{
                                 ...floatingStyles,

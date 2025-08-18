@@ -54,7 +54,7 @@ const { children, class: className = '' } = Astro.props;
 </style>
 
 <!-- Container with border and padding (screen only) -->
-<div class={`cv-container w-fit h-fit pb-1 bg-white text-main p-[10mm] print:p-0 box-border border-2 border-secondary print:border-0 mx-auto font-serif shadow-[8px_8px_0_var(--color-main)] print:shadow-none overflow-hidden ${className}`}>
+<div class={`cv-container w-fit h-fit pb-1 bg-secondary text-main p-[10mm] print:p-0 box-border border-2 border-secondary print:border-0 mx-auto font-serif shadow-[8px_8px_0_var(--color-main)] print:shadow-none overflow-hidden ${className}`}>
     <!-- Internal page without border or padding -->
     <div class="w-[210mm] h-[297mm] bg-secondary text-main border-1 border-red-500 print:cv-page-print overflow-hidden">
         <slot />

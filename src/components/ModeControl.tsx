@@ -190,7 +190,7 @@ export default function ModeControl() {
         >
             <div className="flex items-center gap-2">
                 <div className="w-3.5 h-3.5 relative flex-shrink-0 translate-y-[-1px]">{getModeIcon(currentMode, '')}</div>
-                <span className="hidden @6xl:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus:text-secondary uppercase translate-y-[1.5px]">{getModeName(currentMode)}</span>
+                <span className="hidden @6xl:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus:text-secondary uppercase">{getModeName(currentMode)}</span>
             </div>
         </DropdownButton>
     );
