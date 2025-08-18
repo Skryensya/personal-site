@@ -1,6 +1,6 @@
 ---
 import ProjectCard from '../ProjectCard.astro';
-import ProjectCarousel from '../ProjectCarousel.tsx';
+import ProjectCarousel from '../ProjectCarousel.astro';
 import { getFeaturedProjectsByLanguage, getSlugFromId } from '@/utils/content-utils';
 import { useTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
@@ -21,7 +21,7 @@ const featuredProjects = (await getFeaturedProjectsByLanguage(lang))
 <section class="py-20 bg-secondary">
   <div class="max-w-7xl mx-auto px-4">
     <h2 class="font-mono text-3xl font-bold text-main mb-12">{t('home.featuredProjects')}</h2>
-    <ProjectCarousel client:load projectCount={featuredProjects.length}>
+    <ProjectCarousel projectCount={featuredProjects.length}>
       {featuredProjects.map((project, index) => (
         <ProjectCard
           name={project.data.name}

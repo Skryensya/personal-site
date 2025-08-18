@@ -80,12 +80,14 @@ export default function LanguageControl({ currentPath, initialLocale }: Language
     }, []);
 
     const handleLanguageSwitch = useCallback((lang: Language, url: string, viaKeyboard = false) => {
+        console.log('🔄 LANGUAGE: handleLanguageSwitch called', { lang, url, viaKeyboard });
         if (typeof window !== 'undefined') {
             localStorage.setItem('langChoice', lang);
             // Only save focus state if changed via keyboard
             if (viaKeyboard) {
                 localStorage.setItem('focusAfterNavigation', 'language-control');
             }
+            console.log('🔄 LANGUAGE: About to redirect to:', url);
             window.location.href = url;
         }
     }, []);
@@ -125,11 +127,33 @@ export default function LanguageControl({ currentPath, initialLocale }: Language
                         type="button"
                         onClick={(e) => {
                             // Detect if this was triggered by keyboard (Enter/Space via dropdown navigation)
-                            // When DropdownButton calls activeItem.click(), the event has no pointer coordinates
-                            const isKeyboard = (e.detail === 0 || e.detail === undefined) || (e.clientX === 0 && e.clientY === 0);
+                            // When DropdownButton calls activeItem.click(), it's a programmatic click
+                            // Check for synthetic events: no detail, or coordinates at 0,0, or isTrusted is false
+                            const isKeyboard = e.detail === 0 || 
+                                              (e.clientX === 0 && e.clientY === 0) ||
+                                              !e.isTrusted ||
+                                              e.type === 'click' && e.screenX === 0 && e.screenY === 0;
+                            
+                            console.log('🌍 LANGUAGE: Click received!', {
+                                lang,
+                                url,
+                                event: {
+                                    detail: e.detail,
+                                    clientX: e.clientX,
+                                    clientY: e.clientY,
+                                    screenX: e.screenX,
+                                    screenY: e.screenY,
+                                    isTrusted: e.isTrusted,
+                                    type: e.type
+                                },
+                                isKeyboard
+                            });
+                            
                             if (isKeyboard) {
+                                console.log('⌨️ LANGUAGE: Handling as keyboard selection');
                                 handleDropdownKeyboardSelection(lang, url);
                             } else {
+                                console.log('🖱️ LANGUAGE: Handling as mouse selection');
                                 handleDropdownMouseSelection(lang, url);
                             }
                         }}
@@ -179,7 +203,7 @@ export default function LanguageControl({ currentPath, initialLocale }: Language
                 className="w-7 h-7 @6xl:w-auto @6xl:h-8"
             >
             <div className="flex items-center gap-2">
-                <span className="font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus:text-secondary uppercase translate-y-[1.5px]">
+                <span className="font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus:text-secondary uppercase">
                     {getNativeLanguageName(currentLang)}
                 </span>
             </div>

@@ -207,7 +207,7 @@ export default function ThemeControl() {
                         background: `linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%)`
                     }}
                 />
-                <span className="hidden @6xl:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus:text-secondary truncate uppercase translate-y-[1.5px]">
+                <span className="hidden @6xl:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus:text-secondary truncate uppercase  ">
                     {currentTheme.name}
                 </span>
             </div>
