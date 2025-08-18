@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 export interface Props {
   href?: string;
   variant?: 'normal' | 'outline';
+  size?: 'normal' | 'sm';
   filled?: boolean;
   elevated?: boolean;
   class?: string;
@@ -17,6 +18,7 @@ export interface Props {
 const {
   href,
   variant = 'normal',
+  size = 'normal',
   filled = false,
   elevated = false,
   class: className,
@@ -32,23 +34,32 @@ const Tag = href ? 'a' : 'button';
 
 
 const buttonClasses = cn(
-  'px-6 text-sm h-12 font-bold uppercase tracking-wide cursor-pointer border-double border-2 whitespace-nowrap flex items-center justify-center no-underline',
+  'font-bold uppercase tracking-wide cursor-pointer border-double border-2 whitespace-nowrap flex items-center justify-center no-underline',
   {
+    // Size variants
+    'px-6 text-sm h-12': size === 'normal',
+    'px-2 h-8 font-grotesk font-bold': size === 'sm',
+    // Position and elevation
     'relative top-0 left-0 z-20': !elevated && variant !== 'outline',
     'absolute top-0 left-0 z-30 elevated-button': elevated && variant !== 'outline',
     'relative top-0 left-0 z-30 active:top-0 active:left-0': variant === 'outline' && !elevated,
     'relative top-0 left-0 z-30 border-secondary': variant === 'outline' && elevated,
+    // Colors and states
     'bg-main text-secondary border-main shadow-[inset_0_0_0_2px_var(--color-secondary)]': filled,
-    'bg-secondary text-main border-main shadow-[inset_0_0_0_2px_var(--color-secondary)] hover:bg-main hover:text-secondary': !filled && variant !== 'outline',
+    'bg-secondary text-main border-main shadow-[inset_0_0_0_2px_var(--color-secondary)] hover:bg-main hover:text-secondary focus:bg-main focus:text-secondary': !filled && variant !== 'outline',
     'bg-secondary text-main border-transparent overflow-hidden group': variant === 'outline',
   },
   className
 );
 
 const shadowClasses = cn(
-  'px-6 text-sm h-12 absolute top-0 left-0 border-2 whitespace-nowrap pointer-events-none font-bold uppercase tracking-wide flex items-center justify-center',
+  'absolute top-0 left-0 border-2 whitespace-nowrap pointer-events-none font-bold uppercase tracking-wide flex items-center justify-center',
   'bg-secondary bg-opacity-60 z-10',
- 
+  {
+    // Size variants for shadow
+    'px-6 text-sm h-12': size === 'normal',
+    'px-2 h-8 font-grotesk font-bold': size === 'sm',
+  }
 );
 ---
 
@@ -72,13 +83,13 @@ const shadowClasses = cn(
       </div>
       <!-- Movable button -->
       <div class="outline-elevated-button relative z-20">
-        <Tag class={cn(buttonClasses, 'group outline-animated-button', { 'button-with-sound': elevated })} href={href} style={style} onclick={onClick} type={type} disabled={disabled} id={id}>
+        <Tag class={cn(buttonClasses, 'group outline-animated-button', { 'button-with-sound': elevated })} href={href} style={size === 'sm' ? `font-size: 14px; ${style || ''}` : style} onclick={onClick} type={type} disabled={disabled} id={id}>
           <slot />
         </Tag>
       </div>
     </div>
   ) : (
-    <Tag class={cn(buttonClasses, { 'button-with-sound': elevated })} href={href} style={style} onclick={onClick} type={type} disabled={disabled} id={id}>
+    <Tag class={cn(buttonClasses, { 'button-with-sound': elevated })} href={href} style={size === 'sm' ? `font-size: 14px; ${style || ''}` : style} onclick={onClick} type={type} disabled={disabled} id={id}>
       {variant === 'outline' && (
         <>
           <div class="absolute top-0 left-0 w-full h-0 border-t-2 border-double border-main transform -translate-x-full group-hover:translate-x-0 group-hover:delay-0 transition-transform duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] delay-600"></div>
@@ -273,8 +284,9 @@ const shadowClasses = cn(
         
         
         
-        actualButton.addEventListener('mouseenter', () => {
-          console.log('Mouse enter detected on button');
+        // Function to handle animation trigger (both hover and focus)
+        const triggerAnimation = (eventType: string) => {
+          console.log(`${eventType} detected on button`);
           
           // Clear any existing hover timeout
           if (hoverTimeout) {
@@ -299,7 +311,10 @@ const shadowClasses = cn(
             htmlButtonWrapper.style.transition = 'transform 200ms ease-out';
             console.log('Button elevated after border animation completed');
           }, 1030);
-        });
+        };
+
+        actualButton.addEventListener('mouseenter', () => triggerAnimation('Mouse enter'));
+        actualButton.addEventListener('focus', () => triggerAnimation('Focus'));
         
         actualButton.addEventListener('mouseleave', () => {
           console.log('Mouse leave detected on button');
@@ -349,6 +364,7 @@ const shadowClasses = cn(
     elevatedButtons.forEach((button) => {
       const htmlButton = button as HTMLElement;
       let hasElevated = false;
+      const isFilled = htmlButton.classList.contains('bg-main');
       
       // Elevate after 1 second on page load
       setTimeout(() => {
@@ -358,6 +374,37 @@ const shadowClasses = cn(
           hasElevated = true;
         }
       }, 1000);
+      
+      // Handle hover for filled buttons (30% less elevation)
+      if (isFilled) {
+        htmlButton.addEventListener('mouseenter', () => {
+          if (hasElevated && htmlButton.style) {
+            htmlButton.style.transform = 'translate(-8.4px, -8.4px)';
+            htmlButton.style.transition = 'transform 150ms ease-out';
+          }
+        });
+        
+        htmlButton.addEventListener('mouseleave', () => {
+          if (hasElevated && htmlButton.style) {
+            htmlButton.style.transform = 'translate(-12px, -12px)';
+            htmlButton.style.transition = 'transform 150ms ease-out';
+          }
+        });
+        
+        htmlButton.addEventListener('focus', () => {
+          if (hasElevated && htmlButton.style) {
+            htmlButton.style.transform = 'translate(-8.4px, -8.4px)';
+            htmlButton.style.transition = 'transform 150ms ease-out';
+          }
+        });
+        
+        htmlButton.addEventListener('blur', () => {
+          if (hasElevated && htmlButton.style) {
+            htmlButton.style.transform = 'translate(-12px, -12px)';
+            htmlButton.style.transition = 'transform 150ms ease-out';
+          }
+        });
+      }
       
       // Handle press animation when elevated
       htmlButton.addEventListener('mousedown', () => {
@@ -369,7 +416,8 @@ const shadowClasses = cn(
       
       htmlButton.addEventListener('mouseup', () => {
         if (hasElevated && htmlButton.style) {
-          htmlButton.style.transform = 'translate(-12px, -12px)';
+          const targetTransform = isFilled && htmlButton.matches(':hover') ? 'translate(-8.4px, -8.4px)' : 'translate(-12px, -12px)';
+          htmlButton.style.transform = targetTransform;
           htmlButton.style.transition = 'none';
         }
       });

@@ -80,7 +80,7 @@ const {
 </style>
 
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    function initAsciiGrid() {
         const canvas = document.getElementById('techGridCanvas') as HTMLCanvasElement;
         if (!canvas) return;
 
@@ -620,5 +620,23 @@ const {
                 cancelAnimationFrame(animationId);
             }
         };
+    }
+
+    // Inicializar en carga inicial
+    document.addEventListener('DOMContentLoaded', initAsciiGrid);
+    
+    // Inicializar en navegación de Astro
+    document.addEventListener('astro:page-load', initAsciiGrid);
+    
+    // Cleanup en navegación de Astro
+    document.addEventListener('astro:before-preparation', () => {
+        const canvas = document.getElementById('techGridCanvas') as HTMLCanvasElement;
+        if (canvas) {
+            // Limpiar cualquier animación en curso
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
     });
 </script>

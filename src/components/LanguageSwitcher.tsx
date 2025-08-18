@@ -2,7 +2,7 @@ import React from 'react';
 import { supportedLanguages, languages, type Language } from '@/i18n/ui';
 import { getLangFromUrl } from '@/i18n/utils';
 import { getEquivalentPage } from '@/utils/localized-routes';
-import DropdownButton from './DropdownButton';
+import DropdownButton, { DropdownContent } from './DropdownButton';
 
 interface LanguageSwitcherProps {
     currentPath?: string;
@@ -66,7 +66,7 @@ export default function LanguageSwitcher({ currentPath, initialLocale }: Languag
     };
 
     const dropdownContent = (
-        <div>
+        <DropdownContent>
             {supportedLanguages.map((lang) => {
                 const url = alternateUrls.find(alt => alt.lang === lang)?.url || '/';
                 return (
@@ -74,9 +74,13 @@ export default function LanguageSwitcher({ currentPath, initialLocale }: Languag
                         key={lang}
                         type="button"
                         onClick={() => handleLanguageSwitch(lang, url)}
-                        className={`w-full px-1 py-0.5 text-left focus:outline-none block cursor-pointer relative z-10 ${
+                        className={`w-full px-1 py-0.5 text-left block cursor-pointer relative focus:z-[9999] ${
                             lang === currentLang ? 'bg-main text-secondary' : 'bg-secondary text-main hover:bg-main hover:text-secondary'
                         }`}
+                        style={{
+                            outlineWidth: '1px',
+                            outlineOffset: '1px'
+                        }}
                         style={{ minHeight: '32px' }}
                     >
                         <div className="flex items-center gap-0 pointer-events-none">
@@ -105,12 +109,17 @@ export default function LanguageSwitcher({ currentPath, initialLocale }: Languag
                     </button>
                 );
             })}
-        </div>
+        </DropdownContent>
     );
+
+    // Find the index of the current language
+    const currentLangIndex = supportedLanguages.findIndex(lang => lang === currentLang);
+    const selectedIndex = currentLangIndex >= 0 ? currentLangIndex : 0;
 
     return (
         <DropdownButton
             onMainClick={nextLanguage}
+            initialSelectedIndex={selectedIndex}
             dropdownContent={dropdownContent}
             className="w-7 h-7 @6xl:w-auto @6xl:h-8"
         >

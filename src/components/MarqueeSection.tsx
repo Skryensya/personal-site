@@ -166,7 +166,11 @@ export default function MarqueeSection({ links }: Props) {
         <div className="relative">
             <div
                 ref={containerRef}
-                className={`overflow-hidden relative w-full py-2 flex items-center focus:outline-2 focus:outline-offset-2 focus:outline-main ${isKeyboardActive ? 'has-keyboard-focus' : ''}`}
+                className={`overflow-hidden relative w-full py-2 flex items-center ${isKeyboardActive ? 'has-keyboard-focus' : ''}`}
+                style={{
+                    outlineWidth: '0.5px',
+                    outlineOffset: '0.5px'
+                }}
                 tabIndex={0}
                 role="region"
                 aria-label={
@@ -189,7 +193,7 @@ export default function MarqueeSection({ links }: Props) {
                                 data-index={index}
                                 data-href={`/tags/${link.text.toLowerCase().replace(/\s+/g, '-')}`}
                             >
-                                <span className="relative inline-block bg-secondary text-main px-3 py-1 !text-xs font-mono font-medium border-2 border-main overflow-hidden tag-item">
+                                <span className="relative inline-block bg-secondary text-main px-4 py-1 !text-sm font-mono font-medium border-2 border-main overflow-hidden tag-item">
                                     #{link.text}
                                     <div className="absolute bottom-0 right-0 w-0 h-0 border-l-[10px] border-l-transparent border-b-[10px] border-b-main"></div>
                                 </span>
@@ -201,7 +205,7 @@ export default function MarqueeSection({ links }: Props) {
                     <ul className={`flex items-center flex-shrink-0 space-x-2 pr-2 ${isKeyboardActive ? 'hidden' : ''}`} aria-hidden="true">
                         {links.map((link, index) => (
                             <li key={`second-${index}`} data-index={index + links.length} data-href={`/tags/${link.text.toLowerCase().replace(/\s+/g, '-')}`}>
-                                <span className="relative inline-block bg-secondary text-main px-3 py-1 !text-xs font-mono font-medium border-2 border-main overflow-hidden tag-item">
+                                <span className="relative inline-block bg-secondary text-main px-4 py-1 !text-sm font-mono font-medium border-2 border-main overflow-hidden tag-item">
                                     #{link.text}
                                     <div className="absolute bottom-0 right-0 w-0 h-0 border-l-[10px] border-l-transparent border-b-[10px] border-b-main"></div>
                                 </span>
@@ -217,7 +221,7 @@ export default function MarqueeSection({ links }: Props) {
                                 data-index={index + links.length * 2}
                                 data-href={`/tags/${link.text.toLowerCase().replace(/\s+/g, '-')}`}
                             >
-                                <span className="relative inline-block bg-secondary text-main px-3 py-1 !text-xs font-mono font-medium border-2 border-main overflow-hidden tag-item">
+                                <span className="relative inline-block bg-secondary text-main px-4 py-1 !text-sm font-mono font-medium border-2 border-main overflow-hidden tag-item">
                                     #{link.text}
                                     <div className="absolute bottom-0 right-0 w-0 h-0 border-l-[10px] border-l-transparent border-b-[10px] border-b-main"></div>
                                 </span>
@@ -284,11 +288,6 @@ export default function MarqueeSection({ links }: Props) {
         
         .has-keyboard-focus .tag-item:not(.selected) {
           opacity: 0.7;
-        }
-        
-        div:focus {
-          outline: 3px solid var(--color-main);
-          outline-offset: 4px;
         }
         
         /* Container adjusts to content */

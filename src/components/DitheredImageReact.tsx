@@ -20,8 +20,8 @@ export default function DitheredImageReact({
     src,
     alt,
     className,
-    crunch = 'auto',
-    cutoff = 0.3,
+    crunch = 'pixel',
+    cutoff = 0.35,
     mainColor,
     secondaryColor,
     respectOriginalSize = true
@@ -283,6 +283,10 @@ export default function DitheredImageReact({
             pointer-events: none;
             background: transparent !important;
             transition: opacity 0.3s ease;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
           }
           .dithered-container-${src.replace(/[^a-zA-Z0-9]/g, '')}::after {
             content: '';
@@ -304,6 +308,10 @@ export default function DitheredImageReact({
             -ms-user-select: none;
             transition: opacity 0.2s ease, background-image 0.3s ease;
             transition-delay: 0s;
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
           }
           .dithered-container-${src.replace(/[^a-zA-Z0-9]/g, '')}:hover:not(.show-original)::after {
             opacity: 0.7;

@@ -54,69 +54,76 @@ declare global {
 <!doctype html>
 <html lang={lang} class="antialiased break-words">
     <head>
-        <!-- INSTANT theme application - runs BEFORE any CSS -->
+        <!-- INSTANT theme application - runs BEFORE any CSS and PERSISTS during View Transitions -->
         <script is:inline define:vars={{ validThemes, themeColors, defaultColorful, defaultContrasty, defaultThemeId }}>
-            // BLOCKING script - applies theme from localStorage instantly before any CSS
+            // ULTRA-FAST theme application for View Transitions compatibility
             (function() {
-                // Get theme from localStorage immediately
-                let savedTheme, savedMode;
-                try {
-                    savedTheme = localStorage.getItem('theme-id');
-                    savedMode = localStorage.getItem('theme-mode');
-                } catch (e) {
-                    // localStorage unavailable
+                // Create reusable theme application function
+                function applyThemeInstantly() {
+                    const html = document.documentElement;
+                    
+                    // Get theme from localStorage immediately
+                    let savedTheme, savedMode;
+                    try {
+                        savedTheme = localStorage.getItem('theme-id');
+                        savedMode = localStorage.getItem('theme-mode');
+                    } catch (e) {
+                        // localStorage unavailable - use defaults
+                    }
+                    
+                    // Determine theme immediately
+                    const themeId = (savedTheme && validThemes.includes(savedTheme)) ? savedTheme : defaultThemeId;
+                    const mode = savedMode || 'system';
+                    
+                    // Get theme colors from embedded data
+                    const theme = themeColors[themeId] || { 
+                        colorful: defaultColorful, 
+                        contrasty: defaultContrasty 
+                    };
+                    
+                    // Determine dark mode immediately
+                    let isDark = false;
+                    if (mode === 'system') {
+                        isDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    } else {
+                        isDark = mode === 'dark';
+                    }
+                    
+                    // Apply ALL theme properties SIMULTANEOUSLY
+                    html.setAttribute('data-theme', themeId);
+                    html.classList.toggle('dark', isDark);
+                    
+                    // Set ALL CSS variables in one batch to prevent any flash
+                    const mainColor = isDark ? theme.colorful : theme.contrasty;
+                    const secondaryColor = isDark ? theme.contrasty : theme.colorful;
+                    
+                    html.style.setProperty('--theme-colorful', theme.colorful);
+                    html.style.setProperty('--theme-contrasty', theme.contrasty);
+                    html.style.setProperty('--color-main', mainColor);
+                    html.style.setProperty('--color-secondary', secondaryColor);
+                    
+                    // Store for React components
+                    window.__THEME_ID__ = themeId;
+                    window.__THEME_MODE__ = mode;
+                    window.__THEME_READY__ = true;
                 }
                 
-                const themeId = (savedTheme && validThemes.includes(savedTheme)) ? savedTheme : defaultThemeId;
-                const mode = savedMode || 'system';
+                // Apply theme immediately on initial load
+                applyThemeInstantly();
                 
-                // Get theme colors from embedded data
-                const theme = themeColors[themeId] || { 
-                    colorful: defaultColorful, 
-                    contrasty: defaultContrasty 
-                };
+                // Re-apply theme instantly before View Transitions start
+                document.addEventListener('astro:before-preparation', applyThemeInstantly);
+                document.addEventListener('astro:page-load', applyThemeInstantly);
                 
-                // Determine dark mode
-                let isDark = false;
-                if (mode === 'system') {
-                    isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                } else {
-                    isDark = mode === 'dark';
-                }
-                
-                // Apply theme INSTANTLY to HTML
-                const html = document.documentElement;
-                html.setAttribute('data-theme', themeId);
-                html.classList.toggle('dark', isDark);
-                
-                // INJECT CSS variables immediately into HTML
-                html.style.setProperty('--theme-colorful', theme.colorful);
-                html.style.setProperty('--theme-contrasty', theme.contrasty);
-                html.style.setProperty('--color-main', isDark ? theme.colorful : theme.contrasty);
-                html.style.setProperty('--color-secondary', isDark ? theme.contrasty : theme.colorful);
-                
-                // Store for React components
-                window.__THEME_ID__ = themeId;
-                window.__THEME_MODE__ = mode;
-                window.__THEME_READY__ = true;
-                
-                // Debug: log theme application
-                console.log('🎨 Theme applied instantly:', themeId, 'colors:', theme);
+                // Store the function globally so it can be called from anywhere
+                window.__APPLY_THEME_INSTANTLY__ = applyThemeInstantly;
             })();
         </script>
         
         <!-- CSS loads AFTER theme is already applied -->
         <style>
             /* Base structure - colors already set by script above */
-            :root {
-                /* Colors will be overridden by script above */
-                --color-main: var(--theme-contrasty);
-                --color-secondary: var(--theme-colorful);
-            }
-            html.dark {
-                --color-main: var(--theme-colorful);
-                --color-secondary: var(--theme-contrasty);
-            }
+            /* No default values to prevent flash - script sets all values immediately */
         </style>
  
         
@@ -124,6 +131,31 @@ declare global {
         <script src="/as-dithered-image.js" is:inline></script>
         <link rel="stylesheet" href="/src/styles/view-transitions.css">
         <ViewTransitions />
+        
+        <!-- Selection color animator -->
+        <script>
+            import { startGlobalSelectionAnimation } from '../utils/globalSelectionAnimator.ts';
+            startGlobalSelectionAnimation();
+        </script>
+        
+        <!-- Additional theme persistence for View Transitions -->
+        <script is:inline>
+            // Ensure theme persists during View Transitions
+            document.addEventListener('astro:before-preparation', function(e) {
+                // Apply theme immediately when preparing for transition
+                if (window.__APPLY_THEME_INSTANTLY__) {
+                    window.__APPLY_THEME_INSTANTLY__();
+                }
+            });
+            
+            document.addEventListener('astro:after-preparation', function(e) {
+                // Apply theme immediately after transition preparation
+                if (window.__APPLY_THEME_INSTANTLY__) {
+                    window.__APPLY_THEME_INSTANTLY__();
+                }
+            });
+        </script>
+        
         <style>
             /* View Transitions for theme changes */
             ::view-transition-old(root),

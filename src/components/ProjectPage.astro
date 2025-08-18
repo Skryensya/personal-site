@@ -1,24 +1,18 @@
 ---
 import { type CollectionEntry } from 'astro:content';
-import Layout from '../layouts/Layout.astro';
-import { sortItemsByDateDesc } from '../utils/data-utils';
-import { getProjectsByLanguage, getSlugFromId, getAlternativeLanguages } from '@/utils/content-utils';
+import Layout from '../layouts/Layout.astro';   
 import DitheredImageReact from './DitheredImageReact';
 import Button from './Button.astro';
+import ReadingGuide from './ReadingGuide';
+import ScrollProgress from './ScrollProgress';
 
 interface Props {
     projectsByLang: Record<string, CollectionEntry<'projects'>>;
     slug: string;
-    currentLocale: string;
-    language?: string;
+    currentLocale: "es" | "en" | "no";
 }
 
-const { projectsByLang, slug, currentLocale, language } = Astro.props as {
-    projectsByLang: Record<string, CollectionEntry<'projects'>>;
-    slug: string;
-    currentLocale: "es" | "en" | "no";
-    language?: string;
-};
+const { projectsByLang, slug, currentLocale } = Astro.props;
 
 // Get the project for the current language, fallback to Spanish if not available
 const project = projectsByLang[currentLocale] || projectsByLang['es'] || Object.values(projectsByLang)[0];
@@ -27,82 +21,19 @@ if (!project) {
     return Astro.redirect('/404');
 }
 
-// Get projects in the current language for navigation
-const projectsInLanguage = (await getProjectsByLanguage(currentLocale)).sort(sortItemsByDateDesc);
-const currentIndex = projectsInLanguage.findIndex(p => getSlugFromId(p.id) === slug);
-// 
-
-// Get alternative language versions
-const alternatives = await getAlternativeLanguages('projects', slug, currentLocale);
-
 const { name, hook, seo, clientLogo } = project.data;
 const { Content } = await project.render();
 ---
 
 <Layout title={seo?.title ?? name} description={seo?.description ?? hook} image={seo?.image} pageType="article" showHeader={true} lang={currentLocale}>
-    <!-- Scroll Progress Bar -->
-    <div class="fixed top-0 left-0 w-full h-0.5 z-50" id="scroll-progress-container">
-        <div class="h-full bg-main opacity-60" id="scroll-progress-bar" style="width: 0%"></div>
-    </div>
-    
-    <!-- Left Reading Guide Indicator - Positioned next to prose content -->
-    <div class="fixed opacity-0 z-40 transition-opacity duration-300" id="reading-guide-indicator-left" style="top: calc(50vh - 12px); left: 50px;">
-        <!-- Droplet icon rotated to point right -->
-        <div class="cursor-ns-resize text-main" id="reading-guide-button-left">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" class="transform rotate-90 drop-shadow-lg">
-                <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>
-            </svg>
-        </div>
-        
-    </div>
-
-    <!-- Right Reading Guide Indicator - Positioned between content and sidebar -->
-    <div class="fixed opacity-0 z-40 transition-opacity duration-300" id="reading-guide-indicator-right" style="top: calc(50vh - 12px); right: 240px;">
-        <!-- Droplet icon rotated to point left -->
-        <div class="cursor-ns-resize text-main" id="reading-guide-button-right">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="none" stroke-width="0" stroke-linecap="round" stroke-linejoin="round" class="transform -rotate-90 drop-shadow-lg">
-                <path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>
-            </svg>
-        </div>
-    </div>
-
-    <!-- Single intersection line that spans the content width -->
-    <div class="fixed opacity-0 z-30 transition-opacity duration-200 border-t border-main pointer-events-none" id="reading-guide-line" style="top: calc(50vh - 0.5px);"></div>
-    
-    <!-- Corner crosses for content delimitation -->
-    <!-- Top left cross -->
-    <div class="fixed z-20 pointer-events-none opacity-50" id="top-left-cross">
-        <svg width="20" height="20" viewBox="0 0 20 20" class="text-main">
-            <path d="M10 0v20M0 10h20" stroke="currentColor" stroke-width="1" fill="none"/>
-        </svg>
-    </div>
-    
-    <!-- Top right cross -->
-    <div class="fixed z-20 pointer-events-none opacity-50" id="top-right-cross">
-        <svg width="20" height="20" viewBox="0 0 20 20" class="text-main">
-            <path d="M10 0v20M0 10h20" stroke="currentColor" stroke-width="1" fill="none"/>
-        </svg>
-    </div>
-    
-    <!-- Bottom left cross -->
-    <div class="fixed z-20 pointer-events-none opacity-50" id="bottom-left-cross">
-        <svg width="20" height="20" viewBox="0 0 20 20" class="text-main">
-            <path d="M10 0v20M0 10h20" stroke="currentColor" stroke-width="1" fill="none"/>
-        </svg>
-    </div>
-    
-    <!-- Bottom right cross -->
-    <div class="fixed z-20 pointer-events-none opacity-50" id="bottom-right-cross">
-        <svg width="20" height="20" viewBox="0 0 20 20" class="text-main">
-            <path d="M10 0v20M0 10h20" stroke="currentColor" stroke-width="1" fill="none"/>
-        </svg>
-    </div>
+    <ScrollProgress client:load />
+    <ReadingGuide client:load />
     
     <article class="min-h-screen">
         <!-- Full height layout with content and sidebar -->
         <div class="flex min-h-screen" id="project-content-container">
             <!-- Main content area -->
-            <main class="flex-1 min-w-0" id="project-content">
+            <main class="flex-1 min-w-0 md:mb-64" id="project-content">
                 <!-- Content with project header -->
                 <div class="py-8 px-2 lg:px-4 lg:py-4 flex flex-col items-center">
                     <!-- Project Title and Hook - Part of Content -->
@@ -203,10 +134,10 @@ const { Content } = await project.render();
                         <div class="relative">
                             <!-- Progress indicator background -->
                             <div class="absolute left-0 top-0 bottom-0 w-0.5 bg-main opacity-10" id="progress-bg"></div>
-                            <!-- Active progress indicator -->
-                            <div class="absolute left-0 w-0.5 bg-main transition-all duration-300 ease-out" id="progress-indicator" style="height: 0px; top: 0px;"></div>
+                            <!-- Active progress indicator - animated shadow -->
+                            <div class="absolute left-3 right-0 bg-main opacity-15 transition-all duration-300 ease-out" id="progress-indicator" style="height: 0px; top: 0px;"></div>
                             <!-- TOC list with modern styling -->
-                            <ul id="toc-list" class="relative space-y-0 pl-3">
+                            <ul id="toc-list" class="relative space-y-1 pl-3">
                                 <!-- TOC will be generated by JavaScript -->
                             </ul>
                         </div>
@@ -219,7 +150,7 @@ const { Content } = await project.render();
                         </div>
                         <Button 
                             id="reading-guide-toggle" 
-                            class="w-full text-left text-xs font-mono !px-3 !py-2 !h-auto !text-xs !font-normal !normal-case !tracking-normal"
+                            class="w-full text-left text-xs font-mono !px-3 !py-2 !h-auto !font-normal !normal-case !tracking-normal"
                             aria-pressed="false"
                         >
                             Activar guía
@@ -280,9 +211,9 @@ const { Content } = await project.render();
                     listItem.className = 'relative group';
                     
                     if (level === 1 || level === 2) {
-                        link.className = 'block text-main hover:bg-secondary text-xs py-1.5 px-2 font-mono font-medium transition-all duration-200 ease-out';
+                        link.className = 'block text-main border-2 border-transparent hover:border-main text-xs py-2 px-3 mx-1 font-mono font-medium transition-all duration-200 ease-out';
                     } else {
-                        link.className = 'block text-main hover:bg-secondary text-xs py-1 px-2 pl-4 font-mono opacity-70 hover:opacity-100 transition-all duration-200 ease-out';
+                        link.className = 'block text-main border-2 border-transparent hover:border-main text-xs py-1.5 px-3 pl-5 mx-1 font-mono opacity-70 hover:opacity-100 transition-all duration-200 ease-out';
                     }
                     
                     listItem.appendChild(link);
@@ -295,19 +226,19 @@ const { Content } = await project.render();
                 const progressIndicator = document.getElementById('progress-indicator');
                 const tocList = document.getElementById('toc-list');
                 
-                // Remove active styles from all links
+                // Reset all links to default style
                 tocLinks.forEach(link => {
-                    link.classList.remove('bg-main', 'text-secondary', 'border-main', 'font-bold');
-                    link.classList.add('border-transparent');
+                    link.classList.remove('font-bold', 'text-secondary');
+                    link.classList.add('text-main');
                 });
                 
                 const activeLink = document.querySelector(`#toc-list a[href="#${activeId}"]`);
                 if (activeLink && progressIndicator && tocList) {
-                    // Add active styles to current link
-                    activeLink.classList.remove('border-transparent', 'hover:bg-secondary');
-                    activeLink.classList.add('bg-main', 'text-secondary', 'border-main', 'font-bold');
+                    // Style the active link text for better contrast over shadow
+                    activeLink.classList.remove('text-main');
+                    activeLink.classList.add('font-bold', 'text-secondary', 'relative', 'z-10');
                     
-                    // Calculate position for progress indicator
+                    // Calculate position for animated shadow indicator
                     const linkRect = activeLink.getBoundingClientRect();
                     const tocListRect = tocList.getBoundingClientRect();
                     
@@ -315,11 +246,9 @@ const { Content } = await project.render();
                     const relativeTop = linkRect.top - tocListRect.top;
                     const linkHeight = linkRect.height;
                     
-                    // Update progress indicator position and height
+                    // Update animated shadow position and height
                     progressIndicator.style.top = `${relativeTop}px`;
                     progressIndicator.style.height = `${linkHeight}px`;
-                    
-                    // Update progress indicator opacity based on position
                     progressIndicator.style.opacity = '1';
                 }
             }
@@ -336,18 +265,46 @@ const { Content } = await project.render();
                 if (!headings.length) return;
                 
                 let currentHeading = null;
-                const scrollPosition = window.scrollY + 100; // Offset for better detection
+                let detectionY = 0;
                 
-                // Find the current visible heading with header offset
-                const headerOffset = 48;
-                for (let i = 0; i < headings.length; i++) {
-                    const heading = headings[i] as HTMLElement;
-                    const headingTop = heading.offsetTop - headerOffset;
+                // Check if reading guide is active and get its position
+                const readingGuideToggle = document.getElementById('reading-guide-toggle');
+                const isReadingGuideActive = readingGuideToggle && readingGuideToggle.getAttribute('aria-pressed') === 'true';
+                
+                if (isReadingGuideActive) {
+                    // Use reading guide position from the component
+                    const viewportHeight = window.innerHeight;
+                    const readingGuidePosition = (window as any).getReadingGuidePosition ? (window as any).getReadingGuidePosition() : 0.5;
+                    detectionY = viewportHeight * readingGuidePosition;
                     
-                    if (scrollPosition >= headingTop) {
-                        currentHeading = heading;
-                    } else {
-                        break;
+                    // Find heading based on screen position (reading guide mode)
+                    for (let i = 0; i < headings.length; i++) {
+                        const heading = headings[i] as HTMLElement;
+                        const headingRect = heading.getBoundingClientRect();
+                        const headingScreenY = headingRect.top;
+                        
+                        // Check if heading has passed the detection line
+                        if (headingScreenY <= detectionY) {
+                            currentHeading = heading;
+                        } else {
+                            break;
+                        }
+                    }
+                } else {
+                    // Traditional detection - heading at middle of viewport
+                    const viewportMiddle = window.innerHeight * 0.5;
+                    
+                    for (let i = 0; i < headings.length; i++) {
+                        const heading = headings[i] as HTMLElement;
+                        const headingRect = heading.getBoundingClientRect();
+                        const headingScreenY = headingRect.top;
+                        
+                        // Check if heading has passed the middle of viewport
+                        if (headingScreenY <= viewportMiddle) {
+                            currentHeading = heading;
+                        } else {
+                            break;
+                        }
                     }
                 }
                 
@@ -461,436 +418,6 @@ const { Content } = await project.render();
                 readingTimeElement.textContent = readingTimeText;
             }
 
-            function updateScrollProgress() {
-                const progressBar = document.getElementById('scroll-progress-bar');
-                if (!progressBar) return;
-                
-                const scrollTop = window.scrollY;
-                const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-                const scrollPercent = (scrollTop / docHeight) * 100;
-                
-                progressBar.style.width = `${Math.min(100, Math.max(0, scrollPercent))}%`;
-            }
-
-            // Reading Guide Variables
-            let readingGuideActive = false;
-            let originalProseContent = null;
-            let originalHeaderContent = null;
-            let currentRevealPosition = 0.5; // Default to 50% (middle of screen, within allowed range)
-            let isDraggingIndicator = false;
-            let charSpans = [];
-
-            function positionCornerCrosses() {
-                const contentContainer = document.getElementById('project-content');
-                if (!contentContainer) return;
-                
-                const containerRect = contentContainer.getBoundingClientRect();
-                const scrollX = window.scrollX;
-                const scrollY = window.scrollY;
-                
-                const topLeftCross = document.getElementById('top-left-cross');
-                const topRightCross = document.getElementById('top-right-cross');
-                const bottomLeftCross = document.getElementById('bottom-left-cross');
-                const bottomRightCross = document.getElementById('bottom-right-cross');
-                
-                if (topLeftCross) {
-                    topLeftCross.style.left = `${containerRect.left + scrollX}px`;
-                    topLeftCross.style.top = `${containerRect.top + scrollY}px`;
-                }
-                
-                if (topRightCross) {
-                    topRightCross.style.left = `${containerRect.right + scrollX - 20}px`; // Subtract cross width
-                    topRightCross.style.top = `${containerRect.top + scrollY}px`;
-                }
-                
-                if (bottomLeftCross) {
-                    bottomLeftCross.style.left = `${containerRect.left + scrollX}px`;
-                    bottomLeftCross.style.top = `${containerRect.bottom + scrollY - 20}px`; // Subtract cross height
-                }
-                
-                if (bottomRightCross) {
-                    bottomRightCross.style.left = `${containerRect.right + scrollX - 20}px`; // Subtract cross width
-                    bottomRightCross.style.top = `${containerRect.bottom + scrollY - 20}px`; // Subtract cross height
-                }
-            }
-
-            function activateReadingGuide() {
-                const proseContent = document.querySelector('.prose');
-                const headerSection = document.querySelector('header');
-                if (!proseContent) return;
-                
-                readingGuideActive = true;
-                
-                // Show both reading guide indicators
-                const guideIndicatorLeft = document.getElementById('reading-guide-indicator-left');
-                const guideButtonLeft = document.getElementById('reading-guide-button-left');
-                const guideIndicatorRight = document.getElementById('reading-guide-indicator-right');
-                const guideButtonRight = document.getElementById('reading-guide-button-right');
-                
-                if (guideIndicatorLeft && guideButtonLeft) {
-                    guideIndicatorLeft.style.opacity = '1';
-                    guideIndicatorLeft.style.pointerEvents = 'auto';
-                    positionLeftIndicatorNextToProse(guideIndicatorLeft);
-                    setupIndicatorDrag(guideButtonLeft, 'left');
-                }
-                
-                if (guideIndicatorRight && guideButtonRight) {
-                    guideIndicatorRight.style.opacity = '1';
-                    guideIndicatorRight.style.pointerEvents = 'auto';
-                    positionRightIndicatorNextToSidebar(guideIndicatorRight);
-                    setupIndicatorDrag(guideButtonRight, 'right');
-                }
-                
-                // Position corner crosses
-                positionCornerCrosses();
-                
-                // Store original content for both prose and header
-                originalProseContent = proseContent.innerHTML;
-                originalHeaderContent = headerSection ? headerSection.innerHTML : null;
-                
-                // Process text content in both prose and header sections
-                processTextContent(proseContent);
-                if (headerSection) {
-                    processTextContent(headerSection);
-                }
-                
-                // Cache character spans for better performance (now includes header + prose)
-                charSpans = Array.from(document.querySelectorAll('.reading-guide-char'));
-                
-                // Initial update based on scroll position
-                updateReadingGuide();
-            }
-
-            function processTextContent(element) {
-                const walker = document.createTreeWalker(
-                    element,
-                    NodeFilter.SHOW_TEXT,
-                    {
-                        acceptNode: function(node) {
-                            // Skip code blocks and other special elements
-                            const parent = node.parentNode;
-                            if (parent && (parent.tagName === 'CODE' || parent.tagName === 'PRE' || parent.tagName === 'SCRIPT')) {
-                                return NodeFilter.FILTER_REJECT;
-                            }
-                            // Only process text nodes with actual content
-                            return node.textContent.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-                        }
-                    }
-                );
-
-                const textNodes = [];
-                let node;
-                while (node = walker.nextNode()) {
-                    textNodes.push(node);
-                }
-
-                // Replace each text node with character spans
-                textNodes.forEach(textNode => {
-                    const text = textNode.textContent;
-                    const wrapper = document.createElement('span');
-                    wrapper.className = 'reading-guide-wrapper';
-                    
-                    // Create character spans with reduced opacity
-                    text.split('').forEach((char, index) => {
-                        const span = document.createElement('span');
-                        span.textContent = char;
-                        span.className = 'reading-guide-char';
-                        span.style.opacity = '0.3';
-                        wrapper.appendChild(span);
-                    });
-                    
-                    // Replace the text node
-                    textNode.parentNode.replaceChild(wrapper, textNode);
-                });
-            }
-
-            function deactivateReadingGuide() {
-                readingGuideActive = false;
-                
-                // Clear cached spans
-                charSpans = [];
-                
-                // Hide both reading guide indicators and disable interaction
-                const guideIndicatorLeft = document.getElementById('reading-guide-indicator-left');
-                const guideIndicatorRight = document.getElementById('reading-guide-indicator-right');
-                
-                if (guideIndicatorLeft) {
-                    guideIndicatorLeft.style.opacity = '0';
-                    guideIndicatorLeft.style.pointerEvents = 'none';
-                }
-                
-                if (guideIndicatorRight) {
-                    guideIndicatorRight.style.opacity = '0';
-                    guideIndicatorRight.style.pointerEvents = 'none';
-                }
-                
-                // Restore original content for both prose and header
-                const proseContent = document.querySelector('.prose');
-                const headerSection = document.querySelector('header');
-                
-                if (proseContent && originalProseContent) {
-                    proseContent.innerHTML = originalProseContent;
-                }
-                
-                if (headerSection && originalHeaderContent) {
-                    headerSection.innerHTML = originalHeaderContent;
-                }
-            }
-
-            function positionLeftIndicatorNextToProse(indicator) {
-                const proseContent = document.querySelector('.prose');
-                if (!proseContent) return;
-                
-                // Get the prose content's position and calculate where to place the indicator
-                const proseRect = proseContent.getBoundingClientRect();
-                const scrollX = window.scrollX;
-                
-                // Position the indicator to the left of the prose content with good separation
-                const leftPosition = proseRect.left + scrollX - 50; // 50px to the left for better visibility
-                indicator.style.left = `${Math.max(20, leftPosition)}px`; // Minimum 20px from left edge
-                
-                // Also reposition on window resize
-                const handleResize = () => {
-                    if (readingGuideActive) {
-                        const newProseRect = proseContent.getBoundingClientRect();
-                        const newScrollX = window.scrollX;
-                        const newLeftPosition = newProseRect.left + newScrollX - 50;
-                        indicator.style.left = `${Math.max(20, newLeftPosition)}px`;
-                    }
-                };
-                
-                window.addEventListener('resize', handleResize);
-            }
-
-            function positionRightIndicatorNextToSidebar(indicator) {
-                const sidebar = document.getElementById('project-sidebar');
-                const proseContent = document.querySelector('.prose');
-                if (!sidebar || !proseContent) return;
-                
-                // Get the prose content's position and calculate where to place the right indicator
-                const proseRect = proseContent.getBoundingClientRect();
-                const scrollX = window.scrollX;
-                
-                // Position the indicator to the right of the prose content (before sidebar)
-                const rightPosition = proseRect.right + scrollX + 30; // 30px to the right for spacing
-                indicator.style.left = `${rightPosition}px`;
-                
-                // Also reposition on window resize
-                const handleResize = () => {
-                    if (readingGuideActive) {
-                        const newProseRect = proseContent.getBoundingClientRect();
-                        const newScrollX = window.scrollX;
-                        const newRightPosition = newProseRect.right + newScrollX + 30;
-                        indicator.style.left = `${newRightPosition}px`;
-                    }
-                };
-                
-                window.addEventListener('resize', handleResize);
-            }
-
-            function updateReadingGuide() {
-                if (!readingGuideActive) return;
-
-                // Calculate the reveal line based on current position
-                const viewportHeight = window.innerHeight;
-                const revealLineY = viewportHeight * currentRevealPosition;
-
-                // Use cached spans or get them fresh
-                if (charSpans.length === 0) {
-                    charSpans = Array.from(document.querySelectorAll('.reading-guide-char'));
-                }
-
-                if (charSpans.length === 0) return;
-
-                // Update character opacities immediately
-                charSpans.forEach((span) => {
-                    const spanRect = span.getBoundingClientRect();
-                    const spanCenterY = spanRect.top + (spanRect.height / 2);
-                    
-                    // Strict binary reveal: either fully visible or faded
-                    if (spanCenterY <= revealLineY) {
-                        span.style.opacity = '1';
-                    } else {
-                        span.style.opacity = '0.3';
-                    }
-                });
-            }
-
-            function setupIndicatorDrag(button, side) {
-                let isDragging = false;
-                
-                function updateIndicatorPosition(clientY) {
-                    const viewportHeight = window.innerHeight;
-                    
-                    // Constrain between 25% and 75% of viewport height for optimal reading comfort
-                    const minY = viewportHeight * 0.25; // Not too high to avoid header/navigation area
-                    const maxY = viewportHeight * 0.75; // Not too low to ensure comfortable reading position
-                    const constrainedY = Math.max(minY, Math.min(maxY, clientY));
-                    
-                    // Update reveal position
-                    currentRevealPosition = constrainedY / viewportHeight;
-                    
-                    // Update both indicators and line to the same position
-                    const indicatorLeft = document.getElementById('reading-guide-indicator-left');
-                    const indicatorRight = document.getElementById('reading-guide-indicator-right');
-                    const line = document.getElementById('reading-guide-line');
-                    
-                    if (indicatorLeft) {
-                        indicatorLeft.style.top = `${constrainedY - 12}px`; // Center the 24px indicator
-                    }
-                    
-                    if (indicatorRight) {
-                        indicatorRight.style.top = `${constrainedY - 12}px`; // Center the 24px indicator
-                    }
-                    
-                    if (line) {
-                        line.style.top = `${constrainedY - 0.5}px`; // Center the 1px line
-                        updateLinePosition(line);
-                    }
-                    
-                    // Update text reveal immediately
-                    updateReadingGuide();
-                }
-
-                function updateLinePosition(line) {
-                    const proseContent = document.querySelector('.prose');
-                    if (!proseContent) return;
-                    
-                    const proseRect = proseContent.getBoundingClientRect();
-                    const scrollX = window.scrollX;
-                    
-                    // Position line to match the prose content width and position
-                    line.style.left = `${proseRect.left + scrollX}px`;
-                    line.style.width = `${proseRect.width}px`;
-                }
-
-                // Show/hide line on hover
-                function handleMouseEnter() {
-                    if (!isDragging) {
-                        const line = document.getElementById('reading-guide-line');
-                        if (line) {
-                            updateLinePosition(line);
-                            line.style.opacity = '0.3';
-                        }
-                    }
-                }
-
-                function handleMouseLeave() {
-                    if (!isDragging) {
-                        const line = document.getElementById('reading-guide-line');
-                        if (line) {
-                            line.style.opacity = '0';
-                        }
-                    }
-                }
-
-                // Mouse events
-                function handleMouseDown(e) {
-                    if (e.button !== 0) return;
-                    
-                    isDragging = true;
-                    updateIndicatorPosition(e.clientY);
-                    
-                    // Show line during drag
-                    const line = document.getElementById('reading-guide-line');
-                    
-                    if (line) {
-                        line.style.opacity = '0.5';
-                    }
-                    
-                    document.body.style.userSelect = 'none';
-                    document.body.style.cursor = 'ns-resize';
-                    
-                    e.preventDefault();
-                }
-
-                function handleMouseMove(e) {
-                    if (!isDragging) return;
-                    updateIndicatorPosition(e.clientY);
-                }
-
-                function handleMouseUp() {
-                    if (!isDragging) return;
-                    
-                    isDragging = false;
-                    
-                    // Hide line after drag
-                    const line = document.getElementById('reading-guide-line');
-                    
-                    if (line) {
-                        line.style.opacity = '0';
-                    }
-                    
-                    document.body.style.userSelect = '';
-                    document.body.style.cursor = '';
-                }
-
-                // Touch events
-                function handleTouchStart(e) {
-                    if (e.touches.length !== 1) return;
-                    
-                    const touch = e.touches[0];
-                    isDragging = true;
-                    updateIndicatorPosition(touch.clientY);
-                    
-                    // Show line during drag
-                    const line = document.getElementById('reading-guide-line');
-                    
-                    if (line) {
-                        line.style.opacity = '0.5';
-                    }
-                    
-                    e.preventDefault();
-                }
-
-                function handleTouchMove(e) {
-                    if (!isDragging || e.touches.length !== 1) return;
-                    
-                    const touch = e.touches[0];
-                    updateIndicatorPosition(touch.clientY);
-                    e.preventDefault();
-                }
-
-                function handleTouchEnd() {
-                    if (!isDragging) return;
-                    
-                    isDragging = false;
-                    
-                    // Hide line after drag
-                    const line = document.getElementById('reading-guide-line');
-                    
-                    if (line) {
-                        line.style.opacity = '0';
-                    }
-                }
-
-                // Event listeners
-                button.addEventListener('mousedown', handleMouseDown);
-                button.addEventListener('touchstart', handleTouchStart, { passive: false });
-                button.addEventListener('mouseenter', handleMouseEnter);
-                button.addEventListener('mouseleave', handleMouseLeave);
-                
-                document.addEventListener('mousemove', handleMouseMove);
-                document.addEventListener('mouseup', handleMouseUp);
-                document.addEventListener('touchmove', handleTouchMove, { passive: false });
-                document.addEventListener('touchend', handleTouchEnd);
-            }
-
-
-            function toggleReadingGuide() {
-                const button = document.getElementById('reading-guide-toggle');
-                if (!button) return;
-
-                if (readingGuideActive) {
-                    deactivateReadingGuide();
-                    button.setAttribute('aria-pressed', 'false');
-                    button.textContent = 'Activar guía';
-                } else {
-                    activateReadingGuide();
-                    button.setAttribute('aria-pressed', 'true');
-                    button.textContent = 'Desactivar guía';
-                }
-            }
 
 
             function initPage() {
@@ -900,132 +427,23 @@ const { Content } = await project.render();
                 // Set initial active heading
                 updateCurrentHeading();
                 
-                // Initialize scroll progress
-                updateScrollProgress();
-                
                 // Calculate reading time
                 calculateReadingTime();
-                
-                // Position corner crosses
-                positionCornerCrosses();
                 
                 // Animate metrics numbers
                 setTimeout(animateNumbers, 500); // Start animation after page loads
                 
-                // Open mobile TOC drawer automatically
-                setTimeout(() => {
-                    if (window.innerWidth < 1024) { // Only on mobile/tablet
-                        openMobileTocDrawer();
-                    }
-                }, 1000); // Open after 1 second
-                
-                // Update active heading and scroll progress on scroll
+                // Update active heading on scroll
                 let scrollTimeout: number;
                 
                 window.addEventListener('scroll', () => {
-                    // Update progress bar immediately for responsiveness
-                    updateScrollProgress();
-                    
-                    // Update reading guide immediately during scroll
-                    if (readingGuideActive) {
-                        updateReadingGuide();
-                    }
-                    
                     // Throttle heading updates for performance
                     clearTimeout(scrollTimeout);
                     scrollTimeout = setTimeout(updateCurrentHeading, 10) as any;
                 }, { passive: true });
                 
-                // Mobile TOC Event Listeners
-                const mobileButton = document.getElementById('mobile-toc-button');
-                const closeButton = document.getElementById('close-toc-drawer');
-                const overlay = document.getElementById('mobile-toc-overlay');
-                const drawer = document.getElementById('mobile-toc-drawer');
-                
-                if (mobileButton) {
-                    mobileButton.addEventListener('click', toggleMobileTocDrawer);
-                    
-                    // Add touch gesture support to button area
-                    mobileButton.addEventListener('touchstart', handleTouchStart as EventListener, { passive: false });
-                    mobileButton.addEventListener('touchmove', handleTouchMove as EventListener, { passive: false });
-                    mobileButton.addEventListener('touchend', handleTouchEnd as EventListener, { passive: false });
-                }
-                
-                if (closeButton) {
-                    closeButton.addEventListener('click', closeMobileTocDrawer);
-                }
-                
-                if (overlay) {
-                    overlay.addEventListener('click', closeMobileTocDrawer);
-                }
-                
-                if (drawer) {
-                    // Add touch gesture support to drawer handle and top area
-                    const drawerHandle = drawer.querySelector('.flex.justify-center');
-                    const drawerHeader = drawer.querySelector('.flex.items-center.justify-between');
-                    
-                    if (drawerHandle) {
-                        drawerHandle.addEventListener('touchstart', handleTouchStart as EventListener, { passive: false });
-                        drawerHandle.addEventListener('touchmove', handleTouchMove as EventListener, { passive: false });
-                        drawerHandle.addEventListener('touchend', handleTouchEnd as EventListener, { passive: false });
-                    }
-                    
-                    if (drawerHeader) {
-                        drawerHeader.addEventListener('touchstart', handleTouchStart as EventListener, { passive: false });
-                        drawerHeader.addEventListener('touchmove', handleTouchMove as EventListener, { passive: false });
-                        drawerHeader.addEventListener('touchend', handleTouchEnd as EventListener, { passive: false });
-                    }
-                }
-                
-                // Add gesture support to bottom edge of screen for opening
-                const bottomGestureArea = document.createElement('div');
-                bottomGestureArea.style.cssText = `
-                    position: fixed;
-                    bottom: 0;
-                    left: 0;
-                    right: 0;
-                    height: 20px;
-                    z-index: 30;
-                    pointer-events: auto;
-                `;
-                bottomGestureArea.className = 'lg:hidden';
-                
-                bottomGestureArea.addEventListener('touchstart', (e) => {
-                    if (!isDrawerOpen) {
-                        handleTouchStart(e);
-                    }
-                }, { passive: false });
-                
-                bottomGestureArea.addEventListener('touchmove', (e) => {
-                    if (!isDrawerOpen && isDragging) {
-                        e.preventDefault();
-                        handleTouchMove(e);
-                    }
-                }, { passive: false });
-                
-                bottomGestureArea.addEventListener('touchend', (e) => {
-                    if (!isDrawerOpen) {
-                        handleTouchEnd(e);
-                    }
-                }, { passive: false });
-                
-                document.body.appendChild(bottomGestureArea);
-                
-                // Close drawer on escape key
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') {
-                        closeMobileTocDrawer();
-                    }
-                });
 
-                // Initialize reading guide button
-                const readingGuideButton = document.getElementById('reading-guide-toggle');
-                if (readingGuideButton) {
-                    readingGuideButton.addEventListener('click', toggleReadingGuide);
-                }
-                
-                // Reposition corner crosses on window resize
-                window.addEventListener('resize', positionCornerCrosses);
+                // Reading guide toggle is handled by the ReadingGuide component
             }
 
             // Run on page load
