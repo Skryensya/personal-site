@@ -4,8 +4,8 @@ import siteConfig from '@/data/site-config';
 const currentYear = new Date().getFullYear();
 ---
 
-<footer class="bg-main px-4 border-t-2 border-secondary">
-    <div class="mx-auto max-w-[var(--max-w-size)] py-12">
+<footer class="bg-main border-t-double border-t-2 border-secondary">
+    <div class="mx-auto max-w-[var(--max-w-size)] px-8 py-12">
         <!-- Main content grid -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <!-- Navigation -->
@@ -100,7 +100,7 @@ const currentYear = new Date().getFullYear();
         </div>
 
         <!-- Copyright -->
-        <div class="border-t-2 border-secondary pt-6">
+        <div class="border-t-double border-t-2 border-secondary pt-6">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                 <p class="font-mono text-sm text-secondary scramble-text" data-text={`© ${currentYear} ${siteConfig.title}. All rights reserved.`}>
                     © {currentYear} {siteConfig.title}. All rights reserved.

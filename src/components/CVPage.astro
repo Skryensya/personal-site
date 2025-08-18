@@ -7,8 +7,54 @@ interface Props {
 const { children, class: className = '' } = Astro.props;
 ---
 
+<style>
+    /* Apply black and white with theme hints to both screen and print */
+    .cv-container {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    
+    /* CV content backgrounds - force black and white */
+    .cv-container .bg-secondary {
+        background-color: white !important;
+    }
+    
+    .cv-container .bg-main {
+        background-color: white !important;
+        border-left: 4px solid var(--color-main) !important;
+    }
+    
+    /* CV content text - force black and white */
+    .cv-container .text-main {
+        color: black !important;
+    }
+    
+    .cv-container .text-secondary {
+        color: black !important;
+    }
+    
+    /* All CV content text - black on white */
+    .cv-container .bg-main *,
+    .cv-container .bg-secondary * {
+        color: black !important;
+        background-color: transparent !important;
+    }
+    
+    /* Section dividers - theme color accents */
+    .cv-container .border-secondary {
+        border-color: var(--color-main) !important;
+        border-width: 2px !important;
+    }
+    
+    /* Links - theme color accents */
+    .cv-container a {
+        color: var(--color-main) !important;
+    }
+    
+</style>
+
 <!-- Container with border and padding (screen only) -->
-<div class={` w-fit h-fit pb-1 bg-secondary text-main p-[10mm] print:p-0 box-border border-2 border-main print:border-0 mx-auto font-serif shadow-[8px_8px_0_var(--color-main)] print:shadow-none overflow-hidden ${className}`}>
+<div class={`cv-container w-fit h-fit pb-1 bg-white text-main p-[10mm] print:p-0 box-border border-2 border-secondary print:border-0 mx-auto font-serif shadow-[8px_8px_0_var(--color-main)] print:shadow-none overflow-hidden ${className}`}>
     <!-- Internal page without border or padding -->
     <div class="w-[210mm] h-[297mm] bg-secondary text-main border-1 border-red-500 print:cv-page-print overflow-hidden">
         <slot />

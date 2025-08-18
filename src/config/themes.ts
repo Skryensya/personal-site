@@ -54,7 +54,7 @@ export const THEME_CONFIG: Theme[] = [
     contrastRatio: 21.0,
     era: '1981-1995',
     effects: {
-      fontOverride: "'JetBrains Mono', 'IBM Plex Mono', monospace"
+      fontOverride: "'Fira Code', 'Cascadia Code', 'SF Mono', monospace"
     }
   },
   {

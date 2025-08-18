@@ -4,11 +4,12 @@
 @layer base {
     :root {
         --main-hue: 0;
-        --selection-opacity: 0.8;
-        --selection-color: #ff0080; /* Will be animated */
+        --selection-color: hsl(200, 35%, 50%); /* Fallback before JS loads */
         --max-w-size: 1280px;
         --paragraph-max-width: 80ch;
     }
+
+    /* Smooth selection color animation - controlled by JavaScript */
 
     /* Prevent any horizontal overflow */
     *,
@@ -55,26 +56,34 @@
     code,
     pre,
     .mono {
-        font-family: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+        font-family: 'Fira Code', 'Cascadia Code', 'SF Mono', monospace;
         font-weight: 400;
         font-variant-ligatures: none;
     }
 
     ::selection {
-        background: var(--selection-color);
+        background: var(--selection-color, hsl(200, 35%, 50%));
         color: var(--color-secondary);
         font-weight: 700 !important;
     }
 
     a::selection {
-        background: var(--selection-color);
+        background: var(--selection-color, hsl(200, 35%, 50%));
         color: var(--color-secondary);
     }
+
+    /* Selection color is now fully controlled by JavaScript animator */
 
     /* No transitions needed - color updates every frame */
     *:focus {
         /* outline: 3px solid #2b90d4 !important; */
         outline-offset: 3px;
+        scroll-margin: 0;
+    }
+
+    /* Prevent scroll-to-element for header navigation elements */
+    header *:focus {
+        scroll-margin: 0;
     }
 
     html {

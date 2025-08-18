@@ -64,7 +64,7 @@ export const ui = {
         'about.keyFeature1': 'Código limpio y mantenible',
         'about.keyFeature2': 'Experiencias accesibles para todos',
         'about.keyFeature3': 'Performance optimizada',
-        'about.tldr.title': 'Resumen Profesional',
+        'about.tldr.title': 'Sobre mí',
         'about.tldr.description': 'Desarrolladora full-stack con 3+ años de experiencia especializada en React, TypeScript y Node.js. Enfocada en crear experiencias web accesibles, optimizadas y funcionalmente complejas. Expertise en performance optimization, developer experience y UI/UX design.',
         'about.specialties.title': 'ESPECIALIDADES',
         'about.stack.title': 'STACK PRINCIPAL',
@@ -125,7 +125,7 @@ export const ui = {
         'cv.title': 'Currículum Vitae',
         'cv.contact': 'Contacto',
         'cv.email': 'allisonpena@email.com',
-        'cv.phone': '+56 9 1234 5678',
+        'cv.phone': '',
         'cv.location': 'Santiago, Chile',
         'cv.website': 'allisonpena.dev',
         'cv.social.linkedin': 'linkedin.com/in/skryensya',
@@ -141,7 +141,9 @@ export const ui = {
         'cv.languages.title': 'Idiomas',
         'cv.languages.spanish': 'Español (Nativo)',
         'cv.languages.english': 'Inglés (Avanzado)',
-        'cv.languages.norwegian': 'Noruego (Intermedio)',
+        'cv.languages.norwegian': 'Noruego (Básico)',
+        'cv.references.title': 'Referencias',
+        'cv.certificates.title': 'Certificados',
         
         // Norwegian disclaimer banner
         'disclaimer.norwegian.compact': 'Estoy aprendiendo noruego como objetivo personal, pero para una comunicación más clara, no dudes en contactarme en inglés o español.'
@@ -263,7 +265,7 @@ export const ui = {
         'cv.title': 'Curriculum Vitae',
         'cv.contact': 'Contact',
         'cv.email': 'allisonpena@email.com',
-        'cv.phone': '+56 9 1234 5678',
+        'cv.phone': '',
         'cv.location': 'Santiago, Chile',
         'cv.website': 'allisonpena.dev',
         'cv.social.linkedin': 'linkedin.com/in/skryensya',
@@ -279,7 +281,9 @@ export const ui = {
         'cv.languages.title': 'Languages',
         'cv.languages.spanish': 'Spanish (Native)',
         'cv.languages.english': 'English (Advanced)',
-        'cv.languages.norwegian': 'Norwegian (Intermediate)',
+        'cv.languages.norwegian': 'Norwegian (Basic)',
+        'cv.references.title': 'References',
+        'cv.certificates.title': 'Certificates',
         
         // Norwegian disclaimer banner
         'disclaimer.norwegian.compact': 'I am learning Norwegian as a personal goal, but for clearer communication, feel free to contact me in English or Spanish.'
@@ -401,7 +405,7 @@ export const ui = {
         'cv.title': 'Curriculum Vitae',
         'cv.contact': 'Kontakt',
         'cv.email': 'allisonpena@email.com',
-        'cv.phone': '+56 9 1234 5678',
+        'cv.phone': '',
         'cv.location': 'Santiago, Chile',
         'cv.website': 'allisonpena.dev',
         'cv.social.linkedin': 'linkedin.com/in/skryensya',
@@ -417,7 +421,9 @@ export const ui = {
         'cv.languages.title': 'Språk',
         'cv.languages.spanish': 'Spansk (Morsmål)',
         'cv.languages.english': 'Engelsk (Avansert)',
-        'cv.languages.norwegian': 'Norsk (Middels)',
+        'cv.languages.norwegian': 'Norsk (Grunnleggende)',
+        'cv.references.title': 'Referanser',
+        'cv.certificates.title': 'Sertifikater',
         
         // Norwegian disclaimer banner
         'disclaimer.norwegian.compact': 'Jeg lærer norsk som et personlig mål, men for tydeligere kommunikasjon, kontakt meg gjerne på engelsk eller spansk.'

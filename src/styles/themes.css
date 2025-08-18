@@ -134,7 +134,7 @@ html.dark {
 
 /* DOS monospace styling */
 :root[data-theme='dos'] {
-    --font-family-override: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+    --font-family-override: 'Fira Code', 'Cascadia Code', 'SF Mono', monospace;
 }
 
 /* Commodore 64 retro styling */

@@ -25,6 +25,7 @@
         "@radix-ui/react-slot": "^1.2.3",
         "@radix-ui/react-tabs": "^1.1.12",
         "@radix-ui/react-tooltip": "^1.2.7",
+        "@react-three/fiber": "^8.18.0",
         "@tailwindcss/vite": "^4.1.11",
         "@tanstack/react-table": "^8.21.3",
         "@types/cheerio": "^0.22.35",
@@ -44,6 +45,7 @@
         "react-rnd": "^10.5.2",
         "tailwind-merge": "^3.3.1",
         "tailwindcss": "^4.1.11",
+        "three": "^0.179.1",
         "typegpu": "^0.6.0"
     },
     "devDependencies": {
@@ -51,6 +53,7 @@
         "@tailwindcss/typography": "^0.5.16",
         "@types/react": "^18.3.23",
         "@types/react-dom": "^18.3.7",
+        "@types/three": "^0.179.0",
         "install": "^0.13.0",
         "npm": "^10.9.0",
         "prettier": "^3.3.3",

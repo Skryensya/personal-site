@@ -1,0 +1,50 @@
+---
+name: 'E-handel Plattform'
+hook: 'Komplett e-handelssystem med React, Node.js og PostgreSQL, som behandler +1000 daglige transaksjoner med skalerbar arkitektur.'
+publishDate: '03/06/2025'
+isFeatured: true
+---
+
+## Oversikt
+
+Utvikling av en robust og skalerbar e-handelsplattform som håndterer hele online salgssyklusen, fra produktpresentasjon til betalingsbehandling og lagerstyring.
+
+Systemet behandler over 1000 daglige transaksjoner og er designet for å skalere horisontalt i henhold til forretningsetterspørsel.
+
+## Teknologistack
+
+**Frontend**: React 18 med TypeScript, implementerer responsivt design med Tailwind CSS og global tilstandsadministrasjon med Zustand.
+
+**Backend**: Node.js med Express, mikrotjenestearkitektur som skiller forretningslogikk i uavhengige moduler (autentisering, produkter, betalinger, lager).
+
+**Database**: PostgreSQL med Prisma ORM, optimalisert for komplekse spørringer og enhetsrelasjoner.
+
+## Hovedfunksjoner
+
+### Autentiseringssystem
+JWT-implementering med refresh tokens, valgfri tofaktorautentisering og OAuth-leverandørintegrasjon (Google, Facebook).
+
+### Produktadministrasjon
+Komplett CRUD med flere bildeopplastinger, avansert kategorisering, variantsystem (størrelse, farge) og lagerstyring i sanntid.
+
+### Handlekurv og Checkout
+Vedvarende handlekurv mellom økter, dynamisk fraktberegning basert på lokasjon, integrasjon med flere betalingsmetoder (Stripe, PayPal) og automatisk fakturagenerering.
+
+### Administrasjonspanel
+Komplett dashboard med salgsstatistikk, produktadministrasjon, bestillingssporing og analytiske rapporter med interaktive visualiseringer.
+
+## Ytelsesoptimaliseringer
+
+- Redis cache-implementering for hyppige spørringer
+- Bildeoptimalisering med lazy loading og flere formater
+- Code splitting på rute- og komponentnivå
+- Gzip-komprimering og asset-minifisering
+- CDN for statisk innholdsdistribusjon
+
+## Sikkerhet
+
+- Datavalidering og sanitering på frontend og backend
+- Beskyttelse mot CSRF- og XSS-angrep
+- Rate limiting for kritiske APIer
+- Kryptering av sensitive data
+- Periodiske sikkerhetsrevisjoner

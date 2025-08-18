@@ -1,0 +1,54 @@
+---
+name: 'Dashboard Analytics'
+hook: 'Plataforma de análisis de datos en tiempo real con visualizaciones interactivas, procesando millones de eventos diarios con D3.js y WebSockets.'
+publishDate: '20/05/2025'
+isFeatured: true
+---
+
+## Contexto del Proyecto
+
+Desarrollo de una plataforma completa de analytics que permite a las empresas visualizar y analizar grandes volúmenes de datos en tiempo real, con capacidad para procesar millones de eventos diarios.
+
+El sistema proporciona insights accionables a través de visualizaciones interactivas y alertas automáticas basadas en umbrales personalizables.
+
+## Arquitectura del Sistema
+
+**Frontend**: React con TypeScript, implementando una arquitectura de componentes modulares que permite crear dashboards personalizados mediante drag & drop.
+
+**Visualizaciones**: D3.js para gráficos complejos y personalizados, Chart.js para visualizaciones estándar, mapas interactivos con Leaflet.
+
+**Backend**: Node.js con arquitectura de microservicios, procesamiento de streams de datos con Apache Kafka y almacenamiento en ClickHouse para consultas analíticas ultrarrápidas.
+
+## Funcionalidades Clave
+
+### Procesamiento en Tiempo Real
+Sistema de ingesta de datos que procesa eventos en tiempo real utilizando WebSockets para actualizaciones instantáneas en el dashboard sin necesidad de recargar la página.
+
+### Visualizaciones Interactivas
+- Gráficos de líneas y barras con zoom y pan
+- Heatmaps geográficos para análisis de ubicación
+- Funnels de conversión con drill-down capabilities
+- Tablas virtualizadas para manejar grandes conjuntos de datos
+
+### Sistema de Alertas
+Configuración de alertas personalizadas con umbrales dinámicos, notificaciones por email/Slack y escalamiento automático según criticidad.
+
+### Dashboards Personalizables
+Editor visual que permite a los usuarios crear dashboards personalizados arrastrando widgets, configurando métricas y definiendo períodos de tiempo.
+
+## Optimizaciones de Performance
+
+- Virtualización de listas para manejar miles de filas
+- Debouncing de consultas para reducir carga del servidor
+- Caché inteligente con invalidación automática
+- Lazy loading de componentes de visualización
+- Optimización de consultas SQL con índices especializados
+
+## Escalabilidad y Monitoreo
+
+El sistema está diseñado para escalar horizontalmente:
+- Load balancing con NGINX
+- Clustering de Node.js para aprovechar múltiples cores
+- Monitoreo con Prometheus y Grafana
+- Logs centralizados con ELK Stack
+- Health checks automáticos y recuperación de fallos

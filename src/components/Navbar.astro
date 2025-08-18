@@ -1,5 +1,7 @@
 --- 
-import NavbarControls from './NavbarControls.tsx';
+import ThemeControl from './ThemeControl.tsx';
+import ModeControl from './ModeControl.tsx';
+import LanguageControl from './LanguageControl.tsx';
 import Button from './Button.astro';
 import { getLangFromUrl } from '@/i18n/utils';
 import { useTranslations } from '@/i18n/utils';
@@ -12,6 +14,13 @@ const t = useTranslations(currentLocale);
 
 // Check if current page is CV to make header non-sticky
 const isCVPage = currentPath.includes('/cv');
+
+// Check if current page is home page
+// Spanish default: '/' is home
+// Other languages: '/en/' or '/no/' is home
+const isHomePage = currentLocale === 'es' 
+  ? currentPath === '/' 
+  : (currentPath === `/${currentLocale}/` || currentPath === `/${currentLocale}`);
 
 // Prepare theme data for client-side JavaScript
 const themeNames = themes.reduce((acc, theme) => {
@@ -38,35 +47,57 @@ const navItems = [
 
 <nav class={`${isCVPage ? '!relative' : '!sticky !top-0'} z-[300] flex justify-center mx-auto max-w-[var(--max-w-size)] @container`} style="--navbar-height: 76px;">
   <div class={`max-w-[1280px] w-full px-4 mt-4`}>
-    <div class="flex items-start justify-between gap-2 flex-nowrap p-2" style="width: 100%; background-image: repeating-linear-gradient(315deg, var(--color-main) 0 1px, var(--color-secondary) 1px 2px, transparent 2px 50%); background-size: 10px 10px; background-attachment: local; background-repeat: repeat;">
+    <div class="flex items-start justify-between gap-2 flex-nowrap p-2 @6xl:pl-0" style="width: 100%; background-image: repeating-linear-gradient(315deg, var(--color-main) 0 1px, var(--color-secondary) 1px 2px, transparent 2px 50%); background-size: 10px 10px; background-attachment: local; background-repeat: repeat;">
       <!-- Desktop Navigation -->
-      <div class="hidden @6xl:flex items-start gap-x-2 gap-y-1 flex-wrap flex-1 mr-2">
-        {navItems.map((item) => (
-          <a 
-            href={item.href}
-            class="flex items-center gap-1.5 px-2 pb-1 pt-1.5 h-7 @6xl:h-8 bg-secondary border-double border-2 border-main font-grotesk text-sm text-main no-underline pointer-events-auto hover:bg-main hover:text-secondary active:bg-main active:text-secondary font-bold tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)] uppercase"
-            data-nav-link
-            data-hotkey={item.hotkey}
-            aria-label={item.hotkey ? `${item.label} (Press ${item.hotkey.toUpperCase()})` : item.label}
-          >
-            {item.hotkey && <span class="font-bold font-mono hidden md:inline">[{item.hotkey.toUpperCase()}]</span>}
-            <span class="font-semibold">{item.label}</span>
-          </a>
-        ))}
+      <div class="hidden @6xl:flex items-start gap-x-2 gap-y-1 flex-wrap flex-1 mr-2 relative">
+        <Button 
+          size="sm"
+          class="!w-0 focus:!ml-2 !h-8 !px-0 !overflow-hidden !opacity-0 !border-0 focus-visible:!w-auto focus-visible:!px-2 focus-visible:!opacity-100 focus-visible:!border-2 motion-safe:!transition-all motion-safe:!duration-300 motion-safe:!ease-out"
+          onClick="skipToMainContent()"
+          aria-label="Saltar al contenido principal"
+        >
+          Saltar a contenido
+        </Button>
+        {navItems.map((item) => {
+          const isCurrentPage = item.label === 'Allison Peña' ? isHomePage : (currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href + '/')) || (item.href !== '/' && currentPath.startsWith(item.href) && currentPath.length > item.href.length));
+          return (
+            <Button 
+              href={item.href}
+              size="sm"
+              filled={isCurrentPage}
+              data-nav-link
+              data-hotkey={item.hotkey}
+              aria-label={item.hotkey ? `${item.label} (Press ${item.hotkey.toUpperCase()})` : item.label}
+            >
+              {item.hotkey && <span class="font-bold font-mono hidden md:inline">[{item.hotkey.toUpperCase()}]</span>}
+              <span class="font-semibold">{item.label}</span>
+            </Button>
+          );
+        })}
       </div>
 
       <!-- Mobile Navigation -->
       <div class="@6xl:hidden flex items-center flex-1 relative">
-        <a 
+        <Button 
+          size="sm"
+          class="!w-0 !h-8 !px-0 !overflow-hidden !opacity-0 !border-0 focus-visible:!w-auto focus-visible:!px-2 focus-visible:!opacity-100 focus-visible:!border-2 motion-safe:!transition-all motion-safe:!duration-300 motion-safe:!ease-out"
+          onClick="skipToMainContent()"
+          aria-label="Saltar al contenido principal"
+        >
+          Saltar a contenido
+        </Button>
+        <Button 
           href={getHomeUrl(currentLocale)}
-          class="flex items-center gap-1.5 px-2 py-1 h-8 bg-secondary border-double border-2 border-main font-grotesk text-sm text-main no-underline pointer-events-auto hover:bg-main hover:text-secondary active:bg-main active:text-secondary font-bold tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)] uppercase"
+          size="sm"
+          filled={isHomePage}
+          class="flex items-center gap-1.5"
         >
           <span class="font-semibold">Allison Peña</span>
-        </a>
+        </Button>
         <button
           type="button"
           id="mobile-menu-trigger"
-          class="@6xl:hidden ml-auto px-2 py-1 h-8 bg-secondary border-double border-2 border-main text-main hover:bg-main hover:text-secondary flex items-center gap-1 font-bold tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)]"
+          class="@6xl:hidden ml-auto px-2 py-1 h-8 bg-secondary border-double border-2 border-main text-main hover:bg-main hover:text-secondary flex items-center gap-1 font-bold tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)] focus:outline-none [@media(hover:hover)]:focus:outline-none [&.menu-open]:focus:outline [&.menu-open]:focus:outline-3 [&.menu-open]:focus:outline-main [&.menu-open]:focus:outline-offset-3"
         >
           <svg id="hamburger-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <line x1="4" x2="20" y1="12" y2="12"/>
@@ -83,14 +114,14 @@ const navItems = [
 
       <!-- Desktop Navbar Controls - Container with fixed positioning to prevent CLS -->
       <div class="hidden @6xl:flex items-center gap-2 flex-shrink-0 relative">
-        <!-- Placeholder layer - absolute positioned with constant opacity -->
-        <div class="absolute top-0 right-0 h-full flex items-center gap-x-2 gap-y-1 pointer-events-none" id="navbar-controls-placeholder">
+        <!-- Individual Placeholders -->
+        <div class="absolute top-0 right-0 h-full flex items-center gap-x-2 gap-y-1 pointer-events-none">
           <!-- Theme Switcher Placeholder -->
-          <div class="w-7 h-7 @6xl:w-full @6xl:h-8 inline-flex">
+          <div class="w-7 h-7 @6xl:w-full @6xl:h-8 inline-flex" id="theme-placeholder">
             <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
               <div class="flex items-center gap-2 w-full">
-                <div id="theme-placeholder-preview" class="w-4 h-4 border border-main flex-shrink-0" style="background: linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%)"></div>
-                <span id="theme-placeholder-text" class="hidden @6xl:block font-grotesk text-xs font-semibold text-main flex-1 text-left uppercase">{t('ui.loading')}</span>
+                <div class="w-4 h-4 border border-main flex-shrink-0" style="background: linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%)"></div>
+                <span class="hidden @6xl:block font-grotesk text-xs font-semibold text-main flex-1 text-left uppercase">{t('ui.loading')}</span>
               </div>
             </div>
             <div class="hidden @6xl:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
@@ -101,7 +132,7 @@ const navItems = [
           </div>
 
           <!-- Mode Toggle Placeholder -->
-          <div class="w-7 h-7 @6xl:w-auto @6xl:h-8 inline-flex">
+          <div class="w-7 h-7 @6xl:w-auto @6xl:h-8 inline-flex" id="mode-placeholder">
             <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
               <div class="flex items-center gap-2">
                 <div class="w-3.5 h-3.5 flex-shrink-0">
@@ -111,7 +142,7 @@ const navItems = [
                     <line x1="12" y1="17" x2="12" y2="21"></line>
                   </svg>
                 </div>
-                <span id="mode-placeholder-text" class="hidden @6xl:block font-grotesk text-xs font-semibold text-main uppercase">{t('ui.loading')}</span>
+                <span class="hidden @6xl:block font-grotesk text-xs font-semibold text-main uppercase">{t('ui.loading')}</span>
               </div>
             </div>
             <div class="hidden @6xl:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
@@ -122,7 +153,7 @@ const navItems = [
           </div>
           
           <!-- Language Switcher Placeholder -->
-          <div class="w-7 h-7 @6xl:w-auto @6xl:h-8 inline-flex">
+          <div class="w-7 h-7 @6xl:w-auto @6xl:h-8 inline-flex" id="language-placeholder">
             <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
               <div class="flex items-center gap-2">
                 <span class="font-grotesk text-xs font-semibold text-main uppercase">{t('ui.loading')}</span>
@@ -136,10 +167,16 @@ const navItems = [
           </div>
         </div>
         
-        <!-- React components layer - absolute positioned to match exactly -->
-        <div class="absolute top-0 right-0 h-full flex flex-row items-center gap-x-2 gap-y-1 pointer-events-auto" id="navbar-controls-react" style="visibility: hidden;">
-          <div data-theme-control class="flex flex-row items-center gap-x-2">
-            <NavbarControls currentPath={Astro.url.pathname} initialLocale={currentLocale} client:idle />
+        <!-- Individual React components -->
+        <div class="absolute top-0 right-0 h-full flex flex-row items-center gap-x-2 gap-y-1 pointer-events-auto">
+          <div style="visibility: hidden;" id="theme-control">
+            <ThemeControl client:load />
+          </div>
+          <div style="visibility: hidden;" id="mode-control">
+            <ModeControl client:load />
+          </div>
+          <div style="visibility: hidden;" id="language-control">
+            <LanguageControl currentPath={Astro.url.pathname} initialLocale={currentLocale} client:load />
           </div>
         </div>
         
@@ -331,6 +368,106 @@ const navItems = [
 
 <script define:vars={{ themeNames, themeColors }}>
 
+  // Skip to main content functionality
+  function skipToMainContent() {
+    // Obtener la navbar
+    const navbar = document.querySelector('nav');
+    if (!navbar) return;
+
+    // Lista de elementos focuseables que pueden tener tabindex explícito
+    const elementsWithTabindex = document.querySelectorAll('[tabindex]:not([tabindex="-1"])');
+    
+    // Buscar el primer elemento con tabindex después de la navbar
+    let targetElement = null;
+    const navbarRect = navbar.getBoundingClientRect();
+    
+    for (const element of elementsWithTabindex) {
+      const elementRect = element.getBoundingClientRect();
+      // Verificar si el elemento está después de la navbar
+      if (elementRect.top > navbarRect.bottom) {
+        targetElement = element;
+        break;
+      }
+    }
+
+    // Si no hay elementos con tabindex después de la navbar, buscar elementos focuseables naturales
+    if (!targetElement) {
+      const focusableSelectors = [
+        'a[href]:not([tabindex="-1"])',
+        'button:not([disabled]):not([tabindex="-1"])',
+        'input:not([disabled]):not([tabindex="-1"])',
+        'textarea:not([disabled]):not([tabindex="-1"])',
+        'select:not([disabled]):not([tabindex="-1"])',
+        'details',
+        'summary'
+      ].join(',');
+
+      const allFocusable = document.querySelectorAll(focusableSelectors);
+      
+      for (const element of allFocusable) {
+        const elementRect = element.getBoundingClientRect();
+        if (elementRect.top > navbarRect.bottom) {
+          targetElement = element;
+          break;
+        }
+      }
+    }
+
+    // Fallback: buscar contenido principal
+    if (!targetElement) {
+      const mainContentSelectors = [
+        'main',
+        '#project-content',
+        '[role="main"]',
+        '.prose',
+        'h1',
+        'article'
+      ];
+
+      for (const selector of mainContentSelectors) {
+        const element = document.querySelector(selector);
+        if (element) {
+          const elementRect = element.getBoundingClientRect();
+          if (elementRect.top > navbarRect.bottom) {
+            targetElement = element;
+            break;
+          }
+        }
+      }
+    }
+
+    if (targetElement) {
+      // Si el elemento no es naturalmente focuseable, hacerlo temporalmente focuseable
+      const wasTabIndex = targetElement.getAttribute('tabindex');
+      const needsTabIndex = !targetElement.matches('a, button, input, textarea, select, [tabindex]');
+      
+      if (needsTabIndex) {
+        targetElement.setAttribute('tabindex', '-1');
+      }
+
+      // Enfocar el elemento y scroll suave
+      targetElement.focus();
+      
+      // Scroll suave al elemento
+      targetElement.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start',
+        inline: 'nearest'
+      });
+
+      // Restaurar tabindex original después de un breve delay
+      if (needsTabIndex) {
+        setTimeout(() => {
+          if (wasTabIndex === null) {
+            targetElement.removeAttribute('tabindex');
+          } else {
+            targetElement.setAttribute('tabindex', wasTabIndex);
+          }
+        }, 100);
+      }
+    }
+  }
+
   // Initialize global theme state from localStorage immediately and update placeholder
   function initializeGlobalTheme() {
     if (typeof window === 'undefined') return;
@@ -354,16 +491,23 @@ const navItems = [
     }
   }
 
-  // Instant transition from placeholder to React components  
-  function showReactComponentsImmediately() {
-    const placeholder = document.getElementById('navbar-controls-placeholder');
-    const reactContainer = document.getElementById('navbar-controls-react');
+  // Individual placeholder management
+  function showReactComponent(componentName) {
+    const placeholder = document.getElementById(`${componentName}-placeholder`);
+    const reactComponent = document.getElementById(`${componentName}-control`);
     
-    if (placeholder && reactContainer) {
-      // Instant swap - hide placeholder and show React components
+    if (placeholder && reactComponent) {
+      // Hide individual placeholder and show React component
       placeholder.style.display = 'none';
-      reactContainer.style.visibility = 'visible';
+      reactComponent.style.visibility = 'visible';
     }
+  }
+  
+  // Show all components at once (fallback)
+  function showAllReactComponents() {
+    showReactComponent('theme');
+    showReactComponent('mode');
+    showReactComponent('language');
   }
 
   // Mobile menu functionality
@@ -372,6 +516,25 @@ const navItems = [
     const mobileMenuTrigger = document.getElementById('mobile-menu-trigger');
 
 
+
+    // Handle responsive accessibility for mobile menu button
+    function handleMobileMenuAccessibility() {
+      const button = document.getElementById('mobile-menu-trigger');
+      if (!button) return;
+      
+      // Check if we're on desktop viewport (container query @6xl = 1536px)
+      const isDesktop = window.matchMedia('(min-width: 1536px)').matches;
+      
+      if (isDesktop) {
+        // On desktop: make button inaccessible to keyboard and screen readers
+        button.setAttribute('tabindex', '-1');
+        button.setAttribute('aria-hidden', 'true');
+      } else {
+        // On mobile: make button accessible
+        button.removeAttribute('tabindex');
+        button.removeAttribute('aria-hidden');
+      }
+    }
 
     // Create the simplest possible mobile menu toggle
     function setupMobileMenu() {
@@ -389,6 +552,12 @@ const navItems = [
       }
 
       let isOpen = false;
+      
+      // Initialize all interactive elements with tabindex=-1 since dropdown starts closed
+      const interactiveElements = dropdown.querySelectorAll('button, a');
+      interactiveElements.forEach(el => {
+        el.setAttribute('tabindex', '-1');
+      });
 
       function closeMenu() {
         isOpen = false;
@@ -396,6 +565,14 @@ const navItems = [
         dropdown.style.pointerEvents = 'none';
         hamburgerIcon?.classList.remove('hidden');
         closeIcon?.classList.add('hidden');
+        button.classList.remove('menu-open');
+        
+        // Set tabindex=-1 for all interactive elements when closed
+        const interactiveElements = dropdown.querySelectorAll('button, a, [tabindex]');
+        interactiveElements.forEach(el => {
+          el.setAttribute('tabindex', '-1');
+        });
+        
         console.log('Closing dropdown...');
       }
 
@@ -405,6 +582,14 @@ const navItems = [
         dropdown.style.pointerEvents = 'auto';
         hamburgerIcon?.classList.add('hidden');
         closeIcon?.classList.remove('hidden');
+        button.classList.add('menu-open');
+        
+        // Remove tabindex=-1 from interactive elements when open
+        const interactiveElements = dropdown.querySelectorAll('button, a, [tabindex="-1"]');
+        interactiveElements.forEach(el => {
+          el.removeAttribute('tabindex');
+        });
+        
         console.log('Opening dropdown...');
       }
 
@@ -448,8 +633,38 @@ const navItems = [
       console.log('Mobile menu setup complete!');
     }
 
+    // Setup mobile menu accessibility
+    handleMobileMenuAccessibility();
+    
+    // Listen for viewport changes to update accessibility
+    const mediaQuery = window.matchMedia('(min-width: 1536px)');
+    mediaQuery.addEventListener('change', handleMobileMenuAccessibility);
+    
     // Call setup function
     setupMobileMenu();
+
+    // Prevent scroll when tabbing through header elements
+    function preventHeaderScrollOnFocus() {
+      const header = document.querySelector('header');
+      if (!header) return;
+
+      const focusableElements = header.querySelectorAll('button, a, [tabindex]:not([tabindex="-1"])');
+      
+      focusableElements.forEach(element => {
+        element.addEventListener('focus', (e) => {
+          // Prevent default scroll behavior when focusing header elements
+          e.preventDefault();
+          
+          // Manually set focus without scrolling
+          const currentScroll = window.scrollY;
+          element.focus({ preventScroll: true });
+          window.scrollTo(0, currentScroll);
+        });
+      });
+    }
+
+    // Setup scroll prevention for header focus
+    preventHeaderScrollOnFocus();
 
     // Mobile control buttons functionality
     function setupMobileControlButtons() {
@@ -647,17 +862,36 @@ const navItems = [
     // Initialize global theme state (theme already applied by inline script)
     initializeGlobalTheme();
     
-    // Listen for when React components are ready with the correct theme
-    const handleReactReady = (event) => {
-      console.log('React header ready with theme:', event.detail);
-      showReactComponentsImmediately();
+    // Listen for individual component ready events
+    const handleThemeReady = (event) => {
+      console.log('Theme control ready:', event.detail);
+      showReactComponent('theme');
     };
     
-    window.addEventListener('react-header-ready', handleReactReady);
+    const handleModeReady = (event) => {
+      console.log('Mode control ready:', event.detail);
+      showReactComponent('mode');
+    };
+    
+    const handleLanguageReady = (event) => {
+      console.log('Language control ready:', event.detail);
+      showReactComponent('language');
+    };
+    
+    window.addEventListener('theme-control-ready', handleThemeReady);
+    window.addEventListener('mode-control-ready', handleModeReady);
+    window.addEventListener('language-control-ready', handleLanguageReady);
+    
+    // Fallback: Show all components after a delay if events don't fire
+    setTimeout(() => {
+      showAllReactComponents();
+    }, 2000);
     
     // Cleanup function for page navigation
     const cleanup = () => {
-      window.removeEventListener('react-header-ready', handleReactReady);
+      window.removeEventListener('theme-control-ready', handleThemeReady);
+      window.removeEventListener('mode-control-ready', handleModeReady);
+      window.removeEventListener('language-control-ready', handleLanguageReady);
     };
     
     // Clean up on navigation
