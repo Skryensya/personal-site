@@ -3,7 +3,7 @@ import BigSectionContainer from '../BigSectionContainer.astro';
 import { useTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import Button from '../Button.astro';
-import DitheredImageReact from '../DitheredImageReact';
+import ThemedImage from '../ThemedImage.astro';
 
 interface Props {
     className?: string;
@@ -16,8 +16,8 @@ const t = useTranslations(lang);
 
 <BigSectionContainer title={t('about.tldr.title')} id="about" style="view-transition-name: about-section;">
 <div class="flex flex-col md:flex-row gap-4 items-start  ">
-    <div class="max-w-64 w-64 overflow-hidden aspect-square">
-        <DitheredImageReact src="/Allison.jpeg" alt="Descripción de la imagen" className="" respectOriginalSize={false} />
+    <div class="max-w-64 w-64 h-64 overflow-hidden aspect-square">
+        <ThemedImage src="/me.png" alt="Allison Peña" class="w-full h-full" />
     </div>
     <div className={"w-full " + className} style="view-transition-name: tldr-content;">
 

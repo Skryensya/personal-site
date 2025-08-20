@@ -1,0 +1,77 @@
+---
+interface Props {
+    src: string;
+    alt: string;
+    class?: string;
+}
+
+const { src, alt, class: className = '' } = Astro.props;
+---
+
+<div class={`themed-image relative select-none ${className}`}>
+    <!-- Base grayscale image -->
+    <img 
+        src={src} 
+        alt={alt} 
+        class="w-full h-full object-cover object-center filter grayscale smooth-image select-none"
+    />
+    
+    <!-- Color overlay using CSS variable -->
+    <div class="absolute inset-0 mix-blend-multiply bg-[var(--theme-colorful)] select-none"></div>
+</div>
+
+<style>
+    .themed-image {
+        /* Completely disable all mouse interactions */
+        pointer-events: none;
+        /* Completely disable selection */
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        /* Disable touch callouts on mobile */
+        -webkit-touch-callout: none;
+        /* Disable drag */
+        -webkit-user-drag: none;
+        -khtml-user-drag: none;
+        -moz-user-drag: none;
+        -o-user-drag: none;
+        user-drag: none;
+    }
+
+    .themed-image * {
+        /* Apply to all children */
+        pointer-events: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        -webkit-touch-callout: none;
+        -webkit-user-drag: none;
+        -khtml-user-drag: none;
+        -moz-user-drag: none;
+        -o-user-drag: none;
+        user-drag: none;
+    }
+ 
+    .smooth-image {
+        /* Anti-aliasing for smooth image rendering */
+        image-rendering: auto;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: optimizeQuality;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        /* Prevent pixelation and dithering */
+        image-rendering: smooth;
+        /* Better quality scaling */
+        transform: translateZ(0);
+        backface-visibility: hidden;
+        /* Hardware acceleration for smooth rendering */
+        -webkit-transform: translate3d(0, 0, 0);
+        transform: translate3d(0, 0, 0);
+        /* Additional smoothing */
+        filter: contrast(1) brightness(1);
+    }
+</style>
+
+ 

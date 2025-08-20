@@ -1,7 +1,7 @@
 ---
 import { type CollectionEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';   
-import DitheredImageReact from './DitheredImageReact';
+import ThemedImage from './ThemedImage.astro';
 import Button from './Button.astro';
 import ReadingGuide from './ReadingGuide';
 import ScrollProgress from './ScrollProgress';
@@ -105,12 +105,10 @@ const { Content } = await project.render();
                         
                         {clientLogo && (
                             <div class="mt-8 w-32 h-32" style={`view-transition-name: project-logo-${project.slug}`} data-client-logo={clientLogo}>
-                                <DitheredImageReact 
+                                <ThemedImage 
                                     src={clientLogo} 
                                     alt={`Logo del cliente - ${name}`}
-                                    className="w-full h-full object-contain"
-                                    respectOriginalSize={true}
-                                    client:load
+                                    class="w-full h-full"
                                 />
                             </div>
                         )}

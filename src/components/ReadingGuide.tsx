@@ -56,8 +56,12 @@ export default function ReadingGuide({ className = '' }: ReadingGuideProps) {
     // Process text elements efficiently
     const processTextElements = useCallback(() => {
         const prose = elementsRef.current.prose;
-        if (!prose) return;
+        if (!prose) {
+            console.warn('No prose element found for reading guide');
+            return;
+        }
 
+        console.log('Processing text elements in:', prose.tagName, prose.id || prose.className);
         textElementsRef.current = [];
         originalContentRef.current.clear();
 
@@ -77,15 +81,17 @@ export default function ReadingGuide({ className = '' }: ReadingGuideProps) {
                 }
             });
 
-            // Process specific UI elements with those classes (but skip if inside metrics containers)
-            const uiElements = container.querySelectorAll('.bg-secondary.text-main.px-3.py-2.border.border-main, .filled');
+            // Process specific UI elements (CV badges, buttons, etc.)
+            const uiElements = container.querySelectorAll('.bg-secondary.text-main.px-3.py-2.border.border-main, .filled, .bg-main.text-secondary, .border.border-main');
             uiElements.forEach(element => {
                 const htmlElement = element as HTMLElement;
                 // Skip if inside metrics container - let the container handle it
                 if (htmlElement.closest('#metrics-container-mobile, #metrics-container-desktop')) {
                     return;
                 }
-                if (!htmlElement.hasAttribute('data-visible')) {
+                // Skip if it's a nested container with children text elements
+                const hasChildTextElements = htmlElement.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span').length > 0;
+                if (!hasChildTextElements && !htmlElement.hasAttribute('data-visible')) {
                     htmlElement.setAttribute('data-visible', 'false');
                     textElementsRef.current.push(htmlElement);
                 }
@@ -103,6 +109,11 @@ export default function ReadingGuide({ className = '' }: ReadingGuideProps) {
 
                 // Skip processing if element is inside a metrics container
                 if (htmlElement.closest('#metrics-container-mobile, #metrics-container-desktop')) {
+                    return;
+                }
+
+                // Skip if element is a UI component that should be treated as a unit
+                if (htmlElement.closest('.bg-secondary.text-main.px-3.py-2.border.border-main, .bg-main.text-secondary')) {
                     return;
                 }
 
@@ -263,11 +274,15 @@ export default function ReadingGuide({ className = '' }: ReadingGuideProps) {
 
     // Activate/deactivate
     const activate = useCallback(() => {
+        console.log('Activating reading guide...');
         setIsActive(true);
         processTextElements();
         updateIndicatorPositions();
         // Immediate effect update
-        setTimeout(() => updateRevealEffect(), 0);
+        setTimeout(() => {
+            updateRevealEffect();
+            console.log('Reading guide activated, elements processed:', textElementsRef.current.length);
+        }, 0);
     }, [processTextElements, updateIndicatorPositions, updateRevealEffect]);
 
     const deactivate = useCallback(() => {
@@ -284,13 +299,31 @@ export default function ReadingGuide({ className = '' }: ReadingGuideProps) {
 
     const toggle = useCallback(() => {
         const toggleButton = elementsRef.current.toggle;
-        if (!toggleButton) return;
+        const proseElement = elementsRef.current.prose;
+        
+        console.log('Toggle clicked:', { 
+            toggleButton: toggleButton?.id, 
+            proseElement: proseElement?.tagName,
+            isActive 
+        });
+
+        if (!toggleButton) {
+            console.warn('Reading guide toggle button not found');
+            return;
+        }
+
+        if (!proseElement) {
+            console.warn('Reading guide content area not found');
+            return;
+        }
 
         if (isActive) {
+            console.log('Deactivating reading guide');
             deactivate();
             toggleButton.setAttribute('aria-pressed', 'false');
             toggleButton.textContent = 'Activar guía';
         } else {
+            console.log('Activating reading guide');
             activate();
             toggleButton.setAttribute('aria-pressed', 'true');
             toggleButton.textContent = 'Desactivar guía';
@@ -299,20 +332,34 @@ export default function ReadingGuide({ className = '' }: ReadingGuideProps) {
 
     // Initialize elements and expose toggle function
     useEffect(() => {
-        elementsRef.current = {
-            prose: document.querySelector('.prose'),
-            header: document.querySelector('header'),
-            toggle: document.getElementById('reading-guide-toggle')
+        // Wait a bit for DOM to be ready
+        const initElements = () => {
+            elementsRef.current = {
+                prose: document.querySelector('.prose') || document.querySelector('#cv-content') || document.querySelector('main'),
+                header: document.querySelector('header'),
+                toggle: document.getElementById('reading-guide-toggle')
+            };
+
+            // Debug log to see what we found
+            console.log('ReadingGuide initialized:', {
+                prose: elementsRef.current.prose?.tagName,
+                proseId: elementsRef.current.prose?.id,
+                toggle: elementsRef.current.toggle?.id
+            });
+
+            const toggleButton = elementsRef.current.toggle;
+            if (toggleButton) {
+                toggleButton.addEventListener('click', toggle);
+            }
+
+            // Expose globally for external access
+            (window as any).toggleReadingGuide = toggle;
+            (window as any).getReadingGuidePosition = () => revealPosition;
         };
 
-        const toggleButton = elementsRef.current.toggle;
-        if (toggleButton) {
-            toggleButton.addEventListener('click', toggle);
-        }
-
-        // Expose globally for external access
-        (window as any).toggleReadingGuide = toggle;
-        (window as any).getReadingGuidePosition = () => revealPosition;
+        // Try immediately and also after a delay
+        initElements();
+        const timeoutId = setTimeout(initElements, 100);
 
         // Handle resize
         const handleResize = () => {
@@ -325,6 +372,8 @@ export default function ReadingGuide({ className = '' }: ReadingGuideProps) {
         window.addEventListener('resize', handleResize);
 
         return () => {
+            clearTimeout(timeoutId);
+            const toggleButton = elementsRef.current.toggle;
             if (toggleButton) {
                 toggleButton.removeEventListener('click', toggle);
             }
@@ -413,8 +462,15 @@ export default function ReadingGuide({ className = '' }: ReadingGuideProps) {
                         font-size: 0.875em;
                     }
                     .bg-secondary.text-main.px-3.py-2.border.border-main[data-visible],
-                    .filled[data-visible] {
+                    .filled[data-visible],
+                    .bg-main.text-secondary[data-visible],
+                    .border.border-main[data-visible] {
                         display: inline-block;
+                    }
+                    /* CV specific elements */
+                    .bg-secondary[data-visible],
+                    .border-l-4[data-visible] {
+                        display: block;
                     }
                     [data-reading-guide] {
                         /* Container elements that participate in reading guide but don't have visibility state */
