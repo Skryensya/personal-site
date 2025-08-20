@@ -71,7 +71,9 @@ export default function ReadingGuide({ className = '' }: ReadingGuideProps) {
         containers.forEach(container => {
             originalContentRef.current.set(container, container.innerHTML);
 
-            // First, process metrics containers as complete units
+            // Process page-specific container elements
+            
+            // CV/Curriculum specific: metrics containers
             const metricsContainers = container.querySelectorAll('#metrics-container-mobile, #metrics-container-desktop');
             metricsContainers.forEach(element => {
                 const htmlElement = element as HTMLElement;
@@ -81,9 +83,9 @@ export default function ReadingGuide({ className = '' }: ReadingGuideProps) {
                 }
             });
 
-            // Process specific UI elements (CV badges, buttons, etc.)
-            const uiElements = container.querySelectorAll('.bg-secondary.text-main.px-3.py-2.border.border-main, .filled, .bg-main.text-secondary, .border.border-main');
-            uiElements.forEach(element => {
+            // CV/Curriculum specific: UI elements (badges, buttons, etc.)
+            const cvUiElements = container.querySelectorAll('.bg-secondary.text-main.px-3.py-2.border.border-main, .filled, .bg-main.text-secondary, .border.border-main');
+            cvUiElements.forEach(element => {
                 const htmlElement = element as HTMLElement;
                 // Skip if inside metrics container - let the container handle it
                 if (htmlElement.closest('#metrics-container-mobile, #metrics-container-desktop')) {
@@ -92,6 +94,26 @@ export default function ReadingGuide({ className = '' }: ReadingGuideProps) {
                 // Skip if it's a nested container with children text elements
                 const hasChildTextElements = htmlElement.querySelectorAll('p, h1, h2, h3, h4, h5, h6, span').length > 0;
                 if (!hasChildTextElements && !htmlElement.hasAttribute('data-visible')) {
+                    htmlElement.setAttribute('data-visible', 'false');
+                    textElementsRef.current.push(htmlElement);
+                }
+            });
+
+            // Reading guide specific: process image captions and figure elements
+            const figures = container.querySelectorAll('figure, .figure');
+            figures.forEach(element => {
+                const htmlElement = element as HTMLElement;
+                if (!htmlElement.hasAttribute('data-visible')) {
+                    htmlElement.setAttribute('data-visible', 'false');
+                    textElementsRef.current.push(htmlElement);
+                }
+            });
+
+            // Reading guide specific: process blockquotes as units
+            const blockquotes = container.querySelectorAll('blockquote');
+            blockquotes.forEach(element => {
+                const htmlElement = element as HTMLElement;
+                if (!htmlElement.hasAttribute('data-visible')) {
                     htmlElement.setAttribute('data-visible', 'false');
                     textElementsRef.current.push(htmlElement);
                 }
@@ -113,7 +135,7 @@ export default function ReadingGuide({ className = '' }: ReadingGuideProps) {
                 }
 
                 // Skip if element is a UI component that should be treated as a unit
-                if (htmlElement.closest('.bg-secondary.text-main.px-3.py-2.border.border-main, .bg-main.text-secondary')) {
+                if (htmlElement.closest('.bg-secondary.text-main.px-3.py-2.border.border-main, .bg-main.text-secondary, figure, blockquote')) {
                     return;
                 }
 
@@ -334,8 +356,24 @@ export default function ReadingGuide({ className = '' }: ReadingGuideProps) {
     useEffect(() => {
         // Wait a bit for DOM to be ready
         const initElements = () => {
+            // Enhanced content detection with priority order
+            const contentSelectors = [
+                '.prose',           // Blog posts and content pages
+                '#cv-content',      // CV/curriculum pages
+                '#main-content',    // Generic main content
+                'main',             // Fallback to main element
+                'article',          // Article pages
+                '[role="main"]'     // Accessibility-compliant main content
+            ];
+
+            let proseElement = null;
+            for (const selector of contentSelectors) {
+                proseElement = document.querySelector(selector);
+                if (proseElement) break;
+            }
+
             elementsRef.current = {
-                prose: document.querySelector('.prose') || document.querySelector('#cv-content') || document.querySelector('main'),
+                prose: proseElement,
                 header: document.querySelector('header'),
                 toggle: document.getElementById('reading-guide-toggle')
             };
@@ -344,6 +382,7 @@ export default function ReadingGuide({ className = '' }: ReadingGuideProps) {
             console.log('ReadingGuide initialized:', {
                 prose: elementsRef.current.prose?.tagName,
                 proseId: elementsRef.current.prose?.id,
+                proseClass: elementsRef.current.prose?.className,
                 toggle: elementsRef.current.toggle?.id
             });
 
@@ -470,6 +509,12 @@ export default function ReadingGuide({ className = '' }: ReadingGuideProps) {
                     /* CV specific elements */
                     .bg-secondary[data-visible],
                     .border-l-4[data-visible] {
+                        display: block;
+                    }
+                    /* Reading guide specific elements */
+                    figure[data-visible],
+                    .figure[data-visible],
+                    blockquote[data-visible] {
                         display: block;
                     }
                     [data-reading-guide] {

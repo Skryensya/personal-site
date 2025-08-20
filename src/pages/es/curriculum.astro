@@ -13,12 +13,7 @@ import ScrollProgress from '@/components/ScrollProgress';
     <ScrollProgress client:load />
     <ReadingGuide client:load />
     
-    <!-- Floating Print Button (bottom right) -->
-    <div class="print:hidden fixed bottom-8 right-8 z-50">
-        <Button elevated size="sm" onClick="window.print()">
-            Imprimir
-        </Button>
-    </div>
+ 
 
     <style>
         @layer base {
@@ -62,7 +57,7 @@ import ScrollProgress from '@/components/ScrollProgress';
         <!-- Main content area -->
         <main class="flex-1 min-w-0 print:min-w-full" id="cv-content">
             <!-- Contenedor responsivo: flujo normal en móvil, hojas en desktop -->
-            <div class="space-y-0 mb-20 print:space-y-0 print:mb-0 ">
+            <div class="space-y-8 mb-20 print:space-y-0 print:mb-0 ">
                 <CVPage>
                     <CVFirstPage lang="es" />
                 </CVPage>

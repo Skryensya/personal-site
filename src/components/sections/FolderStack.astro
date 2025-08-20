@@ -1,0 +1,75 @@
+---
+import FolderItem from "./FolderItem.astro"
+---
+
+<!-- Wrapper con perspectiva y reglas de apilado -->
+<div class="overflow-y-hidden">
+    <div class="folder-stack relative isolate flex flex-col  w-full py-20 px-4">
+  <FolderItem />
+  <FolderItem />
+  <FolderItem />
+  <FolderItem />
+  <FolderItem />
+</div>
+</div>
+
+<style>
+  .folder-stack {
+    /* Ajusta la fuerza de la perspectiva 3D */
+    --perspective: 900px;
+    /* Cuánto se solapan verticalmente (negativo = se pisan) */
+    --overlap: -2.25rem;
+    /* Elevación visual en hover (px/deg) */
+    --hover-raise: -10px;
+    --hover-tilt-x: 2deg;    /* leve tilt sobre X */
+    --hover-tilt-z: -0.4deg; /* leve tilt como “carpeta” */
+  }
+
+  .folder-stack {
+    perspective: var(--perspective);
+  }
+
+  /* Que cada FolderItem “pise” al anterior */
+  .folder-stack > * + * {
+    margin-top: var(--overlap);
+  }
+
+  /* Transiciones suaves y sin alterar z-index */
+  .folder-stack > * {
+    position: relative; /* conserva el flujo y el stacking por DOM */
+    z-index: 0;         /* explícito: no sube sobre los siguientes */
+    transform-origin: 50% 10%;
+    transform-style: preserve-3d;
+    transition:
+      transform 220ms ease,
+      filter 220ms ease;
+    will-change: transform;
+  }
+
+  /* Efecto 3D sutil por profundidad (opcional) */
+  .folder-stack > *:nth-child(1) { transform: translateZ(0); }
+  .folder-stack > *:nth-child(2) { transform: translateZ(12px); }
+  .folder-stack > *:nth-child(3) { transform: translateZ(24px); }
+  .folder-stack > *:nth-child(4) { transform: translateZ(36px); }
+  .folder-stack > *:nth-child(5) { transform: translateZ(48px); }
+
+  /* Elevar en hover SIN cambiar z-index:
+     seguirá detrás de los que vienen después en el DOM */
+  .folder-stack > *:hover {
+    transform:
+      translateY(var(--hover-raise))
+      rotateX(var(--hover-tilt-x))
+      rotate(var(--hover-tilt-z));
+    filter: brightness(1.02);
+  }
+
+  /* Accesible también con teclado si el interior recibe focus */
+  .folder-stack > *:focus-within {
+    transform:
+      translateY(var(--hover-raise))
+      rotateX(var(--hover-tilt-x))
+      rotate(var(--hover-tilt-z));
+    filter: brightness(1.03);
+    outline: none;
+  }
+</style>
