@@ -4,18 +4,29 @@ import CVPage from '@/components/CVPage.astro';
 import CVFirstPage from '@/components/CVFirstPage.astro';
 import CVSecondPage from '@/components/CVSecondPage.astro';
 import Button from '@/components/Button.astro';
-import TableOfContents from '@/components/ui/TableOfContents';
-import ReadingGuide from '@/components/ReadingGuide';
-import ScrollProgress from '@/components/ScrollProgress';
+import ContentPage from '@/components/ContentPage.astro';
 ---
 
 <Layout title="Allison Peña - CV" description="CV de Allison Peña" lang="es">
-    <ScrollProgress client:load />
-    <ReadingGuide client:load />
-    
- 
 
-    <style>
+  
+    <ContentPage 
+        contentId="cv-content"
+        containerClassName="print:block"
+        contentClassName="print:min-w-full"
+        sidebarClassName="print:hidden"
+    >
+        <!-- Contenedor responsivo: flujo normal en móvil, hojas en desktop -->
+        <div class="space-y-8 mb-20 print:space-y-0 print:mb-0 w-fit">
+            <CVPage>
+                <CVFirstPage lang="es" />
+            </CVPage>
+            <CVPage>
+                <CVSecondPage lang="es" />
+            </CVPage>
+        </div>
+    </ContentPage>
+  <style>
         @layer base {
             :root {
                 /* Variables para ajustar el tamaño de impresión */
@@ -51,29 +62,5 @@ import ScrollProgress from '@/components/ScrollProgress';
             }
         }
     </style>
-
-    <!-- Full height layout with content and sidebar -->
-    <div class="flex min-h-screen print:block" id="cv-content-container">
-        <!-- Main content area -->
-        <main class="flex-1 min-w-0 print:min-w-full" id="cv-content">
-            <!-- Contenedor responsivo: flujo normal en móvil, hojas en desktop -->
-            <div class="space-y-8 mb-20 print:space-y-0 print:mb-0 ">
-                <CVPage>
-                    <CVFirstPage lang="es" />
-                </CVPage>
-                <CVPage>
-                    <CVSecondPage lang="es" />
-                </CVPage>
-            </div>
-        </main>
-        
-        <!-- Desktop Sidebar - Table of Contents -->
-        <TableOfContents 
-            client:load 
-            contentId="cv-content" 
-            readingGuideToggleId="reading-guide-toggle"
-            className="print:hidden"
-        />
-    </div>
 
 </Layout>
