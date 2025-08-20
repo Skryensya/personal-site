@@ -1,11 +1,13 @@
 ---
 import siteConfig from '@/data/site-config';
-
+import WaveDivider from './WaveDivider.astro';
 const currentYear = new Date().getFullYear();
 ---
 
 <footer class="bg-main border-t-double border-t-2 border-secondary">
-    <div class="mx-auto max-w-[var(--max-w-size)] px-8 py-12">
+      <WaveDivider   />
+    <div class="mx-auto max-w-[var(--max-w-size)] px-8 pb-12">
+        
         <!-- Main content grid -->
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
             <!-- Navigation -->

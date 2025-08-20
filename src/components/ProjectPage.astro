@@ -20,7 +20,7 @@ if (!project) {
     return Astro.redirect('/404');
 }
 
-const { name, hook, seo, clientLogo } = project.data;
+const { name, hook, seo, clientLogo, audioUrl } = project.data;
 const { Content } = await project.render();
 ---
 
@@ -118,7 +118,7 @@ const { Content } = await project.render();
                 </div>
         </ContentPage>
 
-        <script>
+        <script define:vars={{ audioUrl, name }}>
 
             function animateNumbers() {
                 const numberElements = document.querySelectorAll('#metrics-container-mobile [data-target], #metrics-container-desktop [data-target]');
@@ -227,11 +227,28 @@ const { Content } = await project.render();
 
 
             function initPage() {
+                console.log('ProjectPage: initPage called');
+                
                 // Calculate reading time
                 calculateReadingTime();
                 
                 // Animate metrics numbers
                 setTimeout(animateNumbers, 500); // Start animation after page loads
+                
+                // Initialize audio player if audio URL is available
+                console.log('ProjectPage audio setup:', { audioUrl, name });
+                if (audioUrl && typeof window !== 'undefined') {
+                    console.log('ProjectPage: Loading audio store...');
+                    // Dynamically import audio store to avoid SSR issues
+                    import('../stores/audioStore').then(({ audioStore }) => {
+                        console.log('Setting audio track:', audioUrl, name);
+                        audioStore.setTrack(audioUrl, name);
+                    }).catch((error) => {
+                        console.error('Failed to load audio store:', error);
+                    });
+                } else {
+                    console.log('No audio URL found or not in browser', { audioUrl, name, window: typeof window });
+                }
                 
                 // Reading guide toggle is handled by the ReadingGuide component
                 // Table of contents is handled by the TableOfContents component
