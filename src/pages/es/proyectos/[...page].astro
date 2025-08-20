@@ -6,6 +6,7 @@ import siteConfig from '../../../data/site-config';
 import { sortItemsByDateDesc } from '../../../utils/data-utils';
 import { getSlugFromId } from '@/utils/content-utils';
 import { useTranslations } from '@/i18n/utils';
+import FolderStack from '@/components/sections/FolderStack.astro';
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
     const allProjects = await getCollection('projects');
@@ -25,10 +26,10 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
 
 type Props = { 
     page: Page<CollectionEntry<'projects'>>; 
-    language: string;
+ 
 };
 
-const { page, language } = Astro.props;
+const { page } = Astro.props;
 const currentLocale = 'es';
 const t = useTranslations(currentLocale);
 
@@ -78,29 +79,9 @@ const portfolio = page.data;
                 </div>
             </article>
         ))}
-    </div>
-    
-    {page.url.prev || page.url.next ? (
-        <nav class="flex justify-between items-center my-8 sm:my-12">
-            {page.url.prev ? (
-                <a href={page.url.prev} class="px-4 py-2 border border-main bg-secondary hover:bg-main hover:text-secondary font-mono text-sm">
-                    ← {t('pagination.previous') || 'Anterior'}
-                </a>
-            ) : (
-                <div></div>
-            )}
-            
-            <span class="font-mono text-sm">
-                {t('pagination.page') || 'Página'} {page.currentPage} {t('pagination.of') || 'de'} {page.lastPage}
-            </span>
-            
-            {page.url.next ? (
-                <a href={page.url.next} class="px-4 py-2 border border-main bg-secondary hover:bg-main hover:text-secondary font-mono text-sm">
-                    {t('pagination.next') || 'Siguiente'} →
-                </a>
-            ) : (
-                <div></div>
-            )}
-        </nav>
-    ) : null}
+    </div> 
+
+
+    <FolderStack  />
+
 </Layout>
