@@ -10,13 +10,13 @@ const { lang = defaultLang } = Astro.props;
 const t = useTranslations(lang);
 ---
 
-<div class="h-full p-6 print:p-4 bg-secondary text-main">
-    <div class="max-w-none">
+<div class="bg-secondary text-main">
+    <div class="w-full">
         
         <!-- Professional Header -->
         <header class="mb-6 print:mb-4">
             <h1 class="text-xl font-bold uppercase border-b-2 border-main pb-2 mb-4">
-                EXPERIENCIA PROFESIONAL
+                EXPERIENCIA DETALLADA
             </h1>
         </header>
 
@@ -34,7 +34,7 @@ const t = useTranslations(lang);
                     de usuario, implementando interfaces y sistemas backend efectivos en todo el ciclo de desarrollo.
                 </p>
                 
-                <h3 class="text-base font-semibold mb-2">Proyectos Destacados:</h3>
+                <h2 class="text-base font-semibold mb-2">Proyectos Destacados:</h2>
                 
                 <div class="mb-3">
                     <h4 class="font-semibold">• Kit Digital UC</h4>
@@ -85,11 +85,11 @@ const t = useTranslations(lang);
 
         <!-- Technical Skills -->
         <section class="mb-6">
-            <h2 class="text-xl font-bold uppercase border-b-2 border-main pb-2 mb-4">
+            <h1 class="text-xl font-bold uppercase border-b-2 border-main pb-2 mb-4">
                 COMPETENCIAS TÉCNICAS
-            </h2>
+            </h1>
             
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div>
                     <h3 class="font-semibold mb-2">Desarrollo Frontend</h3>
                     <p class="text-sm leading-relaxed">
@@ -109,10 +109,10 @@ const t = useTranslations(lang);
         </section>
 
         <!-- Professional Summary -->
-        <section>
-            <h2 class="text-xl font-bold uppercase border-b-2 border-main pb-2 mb-4">
+        <section class="mb-6">
+            <h1 class="text-xl font-bold uppercase border-b-2 border-main pb-2 mb-4">
                 RESUMEN PROFESIONAL
-            </h2>
+            </h1>
             
             <div class="space-y-3 text-sm leading-relaxed">
                 <p>
@@ -129,6 +129,25 @@ const t = useTranslations(lang);
                     <strong>Impacto Profesional:</strong> Los proyectos desarrollados son utilizados por más de 100 sitios web 
                     institucionales, beneficiando a miles de usuarios diarios en el ecosistema digital universitario.
                 </p>
+            </div>
+        </section>
+
+        <!-- Certifications Section -->
+        <section>
+            <h1 class="text-xl font-bold uppercase border-b-2 border-main pb-2 mb-4">
+                CERTIFICACIONES
+            </h1>
+            <div class="bg-main/5 p-4 border border-main/20">
+                <div class="border-l-4 border-main pl-4">
+                    <div class="flex items-start gap-3">
+                        <div class="w-2 h-2 bg-main rounded-full mt-2 flex-shrink-0"></div>
+                        <div>
+                            <p class="font-bold text-main text-base">WAIO.1x</p>
+                            <p class="text-sm text-main/70 mb-1">Introduction to Web Accessibility</p>
+                            <p class="text-xs font-mono text-main/50">Accesibilidad Digital - Estándares WCAG</p>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
