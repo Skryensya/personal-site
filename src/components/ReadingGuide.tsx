@@ -213,10 +213,32 @@ export default function ReadingGuide({ className = '' }: ReadingGuideProps) {
         const proseRect = prose.getBoundingClientRect();
         const scrollX = window.scrollX;
 
-        setIndicatorPositions({
-            left: Math.max(20, proseRect.left + scrollX - 50),
-            right: proseRect.right + scrollX + 30
-        });
+        // Check if we're in a CV page with constrained width
+        const cvPageContainer = prose.closest('.cv-container');
+        
+        if (cvPageContainer) {
+            // For CV pages, find the inner content container with max-w-[210mm]
+            const innerContainer = cvPageContainer.querySelector('[class*="max-w-"][class*="210mm"]');
+            if (innerContainer) {
+                const innerRect = innerContainer.getBoundingClientRect();
+                setIndicatorPositions({
+                    left: Math.max(20, innerRect.left + scrollX - 50),
+                    right: innerRect.right + scrollX + 30
+                });
+            } else {
+                // Fallback to prose element bounds
+                setIndicatorPositions({
+                    left: Math.max(20, proseRect.left + scrollX - 50),
+                    right: proseRect.right + scrollX + 30
+                });
+            }
+        } else {
+            // Original behavior for unconstrained content like project pages
+            setIndicatorPositions({
+                left: Math.max(20, proseRect.left + scrollX - 50),
+                right: proseRect.right + scrollX + 30
+            });
+        }
     }, []);
 
     // Immediate scroll response - no throttling, no RAF
@@ -464,14 +486,45 @@ export default function ReadingGuide({ className = '' }: ReadingGuideProps) {
         if (!prose) return { display: 'none' };
 
         const proseRect = prose.getBoundingClientRect();
-        return {
-            top: `calc(${revealPosition * 100}vh + 3.5px)`,
-            left: `${proseRect.left + window.scrollX}px`,
-            width: `${proseRect.width}px`,
-            height: '1px',
-            opacity: showLine ? 0.5 : 0,
-            pointerEvents: 'none' as const
-        };
+        
+        // Check if we're in a CV page with constrained width
+        const cvPageContainer = prose.closest('.cv-container');
+        
+        if (cvPageContainer) {
+            // For CV pages, find the inner content container with max-w-[210mm]
+            const innerContainer = cvPageContainer.querySelector('[class*="max-w-"][class*="210mm"]');
+            if (innerContainer) {
+                const innerRect = innerContainer.getBoundingClientRect();
+                return {
+                    top: `calc(${revealPosition * 100}vh + 3.5px)`,
+                    left: `${innerRect.left + window.scrollX}px`,
+                    width: `${innerRect.width}px`,
+                    height: '1px',
+                    opacity: showLine ? 0.5 : 0,
+                    pointerEvents: 'none' as const
+                };
+            } else {
+                // Fallback to prose element bounds
+                return {
+                    top: `calc(${revealPosition * 100}vh + 3.5px)`,
+                    left: `${proseRect.left + window.scrollX}px`,
+                    width: `${proseRect.width}px`,
+                    height: '1px',
+                    opacity: showLine ? 0.5 : 0,
+                    pointerEvents: 'none' as const
+                };
+            }
+        } else {
+            // Original behavior for unconstrained content like project pages
+            return {
+                top: `calc(${revealPosition * 100}vh + 3.5px)`,
+                left: `${proseRect.left + window.scrollX}px`,
+                width: `${proseRect.width}px`,
+                height: '1px',
+                opacity: showLine ? 0.5 : 0,
+                pointerEvents: 'none' as const
+            };
+        }
     }, [revealPosition, showLine]);
 
     return (

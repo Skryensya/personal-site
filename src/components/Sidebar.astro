@@ -1,0 +1,35 @@
+---
+import TableOfContents from './TableOfContents.astro';
+import Button from './Button.astro';
+
+interface Props {
+    contentId?: string;
+    className?: string;
+}
+
+const { 
+    contentId = 'main-content',
+    className = '' 
+} = Astro.props;
+---
+
+<aside class={`w-[250px] flex-shrink-0 hidden lg:block ${className}`} id="content-sidebar">
+    <div class="sticky top-20 py-8 px-4">
+        <!-- Table of Contents -->
+        <TableOfContents contentId={contentId} />
+        
+        <!-- Reading Guide Toggle -->
+        <div class="mt-8 pt-6 border-t border-main border-opacity-20">
+            <div class="mb-4">
+                <h3 class="text-xs font-mono font-medium text-main opacity-50 uppercase tracking-wide">Guía de lectura</h3>
+            </div>
+            <Button 
+                id="reading-guide-toggle"
+                class="w-full text-left text-xs font-mono !px-3 !py-2 !h-auto !font-normal !normal-case !tracking-normal"
+                aria-pressed="false"
+            >
+                Activar guía
+            </Button>
+        </div>
+    </div>
+</aside>

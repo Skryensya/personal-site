@@ -39,9 +39,9 @@ const { children, class: className = '' } = Astro.props;
 </style>
 
 <!-- Container with border and padding (styles only from lg+) -->
-<div class={` cv-container bg-secondary text-main xl:w-fit xl:h-fit xl:pb-1 xl:p-[10mm] xl:box-border xl:border-2 xl:border-main xl:mx-auto xl:shadow-[8px_8px_0_var(--color-main)] xl:overflow-hidden print:p-0 print:border-0 print:shadow-none ${className}`}>
+<div class={` cv-container bg-secondary text-main xl:w-fit xl:h-fit xl:pb-1 xl:p-[10mm] xl:box-border xl:border-2 xl:border-main  xl:shadow-[8px_8px_0_var(--color-main)] xl:overflow-hidden print:p-0 print:border-0 print:shadow-none ${className}`}>
     <!-- Internal page without border or padding.  -->
-    <div class="bg-secondary text-main max-w-[210mm] xl:h-[297mm]  xl:border-1 xl:border-red-500/20 xl:overflow-hidden print:cv-page-print mx-auto">
+    <div class="bg-secondary text-main max-w-[210mm] xl:h-[297mm]  xl:border-1 xl:border-red-500/20 xl:overflow-hidden print:cv-page-print ">
         <slot />
     </div>
 </div>
