@@ -5,6 +5,11 @@ interface AudioState {
   isPlaying: boolean;
   currentTime: number;
   duration: number;
+  volume: number;
+  playbackRate: number;
+  waveformData: number[] | null;
+  isMuted: boolean;
+  volumeBeforeMute: number;
 }
 
 class AudioStore {
@@ -14,6 +19,11 @@ class AudioStore {
     isPlaying: false,
     currentTime: 0,
     duration: 0,
+    volume: 1,
+    playbackRate: 1,
+    waveformData: null,
+    isMuted: false,
+    volumeBeforeMute: 1,
   };
 
   private listeners: Set<(state: AudioState) => void> = new Set();
@@ -51,6 +61,7 @@ class AudioStore {
         isPlaying: false,
         currentTime: 0,
         duration: 0,
+        waveformData: null,
       };
       console.log('AudioStore: Track updated, new state:', this.state);
       this.notify();
@@ -81,6 +92,68 @@ class AudioStore {
     return this.audioElement;
   }
 
+  // Set volume
+  setVolume(volume: number) {
+    const newVolume = Math.max(0, Math.min(1, volume));
+    this.state = {
+      ...this.state,
+      volume: newVolume,
+      isMuted: newVolume === 0,
+    };
+    this.notify();
+  }
+
+  // Toggle mute
+  toggleMute() {
+    if (this.state.isMuted) {
+      // Unmute: restore previous volume
+      this.state = {
+        ...this.state,
+        volume: this.state.volumeBeforeMute,
+        isMuted: false,
+      };
+    } else {
+      // Mute: save current volume and set to 0
+      this.state = {
+        ...this.state,
+        volumeBeforeMute: this.state.volume,
+        volume: 0,
+        isMuted: true,
+      };
+    }
+    this.notify();
+  }
+
+  // Set playback rate
+  setPlaybackRate(rate: number) {
+    this.state = {
+      ...this.state,
+      playbackRate: rate,
+    };
+    this.notify();
+  }
+
+  // Set waveform data
+  setWaveformData(waveformData: number[]) {
+    this.state = {
+      ...this.state,
+      waveformData,
+    };
+    this.notify();
+  }
+
+  // Seek to specific time
+  seekTo(time: number) {
+    if (this.audioElement) {
+      this.audioElement.currentTime = time;
+    }
+    this.state = {
+      ...this.state,
+      currentTime: time,
+    };
+    this.notify();
+  }
+
   // Clear current track
   clearTrack() {
     this.state = {
@@ -89,6 +162,11 @@ class AudioStore {
       isPlaying: false,
       currentTime: 0,
       duration: 0,
+      volume: 1,
+      playbackRate: 1,
+      waveformData: null,
+      isMuted: false,
+      volumeBeforeMute: 1,
     };
     this.notify();
   }
