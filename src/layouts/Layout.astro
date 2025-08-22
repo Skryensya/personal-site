@@ -5,7 +5,6 @@ import Navbar from '../components/Navbar.astro';
 import Footer from "../components/Footer.astro"
 import GameOfLifeBackground from '../components/GameOfLifeBackground.astro';
 import NorwegianDisclaimer from '../components/NorwegianDisclaimer.astro';
-import AudioPlayer from '../components/AudioPlayer';
 import { type Language } from '../i18n/ui';
 import { themes } from '../data/themes.js';
 
@@ -202,6 +201,5 @@ declare global {
         <Footer />
         
         <!-- Audio Player -->
-        <AudioPlayer client:load />
     </body>
 </html>

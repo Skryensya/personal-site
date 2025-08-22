@@ -18,7 +18,7 @@ const t = useTranslations(lang);
         <header class="mb-6  print:!block">
             <div class="flex justify-between items-start mb-6 print:flex">
                 <div class="text-left flex-1">
-                    <h1 class="text-5xl  font-bold mb-2">ALLISON JOSUÉ PEÑA BARRIOS</h1>
+                    <h1 class="text-5xl font-bold mb-2 pt-1">ALLISON JOSUÉ PEÑA BARRIOS</h1>
                     <p class="text-xl  font-semibold">Desarrollador Full-Stack</p>
                     <div class="w-24 h-px bg-main mt-4"></div>
                 </div>
@@ -33,7 +33,7 @@ const t = useTranslations(lang);
         </header>
 
         <!-- Contact Information -->
-        <section class="mb-8">
+        <section class="mb-4">
             <div class="flex gap-4 justify-between text-left text-sm">
                 <div class="flex items-start gap-2">
                     <svg class="w-4 h-4 text-main flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -66,7 +66,7 @@ const t = useTranslations(lang);
                     <div class="min-w-0 flex-1">
                         <p class="font-semibold">LinkedIn</p>
                         <a href="https://linkedin.com/in/skryensya" target="_blank" rel="noopener noreferrer" class="text-main hover:underline block truncate">
-                            <span class="print:hidden">skryensya</span>
+                            <span class="print:hidden">/in/skryensya</span>
                             <span class="hidden print:inline">linkedin.com/in/skryensya</span>
                         </a>
                     </div>
@@ -83,22 +83,13 @@ const t = useTranslations(lang);
                     </div>
                 </div>
                 
-                <!-- Portafolio solo en impresión -->
-                <div class="hidden print:flex items-start gap-2 col-span-2">
-                    <svg class="w-4 h-4 text-main flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9-9a9 9 0 00-9 9m9-9v18"></path>
-                    </svg>
-                    <div class="min-w-0 flex-1">
-                        <p class="font-semibold">Portafolio</p>
-                        <p class="text-main">Skryensya.dev</p>
-                    </div>
-                </div>
+    
             </div>
         </section>
 
         <!-- Professional Summary - Hook -->
-        <section class="mb-6">
-            <div class="border-l-4 border-main pl-4 bg-main/5 p-4">
+        <section class="mb-3">
+            <div class="border-l-4 border-main pl-3 bg-main/5 p-3">
                 <h2 class="text-lg font-bold mb-2 text-main">¿Por qué trabajar conmigo?</h2>
                 <p class="text-sm leading-snug italic">
                     Transformo ideas en experiencias digitales que realmente funcionan. Mi especialidad es crear 
@@ -109,29 +100,30 @@ const t = useTranslations(lang);
         </section>
 
         <!-- Experience and Skills in Two Columns -->
-        <section class="mb-5">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <section class="mb-3">
+            <div class="grid grid-cols-1 lg:grid-cols-2 print:grid-cols-2 gap-6 print:gap-4">
                 <!-- Experience Column -->
                 <div>
                     <h2 class="text-xl font-bold uppercase border-b-2 border-main pb-1 mb-4">
                         EXPERIENCIA LABORAL
                     </h2>
-                    <div class="bg-secondary border-l-4 border-main pl-4 py-3">
+                    <div class="bg-secondary border-l-4 border-main pl-3 py-2">
                         <div class="flex justify-between items-start mb-2">
                             <div>
                                 <div class="text-base font-bold text-main">Desarrollador Full-Stack</div>
                                 <p class="text-sm font-semibold text-main/80">Asimov Consultores</p>
                             </div>
                             <div class="text-xs font-semibold bg-main text-secondary px-2 py-0.5">
-                                3+ años
+                                2022 - Presente
                             </div>
                         </div>
-                        <p class="text-sm leading-snug mb-3">
+                        <p class="text-base leading-relaxed mb-4">
                             Transformo conceptos en código que impacta a <strong>miles de usuarios diarios</strong>. 
                             Especializado en crear interfaces accesibles y sistemas robustos para el ecosistema 
-                            digital de instituciones educativas.
+                            digital de instituciones educativas, desarrollando soluciones que mejoran la experiencia 
+                            de usuarios en más de 100 sitios web institucionales.
                         </p>
-                        <div class="bg-main/10 p-2">
+                        <div class="bg-main/10 p-1.5">
                             <div class="flex items-center gap-1 mb-0.5">
                                 <svg class="w-4 h-4 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
@@ -148,43 +140,70 @@ const t = useTranslations(lang);
                     <h2 class="text-xl font-bold uppercase border-b-2 border-main pb-1 mb-4">
                         TECNOLOGÍAS
                     </h2>
-                    <div class="space-y-4">
-                        <div class="bg-secondary/50 border-l-4 border-main p-3">
-                            <div class="flex items-center gap-2 mb-2">
+                    <div class="space-y-3">
+                        <!-- Frontend -->
+                        <div class="bg-secondary/50 border-l-4 border-main p-1.5">
+                            <div class="flex items-center gap-2 mb-1">
                                 <div class="w-2 h-2 bg-main"></div>
                                 <h3 class="font-bold text-main text-sm">Frontend Specialist</h3>
                             </div>
-                            <div class="space-y-1.5 text-sm">
-                                <div class="flex flex-wrap gap-1">
-                                    <span class="bg-main text-secondary px-1.5 py-0.5 text-xs font-mono">React</span>
-                                    <span class="bg-main text-secondary px-1.5 py-0.5 text-xs font-mono">TypeScript</span>
-                                    <span class="bg-main text-secondary px-1.5 py-0.5 text-xs font-mono">Next.js</span>
-                                    <span class="bg-main text-secondary px-1.5 py-0.5 text-xs font-mono">Vue.js</span>
-                                </div>
-                                <div class="flex flex-wrap gap-1">
-                                    <span class="border border-main px-1.5 py-0.5 text-xs font-mono">Astro.js</span>
-                                    <span class="border border-main px-1.5 py-0.5 text-xs font-mono">Tailwind</span>
-                                    <span class="border border-main px-1.5 py-0.5 text-xs font-mono">SCSS</span>
-                                </div>
+                            <p class="text-xs text-main/70 mb-2 leading-tight">
+                                Especializado en crear interfaces modernas, accesibles y responsivas. 
+                                Desarrollo componentes reutilizables siguiendo estándares web actuales.
+                            </p>
+                            <div class="flex flex-wrap gap-0.5">
+                                <span class="bg-main text-secondary px-1 py-0.5 text-xs font-mono">React</span>
+                                <span class="bg-main text-secondary px-1 py-0.5 text-xs font-mono">TypeScript</span>
+                                <span class="bg-main text-secondary px-1 py-0.5 text-xs font-mono">Next.js</span>
+                                <span class="bg-main text-secondary px-1 py-0.5 text-xs font-mono">Vue.js</span>
+                                <span class="bg-main text-secondary px-1 py-0.5 text-xs font-mono">JavaScript</span>
+                                <span class="bg-main text-secondary px-1 py-0.5 text-xs font-mono">jQuery</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">Astro.js</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">Tailwind</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">Bootstrap</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">SCSS</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">CSS3</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">HTML5</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">Responsive</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">Webpack</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">Vite</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">npm</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">ESLint</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">Prettier</span>
                             </div>
                         </div>
-                        <div class="bg-secondary/50 border-l-4 border-main p-3">
-                            <div class="flex items-center gap-2 mb-2">
+                        
+                        <!-- Backend & Database -->
+                        <div class="bg-secondary/50 border-l-4 border-main p-1.5">
+                            <div class="flex items-center gap-2 mb-1">
                                 <div class="w-2 h-2 bg-main"></div>
-                                <h3 class="font-bold text-main text-sm">Full-Stack Engineer</h3>
+                                <h3 class="font-bold text-main text-sm">Backend & Database</h3>
                             </div>
-                            <div class="space-y-1.5 text-sm">
-                                <div class="flex flex-wrap gap-1">
-                                    <span class="bg-main text-secondary px-1.5 py-0.5 text-xs font-mono">Node.js</span>
-                                    <span class="bg-main text-secondary px-1.5 py-0.5 text-xs font-mono">PHP</span>
-                                    <span class="bg-main text-secondary px-1.5 py-0.5 text-xs font-mono">MySQL</span>
-                                    <span class="bg-main text-secondary px-1.5 py-0.5 text-xs font-mono">Python</span>
-                                </div>
-                                <div class="flex flex-wrap gap-1">
-                                    <span class="border border-main px-1.5 py-0.5 text-xs font-mono">WCAG 2.1</span>
-                                    <span class="border border-main px-1.5 py-0.5 text-xs font-mono">Git</span>
-                                    <span class="border border-main px-1.5 py-0.5 text-xs font-mono">CMS</span>
-                                </div>
+                            <p class="text-xs text-main/70 mb-2 leading-tight">
+                                Trabajo con servidores, APIs y bases de datos. Experiencia sólida en SQL 
+                                para consultas complejas, optimización y gestión de datos.
+                            </p>
+                            <div class="flex flex-wrap gap-0.5">
+                                <span class="bg-main text-secondary px-1 py-0.5 text-xs font-mono">MySQL</span>
+                                <span class="bg-main text-secondary px-1 py-0.5 text-xs font-mono">SQL</span>
+                                <span class="bg-main text-secondary px-1 py-0.5 text-xs font-mono">Node.js</span>
+                                <span class="bg-main text-secondary px-1 py-0.5 text-xs font-mono">PHP</span>
+                                <span class="bg-main text-secondary px-1 py-0.5 text-xs font-mono">Express.js</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">Python</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">PostgreSQL</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">MongoDB</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">REST APIs</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">GraphQL</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">JSON</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">JWT</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">Docker</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">Git</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">GitHub</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">Linux</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">Apache</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">Nginx</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">Postman</span>
+                                <span class="border border-main px-1 py-0.5 text-xs font-mono">WCAG 2.1</span>
                             </div>
                         </div>
                     </div>
@@ -192,71 +211,95 @@ const t = useTranslations(lang);
             </div>
         </section>
 
-        <!-- Languages Section -->
-        <section class="mb-5">
-            <div class="bg-main/5 p-3 border border-main/20">
-                <h3 class="text-base font-bold border-b-2 border-main pb-1 mb-3">COMUNICACIÓN GLOBAL</h3>
-                <div class="space-y-2">
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-1.5">
-                            <div class="w-1.5 h-1.5 bg-main rounded-full"></div>
-                            <span class="font-medium text-sm">Español</span>
-                        </div>
-                        <span class="bg-main text-secondary px-2 py-0.5 text-xs font-bold">NATIVO</span>
+        <!-- Languages Section - Compact 24px Strip -->
+        <section class="mb-3">
+            <div class="bg-main text-secondary h-6 px-3 border border-main flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path>
+                    </svg>
+                    <span class="text-xs font-bold uppercase tracking-wide">Idiomas</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-mono bg-secondary/20 px-1 py-0.5">ES</span>
+                        <span class="text-xs font-semibold">Español</span>
+                        <span class="bg-secondary text-main px-1.5 py-0.5 text-xs font-bold">NATIVO</span>
                     </div>
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-1.5">
-                            <div class="w-1.5 h-1.5 bg-main rounded-full"></div>
-                            <span class="font-medium text-sm">Inglés</span>
-                        </div>
-                        <span class="border border-main px-2 py-0.5 text-xs font-bold">AVANZADO</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-1.5">
-                            <div class="w-1.5 h-1.5 bg-main rounded-full"></div>
-                            <span class="font-medium text-sm">Noruego</span>
-                        </div>
-                        <span class="border border-main px-2 py-0.5 text-xs font-bold">BÁSICO</span>
+                    <div class="w-px h-3 bg-secondary/40"></div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-mono bg-secondary/20 px-1 py-0.5">EN</span>
+                        <span class="text-xs font-semibold">English</span>
+                        <span class="bg-secondary text-main px-1.5 py-0.5 text-xs font-bold">AVANZADO</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Enhanced References Section -->
+        <!-- References Section -->
         <section>
             <h2 class="text-xl font-bold uppercase border-b-2 border-main pb-1 mb-4">
-                REFERENCIAS DE CONFIANZA
+                REFERENCIAS
             </h2>
-            <div class="bg-main/5 p-4 border-l-4 border-main">
-                <p class="text-xs font-medium text-main/80 mb-3">
-                    Desarrolladores senior que han supervisado mi crecimiento profesional
-                </p>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="bg-secondary border border-main p-3">
-                        <div class="flex items-start gap-2">
-                            <div class="w-2 h-2 bg-main mt-0.5 flex-shrink-0"></div>
-                            <div class="min-w-0">
-                                <p class="font-bold text-main text-sm">Jorge Vega</p>
-                                <p class="text-xs font-medium text-main/70 mb-1">Senior Developer / Mentor</p>
-                                <a href="mailto:jorgevegab+rf@gmail.com" class="text-xs font-mono text-main hover:underline block truncate">
-                                    jorgevegab+rf@gmail.com
+            <div class="grid grid-cols-1 lg:grid-cols-2 print:grid-cols-2 gap-3">
+                <!-- Reference 1 -->
+                <div class="bg-secondary/30 border border-main p-2">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 bg-main/10 border border-main flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-bold text-sm text-main mb-1">Jorge Vega</h3>
+                            <p class="text-xs text-main/80 mb-2 leading-tight">
+                                Senior Developer / Mentor<br/>
+                                Asimov Consultores
+                            </p>
+                            <div class="flex items-center gap-2 text-xs">
+                                <svg class="w-3 h-3 text-main/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.73c.7.42 1.52.42 2.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                                <a href="mailto:jorgeivegab+rf@gmail.com" class="text-main/70 hover:text-main truncate">
+                                    jorgeivegab+rf@gmail.com
                                 </a>
                             </div>
                         </div>
                     </div>
-                    <div class="bg-secondary border border-main p-3">
-                        <div class="flex items-start gap-2">
-                            <div class="w-2 h-2 bg-main mt-0.5 flex-shrink-0"></div>
-                            <div class="min-w-0">
-                                <p class="font-bold text-main text-sm">Elias Leyton</p>
-                                <p class="text-xs font-medium text-main/70 mb-1">Senior Developer / Mentor</p>
-                                <a href="mailto:Elias.leyton+rf@gmail.com" class="text-xs font-mono text-main hover:underline block truncate">
+                </div>
+
+                <!-- Reference 2 -->
+                <div class="bg-secondary/30 border border-main p-2">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 bg-main/10 border border-main flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h3 class="font-bold text-sm text-main mb-1">Elias Leyton</h3>
+                            <p class="text-xs text-main/80 mb-2 leading-tight">
+                                Senior Developer / Mentor<br/>
+                                Asimov Consultores
+                            </p>
+                            <div class="flex items-center gap-2 text-xs">
+                                <svg class="w-3 h-3 text-main/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.73c.7.42 1.52.42 2.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                                </svg>
+                                <a href="mailto:Elias.leyton+rf@gmail.com" class="text-main/70 hover:text-main truncate">
                                     Elias.leyton+rf@gmail.com
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+            
+            <!-- Available upon request note -->
+            <div class="mt-3 text-center">
+                <p class="text-xs text-main/60 italic">
+                    Referencias adicionales disponibles bajo solicitud
+                </p>
             </div>
         </section>
 

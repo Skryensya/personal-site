@@ -18,19 +18,6 @@ const {
         <!-- Table of Contents -->
         <TableOfContents contentId={contentId} />
         
-        <!-- Audio Player Toggle -->
-        <div class="mt-8 pt-6 border-t border-main border-opacity-20" id="audio-section">
-            <div class="mb-4">
-                <h3 class="text-xs font-mono font-medium text-main opacity-50 uppercase tracking-wide">Audio</h3>
-            </div>
-            <Button 
-                id="audio-player-toggle"
-                class="w-full text-left text-xs font-mono !px-3 !py-2 !h-auto !font-normal !normal-case !tracking-normal mb-3"
-                aria-pressed="false"
-            >
-                Escuchar artículo
-            </Button>
-        </div>
         
         <!-- Reading Guide Toggle -->
         <div class="mt-6 pt-6 border-t border-main border-opacity-20">
@@ -48,87 +35,4 @@ const {
     </div>
 </aside>
 
-<script>
-    function initAudioPlayerToggle() {
-        const toggleButton = document.getElementById('audio-player-toggle');
-        const audioSection = document.getElementById('audio-section');
-        
-        if (!toggleButton || !audioSection) {
-            return;
-        }
-        
-        let isPlayerVisible = false;
-        
-        // Check if audio data is available and show/hide section accordingly
-        const checkAudioAvailability = () => {
-            const hasAudioData = typeof window !== 'undefined' && 
-                                  window.__AUDIO_DATA__ && 
-                                  window.__AUDIO_DATA__.url;
-            console.log('Checking audio availability:', hasAudioData, window.__AUDIO_DATA__);
-            
-            // For now, always show the section for debugging
-            audioSection.style.display = 'block';
-            console.log('Audio section shown (always for debugging)');
-            
-            // if (hasAudioData) {
-            //     audioSection.style.display = 'block';
-            //     console.log('Audio section shown');
-            // } else {
-            //     audioSection.style.display = 'none';
-            //     console.log('Audio section hidden');
-            //     if (isPlayerVisible) {
-            //         hidePlayer(); // Hide player if audio is no longer available
-            //     }
-            // }
-        };
-        
-        const showPlayer = () => {
-            const showEvent = new CustomEvent('showAudioPlayer');
-            document.dispatchEvent(showEvent);
-            
-            isPlayerVisible = true;
-            toggleButton.textContent = 'Ocultar reproductor';
-            toggleButton.setAttribute('aria-pressed', 'true');
-        };
-        
-        const hidePlayer = () => {
-            const hideEvent = new CustomEvent('hideAudioPlayer');
-            document.dispatchEvent(hideEvent);
-            
-            isPlayerVisible = false;
-            toggleButton.textContent = 'Escuchar artículo';
-            toggleButton.setAttribute('aria-pressed', 'false');
-        };
-        
-        toggleButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (isPlayerVisible) {
-                hidePlayer();
-            } else {
-                showPlayer();
-            }
-        });
-        
-        // Listen for external hide events (when X button is clicked)
-        document.addEventListener('audioPlayerClosed', () => {
-            isPlayerVisible = false;
-            toggleButton.textContent = 'Escuchar artículo';
-            toggleButton.setAttribute('aria-pressed', 'false');
-        });
-        
-        // Listen for audio data availability
-        document.addEventListener('audioDataAvailable', () => {
-            setTimeout(checkAudioAvailability, 100); // Small delay to ensure data is set
-        });
-        
-        // Initial check
-        checkAudioAvailability();
-    }
-    
-    // Initialize on page load
-    document.addEventListener('DOMContentLoaded', initAudioPlayerToggle);
-    
-    // Re-initialize on Astro page transitions
-    document.addEventListener('astro:page-load', initAudioPlayerToggle);
-</script>
 

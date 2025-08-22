@@ -20,7 +20,7 @@ if (!project) {
     return Astro.redirect('/404');
 }
 
-const { name, hook, seo, clientLogo, audioUrl } = project.data;
+const { name, hook, seo, clientLogo } = project.data;
 const { Content } = await project.render();
 ---
 
@@ -74,7 +74,7 @@ const { Content } = await project.render();
                                     <div class="text-xs font-mono leading-tight" aria-hidden="true">nuevos<br/>ingresantes</div>
                                 </div>
                                 <div class="bg-main text-secondary px-2 py-2 border border-main" role="listitem">
-                                    <div class="text-lg font-mono font-bold mb-1" data-target="100" aria-label="Más de 100 sitios institucionales">0<span aria-hidden="true">+</span></div>
+                                    <div class="text-lg font-mono font-bold mb-1" data-target="100" aria-label="Más de 100 sitios institucionales">0</div>
                                     <div class="text-xs font-mono leading-tight" aria-hidden="true">sitios<br/>institucionales</div>
                                 </div>
                             </div>
@@ -94,7 +94,7 @@ const { Content } = await project.render();
                                     <div class="text-xs font-mono text-left whitespace-nowrap" aria-hidden="true">nuevos ingresantes</div>
                                 </div>
                                 <div class="bg-secondary text-main px-3 py-2 border border-main min-w-[120px]" role="listitem">
-                                    <div class="text-lg font-mono font-bold text-left" data-target="100" aria-label="Más de 100 sitios institucionales">0<span aria-hidden="true">+</span></div>
+                                    <div class="text-lg font-mono font-bold text-left" data-target="100" aria-label="Más de 100 sitios institucionales">0</div>
                                     <div class="text-xs font-mono text-left whitespace-nowrap" aria-hidden="true">sitios institucionales</div>
                                 </div>
                             </div>
@@ -118,163 +118,63 @@ const { Content } = await project.render();
                 </div>
         </ContentPage>
 
-        <script define:vars={{ audioUrl, name }}>
-
-            function animateNumbers() {
-                const numberElements = document.querySelectorAll('#metrics-container-mobile [data-target], #metrics-container-desktop [data-target]');
+        <script is:inline>
+            // Calculate reading time immediately
+            function setReadingTime() {
+                const readingTimeEl = document.getElementById('reading-time');
+                if (!readingTimeEl) return;
                 
-                numberElements.forEach(element => {
-                    const target = parseInt(element.getAttribute('data-target') || '0');
-                    const duration = 3500; // 3.5 seconds for slower animation
-                    const startTime = performance.now();
+                const content = document.querySelector('.prose') || document.querySelector('article');
+                if (!content) {
+                    readingTimeEl.textContent = '5 min lectura';
+                    return;
+                }
+                
+                const text = content.textContent || '';
+                const words = text.trim().split(/\s+/).filter(function(w) { return w.length > 1; });
+                const minutes = Math.max(2, Math.ceil(words.length / 200));
+                readingTimeEl.textContent = minutes + ' min lectura';
+            }
+
+            // Animate statistics numbers
+            function animateStats() {
+                const elements = document.querySelectorAll('[data-target]');
+                elements.forEach(function(el) {
+                    const target = parseInt(el.getAttribute('data-target'));
+                    let current = 0;
+                    const increment = target / 50;
                     
-                    function updateNumber(currentTime: number) {
-                        const elapsed = currentTime - startTime;
-                        const progress = Math.min(elapsed / duration, 1);
-                        
-                        // More dramatic easing - slower as it approaches target
-                        const easeOutQuart = 1 - Math.pow(1 - progress, 4);
-                        
-                        // Add deceleration curve for the final approach
-                        const finalProgress = progress < 0.8 ? easeOutQuart : 
-                            easeOutQuart + (1 - easeOutQuart) * Math.pow((progress - 0.8) / 0.2, 3);
-                        
-                        const currentValue = Math.floor(target * finalProgress);
-                        
-                        // Format number with commas for thousands
-                        element.textContent = currentValue.toLocaleString();
-                        
-                        if (progress < 1) {
-                            requestAnimationFrame(updateNumber);
+                    const timer = setInterval(function() {
+                        current += increment;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
                         }
-                    }
-                    
-                    requestAnimationFrame(updateNumber);
+                        
+                        let display = Math.floor(current).toLocaleString();
+                        if (target === 100) display += '+';
+                        el.textContent = display;
+                    }, 60);
                 });
             }
 
-            function calculateReadingTime() {
-                const readingTimeElement = document.getElementById('reading-time');
-                if (!readingTimeElement) return;
-                
-                // Get only the prose content (exclude header, sidebar, etc.)
-                const proseElement = document.querySelector('.prose');
-                if (!proseElement) return;
-                
-                // Clone the element to manipulate without affecting the original
-                const contentClone = proseElement.cloneNode(true) as Element;
-                
-                // Remove code blocks (they read slower)
-                const codeBlocks = contentClone.querySelectorAll('pre, code');
-                codeBlocks.forEach((block: Element) => block.remove());
-                
-                // Remove headings from word count (they're scanned, not read)
-                const headings = contentClone.querySelectorAll('h1, h2, h3, h4, h5, h6');
-                headings.forEach((heading: Element) => heading.remove());
-                
-                // Extract clean text content
-                const textContent = contentClone.textContent || '';
-                
-                // More sophisticated word counting
-                const words = textContent
-                    .trim()
-                    .replace(/\s+/g, ' ') // Normalize whitespace
-                    .split(' ')
-                    .filter((word: string) => 
-                        word.length > 0 && 
-                        !/^[^\w]*$/.test(word) && // Filter out punctuation-only "words"
-                        word.length > 1 // Filter out single characters
-                    );
-                
-                const wordCount = words.length;
-                
-                // Add time for code blocks (slower reading)
-                const codeWordCount = Array.from(codeBlocks).reduce((count: number, block: Element) => {
-                    const codeText = block.textContent || '';
-                    const codeWords = codeText.trim().split(/\s+/).filter((word: string) => word.length > 0);
-                    return count + codeWords.length;
-                }, 0);
-                
-                // Add time for headings (quick scanning)
-                const headingWordCount = Array.from(headings).reduce((count: number, heading: Element) => {
-                    const headingText = heading.textContent || '';
-                    const headingWords = headingText.trim().split(/\s+/).filter((word: string) => word.length > 0);
-                    return count + headingWords.length;
-                }, 0);
-                
-                // More conservative reading speeds (slower, more realistic for all users)
-                const regularWordsPerMinute = 180; // Regular text (more conservative)
-                const codeWordsPerMinute = 60;     // Code (much slower, needs analysis)
-                const headingWordsPerMinute = 300; // Headings (moderate scanning speed)
-                
-                const regularTime = wordCount / regularWordsPerMinute;
-                const codeTime = codeWordCount / codeWordsPerMinute;
-                const headingTime = headingWordCount / headingWordsPerMinute;
-                
-                const totalMinutes = Math.ceil(regularTime + codeTime + headingTime);
-                
-                // Minimum 2 minutes for any substantial content
-                const readingTimeMinutes = Math.max(2, totalMinutes);
-                
-                // Format the reading time
-                const readingTimeText = readingTimeMinutes === 1 
-                    ? '1 min lectura' 
-                    : `${readingTimeMinutes} min lectura`;
-                
-                readingTimeElement.textContent = readingTimeText;
+            // Initialize everything
+            function init() {
+                setReadingTime();
+                setTimeout(animateStats, 500);
             }
 
-
-
-            function initPage() {
-                console.log('ProjectPage: initPage called');
-                
-                // Calculate reading time
-                calculateReadingTime();
-                
-                // Animate metrics numbers
-                setTimeout(animateNumbers, 500); // Start animation after page loads
-                
-                // Set audio information for the player if available
-                if (audioUrl && typeof window !== 'undefined') {
-                    console.log('Setting audio data for player:', { audioUrl, name });
-                    
-                    // Store audio data globally for the player to access
-                    window.__AUDIO_DATA__ = {
-                        url: audioUrl,
-                        title: name
-                    };
-                    
-                    // Dispatch event to notify player
-                    const audioDataEvent = new CustomEvent('audioDataAvailable', {
-                        detail: { url: audioUrl, title: name }
-                    });
-                    document.dispatchEvent(audioDataEvent);
-                } else if (typeof window !== 'undefined') {
-                    // Clear audio data if no audio URL is available
-                    delete window.__AUDIO_DATA__;
-                }
-                
-                // Reading guide toggle is handled by the ReadingGuide component
-                // Table of contents is handled by the TableOfContents component
+            // Run when DOM is ready
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
             }
 
-            // Run on page load
-            document.addEventListener('DOMContentLoaded', initPage);
-            
-            // Run on Astro page transitions
-            document.addEventListener('astro:page-load', initPage);
+            // Also run on Astro page transitions
+            document.addEventListener('astro:page-load', init);
         </script>
     </article>
-    {
-        // (prevProject || nextProject) && (
-        //     <div class="my-16 sm:my-24 ">
-        //         <h2 class="mb-12 text-xl font-serif italic sm:mb-16 sm:text-2xl">Sigue leyendo</h2>
-        //         {nextProject && <ProjectPreview project={nextProject} class="mb-10 sm:mb-12" headingLevel="h3" />}
-        //         {prevProject && <ProjectPreview project={prevProject} class="mb-10 sm:mb-12" headingLevel="h3" />}
-        //     </div>
-        // )
-    }
 </Layout>
 
 <!-- Preload client logo -->
