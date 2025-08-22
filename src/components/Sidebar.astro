@@ -19,7 +19,7 @@ const {
         <TableOfContents contentId={contentId} />
         
         <!-- Audio Player Toggle -->
-        <div class="mt-8 pt-6 border-t border-main border-opacity-20" id="audio-section" style="display: block;">
+        <div class="mt-8 pt-6 border-t border-main border-opacity-20" id="audio-section">
             <div class="mb-4">
                 <h3 class="text-xs font-mono font-medium text-main opacity-50 uppercase tracking-wide">Audio</h3>
             </div>
@@ -28,7 +28,7 @@ const {
                 class="w-full text-left text-xs font-mono !px-3 !py-2 !h-auto !font-normal !normal-case !tracking-normal mb-3"
                 aria-pressed="false"
             >
-                Escuchar
+                Escuchar artículo
             </Button>
         </div>
         
@@ -50,62 +50,58 @@ const {
 
 <script>
     function initAudioPlayerToggle() {
-        console.log('Initializing audio player toggle...');
         const toggleButton = document.getElementById('audio-player-toggle');
-        const audioPlayer = document.getElementById('persistent-audio-player');
+        const audioSection = document.getElementById('audio-section');
         
-        console.log('Toggle button found:', !!toggleButton);
-        console.log('Audio player found:', !!audioPlayer);
-        
-        if (!toggleButton) {
-            console.error('Toggle button not found!');
+        if (!toggleButton || !audioSection) {
             return;
         }
         
         let isPlayerVisible = false;
         
-        const showPlayer = async () => {
-            console.log('Showing player...');
+        // Check if audio data is available and show/hide section accordingly
+        const checkAudioAvailability = () => {
+            const hasAudioData = typeof window !== 'undefined' && 
+                                  window.__AUDIO_DATA__ && 
+                                  window.__AUDIO_DATA__.url;
+            console.log('Checking audio availability:', hasAudioData, window.__AUDIO_DATA__);
             
-            // First, try to set the audio in the store if it's not there
-            try {
-                const { audioStore } = await import('../stores/audioStore');
-                const currentState = audioStore.getState();
-                console.log('Current store state:', currentState);
-                
-                // If no audio URL in store, set it manually
-                if (!currentState.audioUrl) {
-                    console.log('No audio URL in store, setting manually...');
-                    audioStore.setTrack('/tts/es-ecosistema-uc.wav', 'Ecosistema web UC');
-                }
-            } catch (error) {
-                console.error('Failed to update audio store:', error);
-            }
+            // For now, always show the section for debugging
+            audioSection.style.display = 'block';
+            console.log('Audio section shown (always for debugging)');
             
-            // Send custom event to show player
+            // if (hasAudioData) {
+            //     audioSection.style.display = 'block';
+            //     console.log('Audio section shown');
+            // } else {
+            //     audioSection.style.display = 'none';
+            //     console.log('Audio section hidden');
+            //     if (isPlayerVisible) {
+            //         hidePlayer(); // Hide player if audio is no longer available
+            //     }
+            // }
+        };
+        
+        const showPlayer = () => {
             const showEvent = new CustomEvent('showAudioPlayer');
-            window.dispatchEvent(showEvent);
+            document.dispatchEvent(showEvent);
             
             isPlayerVisible = true;
-            toggleButton.textContent = 'Ocultar';
+            toggleButton.textContent = 'Ocultar reproductor';
             toggleButton.setAttribute('aria-pressed', 'true');
         };
         
         const hidePlayer = () => {
-            console.log('Hiding player...');
-            
-            // Send custom event to hide player
             const hideEvent = new CustomEvent('hideAudioPlayer');
-            window.dispatchEvent(hideEvent);
+            document.dispatchEvent(hideEvent);
             
             isPlayerVisible = false;
-            toggleButton.textContent = 'Escuchar';
+            toggleButton.textContent = 'Escuchar artículo';
             toggleButton.setAttribute('aria-pressed', 'false');
         };
         
         toggleButton.addEventListener('click', (e) => {
             e.preventDefault();
-            console.log('Toggle button clicked, player visible:', isPlayerVisible);
             if (isPlayerVisible) {
                 hidePlayer();
             } else {
@@ -113,7 +109,20 @@ const {
             }
         });
         
-        console.log('Audio player toggle initialized successfully');
+        // Listen for external hide events (when X button is clicked)
+        document.addEventListener('audioPlayerClosed', () => {
+            isPlayerVisible = false;
+            toggleButton.textContent = 'Escuchar artículo';
+            toggleButton.setAttribute('aria-pressed', 'false');
+        });
+        
+        // Listen for audio data availability
+        document.addEventListener('audioDataAvailable', () => {
+            setTimeout(checkAudioAvailability, 100); // Small delay to ensure data is set
+        });
+        
+        // Initial check
+        checkAudioAvailability();
     }
     
     // Initialize on page load
@@ -122,3 +131,4 @@ const {
     // Re-initialize on Astro page transitions
     document.addEventListener('astro:page-load', initAudioPlayerToggle);
 </script>
+

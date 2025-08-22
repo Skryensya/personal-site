@@ -235,19 +235,24 @@ const { Content } = await project.render();
                 // Animate metrics numbers
                 setTimeout(animateNumbers, 500); // Start animation after page loads
                 
-                // Initialize audio player if audio URL is available
-                console.log('ProjectPage audio setup:', { audioUrl, name });
+                // Set audio information for the player if available
                 if (audioUrl && typeof window !== 'undefined') {
-                    console.log('ProjectPage: Loading audio store...');
-                    // Dynamically import audio store to avoid SSR issues
-                    import('../stores/audioStore').then(({ audioStore }) => {
-                        console.log('Setting audio track:', audioUrl, name);
-                        audioStore.setTrack(audioUrl, name);
-                    }).catch((error) => {
-                        console.error('Failed to load audio store:', error);
+                    console.log('Setting audio data for player:', { audioUrl, name });
+                    
+                    // Store audio data globally for the player to access
+                    window.__AUDIO_DATA__ = {
+                        url: audioUrl,
+                        title: name
+                    };
+                    
+                    // Dispatch event to notify player
+                    const audioDataEvent = new CustomEvent('audioDataAvailable', {
+                        detail: { url: audioUrl, title: name }
                     });
-                } else {
-                    console.log('No audio URL found or not in browser', { audioUrl, name, window: typeof window });
+                    document.dispatchEvent(audioDataEvent);
+                } else if (typeof window !== 'undefined') {
+                    // Clear audio data if no audio URL is available
+                    delete window.__AUDIO_DATA__;
                 }
                 
                 // Reading guide toggle is handled by the ReadingGuide component

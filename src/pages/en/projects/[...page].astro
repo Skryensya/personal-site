@@ -6,6 +6,7 @@ import siteConfig from '../../../data/site-config';
 import { sortItemsByDateDesc } from '../../../utils/data-utils';
 import { getSlugFromId } from '@/utils/content-utils';
 import { useTranslations } from '@/i18n/utils';
+import ProjectsWithSearch from '../../../components/ProjectsWithSearch';
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
     const allProjects = await getCollection('projects');
@@ -15,24 +16,25 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
         .filter(project => project.id.startsWith(`${lang}/`))
         .sort(sortItemsByDateDesc);
     
-    const paginatedPaths = paginate(projectsInLang, { 
-        pageSize: siteConfig.projectsPerPage || 10,
-        props: { language: lang }
-    });
-    
-    return paginatedPaths;
+    // For search functionality, we'll return all projects on the first page
+    // and handle pagination through the search component
+    return [{
+        params: { page: undefined },
+        props: { 
+            projects: projectsInLang,
+            language: lang 
+        }
+    }];
 }
 
 type Props = { 
-    page: Page<CollectionEntry<'projects'>>; 
+    projects: CollectionEntry<'projects'>[]; 
     language: string;
 };
 
-const { page, language } = Astro.props;
+const { projects, language } = Astro.props;
 const currentLocale = 'en';
 const t = useTranslations(currentLocale);
-
-const portfolio = page.data;
 ---
 
 <Layout
@@ -43,64 +45,18 @@ const portfolio = page.data;
     headerSubtitle={t('nav.projects')}
     lang={currentLocale}
 >
-    <h1 class="mb-12 text-2xl leading-tight font-mono sm:mb-16 sm:text-4xl">{t('nav.projects')}</h1>
-    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {portfolio.map((project) => (
-            <article class="border border-main bg-secondary p-4 hover:bg-main hover:text-secondary group">
-                <div class="mb-4">
-                    <h2 class="text-xl font-mono font-bold mb-2 group-hover:text-secondary">
-                        <a href={`/en/projects/${getSlugFromId(project.id)}`} class="no-underline">
-                            {project.data.name}
-                        </a>
-                    </h2>
-                    {project.data.hook && (
-                        <p class="text-sm leading-relaxed opacity-80 group-hover:text-secondary">
-                            {project.data.hook}
-                        </p>
-                    )}
-                </div>
-                {project.data.tags && project.data.tags.length > 0 && (
-                    <div class="flex flex-wrap gap-1 mb-3">
-                        {project.data.tags.slice(0, 4).map((tag) => (
-                            <span class="text-xs px-2 py-1 border border-main font-mono bg-main text-secondary group-hover:bg-secondary group-hover:text-main group-hover:border-secondary">
-                                {tag}
-                            </span>
-                        ))}
-                        {project.data.tags.length > 4 && (
-                            <span class="text-xs px-2 py-1 border border-main font-mono opacity-70 group-hover:text-secondary">
-                                +{project.data.tags.length - 4}
-                            </span>
-                        )}
-                    </div>
-                )}
-                <div class="text-xs font-mono opacity-70 group-hover:text-secondary">
-                    {new Date(project.data.publishDate).toLocaleDateString('en-US')}
-                </div>
-            </article>
-        ))}
+    <div class="space-y-8">
+        <div class="flex items-center justify-between">
+            <h1 class="text-2xl leading-tight font-mono sm:text-4xl">{t('nav.projects')}</h1>
+            <div class="text-sm font-mono opacity-60">
+                {projects.length} {projects.length === 1 ? 'project' : 'projects'}
+            </div>
+        </div>
+        
+        <ProjectsWithSearch 
+            initialProjects={projects}
+            language={language}
+            client:load
+        />
     </div>
-    
-    {page.url.prev || page.url.next ? (
-        <nav class="flex justify-between items-center my-8 sm:my-12">
-            {page.url.prev ? (
-                <a href={page.url.prev} class="px-4 py-2 border border-main bg-secondary hover:bg-main hover:text-secondary font-mono text-sm">
-                    ← {t('pagination.previous') || 'Previous'}
-                </a>
-            ) : (
-                <div></div>
-            )}
-            
-            <span class="font-mono text-sm">
-                {t('pagination.page') || 'Page'} {page.currentPage} {t('pagination.of') || 'of'} {page.lastPage}
-            </span>
-            
-            {page.url.next ? (
-                <a href={page.url.next} class="px-4 py-2 border border-main bg-secondary hover:bg-main hover:text-secondary font-mono text-sm">
-                    {t('pagination.next') || 'Next'} →
-                </a>
-            ) : (
-                <div></div>
-            )}
-        </nav>
-    ) : null}
 </Layout>

@@ -34,6 +34,19 @@
         border-color: var(--color-main);
     }
 
+    /* Screen reader only class */
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
     body {
         font-family: 'Space Grotesk', sans-serif;
         font-weight: 400;
@@ -215,12 +228,10 @@
     background-repeat: no-repeat;
 }
 .diagonal-stripe {
-    width: 100%;
-    background-image: repeating-linear-gradient(315deg, var(--color-main) 0 1px, var(--color-secondary) 1px 2px, transparent 2px 50%);
-    background-size: 10px 10px;
+    background-image: repeating-linear-gradient(315deg, var(--color-main) 0 1px, var(--color-secondary) 1px 2px, transparent 0px 50%);
+    background-size: 7px 7px;
     background-attachment: local;
     background-repeat: repeat;
-    /* border: 1px solid var(--color-main); */
 }
 
 /* Prose content styling for project pages */

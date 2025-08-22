@@ -53,7 +53,7 @@ const buttonClasses = cn(
 );
 
 const shadowClasses = cn(
-  'absolute top-0 left-0 border-2 whitespace-nowrap pointer-events-none font-bold uppercase tracking-wide flex items-center justify-center',
+  'absolute top-0 left-0 border-2 whitespace-nowrap pointer-events-none font-bold uppercase tracking-wide flex items-center justify-center diagonal-stripe',
   'bg-secondary bg-opacity-60 z-10',
   {
     // Size variants for shadow
@@ -73,8 +73,7 @@ const shadowClasses = cn(
       <div class="absolute top-0 left-0 z-10">
         <div
           class={shadowClasses}
-          style="border-color: color-mix(in srgb, var(--color-main) 60%, transparent); background-image: repeating-linear-gradient(315deg, color-mix(in srgb, var(--color-main) 60%, transparent) 0, color-mix(in srgb, var(--color-main) 60%, transparent) 1px, transparent 0, transparent 50%); background-size: 8px 8px;"
-          aria-hidden="true"
+          
         >
           <span class="invisible">
             <slot />
@@ -105,7 +104,6 @@ const shadowClasses = cn(
   {elevated && variant !== 'outline' && (
     <div
       class={shadowClasses}
-      style="border-color: color-mix(in srgb, var(--color-main) 60%, transparent); background-image: repeating-linear-gradient(315deg, color-mix(in srgb, var(--color-main) 60%, transparent) 0, color-mix(in srgb, var(--color-main) 60%, transparent) 1px, transparent 0, transparent 50%); background-size: 8px 8px;"
       aria-hidden="true"
     >
       <span class="invisible">
