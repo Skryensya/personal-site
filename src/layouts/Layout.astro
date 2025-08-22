@@ -5,7 +5,7 @@ import Navbar from '../components/Navbar.astro';
 import Footer from "../components/Footer.astro"
 import GameOfLifeBackground from '../components/GameOfLifeBackground.astro';
 import NorwegianDisclaimer from '../components/NorwegianDisclaimer.astro';
-import PersistentAudioPlayer from '../components/PersistentAudioPlayer';
+import AudioPlayer from '../components/AudioPlayer';
 import { type Language } from '../i18n/ui';
 import { themes } from '../data/themes.js';
 
@@ -190,7 +190,7 @@ declare global {
             }
         </style>
     </head>
-    <body class="bg-secondary text-main (--max-w-size:1280px) relative">
+    <body class="bg-secondary text-main (--max-w-size:1280px) relative" id="app-body">
         <GameOfLifeBackground is404Page={showGameOfLife} />
         <Navbar />
         <NorwegianDisclaimer lang={lang} />
@@ -201,7 +201,7 @@ declare global {
         </div> 
         <Footer />
         
-        <!-- Persistent Audio Player -->
-        <PersistentAudioPlayer client:load />
+        <!-- Audio Player -->
+        <AudioPlayer client:load />
     </body>
 </html>
