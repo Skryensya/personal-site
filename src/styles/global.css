@@ -1,5 +1,6 @@
 @import './tailwind.config.css';
 @import './themes.css';
+@import './print.css';
 
 @layer base {
     :root {
@@ -289,24 +290,5 @@
     & img {
         margin-top: 2rem !important;
         margin-bottom: 2rem !important;
-    }
-}
-
-/* Global print styles - hide site navigation header and footer on all pages */
-@media print {
-    header:not(.cv-header),
-    footer,
-    nav {
-        display: none !important;
-    }
-
-    body {
-        margin: 0 !important;
-        padding: 0 !important;
-    }
-
-    /* Hide any no-print elements */
-    .no-print {
-        display: none !important;
     }
 }

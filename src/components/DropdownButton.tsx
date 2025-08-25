@@ -28,6 +28,8 @@ interface DropdownButtonProps {
     disabled?: boolean;
     // Índice del elemento inicial seleccionado (opcional)
     initialSelectedIndex?: number;
+    // ARIA label for accessibility
+    ariaLabel?: string;
 }
 
 export default function DropdownButton({
@@ -37,7 +39,8 @@ export default function DropdownButton({
     dropdownClassName = '',
     onMainClick,
     disabled = false,
-    initialSelectedIndex = 0
+    initialSelectedIndex = 0,
+    ariaLabel
 }: DropdownButtonProps) {
     const [isOpen, setIsOpen] = useState(false);
     const [isMounted, setIsMounted] = useState(false);
@@ -300,6 +303,7 @@ export default function DropdownButton({
                         outlineWidth: '1px',
                         outlineOffset: '1px'
                     }}
+                    aria-label={ariaLabel}
                 >
                     {children}
                 </button>

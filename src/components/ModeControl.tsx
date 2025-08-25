@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import DropdownButton, { DropdownContent } from './DropdownButton';
 import { applyTheme, themes } from '../data/themes.js';
-import { useClientTranslations } from '../i18n/utils';
+import { getClientTranslations } from '../i18n/utils';
 
 type Mode = 'light' | 'dark' | 'system';
 
 export default function ModeControl() {
-    const t = useClientTranslations();
+    const t = getClientTranslations();
     
     const [currentMode, setCurrentMode] = useState<Mode>(() => {
         if (typeof window !== 'undefined') {
@@ -148,6 +148,7 @@ export default function ModeControl() {
             onMainClick={toggleMode}
             disabled={false}
             initialSelectedIndex={selectedIndex}
+            ariaLabel={`${t('mode.current' as any)} ${getModeName(currentMode)}. ${t('mode.toggle' as any)}`}
             dropdownContent={
                 <DropdownContent>
                     {(['light', 'dark', 'system'] as Mode[]).map((mode) => (

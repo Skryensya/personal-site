@@ -95,6 +95,8 @@ export const ui = {
         'mode.light': 'Claro',
         'mode.dark': 'Oscuro',
         'mode.system': 'Sistema',
+        'mode.current': 'Modo actual:',
+        'mode.toggle': 'Hacer clic para alternar',
         'ui.print': 'IMPRIMIR',
         'ui.backToHome': 'VOLVER AL INICIO',
         
@@ -235,6 +237,8 @@ export const ui = {
         'mode.light': 'Light',
         'mode.dark': 'Dark',
         'mode.system': 'System',
+        'mode.current': 'Current mode:',
+        'mode.toggle': 'Click to toggle',
         'ui.print': 'PRINT',
         'ui.backToHome': 'BACK TO HOME',
         
@@ -375,6 +379,8 @@ export const ui = {
         'mode.light': 'Lys',
         'mode.dark': 'Mørk',
         'mode.system': 'System',
+        'mode.current': 'Nåværende modus:',
+        'mode.toggle': 'Klikk for å veksle',
         'ui.print': 'SKRIV UT',
         'ui.backToHome': 'TILBAKE TIL HJEMMESIDE',
         
