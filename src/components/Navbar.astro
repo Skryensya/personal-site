@@ -37,9 +37,9 @@ const themeColors = themes.reduce((acc, theme) => {
 }, {} as Record<string, { colorful: string; contrasty: string }>);
 
 const navItems = [
-  { label: 'Allison Peña', href: getHomeUrl(currentLocale), hotkey: null },
-  { label: t('nav.projects'), href: getLocalizedUrl(currentLocale, 'projects'), hotkey: 'p' },
-  { label: t('nav.cv'), href: getLocalizedUrl(currentLocale, 'resume'), hotkey: 'c' },
+  { label: 'Allison Peña', href: getHomeUrl(currentLocale) },
+  { label: t('nav.projects'), href: getLocalizedUrl(currentLocale, 'projects') },
+  { label: t('nav.cv'), href: getLocalizedUrl(currentLocale, 'resume') },
 ];
 
 ---
@@ -66,10 +66,8 @@ const navItems = [
               size="sm"
               filled={isCurrentPage}
               data-nav-link
-              data-hotkey={item.hotkey}
-              aria-label={item.hotkey ? `${item.label} (Press ${item.hotkey.toUpperCase()})` : item.label}
+              aria-label={item.label}
             >
-              {item.hotkey && <span class="font-bold font-mono hidden md:inline">[{item.hotkey.toUpperCase()}]</span>}
               <span class="font-semibold">{item.label}</span>
             </Button>
           );
@@ -922,33 +920,6 @@ const navItems = [
       });
     });
 
-    // Keyboard navigation for main nav only
-    function handleKeydown(e) {
-      // Only trigger if not typing in an input
-      const target = e.target;
-      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') return;
-      
-      const key = e.key.toLowerCase();
-      const navLink = document.querySelector(`[data-hotkey="${key}"]`);
-      
-      if (navLink && navLink.dataset.hotkey && !e.ctrlKey && !e.metaKey && !e.altKey) {
-        e.preventDefault();
-        
-        // Visual feedback
-        navLink.classList.add('!bg-main', '!text-secondary');
-        setTimeout(() => {
-          navLink.classList.remove('!bg-main', '!text-secondary');
-        }, 150);
-        
-        // Navigate
-        const href = navLink.getAttribute('href');
-        if (href) {
-          window.location.href = href;
-        }
-      }
-    }
-
-    document.addEventListener('keydown', handleKeydown);
   });
 </script>
 
@@ -963,12 +934,4 @@ const navItems = [
     position: relative !important;
   }
 
-  /* Hide hotkeys on mobile devices */
-  @media (max-width: 768px) {
-    /* Hide navigation hotkeys */
-    [data-nav-link] .text-xs.font-bold.font-mono {
-      display: none;
-    }
-    
-  }
 </style>

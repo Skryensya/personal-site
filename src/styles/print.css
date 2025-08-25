@@ -1,0 +1,252 @@
+/* 
+ * Dedicated Print Styles
+ * Comprehensive print styling for maximum visibility and readability
+ */
+
+@media print {
+    /* Global print setup */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Hide site navigation elements */
+    header:not(.cv-header),
+    footer,
+    nav {
+        display: none !important;
+    }
+
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background-color: transparent !important;
+        color: var(--color-contrasty) !important;
+    }
+
+    /* Hide any no-print elements */
+    .no-print {
+        display: none !important;
+    }
+    
+    /* COMPLETE BACKGROUND OVERRIDE - NO WHITE BACKGROUNDS */
+    *,
+    *::before,
+    *::after {
+        background-color: transparent !important;
+        background-image: none !important;
+        background: transparent !important;
+        color: var(--color-contrasty) !important;
+        border-color: var(--color-contrasty) !important;
+    }
+
+    /* Ensure page background is completely transparent */
+    html,
+    body,
+    .cv-container,
+    .cv-container > div,
+    .cv-container * {
+        background: transparent !important;
+        background-color: transparent !important;
+    }
+
+    /* CV Container - Force visibility */
+    .cv-container,
+    .cv-container * {
+        opacity: 1 !important;
+        visibility: visible !important;
+        color: var(--color-contrasty) !important;
+    }
+
+    /* HEADINGS - Colorful highlights */
+    .cv-container h1,
+    .cv-container h2,
+    .cv-container h3,
+    .cv-container h4,
+    .cv-container h5,
+    .cv-container h6 {
+        color: var(--color-colorful) !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+    }
+
+    /* ENHANCED SECTIONS - Colorful backgrounds with opacity */
+    
+    /* Professional Summary - "Por qué trabajar conmigo" */
+    .cv-container .border-l-4.border-main.pl-3.bg-main\/5,
+    .cv-container .border-l-4.border-main.pl-3 {
+        background-color: transparent !important;
+        border-left-color: var(--color-colorful) !important;
+        color: var(--color-contrasty) !important;
+    }
+
+    /* Impact boxes and highlighted content */
+    .cv-container .bg-main\/10,
+    .cv-container .bg-main\/5,
+    .cv-container [class*="bg-main/"] {
+        background-color: transparent !important;
+        color: var(--color-contrasty) !important;
+    }
+
+    /* Reference cards background */
+    .cv-container .bg-main\/5.p-4.border,
+    .cv-container .bg-secondary.border.border-main {
+        background-color: transparent !important;
+    }
+
+    /* Language strip - Dark background with white text and borders */
+    .cv-container .bg-main.text-secondary.h-8,
+    .cv-container .bg-main.text-secondary {
+        background-color: #000000 !important;
+        color: white !important;
+        border-color: #000000 !important;
+    }
+    
+    /* Language strip internal elements - white text */
+    .cv-container .bg-main.text-secondary * {
+        color: white !important;
+        border-color: white !important;
+    }
+    
+    /* Language badges inside strip - white background with dark text */
+    .cv-container .bg-main.text-secondary .bg-secondary.text-main {
+        background-color: white !important;
+        color: #000000 !important;
+        border-color: white !important;
+    }
+
+    /* Date badges and accent elements */
+    .cv-container .bg-main.text-secondary.px-2,
+    .cv-container .text-xs.font-semibold.bg-main.text-secondary {
+        background-color: var(--color-colorful) !important;
+        color: white !important;
+    }
+
+    /* BORDERS - All colorful accents */
+    .cv-container .border-l-4,
+    .cv-container .border-b-2 {
+        border-color: var(--color-colorful) !important;
+    }
+
+    .cv-container .border-main,
+    .cv-container .border {
+        border-color: var(--color-contrasty) !important;
+    }
+
+    /* REFERENCE CARDS - Enhanced visibility */
+    .cv-container .shadow-\[6px_6px_0px_0px_theme\(colors\.main\)\] {
+        box-shadow: 2px 2px 0px 0px var(--color-colorful) !important;
+        background-color: transparent !important;
+        border-color: var(--color-contrasty) !important;
+    }
+
+    .cv-container .shadow-\[6px_6px_0px_0px_theme\(colors\.main\)\] *,
+    .cv-container .bg-secondary.border-2.border-main *,
+    .cv-container .bg-secondary.border.border-main * {
+        color: var(--color-contrasty) !important;
+        background-color: transparent !important;
+    }
+
+    /* INITIALS CIRCLES in references */
+    .cv-container .bg-main.text-secondary.font-black.text-sm.flex.items-center.justify-center.rounded-full {
+        background-color: var(--color-colorful) !important;
+        color: white !important;
+    }
+
+    /* ICONS AND DECORATIVE ELEMENTS */
+    .cv-container svg {
+        color: var(--color-contrasty) !important;
+        opacity: 1 !important;
+    }
+    
+    .cv-container .w-1.h-1.bg-main,
+    .cv-container .w-2.h-2.bg-main,
+    .cv-container .w-4.h-px.bg-main {
+        background-color: var(--color-colorful) !important;
+    }
+
+    /* IMAGES - Complete visibility */
+    .cv-container img,
+    .cv-container [data-themed-image],
+    .cv-container .themed-image,
+    .cv-container picture,
+    .cv-container picture * {
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: block !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Avatar container */
+    .cv-container .rounded-full.overflow-hidden,
+    .cv-container .w-24.h-24,
+    .cv-container .lg\\:w-32.lg\\:h-32,
+    .cv-container .print\\:w-20.print\\:h-20 {
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: block !important;
+    }
+
+    /* LINKS - Ensure visibility without underlines */
+    .cv-container a {
+        color: var(--color-contrasty) !important;
+        text-decoration: none !important;
+    }
+
+    /* TEXT VISIBILITY - Override any potential white text */
+    .cv-container p,
+    .cv-container span,
+    .cv-container div,
+    .cv-container li,
+    .cv-container td,
+    .cv-container th {
+        color: var(--color-contrasty) !important;
+    }
+
+    /* CONTACT INFORMATION - Consistent sizing */
+    .cv-container section:nth-child(2) .flex.flex-wrap.gap-6,
+    .cv-container section:nth-child(2) .flex.flex-wrap.gap-6 * {
+        font-size: 14px !important;
+        line-height: 1.25 !important;
+    }
+    
+    .cv-container section:nth-child(2) .text-xs {
+        font-size: 12px !important;
+    }
+    
+    .cv-container section:nth-child(2) .font-mono {
+        font-family: 'JetBrains Mono', 'IBM Plex Mono', monospace !important;
+        font-size: 14px !important;
+    }
+    
+    .cv-container section:nth-child(2) svg {
+        width: 16px !important;
+        height: 16px !important;
+    }
+    
+    .cv-container section:nth-child(2) .flex.items-center.gap-2 {
+        margin-bottom: 4px !important;
+    }
+
+    /* COMPANY BADGES */
+    .cv-container .text-xs.font-mono.bg-main.text-secondary,
+    .cv-container [class*="font-mono bg-main text-secondary"] {
+        background-color: var(--color-colorful) !important;
+        color: white !important;
+    }
+
+    /* CERTIFICATIONS AND SPECIAL CONTENT */
+    .cv-container .border-l-4.border-main.pl-4 {
+        border-left-color: var(--color-colorful) !important;
+        background-color: transparent !important;
+    }
+
+    /* OVERRIDE ANY REMAINING WHITE BACKGROUNDS */
+    .cv-container .bg-white,
+    .cv-container [style*="background-color: white"],
+    .cv-container [style*="background: white"] {
+        background-color: transparent !important;
+        background: transparent !important;
+    }
+}

@@ -1,42 +1,10 @@
 ---
 interface Props {
-    children?: any;
     class?: string;
 }
 
-const { children, class: className = '' } = Astro.props;
+const { class: className = '' } = Astro.props;
 ---
-
-<style>
-    /* Print-specific styling only */
-    @media print {
-        .cv-container {
-            -webkit-print-color-adjust: exact !important;
-            print-color-adjust: exact !important;
-            background-color: white !important;
-            color: black !important;
-        }
-        
-        .cv-container .bg-secondary {
-            background-color: white !important;
-            color: black !important;
-        }
-        
-        .cv-container .bg-main {
-            background-color: white !important;
-            color: black !important;
-        }
-        
-        .cv-container .text-main,
-        .cv-container .text-secondary {
-            color: black !important;
-        }
-        
-        .cv-container a {
-            color: black !important;
-        }
-    }
-</style>
 
 <!-- Container with border and padding (styles only from lg+) -->
 <div class={` cv-container bg-secondary text-main xl:w-fit xl:h-fit xl:pb-1 xl:p-[10mm] xl:box-border xl:border-2 xl:border-main  xl:shadow-[8px_8px_0_var(--color-main)] xl:overflow-hidden print:p-0 print:border-0 print:shadow-none ${className}`}>

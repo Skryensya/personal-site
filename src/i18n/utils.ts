@@ -112,10 +112,10 @@ export function getLanguageDisplayName(lang: Language): string {
 }
 
 /**
- * Client-side translation hook for React components
- * Usage: const t = useClientTranslations();
+ * Client-side translation function for React components
+ * Usage: const t = getClientTranslations();
  */
-export function useClientTranslations() {
+export function getClientTranslations() {
     if (typeof window === 'undefined') {
         return useTranslations(defaultLang);
     }

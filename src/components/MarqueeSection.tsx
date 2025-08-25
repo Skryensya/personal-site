@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Tag from './Tag';
 
 interface Link {
     href: string;
@@ -55,7 +56,7 @@ export default function MarqueeSection({ links }: Props) {
     const updateSelection = useCallback(() => {
         // Remove previous selections
         itemsRef.current.forEach((item) => {
-            const tagItem = item?.querySelector('.tag-item');
+            const tagItem = item?.querySelector('span');
             if (tagItem) {
                 tagItem.classList.remove('selected');
             }
@@ -66,7 +67,7 @@ export default function MarqueeSection({ links }: Props) {
         allItems?.forEach((item) => {
             const itemIndex = parseInt(item.getAttribute('data-index') || '0') % links.length;
             if (itemIndex === selectedIndex) {
-                const tagItem = item.querySelector('.tag-item');
+                const tagItem = item.querySelector('span');
                 if (tagItem) {
                     tagItem.classList.add('selected');
                 }
@@ -141,7 +142,7 @@ export default function MarqueeSection({ links }: Props) {
         }
         // Clear all selections
         itemsRef.current.forEach((item) => {
-            const tagItem = item?.querySelector('.tag-item');
+            const tagItem = item?.querySelector('span');
             if (tagItem) {
                 tagItem.classList.remove('selected');
             }
@@ -193,10 +194,10 @@ export default function MarqueeSection({ links }: Props) {
                                 data-index={index}
                                 data-href={`/tags/${link.text.toLowerCase().replace(/\s+/g, '-')}`}
                             >
-                                <span className="relative inline-block bg-secondary text-main px-4 py-1 !text-sm font-mono font-medium border-2 border-main overflow-hidden tag-item">
-                                    #{link.text}
-                                    <div className="absolute bottom-0 right-0 w-0 h-0 border-l-[10px] border-l-transparent border-b-[10px] border-b-main"></div>
-                                </span>
+                                <Tag 
+                                    text={link.text} 
+                                    withHash={true}  
+                                />
                             </li>
                         ))}
                     </ul>
@@ -205,10 +206,11 @@ export default function MarqueeSection({ links }: Props) {
                     <ul className={`flex items-center flex-shrink-0 space-x-2 pr-2 ${isKeyboardActive ? 'hidden' : ''}`} aria-hidden="true">
                         {links.map((link, index) => (
                             <li key={`second-${index}`} data-index={index + links.length} data-href={`/tags/${link.text.toLowerCase().replace(/\s+/g, '-')}`}>
-                                <span className="relative inline-block bg-secondary text-main px-4 py-1 !text-sm font-mono font-medium border-2 border-main overflow-hidden tag-item">
-                                    #{link.text}
-                                    <div className="absolute bottom-0 right-0 w-0 h-0 border-l-[10px] border-l-transparent border-b-[10px] border-b-main"></div>
-                                </span>
+                                <Tag 
+                                    text={link.text} 
+                                    withHash={true}  
+                  
+                                />
                             </li>
                         ))}
                     </ul>
@@ -221,10 +223,10 @@ export default function MarqueeSection({ links }: Props) {
                                 data-index={index + links.length * 2}
                                 data-href={`/tags/${link.text.toLowerCase().replace(/\s+/g, '-')}`}
                             >
-                                <span className="relative inline-block bg-secondary text-main px-4 py-1 !text-sm font-mono font-medium border-2 border-main overflow-hidden tag-item">
-                                    #{link.text}
-                                    <div className="absolute bottom-0 right-0 w-0 h-0 border-l-[10px] border-l-transparent border-b-[10px] border-b-main"></div>
-                                </span>
+                                <Tag 
+                                    text={link.text} 
+                                    withHash={true}  
+                                />
                             </li>
                         ))}
                     </ul>
@@ -250,18 +252,18 @@ export default function MarqueeSection({ links }: Props) {
           animation-play-state: paused;
         }
         
-        .tag-item {
+        span {
           transition: none;
         }
         
-        .tag-item.selected {
-          background-color: var(--color-main);
-          color: var(--color-secondary);
-          border: 4px solid var(--color-main);
+        span.selected {
+          background-color: var(--color-main) !important;
+          color: var(--color-secondary) !important;
+          border: 4px solid var(--color-main) !important;
           position: relative;
         }
         
-        .tag-item.selected::before {
+        span.selected::before {
           content: '\\25BA';
           position: absolute;
           left: -8px;
@@ -278,15 +280,15 @@ export default function MarqueeSection({ links }: Props) {
           border: 1px solid var(--color-main);
         }
         
-        .tag-item.selected .border-b-main {
+        span.selected .border-b-main {
           border-bottom-color: var(--color-secondary);
         }
         
-        .tag-item:not(.selected):hover {
-          background-color: color-mix(in srgb, var(--color-main) 15%, var(--color-secondary));
+        span:not(.selected):hover {
+          background-color: color-mix(in srgb, var(--color-main) 15%, var(--color-secondary)) !important;
         }
         
-        .has-keyboard-focus .tag-item:not(.selected) {
+        .has-keyboard-focus span:not(.selected) {
           opacity: 0.7;
         }
         
