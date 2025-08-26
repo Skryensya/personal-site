@@ -4,6 +4,7 @@ import { defaultLang, type Language } from '@/i18n/ui';
 import ThemedImage from '@/components/ThemedImage.astro';
 import CVTag from '@/components/CVTag.tsx';
 
+
 interface Props {
     lang?: Language;
 }
@@ -118,7 +119,7 @@ const t = useTranslations(lang);
                     <div class="space-y-1.5">
                         <div class="border-l-4 border-main pl-3">
                             <div class="flex items-center gap-1.5 mb-1">
-                                <span class="w-2 h-2 bg-main"></span>
+                                <span class="w-2 h-2 bg-main print:!bg-black"></span>
                                 <h3 class="font-bold text-SM text-main">WAI0.1x</h3>
                             </div>
                             <p class="text-SM opacity-80">Introduction to Web Accessibility</p>
@@ -134,13 +135,10 @@ const t = useTranslations(lang);
                         <!-- Reference 1 -->
                         <div class="border-l-4 border-main pl-3">
                             <div class="flex items-center gap-1.5 mb-1">
-                                <span class="w-2 h-2 bg-main"></span>
+                                <span class="w-2 h-2 bg-main print:!bg-black print:bg-black"></span>
                                 <h3 class="font-bold text-xs text-main">Jorge Vega</h3>
                             </div>
                             <p class="text-xs opacity-80 mb-1">Senior Developer</p>
-                            <div class="text-xs font-mono bg-main text-secondary px-1 py-0.5 font-bold mb-1 w-fit">
-                                ASIMOV
-                            </div>
                             <a href="mailto:jorgeivegab+rf@gmail.com" class="text-xs font-mono text-main hover:underline block break-all">
                                jorgeivegab+rf@gmail.com
                             </a>
@@ -149,18 +147,33 @@ const t = useTranslations(lang);
                         <!-- Reference 2 -->
                         <div class="border-l-4 border-main pl-3">
                             <div class="flex items-center gap-1.5 mb-1">
-                                <span class="w-2 h-2 bg-main"></span>
+                                <span class="w-2 h-2 bg-main print:!bg-black"></span>
                                 <h3 class="font-bold text-xs text-main">Elias Leyton</h3>
                             </div>
                             <p class="text-xs opacity-80 mb-1">Senior Developer</p>
-                            <div class="text-xs font-mono bg-main text-secondary px-1 py-0.5 font-bold mb-1 w-fit">
-                                ASIMOV
-                            </div>
                             <a href="mailto:Elias.leyton+rf@gmail.com" class="text-xs font-mono text-main hover:underline block break-all">
                                 elias.leyton+rf@gmail.com
                             </a>
                         </div>
                     </div>
+                </section>
+
+                <!-- QR -->
+                    <section>
+                    <h2 class="text-base font-bold uppercase border-b-2 border-main ">Sitio Web</h2>
+
+                
+                    <div class="w-full h-full overflow-hidden">
+                        <ThemedImage 
+                            src="/site-url-qr.svg" 
+                            alt="Allison Peña" 
+                            class="w-full h-full"
+                       />
+                  <div class="flex justify-center">     <a href="https://skryensya.dev" class="font-mono text-main   block text-xs break-all mt-1 hover:underline">
+                            Skryensya.dev
+                        </a></div>
+                    </div>
+                     
                 </section>
             </div>
 
@@ -199,12 +212,12 @@ const t = useTranslations(lang);
                         <h2 class="text-base font-bold uppercase border-b-2 border-main mb-2">
                             Proyectos Destacados
                         </h2>
-                        <div class="space-y-2 pl-3 ml-3 border-l">
+                        <div class="space-y-2 pl-3 ml-2 border-l">
                             <!-- Kit Digital UC -->
                             <div class="relative">
-                                <h4 class="font-bold text-sm text-main mb-0.5 relative before:content-[''] before:absolute before:left-[-18px] before:top-[4px] before:h-3 before:w-3 before:rounded-full before:bg-secondary before:border before:border-main print:before:!bg-black">
+                                <h4 class="font-bold text-sm text-main mb-0.5 relative before:content-[''] before:absolute before:left-[-18px] before:top-[4px] before:h-3 before:w-3 before:rounded-full before:bg-secondary before:border before:border-main print:before:!bg-white">
                                     Kit Digital UC</h4>
-                                <p class="text-sm mb-1">
+                                <p class="text-[15px] print:!text-sm mb-1">
                                     Librería de componentes para el ecosistema de sitios web de la Universidad Católica (100+ sitios). Desarrollo de componentes accesibles siguiendo estándares WCAG 2.1 AA.
                                 </p>
                                 <div class="flex flex-wrap gap-0.5">
@@ -219,8 +232,8 @@ const t = useTranslations(lang);
 
                             <!-- API Agenda UC -->
                             <div>
-                                <h4 class="font-bold text-sm text-main mb-0.5 relative before:content-[''] before:absolute before:left-[-18px] before:top-[4px] before:h-3 before:w-3 before:rounded-full before:bg-secondary before:border before:border-main print:before:!bg-black">API Agenda UC</h4>
-                                <p class="text-sm mb-1">
+                                <h4 class="font-bold text-sm text-main mb-0.5 relative before:content-[''] before:absolute before:left-[-18px] before:top-[4px] before:h-3 before:w-3 before:rounded-full before:bg-secondary before:border before:border-main print:before:!bg-white">API Agenda UC</h4>
+                                <p class="text-[15px] print:!text-sm mb-1">
                                     Sistema completo de gestión de eventos universitarios. Desarrollo del Frontend completo y colaboración en el diseño del modelo de datos de la API.
                                 </p>
                                 <div class="flex flex-wrap gap-0.5">
@@ -233,8 +246,8 @@ const t = useTranslations(lang);
 
                             <!-- Portal UC -->
                             <div>
-                                <h4 class="font-bold text-sm text-main mb-0.5 relative before:content-[''] before:absolute before:left-[-18px] before:top-[4px] before:h-3 before:w-3 before:rounded-full before:bg-secondary before:border before:border-main print:before:!bg-black">Portal UC</h4>
-                                <p class="text-sm mb-1">
+                                <h4 class="font-bold text-sm text-main mb-0.5 relative before:content-[''] before:absolute before:left-[-18px] before:top-[4px] before:h-3 before:w-3 before:rounded-full before:bg-secondary before:border before:border-main print:before:!bg-white">Portal UC</h4>
+                                <p class="text-[15px] print:!text-sm mb-1">
                                     Sitio web principal de la universidad. Desarrollo de funcionalidades y mantenimiento enfocado en accesibilidad, navegación y SEO.
                                 </p>
                                 <div class="flex flex-wrap gap-0.5">
@@ -246,8 +259,8 @@ const t = useTranslations(lang);
 
                             <!-- Barrancas -->
                             <div>
-                                <h4 class="font-bold text-sm text-main mb-0.5 relative before:content-[''] before:absolute before:left-[-18px] before:top-[4px] before:h-3 before:w-3 before:rounded-full before:bg-secondary before:border before:border-main print:before:!bg-black">Barrancas</h4>
-                                <p class="text-sm mb-1">
+                                <h4 class="font-bold text-sm text-main mb-0.5 relative before:content-[''] before:absolute before:left-[-18px] before:top-[4px] before:h-3 before:w-3 before:rounded-full before:bg-secondary before:border before:border-main print:before:!bg-white">Barrancas</h4>
+                                <p class="text-[15px] print:!text-sm  mb-1">
                                     Plataforma de encuestas para escuelas, diseñada para identificar y apoyar estudiantes en riesgo. Full-stack development y desarrollo continuo.
                                 </p>
                                 <div class="flex flex-wrap gap-0.5">
@@ -261,8 +274,8 @@ const t = useTranslations(lang);
 
                             <!-- Kit Digital USS -->
                             <div>
-                                <h4 class="font-bold text-sm text-main mb-0.5 relative before:content-[''] before:absolute before:left-[-18px] before:top-[4px] before:h-3 before:w-3 before:rounded-full before:bg-secondary before:border before:border-main print:before:!bg-black">Kit Digital USS (En Desarrollo)</h4>
-                                <p class="text-sm mb-1">
+                                <h4 class="font-bold text-sm text-main mb-0.5 relative before:content-[''] before:absolute before:left-[-18px] before:top-[4px] before:h-3 before:w-3 before:rounded-full before:bg-secondary before:border before:border-main print:before:!bg-white">Kit Digital USS (En Desarrollo)</h4>
+                                <p class="text-[15px] print:!text-sm mb-1">
                                     Dos librerías de componentes (Vanilla JS y React) más robustas y accesibles. Desarrollo de ambas librerías y documentación técnica.
                                 </p>
                                 <div class="flex flex-wrap gap-0.5">
