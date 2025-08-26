@@ -1,0 +1,268 @@
+---
+import { useTranslations } from '@/i18n/utils';
+import { defaultLang, type Language } from '@/i18n/ui';
+
+interface Props {
+    lang?: Language;
+}
+
+const { lang = defaultLang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<div class="max-w-4xl space-y-8">
+
+    <!-- Professional Experience Section -->
+    <section class="bg-secondary border-2 border-main p-6">
+        <div class="flex items-center gap-3 mb-6 border-b-2 border-main pb-3">
+            <div class="w-8 h-8 bg-main text-secondary flex items-center justify-center font-bold text-sm">
+                01
+            </div>
+            <h2 class="text-2xl font-bold uppercase text-main font-mono">
+                EXPERIENCIA PROFESIONAL
+            </h2>
+        </div>
+
+        <!-- Current Role -->
+        <div class="space-y-4 mb-8">
+            <div class="flex justify-between items-start">
+                <div class="flex-1">
+                    <h3 class="text-xl font-bold text-main mb-1">Asimov Consultores</h3>
+                    <p class="text-lg font-semibold text-main opacity-80">Desarrollador Full-Stack</p>
+                </div>
+                <div class="bg-main text-secondary px-3 py-2 font-mono text-sm font-bold">
+                    2022 - Presente
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <p class="text-base leading-relaxed text-main">
+                    Desarrollo soluciones digitales completas, transformando conceptos en código funcional. He sido colaborador clave en proyectos que mejoran la identidad digital y experiencia de usuario de nuestros clientes, implementando interfaces y sistemas backend efectivos en todo el ciclo de desarrollo.
+                </p>
+
+                <!-- Key Achievements -->
+                <div class="bg-main text-secondary p-4 border-2 border-main">
+                    <h4 class="font-bold text-sm uppercase tracking-wide mb-3">Logros Destacados</h4>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-start gap-2">
+                            <span class="w-2 h-2 bg-secondary mt-2 flex-shrink-0"></span>
+                            <span>Desarrollé la plataforma completa del ecosistema UC, impactando directamente a 33,000+ estudiantes activos</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="w-2 h-2 bg-secondary mt-2 flex-shrink-0"></span>
+                            <span>Implementé interfaces accesibles siguiendo estándares WCAG 2.1 AA</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="w-2 h-2 bg-secondary mt-2 flex-shrink-0"></span>
+                            <span>Optimicé rendimiento de aplicaciones reduciendo tiempo de carga en 40%</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="w-2 h-2 bg-secondary mt-2 flex-shrink-0"></span>
+                            <span>Colaboré en el diseño de arquitectura escalable para +100 sitios institucionales</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Skills Grid -->
+        <div class="border-t-2 border-main pt-6">
+            <h4 class="text-lg font-bold uppercase text-main font-mono mb-4">Stack Técnico Principal</h4>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="bg-main text-secondary p-3 text-center">
+                    <div class="font-bold text-lg">TS</div>
+                    <div class="text-xs font-mono">TypeScript</div>
+                </div>
+                <div class="bg-secondary border-2 border-main p-3 text-center">
+                    <div class="font-bold text-lg">React</div>
+                    <div class="text-xs font-mono">Next.js</div>
+                </div>
+                <div class="bg-main text-secondary p-3 text-center">
+                    <div class="font-bold text-lg">Vue</div>
+                    <div class="text-xs font-mono">Nuxt.js</div>
+                </div>
+                <div class="bg-secondary border-2 border-main p-3 text-center">
+                    <div class="font-bold text-lg">Node</div>
+                    <div class="text-xs font-mono">Backend</div>
+                </div>
+                <div class="bg-secondary border-2 border-main p-3 text-center">
+                    <div class="font-bold text-lg">SQL</div>
+                    <div class="text-xs font-mono">Database</div>
+                </div>
+                <div class="bg-main text-secondary p-3 text-center">
+                    <div class="font-bold text-lg">PHP</div>
+                    <div class="text-xs font-mono">Laravel</div>
+                </div>
+                <div class="bg-secondary border-2 border-main p-3 text-center">
+                    <div class="font-bold text-lg">CSS</div>
+                    <div class="text-xs font-mono">Tailwind</div>
+                </div>
+                <div class="bg-main text-secondary p-3 text-center">
+                    <div class="font-bold text-lg">Git</div>
+                    <div class="text-xs font-mono">DevOps</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- References Section -->
+    <section class="bg-secondary border-2 border-main p-6">
+        <div class="flex items-center gap-3 mb-6 border-b-2 border-main pb-3">
+            <div class="w-8 h-8 bg-main text-secondary flex items-center justify-center font-bold text-sm">
+                02
+            </div>
+            <h2 class="text-2xl font-bold uppercase text-main font-mono">
+                REFERENCIAS PROFESIONALES
+            </h2>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Reference 1 -->
+            <div class="bg-main text-secondary p-4 border-2 border-main relative">
+                <div class="absolute top-2 right-2 w-6 h-6 bg-secondary text-main flex items-center justify-center text-xs font-bold">
+                    01
+                </div>
+                
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 bg-secondary text-main font-black text-lg flex items-center justify-center">
+                        JV
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-black text-lg tracking-tight">Jorge Vega</h3>
+                        <p class="text-sm font-medium opacity-90">Senior Developer & Mentor</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <div class="w-1 h-1 bg-secondary"></div>
+                            <span class="text-xs opacity-80">5+ años experiencia</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-2 mb-4">
+                    <div class="text-xs font-mono bg-secondary text-main px-2 py-1 w-fit font-bold tracking-wide">
+                        ASIMOV CONSULTORES
+                    </div>
+                    <p class="text-sm leading-relaxed opacity-90">
+                        "Allison demuestra un dominio técnico excepcional y una capacidad única para transformar requerimientos complejos en soluciones elegantes y funcionales."
+                    </p>
+                </div>
+
+                <div class="border-t-2 border-secondary border-opacity-20 pt-3">
+                    <a href="mailto:jorgeivegab+rf@gmail.com" class="text-sm font-mono hover:underline inline-flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.73c.7.42 1.52.42 2.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                        jorgeivegab+rf@gmail.com
+                    </a>
+                </div>
+            </div>
+
+            <!-- Reference 2 -->
+            <div class="bg-secondary border-2 border-main p-4 relative">
+                <div class="absolute top-2 right-2 w-6 h-6 bg-main text-secondary flex items-center justify-center text-xs font-bold">
+                    02
+                </div>
+                
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-12 h-12 bg-main text-secondary font-black text-lg flex items-center justify-center">
+                        EL
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-black text-lg tracking-tight">Elias Leyton</h3>
+                        <p class="text-sm font-medium opacity-80">Senior Developer & Mentor</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <div class="w-1 h-1 bg-main"></div>
+                            <span class="text-xs opacity-60">7+ años experiencia</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-2 mb-4">
+                    <div class="text-xs font-mono bg-main text-secondary px-2 py-1 w-fit font-bold tracking-wide">
+                        ASIMOV CONSULTORES
+                    </div>
+                    <p class="text-sm leading-relaxed opacity-80">
+                        "Su enfoque meticuloso en la experiencia de usuario y su habilidad para implementar soluciones escalables lo convierten en un desarrollador invaluable para cualquier equipo."
+                    </p>
+                </div>
+
+                <div class="border-t-2 border-main border-opacity-20 pt-3">
+                    <a href="mailto:Elias.leyton+rf@gmail.com" class="text-sm font-mono text-main hover:underline inline-flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.73c.7.42 1.52.42 2.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                        elias.leyton+rf@gmail.com
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Reference Note -->
+        <div class="mt-6 bg-main text-secondary p-4 border-2 border-main">
+            <div class="flex items-center gap-2 mb-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="text-sm font-bold uppercase tracking-wide">Referencias adicionales</span>
+            </div>
+            <p class="text-sm opacity-90">
+                Referencias adicionales de clientes y colaboradores disponibles bajo solicitud. 
+                Incluye testimonios de proyectos específicos y evaluaciones de rendimiento.
+            </p>
+        </div>
+    </section>
+
+    <!-- Certifications and Education -->
+    <section class="bg-secondary border-2 border-main p-6">
+        <div class="flex items-center gap-3 mb-6 border-b-2 border-main pb-3">
+            <div class="w-8 h-8 bg-main text-secondary flex items-center justify-center font-bold text-sm">
+                03
+            </div>
+            <h2 class="text-2xl font-bold uppercase text-main font-mono">
+                CERTIFICACIONES Y FORMACIÓN
+            </h2>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Education -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-bold text-main border-b border-main pb-2">Formación Académica</h3>
+                <div class="bg-main text-secondary p-4">
+                    <h4 class="font-bold mb-1">Ingeniería en Informática</h4>
+                    <p class="text-sm opacity-90 mb-2">Universidad Católica Silva Henríquez</p>
+                    <div class="text-xs font-mono bg-secondary text-main px-2 py-1 w-fit">
+                        2019 - En curso
+                    </div>
+                </div>
+            </div>
+
+            <!-- Professional Development -->
+            <div class="space-y-4">
+                <h3 class="text-lg font-bold text-main border-b border-main pb-2">Desarrollo Profesional</h3>
+                <div class="space-y-2">
+                    <div class="border-2 border-main p-3">
+                        <h4 class="font-bold text-sm">WCAG 2.1 Accessibility</h4>
+                        <p class="text-xs opacity-70">Certificación en accesibilidad web</p>
+                    </div>
+                    <div class="border-2 border-main p-3">
+                        <h4 class="font-bold text-sm">Advanced TypeScript</h4>
+                        <p class="text-xs opacity-70">Patrones avanzados y arquitectura</p>
+                    </div>
+                    <div class="border-2 border-main p-3">
+                        <h4 class="font-bold text-sm">React Performance</h4>
+                        <p class="text-xs opacity-70">Optimización y mejores prácticas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<style>
+    @media print {
+        .max-w-4xl {
+            max-width: none !important;
+            width: 100% !important;
+        }
+    }
+</style>
