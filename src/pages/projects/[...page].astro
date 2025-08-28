@@ -6,6 +6,7 @@ import siteConfig from '../../data/site-config';
 import { sortItemsByDateDesc } from '../../utils/data-utils';
 import { getSlugFromId } from '@/utils/content-utils';
 import { useTranslations } from '@/i18n/utils';
+import FolderStack from '@/components/sections/FolderStack.astro';
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
     const allProjects = await getCollection('projects');
@@ -103,4 +104,6 @@ const portfolio = page.data;
             )}
         </nav>
     ) : null}
+    
+    <FolderStack lang={currentLocale} />
 </Layout>

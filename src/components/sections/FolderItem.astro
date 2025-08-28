@@ -1,24 +1,100 @@
 ---
-/* Static content with lorem ipsum, as requested */
+import { type CollectionEntry } from 'astro:content';
+import { type Language } from '@/i18n/ui';
+import { useTranslations } from '@/i18n/utils';
+import { getSlugFromId } from '@/utils/content-utils';
+import { getLocalizedUrl } from '@/utils/localized-routes';
+
+interface Props {
+  project?: CollectionEntry<'projects'>;
+  lang?: Language;
+}
+
+const { project, lang = 'es' } = Astro.props;
+const t = useTranslations(lang);
+
+// Generate the project URL if we have a project
+const projectUrl = project ? getLocalizedUrl(lang, 'projects', getSlugFromId(project.id)) : '#';
+const projectSlug = project ? getSlugFromId(project.id) : 'empty';
 ---
+
 <article class="relative z-0">
   <!-- Perspective on wrapper -->
   <div class="group [perspective:400px]">
     <!-- Constant tilt: origin bottom, tilt applied always -->
     <div class="[transform-origin:50%_100%] [transform:rotateX(-4deg)] transition-transform duration-200 ease-out">
       <!-- Only Y-lift on hover; no scale; no z-index changes -->
-      <div class="h-[80px] transform-gpu will-change-transform transition-transform duration-200 ease-out group-hover:-translate-y-5">
+      <div class="h-[80px] transform-gpu will-change-transform transition-transform duration-200 ease-out group-hover:-translate-y-12">
         <div class="relative">
-          <div class="absolute top-0 translate-y-[-100%] font-bold border border-b-0 w-fit py-2 px-4 bg-red-500 text-white overflow-hidden ">
-           FOLDER
+          <!-- Folder Tab -->
+          <div class="absolute top-0 translate-y-[-100%] font-bold border border-main border-b-0 w-fit py-2 px-4 bg-main text-secondary overflow-hidden font-mono text-xs uppercase" 
+               style={`view-transition-name: folder-tab-${projectSlug}`}>
+            {project ? project.data.name : 'FOLDER'}
           </div>
-          <div class="border p-4 bg-red-500 text-white overflow-hidden h-96">
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eum natus ratione sunt amet officia necessitatibus accusamus temporibus error? Dignissimos provident quaerat nam natus consequuntur a officia libero saepe aliquid sapiente!
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eum natus ratione sunt amet officia necessitatibus accusamus temporibus error? Dignissimos provident quaerat nam natus consequuntur a officia libero saepe aliquid sapiente!
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eum natus ratione sunt amet officia necessitatibus accusamus temporibus error? Dignissimos provident quaerat nam natus consequuntur a officia libero saepe aliquid sapiente!
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eum natus ratione sunt amet officia necessitatibus accusamus temporibus error? Dignissimos provident quaerat nam natus consequuntur a officia libero saepe aliquid sapiente!
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eum natus ratione sunt amet officia necessitatibus accusamus temporibus error? Dignissimos provident quaerat nam natus consequuntur a officia libero saepe aliquid sapiente!
-            Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eum natus ratione sunt amet officia necessitatibus accusamus temporibus error? Dignissimos provident quaerat nam natus consequuntur a officia libero saepe aliquid sapiente!
+          
+          <!-- Folder Body -->
+          <div class="border border-main p-4 bg-secondary text-main overflow-hidden h-96"
+               style={`view-transition-name: folder-body-${projectSlug}`}>
+            {project ? (
+              <div class="space-y-4">
+                <!-- Project Title -->
+                <div>
+                  <h3 class="text-xl font-mono font-bold mb-2">
+                    <a href={projectUrl} class="no-underline hover:underline">
+                      {project.data.name}
+                    </a>
+                  </h3>
+                  {project.data.hook && (
+                    <p class="text-sm leading-relaxed opacity-80 mb-3">
+                      {project.data.hook}
+                    </p>
+                  )}
+                </div>
+                
+                <!-- Project Description -->
+                {project.data.cvDescription && (
+                  <p class="text-sm leading-relaxed">
+                    {project.data.cvDescription}
+                  </p>
+                )}
+                
+                <!-- Project Tags -->
+                {project.data.tags && project.data.tags.length > 0 && (
+                  <div class="flex flex-wrap gap-1 mt-4">
+                    {project.data.tags.slice(0, 6).map((tag) => (
+                      <span class="text-xs px-2 py-1 border border-main font-mono bg-main text-secondary">
+                        {tag}
+                      </span>
+                    ))}
+                    {project.data.tags.length > 6 && (
+                      <span class="text-xs px-2 py-1 border border-main font-mono opacity-70">
+                        +{project.data.tags.length - 6}
+                      </span>
+                    )}
+                  </div>
+                )}
+                
+                <!-- Project Date -->
+                <div class="text-xs font-mono opacity-70 mt-4">
+                  {new Date(project.data.publishDate).toLocaleDateString(
+                    lang === 'es' ? 'es-ES' : 
+                    lang === 'no' ? 'no-NO' : 'en-US'
+                  )}
+                </div>
+              </div>
+            ) : (
+              <!-- Empty folder content -->
+              <div class="space-y-4">
+                <h3 class="text-xl font-mono font-bold opacity-50">
+                  {t('nav.projects') || 'PROJECTS'}
+                </h3>
+                <p class="text-sm leading-relaxed opacity-50">
+                  {lang === 'es' ? 'Carpeta de proyectos vacía' :
+                   lang === 'no' ? 'Tom prosjektmappe' : 
+                   'Empty project folder'}
+                </p>
+              </div>
+            )}
           </div>
         </div>
       </div>

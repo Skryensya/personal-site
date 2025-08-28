@@ -1,16 +1,36 @@
 ---
-import FolderItem from "./FolderItem.astro"
+import FolderItem from "./FolderItem.astro";
+import { getCollection } from 'astro:content';
+import { getLangFromUrl } from '@/i18n/utils';
+import { sortItemsByDateDesc } from '@/utils/data-utils';
+import { type Language } from '@/i18n/ui';
+
+interface Props {
+    lang?: Language;
+}
+
+const { lang } = Astro.props;
+const currentLocale = lang || getLangFromUrl(Astro.url);
+
+// Get projects for the current language
+const allProjects = await getCollection('projects');
+const projectsInLang = allProjects
+    .filter(project => project.id.startsWith(`${currentLocale}/`))
+    .sort(sortItemsByDateDesc)
+    .slice(0, 5); // Only show 5 folders
 ---
 
 <!-- Wrapper con perspectiva y reglas de apilado -->
 <div class="overflow-y-hidden">
-    <div class="folder-stack relative isolate flex flex-col  w-full py-20 px-4">
-  <FolderItem />
-  <FolderItem />
-  <FolderItem />
-  <FolderItem />
-  <FolderItem />
-</div>
+    <div class="folder-stack relative isolate flex flex-col w-full py-20 px-4 overflow-y-visible overflow-x-hidden">
+        {projectsInLang.map((project) => (
+            <FolderItem project={project} lang={currentLocale} />
+        ))}
+        {/* If we have fewer than 5 projects, fill with empty folders */}
+        {projectsInLang.length < 5 && Array.from({ length: 5 - projectsInLang.length }).map(() => (
+            <FolderItem lang={currentLocale} />
+        ))}
+    </div>
 </div>
 
 <style>

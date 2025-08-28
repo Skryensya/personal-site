@@ -34,10 +34,10 @@ const { Content } = await project.render();
                 <!-- Content with project header -->
                 <div class="py-8 px-2 lg:px-4 lg:py-4 flex flex-col items-center">
                     <!-- Project Title and Hook - Part of Content -->
-                    <header class="pb-8 border-b border-dotted border-main/30 w-full" style="max-width: var(--paragraph-max-width)">
+                    <header class="pb-8 border-b border-dotted border-main/30 w-full" style={`max-width: var(--paragraph-max-width); view-transition-name: folder-body-${project.slug}`}>
                         <!-- Project Name and Reading Time -->
                         <div class="flex justify-between items-center mb-8">
-                            <div class="text-base font-mono font-medium text-main opacity-60 uppercase tracking-wider" style={`view-transition-name: project-content-${project.slug}`}>
+                            <div class="text-base font-mono font-medium text-main opacity-60 uppercase tracking-wider" style={`view-transition-name: folder-tab-${project.slug}`}>
                                 {name}
                             </div>
                             <div class="text-sm font-mono font-medium text-main opacity-50 uppercase tracking-wider" id="reading-time">
