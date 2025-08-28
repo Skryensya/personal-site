@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import * as React from 'react';
 import DropdownButton, { DropdownContent } from './DropdownButton';
 import { supportedLanguages, languages, type Language } from '@/i18n/ui';
 import { getLangFromUrl } from '@/i18n/utils';
@@ -11,21 +11,21 @@ interface LanguageControlProps {
 
 export default function LanguageControl({ currentPath, initialLocale }: LanguageControlProps = {}) {
     // Initialize language immediately from URL - this is the fastest
-    const [currentLang, setCurrentLang] = useState<Language>(() => {
+    const [currentLang, setCurrentLang] = React.useState<Language>(() => {
         if (typeof window !== 'undefined') {
             return getLangFromUrl(new URL(window.location.href));
         }
         return initialLocale || 'es';
     });
     
-    const [isMounted, setIsMounted] = useState(false);
+    const [isMounted, setIsMounted] = React.useState(false);
 
     // Language utility functions
-    const getNativeLanguageName = useCallback((lang: Language): string => {
+    const getNativeLanguageName = React.useCallback((lang: Language): string => {
         return languages[lang];
     }, []);
 
-    const getLanguageNameInCurrent = useCallback((lang: Language): string => {
+    const getLanguageNameInCurrent = React.useCallback((lang: Language): string => {
         const langNames = {
             es: { es: 'Español', en: 'Inglés', no: 'Noruego' },
             en: { es: 'Spanish', en: 'English', no: 'Norwegian' },
@@ -50,7 +50,7 @@ export default function LanguageControl({ currentPath, initialLocale }: Language
     }, [currentPath]);
 
     // Mount immediately since language is read from URL
-    useEffect(() => {
+    React.useEffect(() => {
         if (typeof window !== 'undefined') {
             const lang = getLangFromUrl(new URL(window.location.href));
             setCurrentLang(lang);
@@ -79,7 +79,7 @@ export default function LanguageControl({ currentPath, initialLocale }: Language
         }
     }, []);
 
-    const handleLanguageSwitch = useCallback((lang: Language, url: string, viaKeyboard = false) => {
+    const handleLanguageSwitch = React.useCallback((lang: Language, url: string, viaKeyboard = false) => {
         console.log('🔄 LANGUAGE: handleLanguageSwitch called', { lang, url, viaKeyboard });
         if (typeof window !== 'undefined') {
             localStorage.setItem('langChoice', lang);
@@ -92,7 +92,7 @@ export default function LanguageControl({ currentPath, initialLocale }: Language
         }
     }, []);
 
-    const nextLanguage = useCallback(() => {
+    const nextLanguage = React.useCallback(() => {
         const currentIndex = supportedLanguages.findIndex(lang => lang === currentLang);
         const nextIndex = (currentIndex + 1) % supportedLanguages.length;
         const nextLang = supportedLanguages[nextIndex];
@@ -101,12 +101,12 @@ export default function LanguageControl({ currentPath, initialLocale }: Language
     }, [currentLang, alternateUrls, handleLanguageSwitch]);
 
     // Separate handler for dropdown selections via keyboard
-    const handleDropdownKeyboardSelection = useCallback((lang: Language, url: string) => {
+    const handleDropdownKeyboardSelection = React.useCallback((lang: Language, url: string) => {
         handleLanguageSwitch(lang, url, true); // Via keyboard
     }, [handleLanguageSwitch]);
 
     // Handler for dropdown selections via mouse
-    const handleDropdownMouseSelection = useCallback((lang: Language, url: string) => {
+    const handleDropdownMouseSelection = React.useCallback((lang: Language, url: string) => {
         handleLanguageSwitch(lang, url, false); // Via mouse
     }, [handleLanguageSwitch]);
 

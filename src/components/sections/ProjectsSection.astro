@@ -2,7 +2,7 @@
 import ProjectCard from '../ProjectCard.astro';
 import ProjectCarousel from '../ProjectCarousel.astro';
 import { getFeaturedProjectsByLanguage, getSlugFromId } from '@/utils/content-utils';
-import { useTranslations } from '@/i18n/utils';
+import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import { getLocalizedUrl } from '@/utils/localized-routes';
 
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const { lang = defaultLang } = Astro.props;
-const t = useTranslations(lang);
+const t = getTranslations(lang);
 
 // Get all featured projects in the current language
 const featuredProjects = (await getFeaturedProjectsByLanguage(lang))

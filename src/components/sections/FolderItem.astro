@@ -1,7 +1,7 @@
 ---
 import { type CollectionEntry } from 'astro:content';
 import { type Language } from '@/i18n/ui';
-import { useTranslations } from '@/i18n/utils';
+import { getTranslations } from '@/i18n/utils';
 import { getSlugFromId } from '@/utils/content-utils';
 import { getLocalizedUrl } from '@/utils/localized-routes';
 
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const { project, lang = 'es' } = Astro.props;
-const t = useTranslations(lang);
+const t = getTranslations(lang);
 
 // Generate the project URL if we have a project
 const projectUrl = project ? getLocalizedUrl(lang, 'projects', getSlugFromId(project.id)) : '#';

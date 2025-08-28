@@ -5,7 +5,7 @@ import Layout from '../../../layouts/Layout.astro';
 import siteConfig from '../../../data/site-config';
 import { sortItemsByDateDesc } from '../../../utils/data-utils';
 import { getSlugFromId } from '@/utils/content-utils';
-import { useTranslations } from '@/i18n/utils';
+import { getTranslations } from '@/i18n/utils';
 import ProjectsWithSearch from '../../../components/ProjectsWithSearch';
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
@@ -34,7 +34,7 @@ type Props = {
 
 const { projects, language } = Astro.props;
 const currentLocale = 'en';
-const t = useTranslations(currentLocale);
+const t = getTranslations(currentLocale);
 ---
 
 <Layout

@@ -1,5 +1,5 @@
 ---
-import { useTranslations } from '@/i18n/utils';
+import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import CVContactSidebar from './CVContactSidebar.astro';
 
@@ -17,7 +17,7 @@ const {
     containerClassName = ''
 } = Astro.props;
 
-const t = useTranslations(lang);
+const t = getTranslations(lang);
 ---
 
 <div class={`flex min-h-screen ${containerClassName}`}>

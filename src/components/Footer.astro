@@ -154,7 +154,7 @@ const currentYear = new Date().getFullYear();
                     // Animate all footer text elements at once
                     const elements = document.querySelectorAll('.scramble-text');
                     elements.forEach((element, index) => {
-                        const originalText = element.dataset.text || element.textContent;
+                        const originalText = (element as HTMLElement).dataset.text || element.textContent;
                         const delay = index * 50; // Staggered effect
                         
                         setTimeout(() => {

@@ -1,7 +1,7 @@
 ---
 import TableOfContents from './TableOfContents.astro';
 import Button from './Button.astro';
-import { useTranslations, defaultLang, type Language } from '@/i18n/utils';
+import { getTranslations, defaultLang, type Language } from '@/i18n/utils';
 
 interface Props {
     contentId?: string;
@@ -15,7 +15,7 @@ const {
     lang = defaultLang
 } = Astro.props;
 
-const t = useTranslations(lang);
+const t = getTranslations(lang);
 ---
 
 <aside class={`w-[250px] flex-shrink-0 hidden lg:block ${className}`} id="content-sidebar">

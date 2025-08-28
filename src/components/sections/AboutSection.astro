@@ -1,6 +1,6 @@
 ---
 import BigSectionContainer from '../BigSectionContainer.astro';
-import { useTranslations } from '@/i18n/utils';
+import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import Button from '../Button.astro';
 import ThemedImage from '../ThemedImage.astro';
@@ -11,7 +11,7 @@ interface Props {
 }
 
 const { className = '', lang = defaultLang } = Astro.props;
-const t = useTranslations(lang);
+const t = getTranslations(lang);
 ---
 
 <BigSectionContainer title={t('about.tldr.title')} id="about" style="view-transition-name: about-section;">

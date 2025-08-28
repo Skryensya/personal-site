@@ -71,7 +71,7 @@ export function getAlternateUrls(pathname: string) {
  * @param lang - Target language
  * @returns Translation function
  */
-export function useTranslations(lang: Language = defaultLang) {
+export function getTranslations(lang: Language = defaultLang) {
     return function t(key: UIKeys): string {
         return ui[lang]?.[key] || ui[defaultLang][key] || key;
     };
@@ -82,7 +82,7 @@ export function useTranslations(lang: Language = defaultLang) {
  * @param lang - Target language
  * @returns Function to translate paths
  */
-export function useTranslatedPath(lang: Language = defaultLang) {
+export function createTranslatedPath(lang: Language = defaultLang) {
     return function translatePath(path: string, targetLang: Language = lang): string {
         return addLocaleToUrl(path, targetLang);
     };
@@ -117,17 +117,25 @@ export function getLanguageDisplayName(lang: Language): string {
  */
 export function getClientTranslations() {
     if (typeof window === 'undefined') {
-        return useTranslations(defaultLang);
+        return getTranslations(defaultLang);
     }
 
+    // Use window.location directly instead of creating new URL to avoid potential hook conflicts
     const lang = getLangFromUrl(new URL(window.location.href));
-    return useTranslations(lang);
+    return getTranslations(lang);
 }
 
 /**
- * Client-side hook for React components to use translations
- * Usage: const t = useClientTranslations();
+ * Client-side translation function for React components (not a hook)
+ * Usage: const t = getClientTranslations();
  */
-export function useClientTranslations() {
-    return getClientTranslations();
+export function getClientTranslationsForComponents() {
+    // Get translations safely for client-side React components
+    if (typeof window === 'undefined') {
+        return getTranslations(defaultLang);
+    }
+    
+    // Get language once and cache it
+    const lang = getLangFromUrl(new URL(window.location.href));
+    return getTranslations(lang);
 }

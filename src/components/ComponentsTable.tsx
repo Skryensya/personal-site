@@ -1,7 +1,7 @@
 import * as React from 'react';
 import DataTable from './ui/DataTable';
 import { type ColumnDef } from '@tanstack/react-table';
-import { getClientTranslations } from '@/i18n/utils';
+import { getClientTranslations, getTranslations } from '@/i18n/utils';
 
 interface ComponentData {
     name: string;
@@ -14,7 +14,8 @@ interface ComponentsTableProps {
 }
 
 export default function ComponentsTable({ data }: ComponentsTableProps) {
-    const t = getClientTranslations();
+    // Get translations without hooks to avoid conflicts
+    const t = typeof window === 'undefined' ? getTranslations('es') : getClientTranslations();
 
     const columns: ColumnDef<ComponentData>[] = [
         {

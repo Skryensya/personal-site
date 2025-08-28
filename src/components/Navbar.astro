@@ -4,13 +4,13 @@ import ModeControl from './ModeControl.tsx';
 import LanguageControl from './LanguageControl.tsx';
 import Button from './Button.astro';
 import { getLangFromUrl } from '@/i18n/utils';
-import { useTranslations } from '@/i18n/utils';
+import { getTranslations } from '@/i18n/utils';
 import { themes } from '../data/themes.js';
 import { getLocalizedUrl, getHomeUrl } from '@/utils/localized-routes';
 
 const currentLocale = getLangFromUrl(Astro.url);
 const currentPath = Astro.url.pathname;
-const t = useTranslations(currentLocale);
+const t = getTranslations(currentLocale);
 
 // Check if current page is CV to make header non-sticky
 const isCVPage = currentPath.includes('/cv');

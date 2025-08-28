@@ -1,5 +1,5 @@
 ---
-import { useTranslations } from '@/i18n/utils';
+import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 
 interface Props {
@@ -7,7 +7,7 @@ interface Props {
 }
 
 const { lang = defaultLang } = Astro.props;
-const t = useTranslations(lang);
+const t = getTranslations(lang);
 ---
 
 <div class="max-w-4xl space-y-8">

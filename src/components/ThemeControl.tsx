@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import * as React from 'react';
 import DropdownButton, { DropdownContent } from './DropdownButton';
 import { applyTheme, themes } from '../data/themes.js';
 
@@ -15,7 +15,7 @@ interface Theme {
 
 export default function ThemeControl() {
     // Initialize theme from global state or localStorage immediately
-    const [currentTheme, setCurrentTheme] = useState<Theme>(() => {
+    const [currentTheme, setCurrentTheme] = React.useState<Theme>(() => {
         if (typeof window !== 'undefined') {
             // Check global state first (set by navbar script)
             const globalThemeId = (window as any).__THEME_ID__;
@@ -48,10 +48,10 @@ export default function ThemeControl() {
         return themes[0];
     });
     
-    const [isMounted, setIsMounted] = useState(false);
+    const [isMounted, setIsMounted] = React.useState(false);
 
     // Apply theme to document
-    const applyThemeToDocument = useCallback((theme: Theme) => {
+    const applyThemeToDocument = React.useCallback((theme: Theme) => {
         if (typeof window === 'undefined') return;
         
         // Get current mode from localStorage or global state
@@ -74,7 +74,7 @@ export default function ThemeControl() {
     }, []);
 
     // Mount immediately and apply theme
-    useEffect(() => {
+    React.useEffect(() => {
         if (typeof window !== 'undefined') {
             applyThemeToDocument(currentTheme);
             setIsMounted(true);
@@ -90,13 +90,13 @@ export default function ThemeControl() {
     }, []);
 
     // Handle theme selection
-    const handleThemeSelect = useCallback((theme: Theme) => {
+    const handleThemeSelect = React.useCallback((theme: Theme) => {
         setCurrentTheme(theme);
         applyThemeToDocument(theme);
     }, [applyThemeToDocument]);
     
     // Previous theme handler
-    const prevTheme = useCallback(() => {
+    const prevTheme = React.useCallback(() => {
         if (!currentTheme) return;
         const currentIndex = themes.findIndex((t) => t.id === currentTheme.id);
         const prevIndex = currentIndex === 0 ? themes.length - 1 : currentIndex - 1;
@@ -105,7 +105,7 @@ export default function ThemeControl() {
     }, [currentTheme, handleThemeSelect]);
 
     // Next theme handler
-    const nextTheme = useCallback(() => {
+    const nextTheme = React.useCallback(() => {
         if (!currentTheme) return;
         const currentIndex = themes.findIndex((t) => t.id === currentTheme.id);
         const nextIndex = (currentIndex + 1) % themes.length;
@@ -114,7 +114,7 @@ export default function ThemeControl() {
     }, [currentTheme, handleThemeSelect]);
 
     // Keyboard shortcuts for theme navigation
-    useEffect(() => {
+    React.useEffect(() => {
         if (!isMounted || typeof window === 'undefined') return;
 
         const handleKeyDown = (e: KeyboardEvent) => {
