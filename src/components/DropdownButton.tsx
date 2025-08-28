@@ -49,7 +49,7 @@ export default function DropdownButton({
     const buttonRef = React.useRef<HTMLButtonElement>(null);
     const listRef = React.useRef<Array<HTMLElement | null>>([]);
 
-    React.React.useEffect(() => {
+    React.useEffect(() => {
         setIsMounted(true);
     }, []);
 
