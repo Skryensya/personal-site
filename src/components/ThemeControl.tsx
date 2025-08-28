@@ -137,12 +137,12 @@ export default function ThemeControl() {
         return () => document.removeEventListener('keydown', handleKeyDown);
     }, [prevTheme, nextTheme, isMounted]);
 
-    // Don't render until mounted
-    if (!isMounted) return null;
-    
     // Find the index of the current theme
     const currentThemeIndex = themes.findIndex(theme => theme.id === currentTheme?.id);
     const selectedIndex = currentThemeIndex >= 0 ? currentThemeIndex : 0;
+    
+    // Don't render until mounted
+    if (!isMounted) return null;
     
     return (
         <DropdownButton

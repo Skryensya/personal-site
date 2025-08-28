@@ -135,13 +135,13 @@ export default function ModeControl() {
         handleModeChange(nextMode);
     }, [currentMode, isMounted, handleModeChange]);
 
-    // Don't render until mounted
-    if (!isMounted) return null;
-    
     // Find the index of the current mode
     const modes: Mode[] = ['light', 'dark', 'system'];
     const currentModeIndex = modes.findIndex(mode => mode === currentMode);
     const selectedIndex = currentModeIndex >= 0 ? currentModeIndex : 0;
+    
+    // Don't render until mounted
+    if (!isMounted) return null;
     
     return (
         <DropdownButton

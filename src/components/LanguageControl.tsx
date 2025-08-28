@@ -110,12 +110,12 @@ export default function LanguageControl({ currentPath, initialLocale }: Language
         handleLanguageSwitch(lang, url, false); // Via mouse
     }, [handleLanguageSwitch]);
 
-    // Don't render until mounted
-    if (!isMounted) return null;
-    
     // Find the index of the current language
     const currentLangIndex = supportedLanguages.findIndex(lang => lang === currentLang);
     const selectedIndex = currentLangIndex >= 0 ? currentLangIndex : 0;
+    
+    // Don't render until mounted
+    if (!isMounted) return null;
     
     const dropdownContent = (
         <DropdownContent>
