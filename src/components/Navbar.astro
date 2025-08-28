@@ -54,9 +54,9 @@ const navItems = [
           size="sm"
           class="!w-0 focus:!ml-2 !h-8 !px-0 !overflow-hidden !opacity-0 !border-0 focus-visible:!w-auto focus-visible:!px-2 focus-visible:!opacity-100 focus-visible:!border-2 motion-safe:!transition-all motion-safe:!duration-300 motion-safe:!ease-out"
           onClick="skipToMainContent()"
-          aria-label="Saltar al contenido principal"
+          aria-label={t('nav.skipToContent')}
         >
-          Saltar a contenido
+          {t('nav.skipToContentShort')}
         </Button>
         {navItems.map((item) => {
           const isCurrentPage = item.label === 'Allison Peña' ? isHomePage : (currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href + '/')) || (item.href !== '/' && currentPath.startsWith(item.href) && currentPath.length > item.href.length));
@@ -80,9 +80,9 @@ const navItems = [
           size="sm"
           class="!w-0 !h-8 !px-0 !overflow-hidden !opacity-0 !border-0 focus-visible:!w-auto focus-visible:!px-2 focus-visible:!opacity-100 focus-visible:!border-2 motion-safe:!transition-all motion-safe:!duration-300 motion-safe:!ease-out"
           onClick="skipToMainContent()"
-          aria-label="Saltar al contenido principal"
+          aria-label={t('nav.skipToContent')}
         >
-          Saltar a contenido
+          {t('nav.skipToContentShort')}
         </Button>
         <Button 
           href={getHomeUrl(currentLocale)}
@@ -345,7 +345,7 @@ const navItems = [
             class="flex-1 flex items-center justify-center gap-2 px-3 h-8 font-grotesk text-xs font-bold tracking-wide bg-secondary hover:bg-main hover:text-secondary border-0 cursor-pointer uppercase"
             id="mobile-lang-center"
           >
-            <span id="mobile-lang-label">{currentLocale === 'en' ? 'English' : currentLocale === 'es' ? 'Español' : 'Norsk'}</span>
+            <span id="mobile-lang-label">Idioma</span>
           </button>
           <button 
             class="aspect-square h-8 flex items-center justify-center bg-main text-secondary border-l border-main hover:bg-secondary hover:text-main"
@@ -747,27 +747,30 @@ const navItems = [
       // Language navigation
       if (langPrev) {
         langPrev.onclick = function() {
-          const desktopLangButton = document.querySelector('[data-lang-control] .inline-flex button:first-child');
+          const desktopLangButton = document.querySelector('[data-component="language-control"] .inline-flex button:first-child');
           if (desktopLangButton) {
             desktopLangButton.click();
+            setTimeout(updateMobileLangDisplay, 100);
           }
         };
       }
       
       if (langNext) {
         langNext.onclick = function() {
-          const desktopLangButton = document.querySelector('[data-lang-control] .inline-flex button:first-child');
+          const desktopLangButton = document.querySelector('[data-component="language-control"] .inline-flex button:first-child');
           if (desktopLangButton) {
             desktopLangButton.click();
+            setTimeout(updateMobileLangDisplay, 100);
           }
         };
       }
       
       if (langCenter) {
         langCenter.onclick = function() {
-          const desktopLangButton = document.querySelector('[data-lang-control] .inline-flex button:first-child');
+          const desktopLangButton = document.querySelector('[data-component="language-control"] .inline-flex button:first-child');
           if (desktopLangButton) {
             desktopLangButton.click();
+            setTimeout(updateMobileLangDisplay, 100);
           }
         };
       }
@@ -804,13 +807,8 @@ const navItems = [
         // Get current mode from localStorage
         const currentMode = localStorage.getItem('theme-mode') || 'system';
         
-        // Get current language from URL - English has no prefix
-        const currentLang = (() => {
-          const path = window.location.pathname;
-          if (path.startsWith('/es/')) return 'es';
-          if (path.startsWith('/no/')) return 'no';
-          return 'en'; // Default to English for root paths
-        })();
+        // Get current language from URL
+        const currentLang = getCurrentLanguageFromURL();
         
         const modeTranslations = {
           'es': { 'light': 'Claro', 'dark': 'Oscuro', 'system': 'Sistema' },
@@ -838,6 +836,31 @@ const navItems = [
       }
     }
 
+    // Get current language from URL
+    function getCurrentLanguageFromURL() {
+      const path = window.location.pathname;
+      if (path.startsWith('/en/')) return 'en';
+      if (path.startsWith('/no/')) return 'no';
+      return 'es'; // Default to Spanish for root paths (new default)
+    }
+
+    // Update mobile language display to show current language name
+    function updateMobileLangDisplay() {
+      const langLabel = document.getElementById('mobile-lang-label');
+      
+      if (langLabel) {
+        const currentLang = getCurrentLanguageFromURL();
+        
+        const langNames = {
+          'es': 'Español',
+          'en': 'English', 
+          'no': 'Norsk'
+        };
+        
+        langLabel.textContent = langNames[currentLang] || 'Español';
+      }
+    }
+
     // Initialize mobile controls
     setupMobileControlButtons();
     
@@ -845,6 +868,7 @@ const navItems = [
     setTimeout(() => {
       updateMobileThemeDisplay();
       updateMobileModeDisplay();
+      updateMobileLangDisplay();
     }, 50);
     
     // Listen for theme changes to update mobile display
@@ -874,6 +898,8 @@ const navItems = [
     const handleLanguageReady = (event) => {
       console.log('Language control ready:', event.detail);
       showReactComponent('language');
+      // Update mobile language display when language control is ready
+      updateMobileLangDisplay();
     };
     
     window.addEventListener('theme-control-ready', handleThemeReady);

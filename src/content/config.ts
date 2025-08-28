@@ -46,6 +46,7 @@ const projects = defineCollection({
     schema: z.object({
         name: z.string(),
         hook: z.string().optional(),
+        cvDescription: z.string().optional(),
         publishDate: z.coerce.date(),
         isFeatured: z.boolean().default(false),
         seo: seoSchema.optional(),

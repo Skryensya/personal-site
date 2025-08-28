@@ -1,9 +1,9 @@
 ---
 import type { GetStaticPathsOptions, Page } from 'astro';
 import { type CollectionEntry, getCollection } from 'astro:content';
-import Layout from '../../../layouts/Layout.astro'; 
-import siteConfig from '../../../data/site-config';
-import { sortItemsByDateDesc } from '../../../utils/data-utils';
+import Layout from '../../layouts/Layout.astro'; 
+import siteConfig from '../../data/site-config';
+import { sortItemsByDateDesc } from '../../utils/data-utils';
 import { getSlugFromId } from '@/utils/content-utils';
 import { useTranslations } from '@/i18n/utils';
 import FolderStack from '@/components/sections/FolderStack.astro';
@@ -26,7 +26,7 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
 
 type Props = { 
     page: Page<CollectionEntry<'projects'>>; 
- 
+
 };
 
 const { page } = Astro.props;
@@ -50,7 +50,7 @@ const portfolio = page.data;
             <article class="border border-main bg-secondary p-4 hover:bg-main hover:text-secondary group">
                 <div class="mb-4">
                     <h2 class="text-xl font-mono font-bold mb-2 group-hover:text-secondary">
-                        <a href={`/es/proyectos/${getSlugFromId(project.id)}`} class="no-underline">
+                        <a href={`/proyectos/${getSlugFromId(project.id)}`} class="no-underline">
                             {project.data.name}
                         </a>
                     </h2>

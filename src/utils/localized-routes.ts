@@ -18,111 +18,141 @@ export const localizedRoutes = {
 export const pagesDictionary = {
   // Home page
   '/': {
-    es: '/es/',
-    en: '/',
+    es: '/',
+    en: '/en/',
     no: '/no/'
   },
-  '/es/': {
-    es: '/es/',
-    en: '/',
+  '/en/': {
+    es: '/',
+    en: '/en/',
     no: '/no/'
   },
   '/no/': {
-    es: '/es/',
-    en: '/',
+    es: '/',
+    en: '/en/',
     no: '/no/'
   },
   // CV/Resume pages
-  '/es/curriculum': {
-    es: '/es/curriculum',
-    en: '/resume',
+  '/curriculum': {
+    es: '/curriculum',
+    en: '/en/resume',
     no: '/no/cv'
   },
-  '/resume': {
-    es: '/es/curriculum',
-    en: '/resume', 
+  '/en/resume': {
+    es: '/curriculum',
+    en: '/en/resume', 
     no: '/no/cv'
   },
   '/no/cv': {
-    es: '/es/curriculum',
-    en: '/resume',
+    es: '/curriculum',
+    en: '/en/resume',
     no: '/no/cv'
   },
-  // Projects pages (dynamic routes will be handled separately)
-  '/es/proyectos': {
-    es: '/es/proyectos',
-    en: '/projects',
+  // Projects pages (pagination)
+  '/proyectos': {
+    es: '/proyectos',
+    en: '/en/projects',
     no: '/no/prosjekter'
   },
-  '/projects': {
-    es: '/es/proyectos',
-    en: '/projects',
+  '/proyectos/': {
+    es: '/proyectos/',
+    en: '/en/projects/',
+    no: '/no/prosjekter/'
+  },
+  '/proyectos/1': {
+    es: '/proyectos/1',
+    en: '/en/projects/1',
+    no: '/no/prosjekter/1'
+  },
+  '/en/projects': {
+    es: '/proyectos',
+    en: '/en/projects',
     no: '/no/prosjekter'
+  },
+  '/en/projects/': {
+    es: '/proyectos/',
+    en: '/en/projects/',
+    no: '/no/prosjekter/'
+  },
+  '/en/projects/1': {
+    es: '/proyectos/1',
+    en: '/en/projects/1',
+    no: '/no/prosjekter/1'
   },
   '/no/prosjekter': {
-    es: '/es/proyectos',
-    en: '/projects',
+    es: '/proyectos',
+    en: '/en/projects',
     no: '/no/prosjekter'
   },
+  '/no/prosjekter/': {
+    es: '/proyectos/',
+    en: '/en/projects/',
+    no: '/no/prosjekter/'
+  },
+  '/no/prosjekter/1': {
+    es: '/proyectos/1',
+    en: '/en/projects/1',
+    no: '/no/prosjekter/1'
+  },
   // Individual project pages - these share the same slugs across languages
-  '/es/proyectos/00-kit-digital-uc': {
-    es: '/es/proyectos/00-kit-digital-uc',
-    en: '/projects/00-kit-digital-uc',
+  '/proyectos/00-kit-digital-uc': {
+    es: '/proyectos/00-kit-digital-uc',
+    en: '/en/projects/00-kit-digital-uc',
     no: '/no/prosjekter/00-kit-digital-uc'
   },
-  '/projects/00-kit-digital-uc': {
-    es: '/es/proyectos/00-kit-digital-uc',
-    en: '/projects/00-kit-digital-uc',
+  '/en/projects/00-kit-digital-uc': {
+    es: '/proyectos/00-kit-digital-uc',
+    en: '/en/projects/00-kit-digital-uc',
     no: '/no/prosjekter/00-kit-digital-uc'
   },
   '/no/prosjekter/00-kit-digital-uc': {
-    es: '/es/proyectos/00-kit-digital-uc',
-    en: '/projects/00-kit-digital-uc',
+    es: '/proyectos/00-kit-digital-uc',
+    en: '/en/projects/00-kit-digital-uc',
     no: '/no/prosjekter/00-kit-digital-uc'
   },
-  '/es/proyectos/01-portal-uc': {
-    es: '/es/proyectos/01-portal-uc',
-    en: '/projects/01-portal-uc',
+  '/proyectos/01-portal-uc': {
+    es: '/proyectos/01-portal-uc',
+    en: '/en/projects/01-portal-uc',
     no: '/no/prosjekter/01-portal-uc'
   },
-  '/projects/01-portal-uc': {
-    es: '/es/proyectos/01-portal-uc',
-    en: '/projects/01-portal-uc',
+  '/en/projects/01-portal-uc': {
+    es: '/proyectos/01-portal-uc',
+    en: '/en/projects/01-portal-uc',
     no: '/no/prosjekter/01-portal-uc'
   },
   '/no/prosjekter/01-portal-uc': {
-    es: '/es/proyectos/01-portal-uc',
-    en: '/projects/01-portal-uc',
+    es: '/proyectos/01-portal-uc',
+    en: '/en/projects/01-portal-uc',
     no: '/no/prosjekter/01-portal-uc'
   },
-  '/es/proyectos/02-agenda-uc': {
-    es: '/es/proyectos/02-agenda-uc',
-    en: '/projects/02-agenda-uc',
+  '/proyectos/02-agenda-uc': {
+    es: '/proyectos/02-agenda-uc',
+    en: '/en/projects/02-agenda-uc',
     no: '/no/prosjekter/02-agenda-uc'
   },
-  '/projects/02-agenda-uc': {
-    es: '/es/proyectos/02-agenda-uc',
-    en: '/projects/02-agenda-uc',
+  '/en/projects/02-agenda-uc': {
+    es: '/proyectos/02-agenda-uc',
+    en: '/en/projects/02-agenda-uc',
     no: '/no/prosjekter/02-agenda-uc'
   },
   '/no/prosjekter/02-agenda-uc': {
-    es: '/es/proyectos/02-agenda-uc',
-    en: '/projects/02-agenda-uc',
+    es: '/proyectos/02-agenda-uc',
+    en: '/en/projects/02-agenda-uc',
     no: '/no/prosjekter/02-agenda-uc'
   },
-  '/es/proyectos/03-barrancas': {
-    es: '/es/proyectos/03-barrancas',
-    en: '/projects/03-barrancas',
+  '/proyectos/03-barrancas': {
+    es: '/proyectos/03-barrancas',
+    en: '/en/projects/03-barrancas',
     no: '/no/prosjekter/03-barrancas'
   },
-  '/projects/03-barrancas': {
-    es: '/es/proyectos/03-barrancas',
-    en: '/projects/03-barrancas',
+  '/en/projects/03-barrancas': {
+    es: '/proyectos/03-barrancas',
+    en: '/en/projects/03-barrancas',
     no: '/no/prosjekter/03-barrancas'
   },
   '/no/prosjekter/03-barrancas': {
-    es: '/es/proyectos/03-barrancas',
-    en: '/projects/03-barrancas',
+    es: '/proyectos/03-barrancas',
+    en: '/en/projects/03-barrancas',
     no: '/no/prosjekter/03-barrancas'
   }
 } as const;
@@ -132,9 +162,11 @@ export function getLocalizedUrl(lang: Language, route: keyof typeof localizedRou
   const localizedRoute = localizedRoutes[route][lang];
   let basePath: string;
   
-  if (lang === 'en') {
+  if (lang === 'es') {
+    // Spanish is the default language, no prefix
     basePath = `/${localizedRoute}`;
   } else {
+    // Other languages get prefixed
     basePath = `/${lang}/${localizedRoute}`;
   }
   
@@ -143,7 +175,8 @@ export function getLocalizedUrl(lang: Language, route: keyof typeof localizedRou
 
 // Helper function to get home URL
 export function getHomeUrl(lang: Language): string {
-  if (lang === 'en') {
+  if (lang === 'es') {
+    // Spanish is the default language, no prefix
     return '/';
   }
   return `/${lang}/`;
@@ -164,18 +197,11 @@ export function getEquivalentPage(currentPath: string, targetLang: Language): st
     const pathParts = normalizedPath.split('/');
     const slug = pathParts[pathParts.length - 1];
     
-    // Return the equivalent projects page with the same slug
-    return getLocalizedUrl(targetLang, 'projects', slug);
-  }
-  
-  // Handle blog routes (if they exist in the future)
-  if (normalizedPath.includes('/blog/')) {
-    const pathParts = normalizedPath.split('/');
-    const slug = pathParts[pathParts.length - 1];
-    
-    // Return the equivalent blog page with the same slug
-    // This assumes blog routes follow the pattern: /lang/blog/slug
-    return `/${targetLang}/blog/${slug}`;
+    // Skip if it's just a page number (handled separately)
+    if (!/^\d+$/.test(slug)) {
+      // Return the equivalent projects page with the same slug
+      return getLocalizedUrl(targetLang, 'projects', slug);
+    }
   }
   
   // Handle pagination routes for projects
@@ -185,6 +211,25 @@ export function getEquivalentPage(currentPath: string, targetLang: Language): st
     
     // Return the equivalent projects pagination page
     return getLocalizedUrl(targetLang, 'projects') + '/' + pageNumber;
+  }
+  
+  // Handle blog routes (if they exist in the future)
+  if (normalizedPath.includes('/blog/')) {
+    const pathParts = normalizedPath.split('/');
+    const slug = pathParts[pathParts.length - 1];
+    
+    // Return the equivalent blog page with the same slug
+    if (targetLang === 'es') {
+      return `/blog/${slug}`;
+    } else {
+      return `/${targetLang}/blog/${slug}`;
+    }
+  }
+  
+  // Fallback: try to handle paths with trailing slashes
+  const pathWithSlash = normalizedPath + '/';
+  if (pagesDictionary[pathWithSlash as keyof typeof pagesDictionary]) {
+    return pagesDictionary[pathWithSlash as keyof typeof pagesDictionary][targetLang];
   }
   
   // If no specific mapping found, try to get the language-appropriate home page

@@ -1,15 +1,24 @@
 ---
+import { useTranslations, defaultLang, type Language } from '@/i18n/utils';
+
 interface Props {
     contentId?: string;
     className?: string;
+    lang?: Language;
 }
 
-const { contentId = 'main-content', className = '' } = Astro.props;
+const { 
+    contentId = 'main-content', 
+    className = '',
+    lang = defaultLang 
+} = Astro.props;
+
+const t = useTranslations(lang);
 ---
 
 <nav class={`toc-nav ${className}`}>
     <div class="mb-6">
-        <h2 class="text-xs font-mono font-medium text-main opacity-50 uppercase tracking-wide">Contenido</h2>
+        <h2 class="text-xs font-mono font-medium text-main opacity-50 uppercase tracking-wide">{t('sidebar.toc')}</h2>
     </div>
     <div class="relative max-h-[50vh] overflow-y-auto scrollbar-custom">
         <!-- Progress indicator background -->

@@ -2,19 +2,22 @@
 import ReadingGuide from './ReadingGuide';
 import ScrollProgress from './ScrollProgress';
 import Sidebar from './Sidebar.astro';
+import { defaultLang, type Language } from '@/i18n/ui';
 
 interface Props {
     contentId?: string;
     sidebarClassName?: string;
     containerClassName?: string;
     contentClassName?: string;
+    lang?: Language;
 }
 
 const { 
     contentId = 'main-content',
     sidebarClassName = '',
     containerClassName = '',
-    contentClassName = ''
+    contentClassName = '',
+    lang = defaultLang
 } = Astro.props;
 ---
 
@@ -33,5 +36,6 @@ const {
     <Sidebar 
         contentId={contentId}
         className={sidebarClassName}
+        lang={lang}
     />
 </div>

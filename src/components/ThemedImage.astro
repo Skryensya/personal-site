@@ -8,7 +8,7 @@ interface Props {
 const { src, alt, class: className = '' } = Astro.props;
 ---
 
-<div class={`themed-image relative select-none ${className}`}>
+<div class={`themed-image relative select-none ${className} overflow-hidden`}>
     <!-- Base grayscale image -->
     <img 
         src={src} 
