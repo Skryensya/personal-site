@@ -8,14 +8,14 @@ import { ui, defaultLang, supportedLanguages, type Language, type UIKeys } from 
 export function getLangFromUrl(url: URL): Language {
     const [, firstSegment] = url.pathname.split('/');
     
-    // Check if first segment is a supported language code (es, no)
-    // English (en) has no prefix, so paths like /, /projects, /resume are English
-    if (firstSegment && supportedLanguages.includes(firstSegment as Language) && firstSegment !== 'en') {
+    // Check if first segment is a supported language code (en, no)
+    // Spanish (es) has no prefix, so paths like /, /proyectos, /curriculum are Spanish
+    if (firstSegment && supportedLanguages.includes(firstSegment as Language) && firstSegment !== 'es') {
         return firstSegment as Language;
     }
     
-    // Default to English for all other paths (/, /projects, /resume, etc.)
-    return defaultLang; // 'en'
+    // Default to Spanish for all other paths (/, /proyectos, /curriculum, etc.)
+    return defaultLang; // 'es'
 }
 
 /**
@@ -26,12 +26,12 @@ export function getLangFromUrl(url: URL): Language {
 export function removeLocaleFromUrl(pathname: string): string {
     const [, possibleLang, ...rest] = pathname.split('/');
     
-    // Check if first segment is a non-English language prefix (es, no)
-    if (possibleLang && supportedLanguages.includes(possibleLang as Language) && possibleLang !== 'en') {
+    // Check if first segment is a non-Spanish language prefix (en, no)
+    if (possibleLang && supportedLanguages.includes(possibleLang as Language) && possibleLang !== 'es') {
         return '/' + rest.join('/');
     }
     
-    // For English or non-language paths, return as-is
+    // For Spanish or non-language paths, return as-is
     return pathname;
 }
 
@@ -39,11 +39,11 @@ export function removeLocaleFromUrl(pathname: string): string {
  * Add language prefix to pathname
  * @param pathname - Clean pathname
  * @param lang - Target language
- * @returns Pathname with language prefix (unless default language English)
+ * @returns Pathname with language prefix (unless default language Spanish)
  */
 export function addLocaleToUrl(pathname: string, lang: Language): string {
-    // English (en) gets no prefix
-    if (lang === 'en') {
+    // Spanish (es) gets no prefix
+    if (lang === 'es') {
         const cleanPath = removeLocaleFromUrl(pathname);
         return cleanPath;
     }
@@ -122,4 +122,12 @@ export function getClientTranslations() {
 
     const lang = getLangFromUrl(new URL(window.location.href));
     return useTranslations(lang);
+}
+
+/**
+ * Client-side hook for React components to use translations
+ * Usage: const t = useClientTranslations();
+ */
+export function useClientTranslations() {
+    return getClientTranslations();
 }

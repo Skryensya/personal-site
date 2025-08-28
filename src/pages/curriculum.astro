@@ -2,7 +2,6 @@
 import Layout from '@/layouts/Layout.astro';
 import CVPage from '@/components/CVPage.astro';
 import CVFirstPage from '@/components/CVFirstPage.astro';
-import CVSecondPage from '@/components/CVSecondPage.astro';
 import Button from '@/components/Button.astro';
 import ContentPage from '@/components/ContentPage.astro';
 ---
@@ -15,14 +14,12 @@ import ContentPage from '@/components/ContentPage.astro';
         containerClassName="print:block"
         contentClassName="print:min-w-full"
         sidebarClassName="print:hidden"
+        lang="es"
     >
         <!-- Contenedor responsivo: flujo normal en móvil, hojas en desktop -->
         <div class="space-y-8 mb-20 print:space-y-0 print:mb-0 w-fit">
             <CVPage>
                 <CVFirstPage lang="es" />
-            </CVPage>
-            <CVPage>
-                <CVSecondPage lang="es" />
             </CVPage>
         </div>
     </ContentPage>

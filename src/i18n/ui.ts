@@ -4,7 +4,7 @@ export const languages = {
     no: 'Norsk'
 } as const;
 
-export const defaultLang = 'en' as const;
+export const defaultLang = 'es' as const;
 export const supportedLanguages = Object.keys(languages) as Array<keyof typeof languages>;
 
 export const ui = {
@@ -126,29 +126,54 @@ export const ui = {
         // CV page
         'cv.title': 'Currículum Vitae',
         'cv.contact': 'Contacto',
-        'cv.email': 'allisonpena@email.com',
-        'cv.phone': '',
-        'cv.location': 'Santiago, Chile',
-        'cv.website': 'allisonpena.dev',
-        'cv.social.linkedin': 'linkedin.com/in/skryensya',
-        'cv.social.twitter': '@allisonpena_dev',
-        'cv.social.instagram': '@allisonpena',
-        'cv.experience.title': 'Experiencia',
-        'cv.projects.title': 'Proyectos Destacados',
-        'cv.skills.title': 'Habilidades Técnicas',
-        'cv.skills.frontend': 'Frontend',
-        'cv.skills.backend': 'Backend',
-        'cv.skills.tools': 'Herramientas',
-        'cv.education.title': 'Educación',
+        'cv.contact.location': 'Ubicación',
+        'cv.contact.email': 'Email',
+        'cv.contact.phone': 'Teléfono',
+        'cv.contact.linkedin': 'LinkedIn',
+        'cv.fullName': 'ALLISON JOSUÉ PEÑA BARRIOS',
+        'cv.jobTitle': 'Desarrollador Full-Stack',
+        'cv.email.value': 'Allison.jpb+cv@gmail.com',
+        'cv.phone.value': '+56 9 9812 0052',
+        'cv.location.value': 'Santiago, Chile',
+        'cv.linkedin.value': '/in/skryensya',
+        'cv.website.title': 'Sitio Web',
+        'cv.website.value': 'Skryensya.dev',
         'cv.languages.title': 'Idiomas',
-        'cv.languages.spanish': 'Español (Nativo)',
-        'cv.languages.english': 'Inglés (Avanzado)',
-        'cv.languages.norwegian': 'Noruego (Básico)',
-        'cv.references.title': 'Referencias',
+        'cv.languages.spanish': 'Español',
+        'cv.languages.spanish.level': 'NATIVO',
+        'cv.languages.english': 'Inglés',
+        'cv.languages.english.level': 'C1 - AVANZADO',
+        'cv.languages.norwegian': 'Noruego',
+        'cv.languages.norwegian.level': 'A1 - BÁSICO',
         'cv.certificates.title': 'Certificados',
+        'cv.references.title': 'Referencias',
+        'cv.about.title': 'Acerca de mí',
+        'cv.about.content': 'Transformo ideas en experiencias digitales que realmente funcionan. Mi especialidad es crear interfaces accesibles que miles de usuarios utilizan diariamente, aplicando las mejores prácticas de desarrollo frontend con un enfoque obsesivo en la usabilidad.',
+        'cv.experience.title': 'EXPERIENCIA PROFESIONAL',
+        'cv.experience.company': 'Asimov Consultores',
+        'cv.experience.position': 'Desarrollador Full-Stack',
+        'cv.experience.period': '2022 - Presente',
+        'cv.experience.description': 'Desarrollo soluciones digitales completas, transformando conceptos en código funcional. He sido colaborador clave en proyectos que mejoran la identidad digital y experiencia de usuario de nuestros clientes, implementando interfaces y sistemas backend efectivos en todo el ciclo de desarrollo.',
+        'cv.projects.title': 'Proyectos Destacados',
+        'cv.references.position': 'Senior Developer',
+        'cv.references.jorge.name': 'Jorge Vega',
+        'cv.references.jorge.email': 'jorgeivegab+rf@gmail.com',
+        'cv.references.elias.name': 'Elias Leyton', 
+        'cv.references.elias.email': 'elias.leyton+rf@gmail.com',
+        'cv.certificate.wai01x.title': 'WAI0.1x',
+        'cv.certificate.wai01x.description': 'Introduction to Web Accessibility',
         
         // Norwegian disclaimer banner
-        'disclaimer.norwegian.compact': 'Estoy aprendiendo noruego como objetivo personal, pero para una comunicación más clara, no dudes en contactarme en inglés o español.'
+        'disclaimer.norwegian.compact': 'Estoy aprendiendo noruego como objetivo personal, pero para una comunicación más clara, no dudes en contactarme en inglés o español.',
+        
+        // Sidebar content
+        'sidebar.toc': 'Contenido',
+        'sidebar.readingGuide.title': 'Guía de lectura',
+        'sidebar.readingGuide.activate': 'Activar guía',
+        
+        // Skip to content
+        'nav.skipToContent': 'Saltar al contenido principal',
+        'nav.skipToContentShort': 'Saltar a contenido'
     },
     en: {
         // Navigation
@@ -268,29 +293,54 @@ export const ui = {
         // CV page
         'cv.title': 'Curriculum Vitae',
         'cv.contact': 'Contact',
-        'cv.email': 'allisonpena@email.com',
-        'cv.phone': '',
-        'cv.location': 'Santiago, Chile',
-        'cv.website': 'allisonpena.dev',
-        'cv.social.linkedin': 'linkedin.com/in/skryensya',
-        'cv.social.twitter': '@allisonpena_dev',
-        'cv.social.instagram': '@allisonpena',
-        'cv.experience.title': 'Experience',
-        'cv.projects.title': 'Featured Projects',
-        'cv.skills.title': 'Technical Skills',
-        'cv.skills.frontend': 'Frontend',
-        'cv.skills.backend': 'Backend',
-        'cv.skills.tools': 'Tools',
-        'cv.education.title': 'Education',
+        'cv.contact.location': 'Location',
+        'cv.contact.email': 'Email',
+        'cv.contact.phone': 'Phone',
+        'cv.contact.linkedin': 'LinkedIn',
+        'cv.fullName': 'ALLISON JOSUÉ PEÑA BARRIOS',
+        'cv.jobTitle': 'Full-Stack Developer',
+        'cv.email.value': 'Allison.jpb+cv@gmail.com',
+        'cv.phone.value': '+56 9 9812 0052',
+        'cv.location.value': 'Santiago, Chile',
+        'cv.linkedin.value': '/in/skryensya',
+        'cv.website.title': 'Website',
+        'cv.website.value': 'Skryensya.dev',
         'cv.languages.title': 'Languages',
-        'cv.languages.spanish': 'Spanish (Native)',
-        'cv.languages.english': 'English (Advanced)',
-        'cv.languages.norwegian': 'Norwegian (Basic)',
-        'cv.references.title': 'References',
+        'cv.languages.spanish': 'Spanish',
+        'cv.languages.spanish.level': 'NATIVE',
+        'cv.languages.english': 'English',
+        'cv.languages.english.level': 'C1 - ADVANCED',
+        'cv.languages.norwegian': 'Norwegian',
+        'cv.languages.norwegian.level': 'A1 - BASIC',
         'cv.certificates.title': 'Certificates',
+        'cv.references.title': 'References',
+        'cv.about.title': 'About me',
+        'cv.about.content': 'I transform ideas into digital experiences that actually work. My specialty is creating accessible interfaces that thousands of users interact with daily, applying frontend development best practices with an obsessive focus on usability.',
+        'cv.experience.title': 'PROFESSIONAL EXPERIENCE',
+        'cv.experience.company': 'Asimov Consultores',
+        'cv.experience.position': 'Full-Stack Developer',
+        'cv.experience.period': '2022 - Present',
+        'cv.experience.description': 'I develop complete digital solutions, transforming concepts into functional code. I have been a key collaborator in projects that improve digital identity and user experience for our clients, implementing interfaces and backend systems effectively throughout the development cycle.',
+        'cv.projects.title': 'Featured Projects',
+        'cv.references.position': 'Senior Developer',
+        'cv.references.jorge.name': 'Jorge Vega',
+        'cv.references.jorge.email': 'jorgeivegab+rf@gmail.com',
+        'cv.references.elias.name': 'Elias Leyton', 
+        'cv.references.elias.email': 'elias.leyton+rf@gmail.com',
+        'cv.certificate.wai01x.title': 'WAI0.1x',
+        'cv.certificate.wai01x.description': 'Introduction to Web Accessibility',
         
         // Norwegian disclaimer banner
-        'disclaimer.norwegian.compact': 'I am learning Norwegian as a personal goal, but for clearer communication, feel free to contact me in English or Spanish.'
+        'disclaimer.norwegian.compact': 'I am learning Norwegian as a personal goal, but for clearer communication, feel free to contact me in English or Spanish.',
+        
+        // Sidebar content
+        'sidebar.toc': 'Contents',
+        'sidebar.readingGuide.title': 'Reading guide',
+        'sidebar.readingGuide.activate': 'Activate guide',
+        
+        // Skip to content
+        'nav.skipToContent': 'Skip to main content',
+        'nav.skipToContentShort': 'Skip to content'
     },
     no: {
         // Navigation
@@ -410,29 +460,54 @@ export const ui = {
         // CV page
         'cv.title': 'Curriculum Vitae',
         'cv.contact': 'Kontakt',
-        'cv.email': 'allisonpena@email.com',
-        'cv.phone': '',
-        'cv.location': 'Santiago, Chile',
-        'cv.website': 'allisonpena.dev',
-        'cv.social.linkedin': 'linkedin.com/in/skryensya',
-        'cv.social.twitter': '@allisonpena_dev',
-        'cv.social.instagram': '@allisonpena',
-        'cv.experience.title': 'Erfaring',
-        'cv.projects.title': 'Utvalgte Prosjekter',
-        'cv.skills.title': 'Tekniske Ferdigheter',
-        'cv.skills.frontend': 'Frontend',
-        'cv.skills.backend': 'Backend',
-        'cv.skills.tools': 'Verktøy',
-        'cv.education.title': 'Utdanning',
+        'cv.contact.location': 'Plassering',
+        'cv.contact.email': 'E-post',
+        'cv.contact.phone': 'Telefon',
+        'cv.contact.linkedin': 'LinkedIn',
+        'cv.fullName': 'ALLISON JOSUÉ PEÑA BARRIOS',
+        'cv.jobTitle': 'Full-Stack Utvikler',
+        'cv.email.value': 'Allison.jpb+cv@gmail.com',
+        'cv.phone.value': '+56 9 9812 0052',
+        'cv.location.value': 'Santiago, Chile',
+        'cv.linkedin.value': '/in/skryensya',
+        'cv.website.title': 'Nettsted',
+        'cv.website.value': 'Skryensya.dev',
         'cv.languages.title': 'Språk',
-        'cv.languages.spanish': 'Spansk (Morsmål)',
-        'cv.languages.english': 'Engelsk (Avansert)',
-        'cv.languages.norwegian': 'Norsk (Grunnleggende)',
-        'cv.references.title': 'Referanser',
+        'cv.languages.spanish': 'Spansk',
+        'cv.languages.spanish.level': 'MORSMÅL',
+        'cv.languages.english': 'Engelsk',
+        'cv.languages.english.level': 'C1 - AVANSERT',
+        'cv.languages.norwegian': 'Norsk',
+        'cv.languages.norwegian.level': 'A1 - GRUNNLEGGENDE',
         'cv.certificates.title': 'Sertifikater',
+        'cv.references.title': 'Referanser',
+        'cv.about.title': 'Om meg',
+        'cv.about.content': 'Jeg transformerer ideer til digitale opplevelser som faktisk fungerer. Min spesialitet er å skape tilgjengelige grensesnitt som tusenvis av brukere samhandler med daglig, og anvender beste praksis for frontend-utvikling med et obsessivt fokus på brukervennlighet.',
+        'cv.experience.title': 'PROFESJONELL ERFARING',
+        'cv.experience.company': 'Asimov Consultores',
+        'cv.experience.position': 'Full-Stack Utvikler',
+        'cv.experience.period': '2022 - I dag',
+        'cv.experience.description': 'Jeg utvikler komplette digitale løsninger, og transformerer konsepter til funksjonell kode. Jeg har vært en nøkkelsamarbeidspartner i prosjekter som forbedrer digital identitet og brukeropplevelse for våre klienter, implementerer grensesnitt og backend-systemer effektivt gjennom hele utviklingssyklusen.',
+        'cv.projects.title': 'Utvalgte Prosjekter',
+        'cv.references.position': 'Senior Utvikler',
+        'cv.references.jorge.name': 'Jorge Vega',
+        'cv.references.jorge.email': 'jorgeivegab+rf@gmail.com',
+        'cv.references.elias.name': 'Elias Leyton', 
+        'cv.references.elias.email': 'elias.leyton+rf@gmail.com',
+        'cv.certificate.wai01x.title': 'WAI0.1x',
+        'cv.certificate.wai01x.description': 'Innføring i webtilgjengelighet',
         
         // Norwegian disclaimer banner
-        'disclaimer.norwegian.compact': 'Jeg lærer norsk som et personlig mål, men for tydeligere kommunikasjon, kontakt meg gjerne på engelsk eller spansk.'
+        'disclaimer.norwegian.compact': 'Jeg lærer norsk som et personlig mål, men for tydeligere kommunikasjon, kontakt meg gjerne på engelsk eller spansk.',
+        
+        // Sidebar content
+        'sidebar.toc': 'Innhold',
+        'sidebar.readingGuide.title': 'Leseguide',
+        'sidebar.readingGuide.activate': 'Aktiver guide',
+        
+        // Skip to content
+        'nav.skipToContent': 'Hopp til hovedinnhold',
+        'nav.skipToContentShort': 'Hopp til innhold'
     }
 } as const;
 
