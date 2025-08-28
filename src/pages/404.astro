@@ -2,11 +2,11 @@
 import Layout from '../layouts/Layout.astro';
 import siteConfig from '../data/site-config';
 import Button from '../components/Button.astro';
-import { useTranslations } from '../i18n/utils';
+import { getTranslations } from '../i18n/utils';
 import { getLangFromUrl } from '../i18n/utils';
 
 const lang = getLangFromUrl(Astro.url);
-const t = useTranslations(lang);
+const t = getTranslations(lang);
 ---
 
 <Layout title={t('404.title')} description={t('404.description')} image={siteConfig.image} showGameOfLife={true} lang={lang}>

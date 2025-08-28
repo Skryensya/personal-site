@@ -1,5 +1,5 @@
 ---
-import { useTranslations, defaultLang, type Language } from '@/i18n/utils';
+import { getTranslations, defaultLang, type Language } from '@/i18n/utils';
 
 interface Props {
     contentId?: string;
@@ -13,7 +13,7 @@ const {
     lang = defaultLang 
 } = Astro.props;
 
-const t = useTranslations(lang);
+const t = getTranslations(lang);
 ---
 
 <nav class={`toc-nav ${className}`}>

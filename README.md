@@ -5,6 +5,7 @@ Un portafolio moderno y multilingüe construido con Astro.js y React, que presen
 ## 🚀 Características
 
 ### Tecnologías Principales
+
 - **Astro.js 5.12.3** - Generación de sitios estáticos con renderizado híbrido
 - **React 18.3.1** - Componentes interactivos con hidratación selectiva
 - **Tailwind CSS 4.1.11** - Sistema de diseño utility-first
@@ -12,12 +13,14 @@ Un portafolio moderno y multilingüe construido con Astro.js y React, que presen
 - **MDX** - Contenido con componentes React
 
 ### Internacionalización
+
 - **3 idiomas soportados**: Español (predeterminado), Inglés, Noruego
 - **Enrutamiento automático**: `/`, `/en/`, `/no/`
 - **Sistema de traducciones centralizado**
 - **SEO optimizado por idioma**
 
 ### Diseño y UX
+
 - **Estética brutalista**: Colores contrastantes, formas geométricas nítidas
 - **Sistema de dos colores**: Inversión automática entre temas claro y oscuro
 - **Sin animaciones**: Cambios de estado instantáneos
@@ -27,7 +30,8 @@ Un portafolio moderno y multilingüe construido con Astro.js y React, que presen
 ## 🛠️ Instalación y Desarrollo
 
 ### Requisitos Previos
-- Node.js 18.0+ 
+
+- Node.js 18.0+
 - npm o yarn
 
 ### Configuración Local
@@ -97,39 +101,42 @@ src/
 
 ### Idiomas Soportados
 
-| Idioma | Código | URL | Estado |
-|--------|--------|-----|--------|
-| Español | `es` | `/` | Predeterminado |
-| English | `en` | `/en/` | Completo |
-| Norsk | `no` | `/no/` | Completo |
+| Idioma  | Código | URL    | Estado         |
+| ------- | ------ | ------ | -------------- |
+| Español | `es`   | `/`    | Predeterminado |
+| English | `en`   | `/en/` | Completo       |
+| Norsk   | `no`   | `/no/` | Completo       |
 
 ### Agregar Traducciones
 
 1. **Actualizar diccionario** (`src/i18n/ui.ts`):
+
 ```typescript
 export const ui = {
   es: {
-    'nueva.clave': 'Texto en español',
+    'nueva.clave': 'Texto en español'
   },
   en: {
-    'nueva.clave': 'Text in English',
+    'nueva.clave': 'Text in English'
   },
   no: {
-    'nueva.clave': 'Tekst på norsk',
-  },
+    'nueva.clave': 'Tekst på norsk'
+  }
 } as const;
 ```
 
 2. **Usar en componentes Astro**:
+
 ```astro
 ---
-import { useTranslations } from '@/i18n/utils';
-const t = useTranslations(lang);
+import { getTranslations } from '@/i18n/utils';
+const t = getTranslations(lang);
 ---
 <h1>{t('nueva.clave')}</h1>
 ```
 
 3. **Usar en componentes React**:
+
 ```tsx
 import { useClientTranslations } from '@/i18n/utils';
 
@@ -142,21 +149,24 @@ export function MyComponent() {
 ## 🎨 Sistema de Diseño
 
 ### Filosofía Visual
+
 - **Brutalismo Minimalista**: Funcionalidad sobre decoración
 - **Alto Contraste**: Legibilidad máxima
 - **Geometría Nítida**: Formas rectangulares y bordes definidos
 - **Tipografía Técnica**: Fuentes monoespaciadas para estética técnica
 
 ### Paleta de Colores
+
 ```css
 /* Solo dos colores que se invierten entre temas */
---color-main: #000000 / #ffffff;        /* Texto y bordes */
---color-secondary: #ffffff / #000000;   /* Fondos y texto alternativo */
+--color-main: #000000 / #ffffff; /* Texto y bordes */
+--color-secondary: #ffffff / #000000; /* Fondos y texto alternativo */
 ```
 
 ### Componentes de UI
 
 #### Botón Estándar
+
 ```astro
 <Button href="/link" size="md" filled={false}>
   Texto del botón
@@ -164,6 +174,7 @@ export function MyComponent() {
 ```
 
 #### Sección de Contenido
+
 ```astro
 <BigSectionContainer title="Título" id="seccion">
   <!-- Contenido -->
@@ -175,31 +186,31 @@ export function MyComponent() {
 ### Colecciones de Contenido
 
 #### Blog Posts (`src/content/blog/`)
+
 ```yaml
 ---
-title: "Título del Post"
+title: 'Título del Post'
 publishDate: 2024-01-01
 tags: ['react', 'typescript']
 isFeatured: false
 seo:
-  title: "Título SEO personalizado"
-  description: "Descripción personalizada"
+  title: 'Título SEO personalizado'
+  description: 'Descripción personalizada'
 ---
-
 Contenido del post en Markdown o MDX...
 ```
 
 #### Proyectos (`src/content/projects/`)
+
 ```yaml
 ---
-title: "Nombre del Proyecto"
-description: "Descripción breve"
+title: 'Nombre del Proyecto'
+description: 'Descripción breve'
 publishDate: 2024-01-01
 isFeatured: true
-color: "#FF5733"
+color: '#FF5733'
 tags: ['astro', 'react']
 ---
-
 Descripción detallada del proyecto...
 ```
 
@@ -213,12 +224,14 @@ Descripción detallada del proyecto...
 ## 🚀 Optimización y Rendimiento
 
 ### Estrategias de Rendimiento
+
 - **Generación Estática**: Todas las páginas pre-renderizadas
 - **Hidratación Selectiva**: Solo componentes interactivos se hidratan
 - **Optimización de Imágenes**: Procesamiento automático y lazy loading
 - **División de Código**: Bundles optimizados automáticamente
 
 ### Métricas Objetivo
+
 - **Bundle JS**: < 150kb gzipped
 - **First Paint**: < 1.5s
 - **LCP**: < 2.5s
@@ -228,6 +241,7 @@ Descripción detallada del proyecto...
 ## 🔧 Configuración de Despliegue
 
 ### Variables de Entorno
+
 ```bash
 # URL del sitio (requerida para sitemaps)
 PUBLIC_SITE_URL=https://tu-dominio.com
@@ -237,11 +251,13 @@ PUBLIC_ANALYTICS_ID=tu-analytics-id
 ```
 
 ### Plataformas Recomendadas
+
 - **Vercel**: Configuración automática con preview deployments
 - **Netlify**: Build automático con formularios
 - **Cloudflare Pages**: CDN global optimizado
 
 ### Configuración de Build
+
 ```bash
 # Comando de build
 npm run build
@@ -264,6 +280,7 @@ dist/
 ## 🧪 Testing y Calidad
 
 ### Verificación de Build
+
 ```bash
 # Verificar que el build funciona correctamente
 npm run build
@@ -273,12 +290,14 @@ npm run preview
 ```
 
 ### Análisis de Rendimiento
+
 ```bash
 # Análisis completo de Lighthouse
 npm run unlighthouse
 ```
 
 ### Checklist de Calidad
+
 - [ ] Build exitoso sin errores
 - [ ] Todas las traducciones funcionan
 - [ ] Responsive en móvil y escritorio
@@ -289,6 +308,7 @@ npm run unlighthouse
 ## 🤝 Contribución
 
 ### Guidelines de Desarrollo
+
 1. **Mantener la estética brutalista**: Sin colores adicionales o animaciones
 2. **Separación Astro/React**: Componentes estáticos vs interactivos
 3. **TypeScript estricto**: Tipado completo
@@ -296,6 +316,7 @@ npm run unlighthouse
 5. **Rendimiento primero**: Optimizar bundle size
 
 ### Estructura de Commits
+
 ```
 tipo(ámbito): descripción breve
 
@@ -308,11 +329,13 @@ Descripción más detallada si es necesario.
 ## 📚 Recursos Adicionales
 
 ### Documentación
+
 - [Astro.js Docs](https://docs.astro.build/)
 - [React Docs](https://react.dev/)
 - [Tailwind CSS Docs](https://tailwindcss.com/docs)
 
 ### Herramientas Útiles
+
 - [Astro DevTools](https://github.com/astro-devtools)
 - [Tailwind IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
 - [TypeScript Extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-next)
@@ -332,4 +355,4 @@ Este proyecto es el portafolio personal de Allison Peña. Todos los derechos res
 
 ---
 
-*Construido con ❤️ en Santiago, Chile usando Astro.js y React*
+_Construido con ❤️ en Santiago, Chile usando Astro.js y React_

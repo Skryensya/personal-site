@@ -1,6 +1,6 @@
 import * as React from 'react';
-import type { PointerTypeContext } from '../hooks/usePointerType';
-import { usePointerType } from '../hooks/usePointerType';
+import type { PointerTypeContext } from '../hooks/usePointerType.tsx';
+import { usePointerType } from '../hooks/usePointerType.tsx';
 
 // Default values for SSR and fallback
 const defaultPointerContext: PointerTypeContext = {

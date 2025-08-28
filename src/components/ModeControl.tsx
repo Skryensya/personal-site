@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import * as React from 'react';
 import DropdownButton, { DropdownContent } from './DropdownButton';
 import { applyTheme, themes } from '../data/themes.js';
-import { getClientTranslations } from '../i18n/utils';
+import { getClientTranslations, getTranslations } from '../i18n/utils';
 
 type Mode = 'light' | 'dark' | 'system';
 
 export default function ModeControl() {
-    const t = getClientTranslations();
+    // Get translations without hooks to avoid conflicts
+    const t = typeof window === 'undefined' ? getTranslations('es') : getClientTranslations();
     
-    const [currentMode, setCurrentMode] = useState<Mode>(() => {
+    const [currentMode, setCurrentMode] = React.useState<Mode>(() => {
         if (typeof window !== 'undefined') {
             // Check global state first
             const globalMode = (window as any).__THEME_MODE__;
@@ -25,15 +26,15 @@ export default function ModeControl() {
         return 'system';
     });
     
-    const [isMounted, setIsMounted] = useState(false);
+    const [isMounted, setIsMounted] = React.useState(false);
 
     // Get mode name in current language
-    const getModeName = useCallback((mode: Mode): string => {
+    const getModeName = React.useCallback((mode: Mode): string => {
         return t(`mode.${mode}` as any) || mode.charAt(0).toUpperCase() + mode.slice(1);
     }, [t]);
     
     // Get mode icon
-    const getModeIcon = useCallback((mode: Mode, className = 'w-3.5 h-3.5') => {
+    const getModeIcon = React.useCallback((mode: Mode, className = 'w-3.5 h-3.5') => {
         switch (mode) {
             case 'light':
                 return (
@@ -60,7 +61,7 @@ export default function ModeControl() {
     }, []);
 
     // Apply mode to document
-    const applyModeToDocument = useCallback((mode: Mode) => {
+    const applyModeToDocument = React.useCallback((mode: Mode) => {
         if (typeof window === 'undefined') return;
         
         // Get current theme from localStorage or global state
@@ -83,7 +84,7 @@ export default function ModeControl() {
     }, []);
 
     // Mount immediately - don't wait for theme
-    useEffect(() => {
+    React.useEffect(() => {
         if (typeof window !== 'undefined') {
             applyModeToDocument(currentMode);
             setIsMounted(true);
@@ -99,13 +100,13 @@ export default function ModeControl() {
     }, []);
 
     // Handle mode change
-    const handleModeChange = useCallback((mode: Mode) => {
+    const handleModeChange = React.useCallback((mode: Mode) => {
         setCurrentMode(mode);
         applyModeToDocument(mode);
     }, [applyModeToDocument]);
 
     // Listen for system preference changes when in system mode
-    useEffect(() => {
+    React.useEffect(() => {
         if (isMounted && currentMode === 'system' && typeof window !== 'undefined') {
             const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
             const handleChange = () => {
@@ -118,7 +119,7 @@ export default function ModeControl() {
     }, [currentMode, applyModeToDocument, isMounted]);
 
     // Handle mode toggle (main button action)
-    const toggleMode = useCallback(() => {
+    const toggleMode = React.useCallback(() => {
         if (!isMounted || typeof window === 'undefined') return;
 
         let nextMode: Mode;

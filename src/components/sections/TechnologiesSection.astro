@@ -1,7 +1,7 @@
 ---
 import BigSectionContainer from '../BigSectionContainer.astro';
 import MarqueeSection from '../MarqueeSection';
-import { useTranslations } from '@/i18n/utils';
+import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const { lang = defaultLang } = Astro.props;
-const t = useTranslations(lang);
+const t = getTranslations(lang);
 
 const technologies = [
     { href: 'https://react.dev/', text: 'React' },

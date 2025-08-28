@@ -3,7 +3,7 @@ import Button from '../Button.astro';
 import TextGenerate from '../TextGenerate.tsx';
 import AsciiGrid from '../AsciiGrid.astro';
 import CornersWithCrosses from '../CornersWithCrosses.astro';
-import { useTranslations } from '@/i18n/utils';
+import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import { getLocalizedUrl } from '@/utils/localized-routes';
 
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const { lang = defaultLang } = Astro.props;
-const t = useTranslations(lang);
+const t = getTranslations(lang);
 ---
 
 <section class="hero-section pt-4 pb-20 ">

@@ -1,22 +1,22 @@
 ---
-import { useTranslations } from '@/i18n/utils';
+import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import ThemedImage from '@/components/ThemedImage.astro';
 import CVTag from '@/components/CVTag.tsx';
-import { getCollection } from 'astro:content';
+import { getCollection, type CollectionEntry } from 'astro:content';
 
 interface Props {
     lang?: Language;
 }
 
 const { lang = defaultLang } = Astro.props;
-const t = useTranslations(lang);
+const t = getTranslations(lang);
 
 // Get featured projects for this language
 const allProjects = await getCollection('projects');
-const featuredProjects = allProjects
-    .filter(project => project.id.startsWith(`${lang}/`) && project.data.isFeatured)
-    .filter(project => project.data.cvDescription) // Only show projects with CV descriptions
+const featuredProjects: CollectionEntry<'projects'>[] = allProjects
+    .filter((project: CollectionEntry<'projects'>) => project.id.startsWith(`${lang}/`) && project.data.isFeatured)
+    .filter((project: CollectionEntry<'projects'>) => project.data.cvDescription) // Only show projects with CV descriptions
     .slice(0, 5); // Limit to 5 projects for CV
 ---
 
@@ -116,7 +116,7 @@ const featuredProjects = allProjects
                     <div class="space-y-1.5">
                         <div class="flex justify-between items-center">
                             <span class="text-sm font-mono">{t('cv.languages.spanish')}</span>
-                            <CVTag text={t('cv.languages.spanish.level')} />
+                            <CVTag text={t('cv.languages.spanish.level')} client:idle />
                         </div>
                         <a href="https://cert.efset.org/en/t9Ceeq" target="_blank" class="flex justify-between items-center group">
                             <span class="text-sm font-mono inline-flex group-hover:underline">{t('cv.languages.english')}
@@ -125,11 +125,11 @@ const featuredProjects = allProjects
                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link-icon lucide-external-link h-4 w-4 ml-1"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
 
                             </span>
-                            <CVTag text={t('cv.languages.english.level')} />
+                            <CVTag text={t('cv.languages.english.level')} client:idle />
                         </a>
                         <div class="flex justify-between items-center">
                             <span class="text-sm font-mono">{t('cv.languages.norwegian')}</span>
-                            <CVTag className="opacity-70" text={t('cv.languages.norwegian.level')} />
+                            <CVTag className="opacity-70" text={t('cv.languages.norwegian.level')} client:idle />
                         </div>
                     </div>
                 </section>
@@ -159,7 +159,7 @@ const featuredProjects = allProjects
                         <!-- Reference 1 -->
                         <div class="border-l-4 border-main pl-3">
                             <div class="flex items-center gap-1.5 mb-1">
-                                <span class="w-2 h-2 bg-main print:!bg-black print:bg-black"></span>
+                                <span class="w-2 h-2 bg-main print:!bg-black"></span>
                                 <h3 class="font-bold text-xs text-main">{t('cv.references.jorge.name')}</h3>
                             </div>
                             <p class="text-xs opacity-80 mb-1">{t('cv.references.position')}</p>
@@ -224,7 +224,7 @@ const featuredProjects = allProjects
                     <div class="mt-3">
                         <h2 class="text-base font-bold uppercase border-b-2 border-main mb-2">{t('cv.projects.title')}</h2>
                         <div class="space-y-2 pl-3 ml-2 border-l">
-                            {featuredProjects.map((project) => (
+                            {featuredProjects.map((project: CollectionEntry<'projects'>) => (
                                 <div class="relative">
                                     <h4
                                         class="font-bold text-sm text-main mb-0.5 relative before:content-[''] before:absolute before:left-[-18px] before:top-[4px] before:h-3 before:w-3 before:rounded-full before:bg-secondary before:border before:border-main print:before:!bg-white"
@@ -236,8 +236,8 @@ const featuredProjects = allProjects
                                     </p>
                                     {project.data.tags && project.data.tags.length > 0 && (
                                         <div class="flex flex-wrap gap-0.5">
-                                            {project.data.tags.map((tag) => (
-                                                <CVTag text={tag} />
+                                            {project.data.tags.map((tag: string) => (
+                                                <CVTag text={tag} client:idle />
                                             ))}
                                         </div>
                                     )}

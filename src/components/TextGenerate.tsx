@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import * as React from 'react';
 
 type TextGenerateProps = {
     words: string;
@@ -14,18 +14,18 @@ type TextGenerateProps = {
  * @returns {React.ReactElement}
  */
 const TextGenerate: React.FC<TextGenerateProps> = ({ words, speed = 20, cursorCharacter = '_', onAnimationComplete }) => {
-    const [displayedText, setDisplayedText] = useState<string>('');
-    const [currentIndex, setCurrentIndex] = useState<number>(0);
-    const [isCursorVisible, setIsCursorVisible] = useState<boolean>(true);
+    const [displayedText, setDisplayedText] = React.useState<string>('');
+    const [currentIndex, setCurrentIndex] = React.useState<number>(0);
+    const [isCursorVisible, setIsCursorVisible] = React.useState<boolean>(true);
 
-    const handleAnimationComplete = useCallback(() => {
+    const handleAnimationComplete = React.useCallback(() => {
         if (onAnimationComplete && typeof onAnimationComplete === 'function') {
             onAnimationComplete();
         }
     }, [onAnimationComplete]);
 
     // Lógica de los hooks (sin cambios)
-    useEffect(() => {
+    React.useEffect(() => {
         setDisplayedText('');
         setCurrentIndex(0);
         if (!words) return;
@@ -44,7 +44,7 @@ const TextGenerate: React.FC<TextGenerateProps> = ({ words, speed = 20, cursorCh
         return () => clearInterval(typingTimer);
     }, [words, speed, handleAnimationComplete]);
 
-    useEffect(() => {
+    React.useEffect(() => {
         const cursorTimer = setInterval(() => {
             setIsCursorVisible((prev) => !prev);
         }, 400);

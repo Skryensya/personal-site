@@ -1,5 +1,5 @@
 ---
-import { useTranslations } from '@/i18n/utils';
+import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import ThemedImage from '@/components/ThemedImage.astro';
 
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const { lang = defaultLang, className = '' } = Astro.props;
-const t = useTranslations(lang);
+const t = getTranslations(lang);
 ---
 
 <aside class={`w-[280px] flex-shrink-0 hidden lg:block ${className} print:hidden`} id="cv-contact-sidebar">

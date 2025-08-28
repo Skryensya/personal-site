@@ -173,7 +173,13 @@ export const ui = {
         
         // Skip to content
         'nav.skipToContent': 'Saltar al contenido principal',
-        'nav.skipToContentShort': 'Saltar a contenido'
+        'nav.skipToContentShort': 'Saltar a contenido',
+        
+        // Pagination
+        'pagination.page': 'Página',
+        'pagination.of': 'de',
+        'pagination.previous': 'Anterior',
+        'pagination.next': 'Siguiente'
     },
     en: {
         // Navigation
@@ -340,7 +346,13 @@ export const ui = {
         
         // Skip to content
         'nav.skipToContent': 'Skip to main content',
-        'nav.skipToContentShort': 'Skip to content'
+        'nav.skipToContentShort': 'Skip to content',
+        
+        // Pagination
+        'pagination.page': 'Page',
+        'pagination.of': 'of',
+        'pagination.previous': 'Previous',
+        'pagination.next': 'Next'
     },
     no: {
         // Navigation
@@ -507,7 +519,13 @@ export const ui = {
         
         // Skip to content
         'nav.skipToContent': 'Hopp til hovedinnhold',
-        'nav.skipToContentShort': 'Hopp til innhold'
+        'nav.skipToContentShort': 'Hopp til innhold',
+        
+        // Pagination
+        'pagination.page': 'Side',
+        'pagination.of': 'av',
+        'pagination.previous': 'Forrige',
+        'pagination.next': 'Neste'
     }
 } as const;
 

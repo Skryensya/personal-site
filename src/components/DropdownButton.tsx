@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import * as React from 'react';
 import {
     useFloating,
     autoUpdate,
@@ -42,14 +42,14 @@ export default function DropdownButton({
     initialSelectedIndex = 0,
     ariaLabel
 }: DropdownButtonProps) {
-    const [isOpen, setIsOpen] = useState(false);
-    const [isMounted, setIsMounted] = useState(false);
-    const [activeIndex, setActiveIndex] = useState(-1);
-    const dropdownRef = useRef<HTMLDivElement>(null);
-    const buttonRef = useRef<HTMLButtonElement>(null);
-    const listRef = useRef<Array<HTMLElement | null>>([]);
+    const [isOpen, setIsOpen] = React.useState(false);
+    const [isMounted, setIsMounted] = React.useState(false);
+    const [activeIndex, setActiveIndex] = React.useState(-1);
+    const dropdownRef = React.useRef<HTMLDivElement>(null);
+    const buttonRef = React.useRef<HTMLButtonElement>(null);
+    const listRef = React.useRef<Array<HTMLElement | null>>([]);
 
-    React.useEffect(() => {
+    React.React.useEffect(() => {
         setIsMounted(true);
     }, []);
 
@@ -88,16 +88,16 @@ export default function DropdownButton({
     const { getReferenceProps } = useInteractions([click, dismiss, role, listNavigation]);
 
     // Store item click handlers for auto-selection
-    const itemClickHandlers = useRef<Array<(() => void) | null>>([]);
+    const itemClickHandlers = React.useRef<Array<(() => void) | null>>([]);
 
     // Get all dropdown items for keyboard navigation
-    const getDropdownItems = useCallback(() => {
+    const getDropdownItems = React.useCallback(() => {
         if (!dropdownRef.current) return [];
         return Array.from(dropdownRef.current.querySelectorAll('[role="menuitem"]:not([disabled])'));
     }, []);
 
     // Simple keyboard navigation - handle everything manually
-    const handleCustomKeyDown = useCallback((event: React.KeyboardEvent) => {
+    const handleCustomKeyDown = React.useCallback((event: React.KeyboardEvent) => {
         if (!isOpen || disabled) return;
 
         const items = getDropdownItems();
@@ -170,7 +170,7 @@ export default function DropdownButton({
     }, [isOpen, disabled, activeIndex, getDropdownItems]);
 
     // Handle keyboard navigation for button
-    const handleButtonKeyDown = useCallback((event: React.KeyboardEvent) => {
+    const handleButtonKeyDown = React.useCallback((event: React.KeyboardEvent) => {
         if (disabled) return;
 
         switch (event.key) {
@@ -179,7 +179,7 @@ export default function DropdownButton({
                 event.preventDefault();
                 if (!isOpen) {
                     setIsOpen(true);
-                    // activeIndex will be set by useEffect
+                    // activeIndex will be set by React.useEffect
                 }
                 break;
 
@@ -188,7 +188,7 @@ export default function DropdownButton({
                 if (!isOpen) {
                     event.preventDefault();
                     setIsOpen(true);
-                    // activeIndex will be set by useEffect
+                    // activeIndex will be set by React.useEffect
                 }
                 break;
 
@@ -202,7 +202,7 @@ export default function DropdownButton({
 
 
     // Reset active index when dropdown closes, set initial when opens
-    useEffect(() => {
+    React.useEffect(() => {
         if (!isOpen) {
             setActiveIndex(-1);
         } else {
@@ -213,7 +213,7 @@ export default function DropdownButton({
     }, [isOpen, initialSelectedIndex]);
 
     // Handle item focus for screen readers and keyboard navigation
-    useEffect(() => {
+    React.useEffect(() => {
         if (isOpen && activeIndex >= 0) {
             const items = getDropdownItems();
             
@@ -233,7 +233,7 @@ export default function DropdownButton({
     }, [activeIndex, isOpen, getDropdownItems]);
 
     // Auto-focus dropdown container when it opens
-    useEffect(() => {
+    React.useEffect(() => {
         if (isOpen) {
             // Use setTimeout to ensure DOM is updated
             const timer = setTimeout(() => {
@@ -264,7 +264,7 @@ export default function DropdownButton({
     };
 
     // Handle dropdown item click - close dropdown after selection (for mouse clicks)
-    const handleItemClick = useCallback((originalOnClick?: () => void) => {
+    const handleItemClick = React.useCallback((originalOnClick?: () => void) => {
         return () => {
             if (originalOnClick) {
                 originalOnClick();
@@ -280,7 +280,7 @@ export default function DropdownButton({
     }, []);
 
     // Handle item selection without closing (for arrow navigation)
-    const handleItemSelection = useCallback((originalOnClick?: () => void) => {
+    const handleItemSelection = React.useCallback((originalOnClick?: () => void) => {
         return () => {
             if (originalOnClick) {
                 originalOnClick();
