@@ -6,6 +6,7 @@ import Footer from "../components/Footer.astro"
 import GameOfLifeBackground from '../components/GameOfLifeBackground.astro';
 import WaveDivider from '../components/WaveDivider.astro';
 import NorwegianDisclaimer from '../components/NorwegianDisclaimer.astro';
+import FaviconManager from '../components/FaviconManager.tsx';
 import { type Language } from '../i18n/ui';
 import { themes } from '../data/themes.js';
 
@@ -215,10 +216,11 @@ declare global {
 
       
         <div class="bg-main w-full h-2"></div> 
-        <div class="h-8"> 
+        <div class="h-8 !z-100"> 
             <WaveDivider />
         </div>
         <Navbar />
+        <FaviconManager client:load />
         <NorwegianDisclaimer lang={lang} />
         <div class="pt-24 mt-8 mx-auto max-w-[var(--max-w-size)] ">
             <main class="text-left px-4">
