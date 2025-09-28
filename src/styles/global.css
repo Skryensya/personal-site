@@ -1,5 +1,4 @@
 @import './tailwind.config.css';
-@import './themes.css';
 @import './print.css';
 
 @layer base {
