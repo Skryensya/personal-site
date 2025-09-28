@@ -292,3 +292,9 @@
         margin-bottom: 2rem !important;
     }
 }
+
+p {
+    max-width: 80ch;
+
+    text-wrap: pretty;
+}

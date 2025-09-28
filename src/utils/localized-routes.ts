@@ -4,13 +4,18 @@ import { type Language } from '@/i18n/ui';
 export const localizedRoutes = {
   projects: {
     es: 'proyectos',
-    en: 'projects', 
+    en: 'projects',
     no: 'prosjekter'
   },
   resume: {
     es: 'curriculum',
     en: 'resume',
     no: 'cv'
+  },
+  accessibility: {
+    es: 'accessibility',
+    en: 'accessibility',
+    no: 'accessibility'
   }
 } as const;
 
@@ -47,6 +52,22 @@ export const pagesDictionary = {
     es: '/curriculum',
     en: '/en/resume',
     no: '/no/cv'
+  },
+  // Accessibility pages
+  '/accessibility': {
+    es: '/accessibility',
+    en: '/en/accessibility',
+    no: '/no/accessibility'
+  },
+  '/en/accessibility': {
+    es: '/accessibility',
+    en: '/en/accessibility',
+    no: '/no/accessibility'
+  },
+  '/no/accessibility': {
+    es: '/accessibility',
+    en: '/en/accessibility',
+    no: '/no/accessibility'
   },
   // Projects pages (pagination)
   '/proyectos': {

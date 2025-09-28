@@ -184,16 +184,6 @@ const t = getTranslations(lang);
         let currentHeading = null;
         let detectionY = 200; // Default 200px from top
         
-        // Check if reading guide is active and get its position
-        const readingGuideToggle = document.getElementById('reading-guide-toggle');
-        const isReadingGuideActive = readingGuideToggle && readingGuideToggle.getAttribute('aria-pressed') === 'true';
-        
-        if (isReadingGuideActive) {
-            // Use reading guide position from the component
-            const viewportHeight = window.innerHeight;
-            const readingGuidePosition = (window).getReadingGuidePosition ? (window).getReadingGuidePosition() : 0.5;
-            detectionY = viewportHeight * readingGuidePosition;
-        }
         
         // Find heading that is closest to being at detection point but has passed it
         for (let i = 0; i < headings.length; i++) {

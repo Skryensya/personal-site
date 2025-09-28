@@ -1,19 +1,5 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import siteConfig from '../data/site-config';
-import Hero from '../components/sections/Hero.astro';
-import TechnologiesSection from '@/components/sections/TechnologiesSection.astro';
-import AboutSection from '@/components/sections/AboutSection.astro';
-import ProjectsSection from '@/components/sections/ProjectsSection.astro';
-import { getTranslations } from '@/i18n/utils';
-
-const currentLocale = 'es';
-const t = getTranslations(currentLocale);
+import HomePage from '@/components/pages/HomePage.astro';
 ---
 
-<Layout description={siteConfig.description} image={siteConfig.image} lang={currentLocale}>
-    <Hero lang={currentLocale} />
-    <TechnologiesSection lang={currentLocale} />
-    <AboutSection lang={currentLocale} />
-    <ProjectsSection lang={currentLocale} /> 
-</Layout>
+<HomePage lang="es" />

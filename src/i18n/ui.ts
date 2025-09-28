@@ -24,7 +24,7 @@ export const ui = {
 
         // Bio content
         'home.bio.intro':
-            'Soy Allison, full-stack developer apasionada por crear experiencias web brutalmente simples pero funcionalmente complejas. Me encanta resolver problemas técnicos complejos y convertir ideas en productos digitales que realmente funcionen.',
+            'Soy Allison, full-stack developer apasionado por crear experiencias web brutalmente simples pero funcionalmente complejas. Me encanta resolver problemas técnicos complejos y convertir ideas en productos digitales que realmente funcionen.',
         'home.bio.experience':
             'Con 3 años de experiencia en desarrollo web, me especializo en accessibility, performance, developer experience y UI/UX. Actualmente disponible para nuevos proyectos y colaboraciones desde Santiago, Chile.',
 
@@ -56,25 +56,42 @@ export const ui = {
         // Hero section
         'hero.heading': 'Hola, soy Allison Bienvenido a mi sitio',
         'hero.description': 'Me gusta crear sitios web que funcionen bien y sean fáciles de usar. Trabajo principalmente con React y TypeScript.',
+        'hero.cards.frontend.title': 'Frontend',
+        'hero.cards.frontend.description': 'React, TypeScript, Astro',
+        'hero.cards.backend.title': 'Backend',
+        'hero.cards.backend.description': 'Node.js, Python, APIs',
+        'hero.cards.design.title': 'Diseño',
+        'hero.cards.design.description': 'UI/UX, Figma, Prototipado',
 
         // About section redesign
-        'about.subtitle': 'Desarrolladora full-stack con experiencia en crear productos digitales accesibles y funcionales',
+        'about.subtitle': 'Desarrollador full-stack con experiencia en crear productos digitales accesibles y funcionales',
         'about.description':
             'Me apasiona resolver problemas complejos y convertir ideas en experiencias web que realmente funcionen. Con base en Santiago, Chile, trabajo con tecnologías modernas para crear soluciones que priorizan la experiencia del usuario y la accesibilidad.',
         'about.keyFeature1': 'Código limpio y mantenible',
         'about.keyFeature2': 'Experiencias accesibles para todos',
         'about.keyFeature3': 'Performance optimizada',
-        'about.tldr.title': 'Sobre mí',
-        'about.tldr.description': 'Desarrolladora full-stack con 3+ años de experiencia especializada en React, TypeScript y Node.js. Enfocada en crear experiencias web accesibles, optimizadas y funcionalmente complejas. Expertise en performance optimization, developer experience y UI/UX design.',
+        'about.title': 'Sobre mí',
+        'about.tldr': 'Soy Allison, desarrollador frontend enfocado en el detalle, usabilidad y accesibilidad. Construyo experiencias hechas a mano con TypeScript, React y Tailwind, y busco entregar productos que se sientan pulidos, usables y cuidados.',
+        'about.expanded': [
+            'Durante los últimos tres años, he trabajado en una empresa consultora, contribuyendo a proyectos de gran escala como Kit Digital UC, el sistema de diseño que alimenta más de 100 sitios en la Pontificia Universidad Católica de Chile. Ese trabajo afianzó mis habilidades frontend, me dio experiencia profunda con sistemas de diseño, y me enseñó cómo adaptarme a desafíos diversos.',
+            'Ahora, busco mayor responsabilidad: no solo programar, sino influir en la dirección del producto. Me atraen las startups o equipos pequeños donde pueda enfocarme en hacer el mejor producto posible.',
+            'Mi enfoque: entender el problema primero. Si ya existe una solución, la adapto; si no, la construyo. Ahí es donde más me divierto. Valoro la precisión de píxeles, la accesibilidad y la discusión abierta, y prospero cuando me desafían.',
+            'Me emociona la creciente capacidad de la web para alojar aplicaciones complejas y eficientes que rivalizan con el software de escritorio. Me inspira especialmente el movimiento local-first, que abre la puerta a experiencias más rápidas, resistentes y controladas por el usuario.',
+            'Fuera del trabajo, estoy aprendiendo noruego por diversión, me encanta jugar ajedrez y me sumerjo en la exploración musical. Disfruto conectar con personas afines, ya sea para proyectos serios o solo buenas conversaciones.'
+        ],
+        'about.cta.message': 'Si algo de esto resuena contigo, escríbeme. Me encantaría charlar.',
+        'about.cta.button': 'Conversemos',
         'about.specialties.title': 'ESPECIALIDADES',
         'about.stack.title': 'STACK PRINCIPAL',
         'about.collaboration.title': '¿INTERESADO EN COLABORAR?',
         'about.collaboration.subtitle': 'Disponible para proyectos y oportunidades',
+        'about.viewMore.open': 'Ver más',
+        'about.viewMore.close': 'Ver menos',
 
         // Site metadata
         'site.title': 'Allison Peña',
         'site.subtitle': 'Full-stack web developer',
-        'site.description': 'Portfolio personal de Allison Peña, desarrolladora full-stack especializada en React, TypeScript y experiencias web accesibles.',
+        'site.description': 'Portfolio personal de Allison Peña, desarrollador full-stack especializado en React, TypeScript y experiencias web accesibles.',
 
         // UI text
         'ui.loading': 'Cargando...',
@@ -168,8 +185,6 @@ export const ui = {
         
         // Sidebar content
         'sidebar.toc': 'Contenido',
-        'sidebar.readingGuide.title': 'Guía de lectura',
-        'sidebar.readingGuide.activate': 'Activar guía',
         
         // Skip to content
         'nav.skipToContent': 'Saltar al contenido principal',
@@ -179,7 +194,40 @@ export const ui = {
         'pagination.page': 'Página',
         'pagination.of': 'de',
         'pagination.previous': 'Anterior',
-        'pagination.next': 'Siguiente'
+        'pagination.next': 'Siguiente',
+
+        // Footer
+        'footer.navigation': 'Navegación',
+        'footer.connect': 'Conectar',
+        'footer.home': 'Inicio',
+        'footer.projects': 'Proyectos',
+        'footer.resume': 'Currículum',
+        'footer.email': 'Email',
+        'footer.accessibility': 'Declaración de Accesibilidad',
+        'footer.copyright': 'Todos los derechos reservados',
+        'footer.builtWith': 'Construido con',
+        'footer.andCode': 'y código',
+
+        // Accessibility Statement
+        'accessibility.title': 'Declaración de Accesibilidad',
+        'accessibility.description': 'Compromiso con la accesibilidad web para todos los usuarios',
+        'accessibility.commitment.title': 'Compromiso con la accesibilidad',
+        'accessibility.commitment.content': 'Estoy comprometido a que mi sitio personal sea accesible para la mayor cantidad de personas posible, sin importar la tecnología que utilicen o sus capacidades. Mi objetivo es ofrecer una experiencia clara, funcional y disfrutable para todos.',
+        'accessibility.standards.title': 'Estándares y guías',
+        'accessibility.standards.items': [
+          'Este sitio procura cumplir con las Pautas de Accesibilidad para el Contenido Web (WCAG) 2.2 en nivel AA, que definen cómo hacer que los contenidos digitales sean más accesibles para personas con discapacidad.'
+        ],
+        'accessibility.features.title': 'Mejora continua',
+        'accessibility.features.items': [
+          'La accesibilidad es un proceso en constante evolución. Reviso y actualizo de forma periódica el diseño, el código y los contenidos de este sitio para mantener e incrementar su nivel de accesibilidad.'
+        ],
+        'accessibility.feedback.title': 'Comentarios y contacto',
+        'accessibility.feedback.content': 'Si encuentras alguna barrera de accesibilidad o tienes sugerencias de mejora, agradeceré tu retroalimentación.',
+        'accessibility.feedback.contact': 'Puedes escribirme a: ',
+        'accessibility.contrast.title': 'Contraste de colores',
+        'accessibility.contrast.content': 'Este sitio utiliza un sistema de dos colores que se invierte entre temas claro y oscuro. El contraste se calcula dinámicamente para cumplir con los estándares WCAG.',
+        'accessibility.updates.title': 'Actualizaciones',
+        'accessibility.updates.content': 'Este sitio se revisa regularmente para mantener y mejorar su accesibilidad. Última actualización: enero 2025.'
     },
     en: {
         // Navigation
@@ -229,6 +277,12 @@ export const ui = {
         // Hero section
         'hero.heading': "Hello, I'm Allison Welcome to my site",
         'hero.description': 'I love creating websites that work well and are easy to use. I work primarily with React and TypeScript.',
+        'hero.cards.frontend.title': 'Frontend',
+        'hero.cards.frontend.description': 'React, TypeScript, Astro',
+        'hero.cards.backend.title': 'Backend',
+        'hero.cards.backend.description': 'Node.js, Python, APIs',
+        'hero.cards.design.title': 'Design',
+        'hero.cards.design.description': 'UI/UX, Figma, Prototyping',
 
         // About section redesign
         'about.subtitle': 'Full-stack developer with experience creating accessible and functional digital products',
@@ -237,12 +291,23 @@ export const ui = {
         'about.keyFeature1': 'Clean and maintainable code',
         'about.keyFeature2': 'Accessible experiences for everyone',
         'about.keyFeature3': 'Optimized performance',
-        'about.tldr.title': 'Professional Summary',
-        'about.tldr.description': 'Full-stack developer with 3+ years of experience specialized in React, TypeScript and Node.js. Focused on creating accessible, optimized and functionally complex web experiences. Expert in performance optimization, developer experience and UI/UX design.',
+        'about.title': 'About Me',
+        'about.tldr': 'I\'m Allison, a frontend developer focused on detail, usability, and accessibility. I build hand-crafted experiences with TypeScript, React, and Tailwind, and I aim to deliver products that feel polished, usable, and cared for.',
+        'about.expanded': [
+            'For the past three years, I\'ve worked at a consulting company, contributing to large-scale projects like Kit Digital UC, the design system powering 100+ sites at Pontificia Universidad Católica de Chile. That work sharpened my frontend skills, gave me deep experience with design systems, and taught me how to adapt to diverse challenges.',
+            'Now, I\'m looking for more ownership — not just coding, but influencing product direction. I\'m drawn to startups or small teams where I can focus on making the best product possible.',
+            'My approach: understand the problem first. If a solution already exists, I adapt it; if not, I build it — that\'s where I have the most fun. I value pixel precision, accessibility, and open discussion, and I thrive when challenged.',
+            'I\'m excited about the web\'s growing ability to host complex, performant apps that rival desktop software. I\'m especially inspired by the local-first movement, which opens the door to faster, more resilient, user-controlled experiences.',
+            'Outside of work, I\'m learning Norwegian for fun, love playing chess, and dive into music exploration. I enjoy connecting with like-minded people, whether for serious projects or just good conversations.'
+        ],
+        'about.cta.message': 'If something here resonates, reach out — I\'d love to chat.',
+        'about.cta.button': 'Let\'s talk',
         'about.specialties.title': 'SPECIALTIES',
         'about.stack.title': 'MAIN STACK',
         'about.collaboration.title': 'INTERESTED IN COLLABORATING?',
         'about.collaboration.subtitle': 'Available for projects and opportunities',
+        'about.viewMore.open': 'View more',
+        'about.viewMore.close': 'View less',
 
         // Site metadata
         'site.title': 'Allison Peña',
@@ -341,8 +406,6 @@ export const ui = {
         
         // Sidebar content
         'sidebar.toc': 'Contents',
-        'sidebar.readingGuide.title': 'Reading guide',
-        'sidebar.readingGuide.activate': 'Activate guide',
         
         // Skip to content
         'nav.skipToContent': 'Skip to main content',
@@ -352,7 +415,40 @@ export const ui = {
         'pagination.page': 'Page',
         'pagination.of': 'of',
         'pagination.previous': 'Previous',
-        'pagination.next': 'Next'
+        'pagination.next': 'Next',
+
+        // Footer
+        'footer.navigation': 'Navigation',
+        'footer.connect': 'Connect',
+        'footer.home': 'Home',
+        'footer.projects': 'Projects',
+        'footer.resume': 'Resume',
+        'footer.email': 'Email',
+        'footer.accessibility': 'Accessibility Statement',
+        'footer.copyright': 'All rights reserved',
+        'footer.builtWith': 'Built with',
+        'footer.andCode': 'and code',
+
+        // Accessibility Statement
+        'accessibility.title': 'Accessibility Statement',
+        'accessibility.description': 'Commitment to web accessibility for all users',
+        'accessibility.commitment.title': 'Accessibility Commitment',
+        'accessibility.commitment.content': 'I am committed to making my personal website accessible to as many people as possible, regardless of technology or abilities. My goal is to provide a clear, functional and enjoyable experience for everyone.',
+        'accessibility.standards.title': 'Standards and Guidelines',
+        'accessibility.standards.items': [
+          'This site aims to comply with the Web Content Accessibility Guidelines (WCAG) 2.2, Level AA, which define how to make digital content more accessible to people with disabilities.'
+        ],
+        'accessibility.features.title': 'Continuous Improvement',
+        'accessibility.features.items': [
+          'Accessibility is a constantly evolving process. I regularly review and update the design, code and content of this site to maintain and increase its accessibility level.'
+        ],
+        'accessibility.feedback.title': 'Comments and Contact',
+        'accessibility.feedback.content': 'If you encounter any accessibility barriers or have suggestions for improvement, I would appreciate your feedback.',
+        'accessibility.feedback.contact': 'You can write to me at: ',
+        'accessibility.contrast.title': 'Color Contrast',
+        'accessibility.contrast.content': 'This site uses a two-color system that inverts between light and dark themes. Contrast is calculated dynamically to meet WCAG standards.',
+        'accessibility.updates.title': 'Ongoing Updates',
+        'accessibility.updates.content': 'This website is regularly reviewed to maintain and improve its accessibility. Last updated: January 2025.'
     },
     no: {
         // Navigation
@@ -402,6 +498,12 @@ export const ui = {
         // Hero section
         'hero.heading': 'Hei, jeg er Allison Velkommen til min nettside',
         'hero.description': 'Jeg elsker å lage nettsteder som fungerer godt og er enkle å bruke. Jeg jobber hovedsakelig med React og TypeScript.',
+        'hero.cards.frontend.title': 'Frontend',
+        'hero.cards.frontend.description': 'React, TypeScript, Astro',
+        'hero.cards.backend.title': 'Backend',
+        'hero.cards.backend.description': 'Node.js, Python, APIer',
+        'hero.cards.design.title': 'Design',
+        'hero.cards.design.description': 'UI/UX, Figma, Prototyping',
 
         // About section redesign
         'about.subtitle': 'Fullstack-utvikler med erfaring i å lage tilgjengelige og funksjonelle digitale produkter',
@@ -410,12 +512,23 @@ export const ui = {
         'about.keyFeature1': 'Ren og vedlikeholdbar kode',
         'about.keyFeature2': 'Tilgjengelige opplevelser for alle',
         'about.keyFeature3': 'Optimalisert ytelse',
-        'about.tldr.title': 'Profesjonelt Sammendrag',
-        'about.tldr.description': 'Fullstack-utvikler med 3+ års erfaring spesialisert på React, TypeScript og Node.js. Fokusert på å skape tilgjengelige, optimaliserte og funksjonelt komplekse webopplevelser. Ekspert på ytelsesoptimalisering, utvikleropplevelse og UI/UX design.',
+        'about.title': 'Om Meg',
+        'about.tldr': 'Jeg er Allison, en frontend-utvikler fokusert på detaljer, brukervennlighet og tilgjengelighet. Jeg bygger håndlagde opplevelser med TypeScript, React og Tailwind, og sikter på å levere produkter som føles polerte, brukbare og omsorgsfulle.',
+        'about.expanded': [
+            'De siste tre årene har jeg jobbet i et konsulentselskap og bidratt til store prosjekter som Kit Digital UC, designsystemet som driver 100+ nettsteder ved Pontificia Universidad Católica de Chile. Det arbeidet skjerpet mine frontend-ferdigheter, ga meg dyp erfaring med designsystemer og lærte meg å tilpasse meg ulike utfordringer.',
+            'Nå søker jeg mer eierskap — ikke bare koding, men å påvirke produktretningen. Jeg trekkes mot startups eller små team hvor jeg kan fokusere på å lage det beste produktet mulig.',
+            'Min tilnærming: forstå problemet først. Hvis en løsning allerede eksisterer, tilpasser jeg den; hvis ikke, bygger jeg den — det er der jeg har mest moro. Jeg verdsetter piksel-presisjon, tilgjengelighet og åpen diskusjon, og trives når jeg blir utfordret.',
+            'Jeg er begeistret for webbens voksende evne til å være vert for komplekse, effektive apper som konkurrerer med skrivebordsprogramvare. Jeg er spesielt inspirert av local-first-bevegelsen, som åpner døren for raskere, mer motstandsdyktige, brukerkontrollerte opplevelser.',
+            'Utenom jobb lærer jeg norsk for moro skyld, elsker å spille sjakk og dykker ned i musikalsk utforskning. Jeg liker å knytte kontakt med likesinnede, enten for alvorlige prosjekter eller bare gode samtaler.'
+        ],
+        'about.cta.message': 'Hvis noe av dette resonerer, ta kontakt — jeg vil gjerne prate.',
+        'about.cta.button': 'La oss snakke',
         'about.specialties.title': 'SPESIALITETER',
         'about.stack.title': 'HOVEDTEKNOLOGIER',
         'about.collaboration.title': 'INTERESSERT I SAMARBEID?',
         'about.collaboration.subtitle': 'Tilgjengelig for prosjekter og muligheter',
+        'about.viewMore.open': 'Se mer',
+        'about.viewMore.close': 'Se mindre',
 
         // Site metadata
         'site.title': 'Allison Peña',
@@ -514,8 +627,6 @@ export const ui = {
         
         // Sidebar content
         'sidebar.toc': 'Innhold',
-        'sidebar.readingGuide.title': 'Leseguide',
-        'sidebar.readingGuide.activate': 'Aktiver guide',
         
         // Skip to content
         'nav.skipToContent': 'Hopp til hovedinnhold',
@@ -525,7 +636,40 @@ export const ui = {
         'pagination.page': 'Side',
         'pagination.of': 'av',
         'pagination.previous': 'Forrige',
-        'pagination.next': 'Neste'
+        'pagination.next': 'Neste',
+
+        // Footer
+        'footer.navigation': 'Navigasjon',
+        'footer.connect': 'Kontakt',
+        'footer.home': 'Hjem',
+        'footer.projects': 'Prosjekter',
+        'footer.resume': 'CV',
+        'footer.email': 'E-post',
+        'footer.accessibility': 'Tilgjengelighetserklæring',
+        'footer.copyright': 'Alle rettigheter reservert',
+        'footer.builtWith': 'Bygget med',
+        'footer.andCode': 'og kode',
+
+        // Accessibility Statement
+        'accessibility.title': 'Tilgjengelighetserklæring',
+        'accessibility.description': 'Forpliktelse til webtilgjengelighet for alle brukere',
+        'accessibility.commitment.title': 'Forpliktelse til tilgjengelighet',
+        'accessibility.commitment.content': 'Jeg er forpliktet til å gjøre min personlige nettside tilgjengelig for så mange mennesker som mulig, uavhengig av teknologi eller evner. Målet mitt er å tilby en klar, funksjonell og hyggelig opplevelse for alle.',
+        'accessibility.standards.title': 'Standarder og retningslinjer',
+        'accessibility.standards.items': [
+          'Denne nettsiden streber etter å oppfylle retningslinjene for tilgjengelig webinnhold (WCAG) 2.2, nivå AA, som definerer hvordan man gjør digitalt innhold mer tilgjengelig for personer med funksjonshemming.'
+        ],
+        'accessibility.features.title': 'Kontinuerlig forbedring',
+        'accessibility.features.items': [
+          'Tilgjengelighet er en prosess i konstant utvikling. Jeg gjennomgår og oppdaterer regelmessig design, kode og innhold på denne nettsiden for å opprettholde og øke tilgjengelighetsnivået.'
+        ],
+        'accessibility.feedback.title': 'Kommentarer og kontakt',
+        'accessibility.feedback.content': 'Hvis du støter på tilgjengelighetsbarrierer eller har forslag til forbedringer, setter jeg pris på tilbakemeldingen din.',
+        'accessibility.feedback.contact': 'Du kan skrive til meg på: ',
+        'accessibility.contrast.title': 'Fargekontrast',
+        'accessibility.contrast.content': 'Dette nettstedet bruker et to-farge system som inverteres mellom lyse og mørke temaer. Kontrast beregnes dynamisk for å oppfylle WCAG-standarder.',
+        'accessibility.updates.title': 'Løpende Oppdateringer',
+        'accessibility.updates.content': 'Denne nettsiden gjennomgås regelmessig for å opprettholde og forbedre tilgjengeligheten. Sist oppdatert: Januar 2025.'
     }
 } as const;
 

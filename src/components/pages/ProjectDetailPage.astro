@@ -1,0 +1,19 @@
+---
+import { type CollectionEntry } from 'astro:content';
+import ProjectPage from '@/components/ProjectPage.astro';
+import { defaultLang, type Language } from '@/i18n/ui';
+
+interface Props {
+    projectsByLang: Record<string, CollectionEntry<'projects'>>;
+    slug: string;
+    lang?: Language;
+}
+
+const { projectsByLang, slug, lang = defaultLang } = Astro.props;
+---
+
+<ProjectPage
+    projectsByLang={projectsByLang}
+    slug={slug}
+    currentLocale={lang}
+/>

@@ -298,7 +298,7 @@ export default function DropdownButton({
                     type="button"
                     onClick={handleMainClick}
                     disabled={disabled}
-                    className="flex items-center justify-center px-3 h-8 bg-secondary border-double border-2 border-main border-r-0 hover:bg-main hover:text-secondary focus:bg-main focus:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)] pt-0 focus:z-[9999]"
+                    className="flex items-center justify-center px-3 h-8 bg-secondary border-double border-2 border-main border-r-0 hover:bg-main hover:text-secondary focus:bg-main focus:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)] pt-0 focus:z-[9999] select-none"
                     style={{
                         outlineWidth: '1px',
                         outlineOffset: '1px'
@@ -318,7 +318,7 @@ export default function DropdownButton({
                     onClick={handleDropdownClick}
                     onKeyDown={handleButtonKeyDown}
                     disabled={disabled}
-                    className="flex items-center justify-center min-w-8 w-8 h-8 bg-secondary border-double border-2 border-main hover:bg-main hover:text-secondary focus:bg-main focus:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)] focus:z-[9999]"
+                    className="flex items-center justify-center min-w-8 w-8 h-8 bg-secondary border-double border-2 border-main hover:bg-main hover:text-secondary focus:bg-main focus:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)] focus:z-[9999] select-none"
                     style={{
                         outlineWidth: '1px',
                         outlineOffset: '1px'
@@ -418,7 +418,7 @@ export function DropdownContent({
                         .replace(/hover:bg-\w+/g, '')
                         .replace(/hover:text-\w+/g, '');
                     
-                    const baseClasses = `${cleanedClassName} w-full px-2 py-1 text-left block transition-all duration-150 border-2 border-transparent`;
+                    const baseClasses = `${cleanedClassName} w-full px-2 py-1 text-left block transition-all duration-150 border-2 border-transparent select-none`;
                     // Active state (focused) always gets filled background, regardless of selected state
                     const stateClasses = isActive 
                         ? 'bg-main text-secondary hover:bg-main hover:text-secondary' 
@@ -467,7 +467,7 @@ export function DropdownItem({
     selected?: boolean;
     isDropdownOpen?: boolean;
 }) {
-    const baseClasses = 'w-full px-2 py-1 text-left block transition-all duration-150 bg-secondary text-main hover:bg-main hover:text-secondary focus:bg-main focus:text-secondary border-2 border-transparent';
+    const baseClasses = 'w-full px-2 py-1 text-left block transition-all duration-150 bg-secondary text-main hover:bg-main hover:text-secondary focus:bg-main focus:text-secondary border-2 border-transparent select-none';
     // Selected solo afecta el checkmark, no el background
     
     return (

@@ -4,6 +4,7 @@ import BaseHead, { type Props as HeadProps } from '../components/BaseHead.astro'
 import Navbar from '../components/Navbar.astro';
 import Footer from "../components/Footer.astro"
 import GameOfLifeBackground from '../components/GameOfLifeBackground.astro';
+import WaveDivider from '../components/WaveDivider.astro';
 import NorwegianDisclaimer from '../components/NorwegianDisclaimer.astro';
 import { type Language } from '../i18n/ui';
 import { themes } from '../data/themes.js';
@@ -147,13 +148,33 @@ declare global {
                     window.__APPLY_THEME_INSTANTLY__();
                 }
             });
-            
+
             document.addEventListener('astro:after-preparation', function(e) {
                 // Apply theme immediately after transition preparation
                 if (window.__APPLY_THEME_INSTANTLY__) {
                     window.__APPLY_THEME_INSTANTLY__();
                 }
             });
+        </script>
+
+        <!-- Apply background after everything is loaded -->
+        <script is:inline>
+            function applyBodyBackground() {
+                const body = document.getElementById('app-body');
+                if (body) {
+                    body.classList.add('bg-main');
+                }
+            }
+
+            // Apply background after DOM is loaded
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', applyBodyBackground);
+            } else {
+                applyBodyBackground();
+            }
+
+            // Re-apply after page transitions
+            document.addEventListener('astro:page-load', applyBodyBackground);
         </script>
         
         <style>
@@ -189,17 +210,23 @@ declare global {
             }
         </style>
     </head>
-    <body class="bg-secondary text-main (--max-w-size:1280px) relative" id="app-body">
-        <GameOfLifeBackground is404Page={showGameOfLife} />
+    <body class="relative" id="app-body">
+        <div class="text-main (--max-w-size:1280px) bg-secondary">
+
+      
+        <div class="bg-main w-full h-2"></div> 
+        <div class="h-8"> 
+            <WaveDivider />
+        </div>
         <Navbar />
         <NorwegianDisclaimer lang={lang} />
-        <div class="mt-8 mx-auto max-w-[var(--max-w-size)]">  
-        <main class="text-left px-4">
+        <div class="pt-24 mt-8 mx-auto max-w-[var(--max-w-size)] ">
+            <main class="text-left px-4">
                 <slot />
             </main>
         </div> 
-        <Footer />
-        
-        <!-- Audio Player -->
+        <Footer lang={lang} />
+         
+           </div>
     </body>
 </html>

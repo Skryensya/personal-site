@@ -1,62 +1,35 @@
 ---
 import type { GetStaticPathsOptions, Page } from 'astro';
 import { type CollectionEntry, getCollection } from 'astro:content';
-import Layout from '../../../layouts/Layout.astro'; 
 import siteConfig from '../../../data/site-config';
 import { sortItemsByDateDesc } from '../../../utils/data-utils';
-import { getSlugFromId } from '@/utils/content-utils';
-import { getTranslations } from '@/i18n/utils';
-import ProjectsWithSearch from '../../../components/ProjectsWithSearch';
+import ProjectsListPage from '@/components/pages/ProjectsListPage.astro';
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
     const allProjects = await getCollection('projects');
     const lang = 'en';
-    
+
     const projectsInLang = allProjects
         .filter(project => project.id.startsWith(`${lang}/`))
         .sort(sortItemsByDateDesc);
-    
+
     // For search functionality, we'll return all projects on the first page
     // and handle pagination through the search component
     return [{
         params: { page: undefined },
-        props: { 
+        props: {
             projects: projectsInLang,
-            language: lang 
+            language: lang
         }
     }];
 }
 
-type Props = { 
-    projects: CollectionEntry<'projects'>[]; 
+type Props = {
+    projects: CollectionEntry<'projects'>[];
     language: string;
 };
 
 const { projects, language } = Astro.props;
-const currentLocale = 'en';
-const t = getTranslations(currentLocale);
 ---
 
-<Layout
-    title={t('nav.projects')}
-    description={t('nav.projects')}
-    showHeader={true}
-    headerTitle={t('nav.projects')}
-    headerSubtitle={t('nav.projects')}
-    lang={currentLocale}
->
-    <div class="space-y-8">
-        <div class="flex items-center justify-between">
-            <h1 class="text-2xl leading-tight font-mono sm:text-4xl">{t('nav.projects')}</h1>
-            <div class="text-sm font-mono opacity-60">
-                {projects.length} {projects.length === 1 ? 'project' : 'projects'}
-            </div>
-        </div>
-        
-        <ProjectsWithSearch 
-            initialProjects={projects}
-            language={language}
-            client:load
-        />
-    </div>
-</Layout>
+<ProjectsListPage lang="en" projects={projects} useSearch={true} />

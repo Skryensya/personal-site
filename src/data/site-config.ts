@@ -73,6 +73,18 @@ const siteConfig: SiteConfig = {
         {
             text: 'LinkedIn',
             href: 'https://linkedin.com/in/skryensya'
+        },
+        {
+            text: 'GitHub',
+            href: 'https://github.com/Skryensya'
+        },
+        {
+            text: 'Lichess',
+            href: 'https://lichess.org/@/Skryensya'
+        },
+        {
+            text: 'Email',
+            href: 'mailto:allison.jpb@gmail.com'
         }
     ],
 
