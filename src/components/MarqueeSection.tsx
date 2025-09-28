@@ -284,7 +284,8 @@ export default function MarqueeSection({ links }: Props) {
           border-bottom-color: var(--color-secondary);
         }
         
-        span:not(.selected):hover {
+        .marquee-scroll span:not(.selected):hover,
+        .keyboard-paused span:not(.selected):hover {
           background-color: color-mix(in srgb, var(--color-main) 15%, var(--color-secondary)) !important;
         }
         

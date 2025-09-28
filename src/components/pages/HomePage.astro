@@ -1,0 +1,28 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import siteConfig from '@/data/site-config';
+import Hero from '@/components/sections/Hero.astro';
+import TechnologiesSection from '@/components/sections/TechnologiesSection.astro';
+import AboutSection from '@/components/sections/AboutSection.astro';
+import ProjectsSection from '@/components/sections/ProjectsSection.astro';
+import TechLogos from '@/components/TechLogos.tsx';
+import { getTranslations } from '@/i18n/utils';
+import { defaultLang, type Language } from '@/i18n/ui';
+
+interface Props {
+    lang?: Language;
+}
+
+const { lang = defaultLang } = Astro.props;
+const t = getTranslations(lang);
+---
+
+<Layout description={siteConfig.description} image={siteConfig.image} lang={lang}>
+    <Hero lang={lang} />
+    <div class="py-12">
+        <TechLogos client:load />
+    </div>
+
+    <AboutSection lang={lang} />
+    <ProjectsSection lang={lang} />
+</Layout>

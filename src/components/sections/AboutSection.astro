@@ -1,44 +1,136 @@
 ---
-import BigSectionContainer from '../BigSectionContainer.astro';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import Button from '../Button.astro';
 import ThemedImage from '../ThemedImage.astro';
+import { MapPin, CheckCircle, Mail, Github, Linkedin, Crown } from 'lucide-react';
 
 interface Props {
-    className?: string;
-    lang?: Language;
+  className?: string;
+  lang?: Language;
 }
 
 const { className = '', lang = defaultLang } = Astro.props;
 const t = getTranslations(lang);
 ---
 
-<BigSectionContainer title={t('about.tldr.title')} id="about" style="view-transition-name: about-section;">
-<div class="flex flex-col md:flex-row gap-4 items-start  ">
-    <div class="max-w-64 w-64 h-64 overflow-hidden aspect-square">
-        <ThemedImage src="/me.png" alt="Allison Peña" class="w-full h-full" />
-    </div>
-    <div className={"w-full " + className} style="view-transition-name: tldr-content;">
+<section id="about" aria-labelledby="about-heading" class={`relative ${className}`} style="view-transition-name: about-section;">
+  <h2 id="about-heading" class="text-4xl font-black text-main mb-12 font-mono uppercase tracking-wider">{t('about.title')}</h2>
 
-        <!-- Professional summary -->
-        <div style="view-transition-name: tldr-description;" class="py-4 w-full">
-            <p class="text-base text-main mb-6" style="max-width: var(--paragraph-max-width);">
-                {t('about.tldr.description')}
-            </p>
-            
-            <!-- Interactive CTA button -->
-            <div class="mt-8 flex justify-end">
-                <Button 
-                    variant="outline"
-                    elevated
-                 
-                >
-                    {t('about.collaboration.title')}
-                </Button>
-            </div>
+  <div class="grid items-start gap-8 lg:grid-cols-[1fr_minmax(12rem,16rem)]">
+    <!-- Content -->
+    <div class="space-y-8">
+      <!-- TL;DR Block -->
+      <section class="border-2 border-main bg-main px-6 py-4 w-full">
+        <h3 class="mb-3 text-sm font-extrabold uppercase tracking-[0.4em] text-secondary/90 font-mono">
+          TL;DR
+        </h3>
+        <p class="text-2xl leading-[1.25] text-secondary font-semibold text-balance">
+          {t('about.tldr')}
+        </p>
+      </section>
+
+      <!-- Divider -->
+      <hr class="h-px w-full border-0 bg-main/30" />
+
+      <!-- Expanded content -->
+      <div class="space-y-6 text-main">
+        {(() => {
+          const expanded = t('about.expanded');
+          if (Array.isArray(expanded)) {
+            return expanded.map((paragraph: string) => (
+              <p class="text-lg leading-relaxed font-normal">
+                {paragraph}
+              </p>
+            ));
+          }
+          return null;
+        })()}
+      </div>
+
+      <!-- Contact CTA -->
+      <section class="pt-6 mt-6 border-t border-dashed border-main/20">
+        <div class="text-base leading-relaxed text-main !flex items-center gap-4 w-full">
+          <span>  Si algo de esto resuena contigo, </span>
+          <span>
+            <Button variant="outline" elevated >
+              {t('about.cta.button')}
+            </Button>
+          </span>
         </div>
-    
+      </section>
     </div>
-</div>
-</BigSectionContainer>
+
+    <!-- Photo and Contact Info -->
+    <div class="space-y-6">
+      <figure class="relative aspect-square w-48 lg:w-full overflow-hidden ring-1 ring-main/20 bg-secondary/10" style="view-transition-name: photo-block;">
+        <ThemedImage src="/img/me.png" alt="Allison Peña" class="size-full object-cover" />
+      </figure>
+
+      <!-- Contact Info -->
+      <div class="space-y-4">
+        <!-- Basic Info -->
+        <div class="space-y-3">
+          <div class="flex items-start gap-3 text-sm">
+            <MapPin size={16} className="text-main mt-0.5 flex-shrink-0" client:load />
+            <div class="flex-1">
+              <div class="font-mono text-xs text-main/70 uppercase tracking-wide">Ubicación</div>
+              <div class="font-medium text-main">Santiago, Chile</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 text-sm">
+            <CheckCircle size={16} className="text-main mt-0.5 flex-shrink-0" client:load />
+            <div class="flex-1">
+              <div class="font-mono text-xs text-main/70 uppercase tracking-wide">Estado</div>
+              <div class="font-medium text-main">Disponible para proyectos</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Social Links -->
+        <div class="border-t border-main/20 pt-4">
+          <div class="font-mono text-xs text-main/70 uppercase tracking-wide mb-3">Conectar</div>
+          <div class="space-y-2">
+            <a
+              href="mailto:allison.jpb@gmail.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group flex items-center gap-3 text-sm text-main hover:bg-main hover:text-secondary px-2 py-1 -mx-2 border border-transparent hover:border-main transition-colors select-none"
+            >
+              <Mail size={16} className="text-main group-hover:text-secondary flex-shrink-0" client:load />
+              <span class="font-medium flex-1">Email</span>
+            </a>
+            <a
+              href="https://github.com/Skryensya"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group flex items-center gap-3 text-sm text-main hover:bg-main hover:text-secondary px-2 py-1 -mx-2 border border-transparent hover:border-main transition-colors select-none"
+            >
+              <Github size={16} className="text-main group-hover:text-secondary flex-shrink-0" client:load />
+              <span class="font-medium flex-1">GitHub</span>
+            </a>
+            <a
+              href="https://linkedin.com/in/skryensya"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group flex items-center gap-3 text-sm text-main hover:bg-main hover:text-secondary px-2 py-1 -mx-2 border border-transparent hover:border-main transition-colors select-none"
+            >
+              <Linkedin size={16} className="text-main group-hover:text-secondary flex-shrink-0" client:load />
+              <span class="font-medium flex-1">LinkedIn</span>
+            </a>
+            <a
+              href="https://lichess.org/@/Skryensya"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group flex items-center gap-3 text-sm text-main hover:bg-main hover:text-secondary px-2 py-1 -mx-2 border border-transparent hover:border-main transition-colors select-none"
+            >
+              <Crown size={16} className="text-main group-hover:text-secondary flex-shrink-0" client:load />
+              <span class="font-medium flex-1">Lichess</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>

@@ -1,53 +1,58 @@
 ---
 import { type CollectionEntry, getCollection } from 'astro:content';
 import { getSlugFromId, getLanguageFromId } from '@/utils/content-utils';
-import ProjectPage from '../../components/ProjectPage.astro';
+import ProjectDetailPage from '@/components/pages/ProjectDetailPage.astro';
 
 export async function getStaticPaths() {
     const allProjects = await getCollection('projects');
-    const paths: any[] = [];
-    
+    const paths: Array<{
+        params: { slug: string };
+        props: {
+            projectsByLang: Record<string, CollectionEntry<'projects'>>;
+            slug: string;
+        };
+    }> = [];
+
     // Group projects by slug
-    const projectsBySlug = new Map();
-    
+    const projectsBySlug = new Map<string, Record<string, CollectionEntry<'projects'>>>();
+
     allProjects.forEach((project) => {
         const slug = getSlugFromId(project.id);
         const language = getLanguageFromId(project.id);
-        
+
         if (!projectsBySlug.has(slug)) {
             projectsBySlug.set(slug, {});
         }
         projectsBySlug.get(slug)[language] = project;
     });
-    
-    // Generate paths for English projects
+
+    // Generate paths for Spanish projects (default language)
     for (const [slug, projectsByLang] of projectsBySlug) {
-        // Only generate if English version exists
-        if (projectsByLang['en']) {
+        // Only generate if Spanish version exists
+        if (projectsByLang['es']) {
             paths.push({
                 params: { slug },
-                props: { 
+                props: {
                     projectsByLang,
                     slug
                 }
             });
         }
     }
-    
+
     return paths;
 }
 
-type Props = { 
+type Props = {
     projectsByLang: Record<string, CollectionEntry<'projects'>>;
     slug: string;
 };
 
 const { projectsByLang, slug } = Astro.props;
-const currentLocale = 'en';
 ---
 
-<ProjectPage 
+<ProjectDetailPage
     projectsByLang={projectsByLang}
     slug={slug}
-    currentLocale={currentLocale}
+    lang="es"
 />

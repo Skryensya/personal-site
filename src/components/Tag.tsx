@@ -10,7 +10,7 @@ interface Props {
 export default function Tag({ text, href, withHash = false, className = '' }: Props) {
     const displayText = withHash ? `#${text}` : text;
 
-    const baseClasses = 'inline-block px-3 py-0.5 !text-xs font-mono font-medium border-2 border-main bg-secondary text-main overflow-hidden px-4 !text-sm';
+    const baseClasses = 'inline-block px-4 py-1 text-base font-mono font-medium border-2 border-main bg-secondary text-main overflow-hidden';
 
     const finalClasses = `${baseClasses} ${className}`;
 

@@ -1,38 +1,67 @@
 ---
 import siteConfig from '@/data/site-config';
 import WaveDivider from './WaveDivider.astro';
+import { Heart } from 'lucide-react';
+import { getTranslations } from '@/i18n/utils';
+import { defaultLang, type Language } from '@/i18n/ui';
+import { getLocalizedUrl, getHomeUrl } from '@/utils/localized-routes';
+
+interface Props {
+  lang?: Language;
+}
+
+const { lang = defaultLang } = Astro.props;
+const t = getTranslations(lang);
 const currentYear = new Date().getFullYear();
 ---
 
 <footer class="bg-main border-t-double border-t-2 border-secondary">
-      <WaveDivider   />
+      <WaveDivider inverted />
     <div class="mx-auto max-w-[var(--max-w-size)] px-4 pb-12">
-        
+
         <!-- Main content grid -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
             <!-- Navigation -->
             <div>
-                <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text="Navigation">
-                    Navigation
+                <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text={t('footer.navigation')}>
+                    {t('footer.navigation')}
                 </h3>
                 <nav class="space-y-2">
-                    {siteConfig.footerNavLinks?.map((link) => (
-                        <a
-                            href={link.href}
-                            target={link.target}
-                            class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text"
-                            data-text={link.text}
-                        >
-                            {link.text}
-                        </a>
-                    ))}
+                    <a
+                        href={getHomeUrl(lang)}
+                        class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text"
+                        data-text={t('footer.home')}
+                    >
+                        {t('footer.home')}
+                    </a>
+                    <a
+                        href={getLocalizedUrl(lang, 'projects')}
+                        class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text"
+                        data-text={t('footer.projects')}
+                    >
+                        {t('footer.projects')}
+                    </a>
+                    <a
+                        href={getLocalizedUrl(lang, 'resume')}
+                        class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text"
+                        data-text={t('footer.resume')}
+                    >
+                        {t('footer.resume')}
+                    </a>
+                    <a
+                        href={getLocalizedUrl(lang, 'accessibility')}
+                        class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text"
+                        data-text={t('footer.accessibility')}
+                    >
+                        {t('footer.accessibility')}
+                    </a>
                 </nav>
             </div>
 
             <!-- Social -->
             <div>
-                <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text="Connect">
-                    Connect
+                <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text={t('footer.connect')}>
+                    {t('footer.connect')}
                 </h3>
                 <nav class="space-y-2">
                     {siteConfig.socialLinks?.map((link) => (
@@ -47,55 +76,29 @@ const currentYear = new Date().getFullYear();
                         </a>
                     ))}
                     <a
-                        href="mailto:contact@allisonpena.dev"
+                        href="mailto:allison.jpb@gmail.com"
                         class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text"
-                        data-text="Email"
+                        data-text={t('footer.email')}
                     >
-                        Email
-                    </a>
-                    <a
-                        href="/resume.pdf"
-                        target="_blank"
-                        class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text"
-                        data-text="Resume ↗"
-                    >
-                        Resume ↗
+                        {t('footer.email')}
                     </a>
                 </nav>
             </div>
 
-            <!-- Info -->
+            <!-- Legal & Accessibility -->
             <div>
-                <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text="About">
-                    About
+                <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text="Legal">
+                    Legal
                 </h3>
                 <div class="space-y-2">
-                    <p class="font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text={siteConfig.subtitle}>
-                        {siteConfig.subtitle}
-                    </p>
                     <p class="font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text="Santiago, Chile">
                         Santiago, Chile
                     </p>
                     <p class="font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text="Available for projects">
                         Available for projects
                     </p>
-                </div>
-            </div>
-
-            <!-- Resources -->
-            <div>
-                <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text="Resources">
-                    Resources
-                </h3>
-                <div class="space-y-2">
-                    <p class="font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text="Astro + Tailwind">
-                        Astro + Tailwind
-                    </p>
                     <a href="/sitemap-index.xml" class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text" data-text="Sitemap">
                         Sitemap
-                    </a>
-                    <a href="/rss.xml" class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text" data-text="RSS Feed">
-                        RSS Feed
                     </a>
                 </div>
             </div>
@@ -104,11 +107,11 @@ const currentYear = new Date().getFullYear();
         <!-- Copyright -->
         <div class="border-t-double border-t-2 border-secondary pt-6">
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="font-mono text-sm text-secondary scramble-text" data-text={`© ${currentYear} ${siteConfig.title}. All rights reserved.`}>
-                    © {currentYear} {siteConfig.title}. All rights reserved.
+                <p class="font-mono text-sm text-secondary scramble-text" data-text={`© ${currentYear} ${siteConfig.title}. ${t('footer.copyright')}.`}>
+                    © {currentYear} {siteConfig.title}. {t('footer.copyright')}.
                 </p>
-                <p class="font-mono text-sm text-secondary scramble-text" data-text={`Built with ❤️ and code`}>
-                    Built with ❤️ and code
+                <p class="font-mono text-sm text-secondary scramble-text flex items-center gap-2" data-text={`${t('footer.builtWith')} ${t('footer.andCode')}`} data-has-heart="true">
+                    <span class="scramble-part">{t('footer.builtWith')}</span> <Heart size={14} className="text-secondary" fill="currentColor" client:load /> <span class="scramble-part">{t('footer.andCode')}</span>
                 </p>
             </div>
         </div>
@@ -119,12 +122,13 @@ const currentYear = new Date().getFullYear();
     document.addEventListener('astro:page-load', () => {
         // Track if footer animation has already happened
         let footerAnimated = false;
-        
+
+
         // Scramble animation function
-        function scrambleText(element, originalText, duration = 800) {
+        function scrambleText(element: HTMLElement, originalText: string, duration: number = 800): void {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
             let iterations = 0;
-            
+
             const interval = setInterval(() => {
                 element.textContent = originalText
                     .split('')
@@ -135,9 +139,9 @@ const currentYear = new Date().getFullYear();
                         return chars[Math.floor(Math.random() * chars.length)];
                     })
                     .join('');
-                
+
                 iterations++;
-                
+
                 if (iterations >= originalText.length) {
                     clearInterval(interval);
                     element.textContent = originalText;
@@ -145,25 +149,48 @@ const currentYear = new Date().getFullYear();
             }, 30);
         }
 
+        // Special scramble for elements with React components (like Heart icon)
+        function scrambleWithHeart(element: HTMLElement): void {
+            const scrambleParts = element.querySelectorAll('.scramble-part');
+
+            scrambleParts.forEach((part, index) => {
+                const partElement = part as HTMLElement;
+                const originalText = partElement.textContent || '';
+                const delay = index * 200; // Stagger the text parts
+
+                setTimeout(() => {
+                    scrambleText(partElement, originalText);
+                }, delay);
+            });
+        }
+
         // Set up intersection observer for scramble animation
-        const observer = new IntersectionObserver((entries) => {
+        const scrambleObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting && !footerAnimated) {
                     footerAnimated = true;
-                    
+
                     // Animate all footer text elements at once
                     const elements = document.querySelectorAll('.scramble-text');
                     elements.forEach((element, index) => {
-                        const originalText = (element as HTMLElement).dataset.text || element.textContent;
+                        const htmlElement = element as HTMLElement;
                         const delay = index * 50; // Staggered effect
-                        
+
                         setTimeout(() => {
-                            scrambleText(element, originalText);
+                            // Check if this element has a React component (heart icon)
+                            if (htmlElement.dataset.hasHeart === 'true') {
+                                scrambleWithHeart(htmlElement);
+                            } else {
+                                const originalText = htmlElement.dataset.text || htmlElement.textContent || '';
+                                if (originalText.trim()) {
+                                    scrambleText(htmlElement, originalText);
+                                }
+                            }
                         }, delay);
                     });
-                    
+
                     // Stop observing after first animation
-                    observer.disconnect();
+                    scrambleObserver.disconnect();
                 }
             });
         }, {
@@ -174,7 +201,21 @@ const currentYear = new Date().getFullYear();
         // Observe the footer container instead of individual elements
         const footer = document.querySelector('footer');
         if (footer) {
-            observer.observe(footer);
+            scrambleObserver.observe(footer);
         }
     });
 </script>
+
+<style>
+    footer::after {
+        content: '';
+        position: fixed;
+        top: 100vh;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: var(--color-main);
+        pointer-events: none;
+        z-index: -1;
+    }
+</style>

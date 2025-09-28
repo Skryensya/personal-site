@@ -1,87 +1,32 @@
 ---
 import type { GetStaticPathsOptions, Page } from 'astro';
 import { type CollectionEntry, getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro'; 
 import siteConfig from '../../data/site-config';
 import { sortItemsByDateDesc } from '../../utils/data-utils';
-import { getSlugFromId } from '@/utils/content-utils';
-import { getTranslations } from '@/i18n/utils';
-import FolderStack from '@/components/sections/FolderStack.astro';
+import ProjectsListPage from '@/components/pages/ProjectsListPage.astro';
 
 export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
     const allProjects = await getCollection('projects');
     const lang = 'es';
-    
+
     const projectsInLang = allProjects
         .filter(project => project.id.startsWith(`${lang}/`))
         .sort(sortItemsByDateDesc);
-    
-    const paginatedPaths = paginate(projectsInLang, { 
+
+    const paginatedPaths = paginate(projectsInLang, {
         pageSize: siteConfig.projectsPerPage || 10,
         props: { language: lang }
     });
-    
+
     return paginatedPaths;
 }
 
-type Props = { 
-    page: Page<CollectionEntry<'projects'>>; 
-
+type Props = {
+    page: Page<CollectionEntry<'projects'>>;
+    language: string;
 };
 
-const { page } = Astro.props;
-const currentLocale = 'es';
-const t = getTranslations(currentLocale);
-
-const portfolio = page.data;
+const { page, language } = Astro.props;
 ---
 
-<Layout
-    title={t('nav.projects')}
-    description={t('nav.projects')}
-    showHeader={true}
-    headerTitle={t('nav.projects')}
-    headerSubtitle={t('nav.projects')}
-    lang={currentLocale}
->
-    <h1 class="mb-12 text-2xl leading-tight font-mono sm:mb-16 sm:text-4xl">{t('nav.projects')}</h1>
-    <div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {portfolio.map((project) => (
-            <article class="border border-main bg-secondary p-4 hover:bg-main hover:text-secondary group">
-                <div class="mb-4">
-                    <h2 class="text-xl font-mono font-bold mb-2 group-hover:text-secondary">
-                        <a href={`/proyectos/${getSlugFromId(project.id)}`} class="no-underline">
-                            {project.data.name}
-                        </a>
-                    </h2>
-                    {project.data.hook && (
-                        <p class="text-sm leading-relaxed opacity-80 group-hover:text-secondary">
-                            {project.data.hook}
-                        </p>
-                    )}
-                </div>
-                {project.data.tags && project.data.tags.length > 0 && (
-                    <div class="flex flex-wrap gap-1 mb-3">
-                        {project.data.tags.slice(0, 4).map((tag) => (
-                            <span class="text-xs px-2 py-1 border border-main font-mono bg-main text-secondary group-hover:bg-secondary group-hover:text-main group-hover:border-secondary">
-                                {tag}
-                            </span>
-                        ))}
-                        {project.data.tags.length > 4 && (
-                            <span class="text-xs px-2 py-1 border border-main font-mono opacity-70 group-hover:text-secondary">
-                                +{project.data.tags.length - 4}
-                            </span>
-                        )}
-                    </div>
-                )}
-                <div class="text-xs font-mono opacity-70 group-hover:text-secondary">
-                    {new Date(project.data.publishDate).toLocaleDateString('es-ES')}
-                </div>
-            </article>
-        ))}
-    </div> 
-
-
-    <FolderStack lang={currentLocale} />
-
-</Layout>
+<ProjectsListPage lang="es" page={page} />

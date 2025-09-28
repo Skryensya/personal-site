@@ -1,5 +1,4 @@
 ---
-import ReadingGuide from './ReadingGuide';
 import ScrollProgress from './ScrollProgress';
 import Sidebar from './Sidebar.astro';
 import { defaultLang, type Language } from '@/i18n/ui';
@@ -12,7 +11,7 @@ interface Props {
     lang?: Language;
 }
 
-const { 
+const {
     contentId = 'main-content',
     sidebarClassName = '',
     containerClassName = '',
@@ -21,9 +20,8 @@ const {
 } = Astro.props;
 ---
 
-<!-- Reading Guide and Scroll Progress (global components) -->
+<!-- Scroll Progress (global component) -->
 <ScrollProgress client:load />
-<ReadingGuide client:load />
 
 <!-- Full height layout with content and sidebar -->
 <div class={`flex min-h-screen ${containerClassName}`} id={`${contentId}-container`}>

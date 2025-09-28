@@ -2,9 +2,20 @@
 interface Props {
   class?: string;
   crossSize?: string;
+  showLeft?: boolean;
+  showRight?: boolean;
+  showTop?: boolean;
+  showBottom?: boolean;
 }
 
-const { class: className, crossSize = "w-3 h-3" } = Astro.props;
+const {
+  class: className,
+  crossSize = "w-3 h-3",
+  showLeft = true,
+  showRight = true,
+  showTop = true,
+  showBottom = true
+} = Astro.props;
 ---
 
 <div class={`relative ${className || ""}`}>
@@ -12,34 +23,42 @@ const { class: className, crossSize = "w-3 h-3" } = Astro.props;
   <slot />
   
   <!-- Cruz esquina superior izquierda -->
-  <div class={`absolute -top-1.5 -left-1.5 ${crossSize} flex items-center justify-center`}>
-    <div class="relative w-full h-full">
-      <div class="absolute inset-y-0 left-1/2 w-px bg-main transform -translate-x-1/2"></div>
-      <div class="absolute inset-x-0 top-1/2 h-px bg-main transform -translate-y-1/2"></div>
+  {(showTop && showLeft) && (
+    <div class={`absolute -top-1.5 -left-1.5 ${crossSize} flex items-center justify-center`}>
+      <div class="relative w-full h-full">
+        <div class="absolute inset-y-0 left-1/2 w-px bg-main transform -translate-x-1/2"></div>
+        <div class="absolute inset-x-0 top-1/2 h-px bg-main transform -translate-y-1/2"></div>
+      </div>
     </div>
-  </div>
+  )}
   
   <!-- Cruz esquina superior derecha -->
-  <div class={`absolute -top-1.5 -right-1.5 ${crossSize} flex items-center justify-center`}>
-    <div class="relative w-full h-full">
-      <div class="absolute inset-y-0 left-1/2 w-px bg-main transform -translate-x-1/2"></div>
-      <div class="absolute inset-x-0 top-1/2 h-px bg-main transform -translate-y-1/2"></div>
+  {(showTop && showRight) && (
+    <div class={`absolute -top-1.5 -right-1.5 ${crossSize} flex items-center justify-center`}>
+      <div class="relative w-full h-full">
+        <div class="absolute inset-y-0 left-1/2 w-px bg-main transform -translate-x-1/2"></div>
+        <div class="absolute inset-x-0 top-1/2 h-px bg-main transform -translate-y-1/2"></div>
+      </div>
     </div>
-  </div>
+  )}
   
   <!-- Cruz esquina inferior izquierda -->
-  <div class={`absolute -bottom-1.5 -left-1.5 ${crossSize} flex items-center justify-center`}>
-    <div class="relative w-full h-full">
-      <div class="absolute inset-y-0 left-1/2 w-px bg-main transform -translate-x-1/2"></div>
-      <div class="absolute inset-x-0 top-1/2 h-px bg-main transform -translate-y-1/2"></div>
+  {(showBottom && showLeft) && (
+    <div class={`absolute -bottom-1.5 -left-1.5 ${crossSize} flex items-center justify-center`}>
+      <div class="relative w-full h-full">
+        <div class="absolute inset-y-0 left-1/2 w-px bg-main transform -translate-x-1/2"></div>
+        <div class="absolute inset-x-0 top-1/2 h-px bg-main transform -translate-y-1/2"></div>
+      </div>
     </div>
-  </div>
+  )}
   
   <!-- Cruz esquina inferior derecha -->
-  <div class={`absolute -bottom-1.5 -right-1.5 ${crossSize} flex items-center justify-center`}>
-    <div class="relative w-full h-full">
-      <div class="absolute inset-y-0 left-1/2 w-px bg-main transform -translate-x-1/2"></div>
-      <div class="absolute inset-x-0 top-1/2 h-px bg-main transform -translate-y-1/2"></div>
+  {(showBottom && showRight) && (
+    <div class={`absolute -bottom-1.5 -right-1.5 ${crossSize} flex items-center justify-center`}>
+      <div class="relative w-full h-full">
+        <div class="absolute inset-y-0 left-1/2 w-px bg-main transform -translate-x-1/2"></div>
+        <div class="absolute inset-x-0 top-1/2 h-px bg-main transform -translate-y-1/2"></div>
+      </div>
     </div>
-  </div>
+  )}
 </div>
