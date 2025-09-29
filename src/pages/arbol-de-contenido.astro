@@ -1,0 +1,63 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import SitemapTree from '@/components/SitemapTree.astro';
+import { getTranslations } from '@/i18n/utils';
+import { defaultLang } from '@/i18n/ui';
+
+const lang = defaultLang;
+const t = getTranslations(lang);
+---
+
+<Layout
+  title="Árbol de contenido - Allison Peña"
+  description="Estructura completa del sitio web de Allison Peña, desarrolladora full-stack"
+  lang={lang}
+>
+  <main class="mx-auto max-w-[var(--max-w-size)] px-4 py-8">
+    <div class="mb-8">
+      <h1 class="text-3xl font-mono font-bold text-main border-b-2 border-main pb-4 mb-4">
+        Árbol de contenido
+      </h1>
+      <p class="text-main font-mono">
+        Explora la estructura completa del sitio web para navegar fácilmente por todo el contenido.
+      </p>
+    </div>
+    
+    <SitemapTree lang={lang} />
+    
+    <div class="mt-12 space-y-8">
+      <div class="space-y-6">
+        <h2 class="text-xl font-mono font-bold text-main border-b border-main pb-2">Información adicional</h2>
+        <div class="grid gap-2 font-mono text-sm text-main ml-4">
+          <div>Total de páginas principales: 4</div>
+          <div>Proyectos disponibles: 6</div>
+          <div>Idiomas soportados: 3 (Español, Inglés, Noruego)</div>
+          <div>Última actualización: {new Date().toLocaleDateString('es-ES')}</div>
+          <div>Sitemap XML: <a href="/sitemap-index.xml" class="text-main underline hover:no-underline">/sitemap-index.xml</a></div>
+        </div>
+      </div>
+      
+      <div class="space-y-6">
+        <h2 class="text-xl font-mono font-bold text-main border-b border-main pb-2">Enlaces rápidos</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 font-mono text-sm ml-4">
+          <div>
+            <h3 class="font-bold text-main mb-3">Páginas principales</h3>
+            <div class="space-y-1 ml-4">
+              <a href="/" class="block text-main hover:underline">Inicio</a>
+              <a href="/proyectos/" class="block text-main hover:underline">Proyectos</a>
+              <a href="/curriculum/" class="block text-main hover:underline">Currículum</a>
+              <a href="/accessibility/" class="block text-main hover:underline">Accesibilidad</a>
+            </div>
+          </div>
+          <div>
+            <h3 class="font-bold text-main mb-3">Otros idiomas</h3>
+            <div class="space-y-1 ml-4">
+              <a href="/en/content-tree/" class="block text-main hover:underline">English Content Tree</a>
+              <a href="/no/innholdstre/" class="block text-main hover:underline">Norsk Innholdstre</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</Layout>

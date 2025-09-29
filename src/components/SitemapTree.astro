@@ -1,0 +1,82 @@
+---
+import { getSitemapForLanguage, type SitemapNode } from '@/data/sitemap-data';
+import { defaultLang, type Language } from '@/i18n/ui';
+import { getTranslations } from '@/i18n/utils';
+
+interface Props {
+  lang?: Language;
+}
+
+const { lang = defaultLang } = Astro.props;
+const t = getTranslations(lang);
+const sitemapData = getSitemapForLanguage(lang);
+
+// Function to render sitemap nodes recursively
+function renderSitemapNode(node: SitemapNode, level: number = 0): string {
+  const indent = '  '.repeat(level * 2);
+  
+  let html = `${indent}<div class="flex items-start gap-2 font-mono text-sm py-1">`;
+  html += `<span class="text-main select-none">${level === 0 ? '▶' : '├──'}</span>`;
+  html += `<a href="${node.url}" class="text-main hover:underline">${node.title}</a>`;
+  html += `</div>`;
+  
+  if (node.children && node.children.length > 0) {
+    for (let i = 0; i < node.children.length; i++) {
+      const child = node.children[i];
+      const isLast = i === node.children.length - 1;
+      const childIndent = '  '.repeat((level + 1) * 2);
+      const childTreeChar = isLast ? '└──' : '├──';
+      
+      html += `${childIndent}<div class="flex items-start gap-2 font-mono text-sm py-1">`;
+      html += `<span class="text-main select-none">${childTreeChar}</span>`;
+      html += `<a href="${child.url}" class="text-main hover:underline">${child.title}</a>`;
+      html += `</div>`;
+      
+      // Render grandchildren if they exist
+      if (child.children && child.children.length > 0) {
+        for (let j = 0; j < child.children.length; j++) {
+          const grandchild = child.children[j];
+          const isLastGrandchild = j === child.children.length - 1;
+          const grandchildIndent = '  '.repeat((level + 2) * 2);
+          const grandchildTreeChar = isLastGrandchild ? '└──' : '├──';
+          
+          html += `${grandchildIndent}<div class="flex items-start gap-2 font-mono text-sm py-1">`;
+          html += `<span class="text-main select-none">${grandchildTreeChar}</span>`;
+          html += `<a href="${grandchild.url}" class="text-main hover:underline">${grandchild.title}</a>`;
+          html += `</div>`;
+        }
+      }
+    }
+  }
+  
+  return html;
+}
+---
+
+<div class="space-y-6">
+  <div>
+    <h2 class="text-xl font-mono font-bold text-main border-b border-main pb-2 mb-4">
+      {lang === 'es' ? 'Árbol de contenido' : lang === 'en' ? 'Content Tree' : 'Innholdstre'}
+    </h2>
+    <p class="text-sm font-mono text-main opacity-75 ml-4">
+      {lang === 'es' ? 'Navegación jerárquica de todas las páginas' : lang === 'en' ? 'Hierarchical navigation of all pages' : 'Hierarkisk navigasjon av alle sider'}
+    </p>
+  </div>
+  
+  <div class="ml-4" set:html={sitemapData.map(node => renderSitemapNode(node)).join('')}></div>
+  
+  <div class="mt-8 pt-4 border-t border-main">
+    <div class="flex items-center gap-6 font-mono text-xs text-main opacity-75 ml-4">
+      <span>▶ {lang === 'es' ? 'Sección principal' : lang === 'en' ? 'Main section' : 'Hovedseksjon'}</span>
+      <span>├── {lang === 'es' ? 'Página' : lang === 'en' ? 'Page' : 'Side'}</span>
+      <span>└── {lang === 'es' ? 'Última página' : lang === 'en' ? 'Last page' : 'Siste side'}</span>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Ensure proper spacing for tree structure */
+  .space-y-1 > * + * {
+    margin-top: 0.25rem;
+  }
+</style>

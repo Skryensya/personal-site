@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-    site: 'https://example.com',
+    site: 'https://skryensya.dev',
     i18n: {
         defaultLocale: 'es',
         locales: ['es', 'en', 'no'],
@@ -18,11 +18,7 @@ export default defineConfig({
         port: 2008,
         host: true
     },
-    integrations: [
-        react(),
-        mdx(),
-        sitemap()
-    ],
+    integrations: [react(), mdx(), sitemap()],
     vite: {
         plugins: [tailwindcss()],
         server: {

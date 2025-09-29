@@ -1,221 +1,210 @@
 ---
 import siteConfig from '@/data/site-config';
 import WaveDivider from './WaveDivider.astro';
-import { Heart } from 'lucide-react';
+import { Heart, ChevronRight, ExternalLink } from 'lucide-react';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import { getLocalizedUrl, getHomeUrl } from '@/utils/localized-routes';
+import CircularText from '@/components/CircularText';
 
-interface Props {
-  lang?: Language;
-}
-
+interface Props { lang?: Language; }
 const { lang = defaultLang } = Astro.props;
 const t = getTranslations(lang);
 const currentYear = new Date().getFullYear();
 ---
 
 <footer class="bg-main border-t-double border-t-2 border-secondary">
-      <WaveDivider inverted />
-    <div class="mx-auto max-w-[var(--max-w-size)] px-4 pb-12">
+  <WaveDivider inverted />
+  <div class="mx-auto max-w-[var(--max-w-size)] px-4 pb-12">
+    <!-- Main content grid -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+      <!-- Navigation -->
+      <div>
+        <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text={t('footer.navigation')}>
+          {t('footer.navigation')}
+        </h3>
+        <nav class="space-y-2">
+          <a
+            href={getHomeUrl(lang)}
+            class="font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border-l-2 border-secondary hover:border-main scramble-text flex items-center justify-between group"
+            data-text={t('footer.home')}
+          >
+            <span class="scramble-part">{t('footer.home')}</span>
+            <ChevronRight size={14} className="text-secondary group-hover:text-main" client:idle />
+          </a>
+          <a
+            href={getLocalizedUrl(lang, 'projects')}
+            class="font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border-l-2 border-secondary hover:border-main scramble-text flex items-center justify-between group"
+            data-text={t('footer.projects')}
+          >
+            <span class="scramble-part">{t('footer.projects')}</span>
+            <ChevronRight size={14} className="text-secondary group-hover:text-main" client:idle />
+          </a>
+          <a
+            href={getLocalizedUrl(lang, 'resume')}
+            class="font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border-l-2 border-secondary hover:border-main scramble-text flex items-center justify-between group"
+            data-text={t('footer.resume')}
+          >
+            <span class="scramble-part">{t('footer.resume')}</span>
+            <ChevronRight size={14} className="text-secondary group-hover:text-main" client:idle />
+          </a>
+          <a 
+            href={lang === 'es' ? '/arbol-de-contenido/' : lang === 'en' ? '/en/content-tree/' : '/no/innholdstre/'} 
+            class="font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border-l-2 border-secondary hover:border-main scramble-text flex items-center justify-between group"
+            data-text={lang === 'es' ? 'Árbol de contenido' : lang === 'en' ? 'Content Tree' : 'Innholdstre'}
+          >
+            <span class="scramble-part">{lang === 'es' ? 'Árbol de contenido' : lang === 'en' ? 'Content Tree' : 'Innholdstre'}</span>
+            <ChevronRight size={14} className="text-secondary group-hover:text-main" client:idle />
+          </a>
+          <a
+            href={getLocalizedUrl(lang, 'accessibility')}
+            class="font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border-l-2 border-secondary hover:border-main scramble-text flex items-center justify-between group"
+            data-text={t('footer.accessibility')}
+          >
+            <span class="scramble-part">{t('footer.accessibility')}</span>
+            <ChevronRight size={14} className="text-secondary group-hover:text-main" client:idle />
+          </a>
+        </nav>
+      </div>
 
-        <!-- Main content grid -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <!-- Navigation -->
-            <div>
-                <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text={t('footer.navigation')}>
-                    {t('footer.navigation')}
-                </h3>
-                <nav class="space-y-2">
-                    <a
-                        href={getHomeUrl(lang)}
-                        class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text"
-                        data-text={t('footer.home')}
-                    >
-                        {t('footer.home')}
-                    </a>
-                    <a
-                        href={getLocalizedUrl(lang, 'projects')}
-                        class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text"
-                        data-text={t('footer.projects')}
-                    >
-                        {t('footer.projects')}
-                    </a>
-                    <a
-                        href={getLocalizedUrl(lang, 'resume')}
-                        class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text"
-                        data-text={t('footer.resume')}
-                    >
-                        {t('footer.resume')}
-                    </a>
-                    <a
-                        href={getLocalizedUrl(lang, 'accessibility')}
-                        class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text"
-                        data-text={t('footer.accessibility')}
-                    >
-                        {t('footer.accessibility')}
-                    </a>
-                </nav>
-            </div>
+      <!-- Social -->
+      <div>
+        <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text={t('footer.connect')}>
+          {t('footer.connect')}
+        </h3>
+        <nav class="space-y-2">
+          {siteConfig.socialLinks?.map((link) => (
+            <a
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border-l-2 border-secondary hover:border-main scramble-text flex items-center justify-between"
+              data-text={`${link.text}`}
+              data-has-external="true"
+            >
+              <span class="scramble-part">{link.text}</span>
+              <ExternalLink size={14} className="text-secondary group-hover:text-main" client:idle />
+            </a>
+          ))}
+        </nav>
+      </div>
 
-            <!-- Social -->
-            <div>
-                <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text={t('footer.connect')}>
-                    {t('footer.connect')}
-                </h3>
-                <nav class="space-y-2">
-                    {siteConfig.socialLinks?.map((link) => (
-                        <a
-                            href={link.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text"
-                            data-text={`${link.text} ↗`}
-                        >
-                            {link.text} ↗
-                        </a>
-                    ))}
-                    <a
-                        href="mailto:allison.jpb@gmail.com"
-                        class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text"
-                        data-text={t('footer.email')}
-                    >
-                        {t('footer.email')}
-                    </a>
-                </nav>
-            </div>
+      <!-- Information -->
+      <div>
+        <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text={lang === 'es' ? 'Información' : lang === 'en' ? 'Information' : 'Informasjon'}>
+          {lang === 'es' ? 'Información' : lang === 'en' ? 'Information' : 'Informasjon'}
+        </h3>
+        <nav class="space-y-2">
+          <div class="block font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text="Santiago, Chile">
+            Santiago, Chile
+          </div>
+          <div class="block font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text={lang === 'es' ? 'Disponible para proyectos' : lang === 'en' ? 'Available for projects' : 'Tilgjengelig for prosjekter'}>
+            {lang === 'es' ? 'Disponible para proyectos' : lang === 'en' ? 'Available for projects' : 'Tilgjengelig for prosjekter'}
+          </div>
+        </nav>
+      </div>
 
-            <!-- Legal & Accessibility -->
-            <div>
-                <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text="Legal">
-                    Legal
-                </h3>
-                <div class="space-y-2">
-                    <p class="font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text="Santiago, Chile">
-                        Santiago, Chile
-                    </p>
-                    <p class="font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text="Available for projects">
-                        Available for projects
-                    </p>
-                    <a href="/sitemap-index.xml" class="block font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border border-transparent hover:border-main scramble-text" data-text="Sitemap">
-                        Sitemap
-                    </a>
-                </div>
-            </div>
-        </div>
-
-        <!-- Copyright -->
-        <div class="border-t-double border-t-2 border-secondary pt-6">
-            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-                <p class="font-mono text-sm text-secondary scramble-text" data-text={`© ${currentYear} ${siteConfig.title}. ${t('footer.copyright')}.`}>
-                    © {currentYear} {siteConfig.title}. {t('footer.copyright')}.
-                </p>
-                <p class="font-mono text-sm text-secondary scramble-text flex items-center gap-2" data-text={`${t('footer.builtWith')} ${t('footer.andCode')}`} data-has-heart="true">
-                    <span class="scramble-part">{t('footer.builtWith')}</span> <Heart size={14} className="text-secondary" fill="currentColor" client:load /> <span class="scramble-part">{t('footer.andCode')}</span>
-                </p>
-            </div>
-        </div>
+      <!-- Empty Column -->
+      <div>
+        <CircularText client:load text="ALLISON * PEÑA * SKRYENSYA * " onHover="speedUp" spinDuration={20}/>
+      </div>
     </div>
+
+    <!-- Copyright -->
+    <div class="border-t-double border-t-2 border-secondary pt-6">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <p class="font-mono text-sm text-secondary scramble-text" data-text={`© ${currentYear} ${siteConfig.title}. ${t('footer.copyright')}.`}>
+          © {currentYear} {siteConfig.title}. {t('footer.copyright')}.
+        </p>
+        <p class="font-mono text-sm text-secondary scramble-text flex items-center gap-2" data-text={`${t('footer.builtWith')} ${t('footer.andCode')}`} data-has-heart="true">
+          <span class="scramble-part">{t('footer.builtWith')}</span>
+          <Heart size={14} className="text-secondary" fill="currentColor" client:idle />
+          <span class="scramble-part">{t('footer.andCode')}</span>
+        </p>
+      </div>
+    </div>
+  </div>
 </footer>
 
 <script>
-    document.addEventListener('astro:page-load', () => {
-        // Track if footer animation has already happened
-        let footerAnimated = false;
+  document.addEventListener('astro:page-load', () => {
+    let footerAnimated = false;
 
+    // Scramble a single text node (span.scramble-part)
+    function scrambleText(element, originalText, duration = 800) {
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+      let i = 0;
+      const stepMs = 30;
+      const maxSteps = Math.ceil(duration / stepMs);
 
-        // Scramble animation function
-        function scrambleText(element: HTMLElement, originalText: string, duration: number = 800): void {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
-            let iterations = 0;
+      const timer = setInterval(() => {
+        const progress = Math.min(i / maxSteps, 1);
+        const reveal = Math.floor(progress * originalText.length);
 
-            const interval = setInterval(() => {
-                element.textContent = originalText
-                    .split('')
-                    .map((char, index) => {
-                        if (index < iterations) {
-                            return originalText[index];
-                        }
-                        return chars[Math.floor(Math.random() * chars.length)];
-                    })
-                    .join('');
+        element.textContent = originalText
+          .split('')
+          .map((ch, idx) => (idx < reveal ? originalText[idx] : chars[Math.floor(Math.random() * chars.length)]))
+          .join('');
 
-                iterations++;
-
-                if (iterations >= originalText.length) {
-                    clearInterval(interval);
-                    element.textContent = originalText;
-                }
-            }, 30);
+        i++;
+        if (progress >= 1) {
+          clearInterval(timer);
+          element.textContent = originalText; // ensure final
         }
+      }, stepMs);
+    }
 
-        // Special scramble for elements with React components (like Heart icon)
-        function scrambleWithHeart(element: HTMLElement): void {
-            const scrambleParts = element.querySelectorAll('.scramble-part');
-
-            scrambleParts.forEach((part, index) => {
-                const partElement = part as HTMLElement;
-                const originalText = partElement.textContent || '';
-                const delay = index * 200; // Stagger the text parts
-
-                setTimeout(() => {
-                    scrambleText(partElement, originalText);
-                }, delay);
-            });
-        }
-
-        // Set up intersection observer for scramble animation
-        const scrambleObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting && !footerAnimated) {
-                    footerAnimated = true;
-
-                    // Animate all footer text elements at once
-                    const elements = document.querySelectorAll('.scramble-text');
-                    elements.forEach((element, index) => {
-                        const htmlElement = element as HTMLElement;
-                        const delay = index * 50; // Staggered effect
-
-                        setTimeout(() => {
-                            // Check if this element has a React component (heart icon)
-                            if (htmlElement.dataset.hasHeart === 'true') {
-                                scrambleWithHeart(htmlElement);
-                            } else {
-                                const originalText = htmlElement.dataset.text || htmlElement.textContent || '';
-                                if (originalText.trim()) {
-                                    scrambleText(htmlElement, originalText);
-                                }
-                            }
-                        }, delay);
-                    });
-
-                    // Stop observing after first animation
-                    scrambleObserver.disconnect();
-                }
-            });
-        }, {
-            threshold: 0.1,
-            rootMargin: '50px'
+    // Scramble only the .scramble-part children; never touch icons/components
+    function scrambleContainer(container) {
+      const parts = container.querySelectorAll('.scramble-part');
+      if (parts.length) {
+        parts.forEach((part, idx) => {
+          const el = part;
+          const txt = el.textContent || '';
+          const delay = idx * 200;
+          if (!txt.trim()) return;
+          setTimeout(() => scrambleText(el, txt), delay);
         });
-
-        // Observe the footer container instead of individual elements
-        const footer = document.querySelector('footer');
-        if (footer) {
-            scrambleObserver.observe(footer);
+      } else {
+        // fallback: if no .scramble-part, scramble the element text safely
+        const txt = container.dataset.text || container.textContent || '';
+        if (!txt.trim()) return;
+        // Only scramble if the element has no child elements (avoid nuking icons)
+        if (container.children.length === 0) {
+          scrambleText(container, txt);
         }
-    });
+      }
+    }
+
+    // Intersection Observer: run once when footer enters viewport
+    const scrambleObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !footerAnimated) {
+          footerAnimated = true;
+          const elements = document.querySelectorAll('.scramble-text');
+          elements.forEach((el, idx) => {
+            setTimeout(() => scrambleContainer(el), idx * 50);
+          });
+          scrambleObserver.disconnect();
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '50px' });
+
+    const footer = document.querySelector('footer');
+    if (footer) scrambleObserver.observe(footer);
+  });
 </script>
 
 <style>
-    footer::after {
-        content: '';
-        position: fixed;
-        top: 100vh;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: var(--color-main);
-        pointer-events: none;
-        z-index: -1;
-    }
+  footer::after {
+    content: '';
+    position: fixed;
+    top: 100vh;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--color-main);
+    pointer-events: none;
+    z-index: -1;
+  }
 </style>

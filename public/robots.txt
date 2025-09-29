@@ -1,0 +1,7 @@
+# robots.txt for https://skryensya.dev
+
+User-agent: *
+Allow: /
+
+# Enlaza tu sitemap principal
+Sitemap: https://skryensya.dev/sitemap.xml
