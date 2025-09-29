@@ -207,6 +207,9 @@ export const ui = {
         'footer.copyright': 'Todos los derechos reservados',
         'footer.builtWith': 'Construido con',
         'footer.andCode': 'y código',
+        'footer.info': 'Info',
+        'footer.availableForProjects': 'Disponible para proyectos',
+        'footer.sitemap': 'Sitemap',
 
         // Accessibility Statement
         'accessibility.title': 'Declaración de Accesibilidad',
@@ -428,6 +431,9 @@ export const ui = {
         'footer.copyright': 'All rights reserved',
         'footer.builtWith': 'Built with',
         'footer.andCode': 'and code',
+        'footer.info': 'Info',
+        'footer.availableForProjects': 'Available for projects',
+        'footer.sitemap': 'Sitemap',
 
         // Accessibility Statement
         'accessibility.title': 'Accessibility Statement',
@@ -649,6 +655,9 @@ export const ui = {
         'footer.copyright': 'Alle rettigheter reservert',
         'footer.builtWith': 'Bygget med',
         'footer.andCode': 'og kode',
+        'footer.info': 'Info',
+        'footer.availableForProjects': 'Tilgjengelig for prosjekter',
+        'footer.sitemap': 'Sitemap',
 
         // Accessibility Statement
         'accessibility.title': 'Tilgjengelighetserklæring',

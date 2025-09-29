@@ -13,9 +13,9 @@ export const localizedRoutes = {
     no: 'cv'
   },
   accessibility: {
-    es: 'accessibility',
-    en: 'accessibility',
-    no: 'accessibility'
+    es: 'declaracion-de-accesibilidad',
+    en: 'accessibility-statement',
+    no: 'tilgjengelighetserklaering'
   }
 } as const;
 
@@ -53,21 +53,52 @@ export const pagesDictionary = {
     en: '/en/resume',
     no: '/no/cv'
   },
-  // Accessibility pages
+  // Accessibility pages (old routes for backward compatibility)
   '/accessibility': {
-    es: '/accessibility',
-    en: '/en/accessibility',
-    no: '/no/accessibility'
+    es: '/declaracion-de-accesibilidad',
+    en: '/en/accessibility-statement',
+    no: '/no/tilgjengelighetserklaering'
   },
   '/en/accessibility': {
-    es: '/accessibility',
-    en: '/en/accessibility',
-    no: '/no/accessibility'
+    es: '/declaracion-de-accesibilidad',
+    en: '/en/accessibility-statement',
+    no: '/no/tilgjengelighetserklaering'
   },
   '/no/accessibility': {
-    es: '/accessibility',
-    en: '/en/accessibility',
-    no: '/no/accessibility'
+    es: '/declaracion-de-accesibilidad',
+    en: '/en/accessibility-statement',
+    no: '/no/tilgjengelighetserklaering'
+  },
+  // New accessibility pages with proper translated names
+  '/declaracion-de-accesibilidad': {
+    es: '/declaracion-de-accesibilidad',
+    en: '/en/accessibility-statement',
+    no: '/no/tilgjengelighetserklaering'
+  },
+  '/declaracion-de-accesibilidad/': {
+    es: '/declaracion-de-accesibilidad/',
+    en: '/en/accessibility-statement/',
+    no: '/no/tilgjengelighetserklaering/'
+  },
+  '/en/accessibility-statement': {
+    es: '/declaracion-de-accesibilidad',
+    en: '/en/accessibility-statement',
+    no: '/no/tilgjengelighetserklaering'
+  },
+  '/en/accessibility-statement/': {
+    es: '/declaracion-de-accesibilidad/',
+    en: '/en/accessibility-statement/',
+    no: '/no/tilgjengelighetserklaering/'
+  },
+  '/no/tilgjengelighetserklaering': {
+    es: '/declaracion-de-accesibilidad',
+    en: '/en/accessibility-statement',
+    no: '/no/tilgjengelighetserklaering'
+  },
+  '/no/tilgjengelighetserklaering/': {
+    es: '/declaracion-de-accesibilidad/',
+    en: '/en/accessibility-statement/',
+    no: '/no/tilgjengelighetserklaering/'
   },
   // Projects pages (pagination)
   '/proyectos': {
@@ -175,6 +206,37 @@ export const pagesDictionary = {
     es: '/proyectos/03-barrancas',
     en: '/en/projects/03-barrancas',
     no: '/no/prosjekter/03-barrancas'
+  },
+  // Content Tree pages
+  '/arbol-de-contenido': {
+    es: '/arbol-de-contenido',
+    en: '/en/content-tree',
+    no: '/no/innholdstre'
+  },
+  '/arbol-de-contenido/': {
+    es: '/arbol-de-contenido/',
+    en: '/en/content-tree/',
+    no: '/no/innholdstre/'
+  },
+  '/en/content-tree': {
+    es: '/arbol-de-contenido',
+    en: '/en/content-tree',
+    no: '/no/innholdstre'
+  },
+  '/en/content-tree/': {
+    es: '/arbol-de-contenido/',
+    en: '/en/content-tree/',
+    no: '/no/innholdstre/'
+  },
+  '/no/innholdstre': {
+    es: '/arbol-de-contenido',
+    en: '/en/content-tree',
+    no: '/no/innholdstre'
+  },
+  '/no/innholdstre/': {
+    es: '/arbol-de-contenido/',
+    en: '/en/content-tree/',
+    no: '/no/innholdstre/'
   }
 } as const;
 

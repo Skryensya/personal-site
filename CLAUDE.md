@@ -189,7 +189,6 @@ Reusable interface elements:
 
 - `Button.astro` - Styled button with sound effects
 - `BigSectionContainer.astro` - Section wrapper with title
-- `DitheredImageReact.tsx` - Theme-aware image processing
 
 #### 3. Interactive Components
 

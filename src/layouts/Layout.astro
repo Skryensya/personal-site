@@ -129,8 +129,7 @@ declare global {
         </style>
  
         
-        <BaseHead {...head} />
-        <script src="/as-dithered-image.js" is:inline></script>
+        <BaseHead {...head} lang={lang} />
         <link rel="stylesheet" href="/src/styles/view-transitions.css">
         <ViewTransitions />
         
@@ -189,18 +188,6 @@ declare global {
             /* Smooth color transitions for theme elements */
             :root {
                 view-transition-name: root;
-            }
-            
-            /* Specific transitions for dithered images */
-            .dithered-container,
-            [class*="dithered-container"] {
-                view-transition-name: dithered-image;
-            }
-            
-            ::view-transition-old(dithered-image),
-            ::view-transition-new(dithered-image) {
-                animation-duration: 0.4s;
-                animation-timing-function: ease-in-out;
             }
             
             /* Prevent navbar from participating in theme view transitions */
