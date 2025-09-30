@@ -157,7 +157,7 @@ export default function LanguageControl({ currentPath, initialLocale }: Language
                                 handleDropdownMouseSelection(lang, url);
                             }
                         }}
-                        className="w-full px-1 py-0.5 text-left block cursor-pointer relative focus:z-[9999]"
+                        className="w-full px-1 py-0.5 text-left block cursor-pointer relative focus-visible:z-[9999]"
                         data-selected={lang === currentLang ? 'true' : 'false'}
                         style={{
                             outlineWidth: '1px',
@@ -203,7 +203,7 @@ export default function LanguageControl({ currentPath, initialLocale }: Language
                 className="w-7 h-7 @6xl:w-auto @6xl:h-8"
             >
             <div className="flex items-center gap-2">
-                <span className="font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus:text-secondary uppercase">
+                <span className="font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary uppercase">
                     {getNativeLanguageName(currentLang)}
                 </span>
             </div>

@@ -1,43 +1,68 @@
 ---
+// imports normales
 import Button from '../Button.astro';
 import TextGenerate from '../TextGenerate.tsx'; 
 import CornersWithCrosses from '../CornersWithCrosses.astro';
 import HeroCards from '../HeroCards.tsx';
+import PixelBlastWithCssVar from '../PixelBlastWithCssVar.tsx'; // 👈
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import { getLocalizedUrl } from '@/utils/localized-routes';
 
-interface Props {
-    lang?: Language;
-}
-
+interface Props { lang?: Language; }
 const { lang = defaultLang } = Astro.props;
 const t = getTranslations(lang);
+ 
 ---
 
 <section class="hero-section pt-2 pb-24 ">
-    <div class="grid grid-cols-1 md:grid-cols-2 ">
-        <!-- Text Content -->
-        <CornersWithCrosses class="flex flex-col justify-center p-8 pr-16 h-[28rem]">
-          <div class="space-y-8">
-            <h1 class="text-3xl md:text-5xl font-black text-main mb-6 text-balance font-mono uppercase tracking-wider">{t('hero.heading')}</h1>
-            <div class="mb-10">
-                <TextGenerate
-                    words={t('hero.description')}
-                    client:load
-                    className="text-xl md:text-2xl leading-relaxed font-medium text-main/90"
-                />
-            </div>
-            <div class="flex flex-col md:flex-row gap-6">
-                <Button href={getLocalizedUrl(lang, 'projects')} class='order-2 md:order-1'>{t('home.heroProjectsButton')}</Button>
-                <Button href={getLocalizedUrl(lang, 'resume')} filled elevated class='order-1 md:order-2'>{t('home.cvButton')}</Button>
-            </div>
-          </div>
-        </CornersWithCrosses>
-        
-        <!-- Cards Section -->
-        <CornersWithCrosses class="flex items-center justify-center h-[28rem]  " showLeft={false}>
-            <div class="border border-main border-dashed overflow-hidden w-full h-full relative">
+  <div class="grid grid-cols-1 md:grid-cols-2 ">
+    <!-- Text Content -->
+    <CornersWithCrosses class="flex flex-col justify-center p-8 pr-16 h-[28rem] border-t border-l border-main/20 ">
+      <div class="space-y-8 ">
+        <h1 class="text-3xl md:text-5xl font-black text-main mb-6 text-balance font-mono uppercase tracking-wider">
+          {t('hero.heading')}
+        </h1>
+        <div class="mb-10">
+          <TextGenerate
+            words={t('hero.description')}
+            client:load
+          />
+        </div>
+        <div class="flex flex-col md:flex-row gap-6">
+          <Button href={getLocalizedUrl(lang, 'projects')} class="order-2 md:order-1">
+            {t('home.heroProjectsButton')}
+          </Button>
+          <Button href={getLocalizedUrl(lang, 'resume')} filled elevated class="order-1 md:order-2">
+            {t('home.cvButton')}
+          </Button>
+        </div>
+      </div>
+    </CornersWithCrosses>
+
+    <!-- Cards Section -->
+    <CornersWithCrosses class="flex items-center justify-center h-[28rem]" showLeft={false}>
+      <div class="overflow-hidden w-full h-full relative border-b border-r border-main/20">
+        <!-- PixelBlast Background -->
+        <PixelBlastWithCssVar
+          className="absolute inset-0 w-full h-full"
+          variant="diamond"
+          pixelSize={2}
+          patternScale={0.75}
+          patternDensity={1.25}
+          edgeFade={0.25}
+          speed={1.5}
+          transparent={true}
+          antialias={false}
+          enableRipples={true}
+          cssVar="--color-main"       
+          fallbackColor="#B19EEF"      
+          client:load                   
+        />
+
+        <!-- Hero Cards on top -->
+        <div class="relative z-10">
+            <div class="-translate-y-56">
                 <HeroCards
                 cardDistance={50}
                 verticalDistance={50}
@@ -54,6 +79,8 @@ const t = getTranslations(lang);
                 client:load
                 />
             </div>
-        </CornersWithCrosses>
-    </div>
+        </div>
+      </div>
+    </CornersWithCrosses>
+  </div>
 </section>
