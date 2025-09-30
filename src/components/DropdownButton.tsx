@@ -253,6 +253,22 @@ export default function DropdownButton({
         }
     };
 
+    const handleMouseEnter = (event: React.MouseEvent) => {
+        // Blur immediately when mouse enters to remove focus-visible styling from clicks
+        const target = event.currentTarget as HTMLButtonElement;
+        if (target && document.activeElement === target) {
+            target.blur();
+        }
+    };
+
+    const handleMouseOut = (event: React.MouseEvent) => {
+        // Blur the button when mouse leaves to remove focus-visible styling
+        const target = event.currentTarget as HTMLButtonElement;
+        if (target && document.activeElement === target) {
+            target.blur();
+        }
+    };
+
     const handleDropdownClick = (event: React.MouseEvent) => {
         event.stopPropagation();
         if (!disabled) {
@@ -297,8 +313,10 @@ export default function DropdownButton({
                 <button
                     type="button"
                     onClick={handleMainClick}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseOut={handleMouseOut}
                     disabled={disabled}
-                    className="flex items-center justify-center px-3 h-8 bg-secondary border-double border-2 border-main border-r-0 hover:bg-main hover:text-secondary focus:bg-main focus:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)] pt-0 focus:z-[9999] select-none"
+                    className="flex items-center justify-center px-3 h-8 bg-secondary border-double border-2 border-main border-r-0 hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)] pt-0 focus-visible:z-[9999] select-none"
                     style={{
                         outlineWidth: '1px',
                         outlineOffset: '1px'
@@ -317,8 +335,10 @@ export default function DropdownButton({
                     type="button"
                     onClick={handleDropdownClick}
                     onKeyDown={handleButtonKeyDown}
+                    onMouseEnter={handleMouseEnter}
+                    onMouseOut={handleMouseOut}
                     disabled={disabled}
-                    className="flex items-center justify-center min-w-8 w-8 h-8 bg-secondary border-double border-2 border-main hover:bg-main hover:text-secondary focus:bg-main focus:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)] focus:z-[9999] select-none"
+                    className="flex items-center justify-center min-w-8 w-8 h-8 bg-secondary border-double border-2 border-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)] focus-visible:z-[9999] select-none"
                     style={{
                         outlineWidth: '1px',
                         outlineOffset: '1px'
@@ -331,7 +351,7 @@ export default function DropdownButton({
                 >
                     {/* Icono de flecha */}
                     <svg
-                        className="w-4 h-4 text-main group-hover:text-secondary group-focus:text-secondary"
+                        className="w-4 h-4 text-main group-hover:text-secondary group-focus-visible:text-secondary"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"

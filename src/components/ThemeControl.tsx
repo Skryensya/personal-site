@@ -156,7 +156,7 @@ export default function ThemeControl() {
                             key={theme.id}
                             type="button"
                             onClick={() => handleThemeSelect(theme)}
-                            className="w-full px-1 py-0.5 text-left block cursor-pointer relative focus:z-[9999]"
+                            className="w-full px-1 py-0.5 text-left block cursor-pointer relative focus-visible:z-[9999]"
                             data-selected={currentTheme?.id === theme.id ? 'true' : 'false'}
                             style={{ 
                                 minHeight: '32px',
@@ -207,7 +207,7 @@ export default function ThemeControl() {
                         background: `linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%)`
                     }}
                 />
-                <span className="hidden @6xl:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus:text-secondary truncate uppercase  ">
+                <span className="hidden @6xl:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary truncate uppercase  ">
                     {currentTheme.name}
                 </span>
             </div>

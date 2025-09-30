@@ -18,40 +18,69 @@ export const themes = themesData.themes.map((theme) => ({
 
 export const themeKeys = themes.map((theme) => theme.id);
 
-// Simple theme management with localStorage optimization
+// Simple theme management with localStorage optimization and View Transitions API
 export function applyTheme(themeId, isDark = false, mode = null) {
     const root = document.documentElement;
-
-    // Set theme data attribute
-    root.setAttribute('data-theme', themeId);
-
+    
     // Get theme using backwards compatibility getters
     const theme = themes.find((t) => t.id === themeId) || themes[0];
 
-    // Apply dark class
-    root.classList.toggle('dark', isDark);
+    // Function to actually apply the theme changes
+    const updateTheme = () => {
+        // Set theme data attribute
+        root.setAttribute('data-theme', themeId);
 
-    // Set CSS custom properties using backwards compatibility getters
-    root.style.setProperty('--theme-colorful', theme.colorful);
-    root.style.setProperty('--theme-contrasty', theme.contrasty);
-    
-    // Set the main color variables that the CSS actually uses
-    root.style.setProperty('--color-main', isDark ? theme.colorful : theme.contrasty);
-    root.style.setProperty('--color-secondary', isDark ? theme.contrasty : theme.colorful);
+        // Apply dark class
+        root.classList.toggle('dark', isDark);
 
-    // Persist to localStorage with error handling
-    try {
-        localStorage.setItem('theme-id', themeId);
-        localStorage.setItem('theme-mode', isDark ? 'dark' : 'light');
-    } catch (e) {
-        console.warn('Failed to save theme to localStorage:', e);
+        // Set CSS custom properties using backwards compatibility getters
+        root.style.setProperty('--theme-colorful', theme.colorful);
+        root.style.setProperty('--theme-contrasty', theme.contrasty);
+        
+        // Set the main color variables that the CSS actually uses
+        root.style.setProperty('--color-main', isDark ? theme.colorful : theme.contrasty);
+        root.style.setProperty('--color-secondary', isDark ? theme.contrasty : theme.colorful);
+
+        // Persist to localStorage with error handling
+        try {
+            localStorage.setItem('theme-id', themeId);
+            localStorage.setItem('theme-mode', isDark ? 'dark' : 'light');
+        } catch (e) {
+            console.warn('Failed to save theme to localStorage:', e);
+        }
+        
+        // Debug log
+        console.log('🎨 Theme applied via applyTheme():', themeId, 'isDark:', isDark, 'colors:', {
+            colorful: theme.colorful,
+            contrasty: theme.contrasty
+        });
+    };
+
+    // Use View Transitions API if available and supported
+    if (typeof document !== 'undefined' && document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        // Start view transition for smooth theme change
+        document.startViewTransition(() => {
+            updateTheme();
+        });
+    } else {
+        // Fallback: Add CSS transitions temporarily for older browsers
+        const elementsToTransition = document.querySelectorAll('*');
+        
+        // Add temporary transitions to all elements
+        elementsToTransition.forEach(el => {
+            el.style.transition = 'background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease';
+        });
+        
+        // Apply theme change
+        updateTheme();
+        
+        // Remove temporary transitions after animation completes
+        setTimeout(() => {
+            elementsToTransition.forEach(el => {
+                el.style.transition = '';
+            });
+        }, 300);
     }
-    
-    // Debug log
-    console.log('🎨 Theme applied via applyTheme():', themeId, 'isDark:', isDark, 'colors:', {
-        colorful: theme.colorful,
-        contrasty: theme.contrasty
-    });
 }
 
 // Get theme by id with fallback

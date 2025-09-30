@@ -157,7 +157,7 @@ export default function ModeControl() {
                             key={mode}
                             type="button"
                             onClick={() => handleModeChange(mode)}
-                            className="w-full px-1 py-0.5 text-left block cursor-pointer relative focus:z-[9999]"
+                            className="w-full px-1 py-0.5 text-left block cursor-pointer relative focus-visible:z-[9999]"
                             data-selected={currentMode === mode ? 'true' : 'false'}
                             style={{
                                 outlineWidth: '1px',
@@ -192,7 +192,7 @@ export default function ModeControl() {
         >
             <div className="flex items-center gap-2">
                 <div className="w-3.5 h-3.5 relative flex-shrink-0 translate-y-[-1px]">{getModeIcon(currentMode, '')}</div>
-                <span className="hidden @6xl:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus:text-secondary uppercase">{getModeName(currentMode)}</span>
+                <span className="hidden @6xl:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary uppercase">{getModeName(currentMode)}</span>
             </div>
         </DropdownButton>
     );

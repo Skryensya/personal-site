@@ -19,6 +19,12 @@ const resolvedImage = image?.src
           alt: image.alt
       }
     : undefined;
+
+// Pre-generate meta tags to avoid template issues
+const ogImageMeta = resolvedImage?.src ? `<meta property="og:image" content="${resolvedImage.src}" />` : '';
+const ogImageAltMeta = resolvedImage?.alt ? `<meta property="og:image:alt" content="${resolvedImage.alt}" />` : '';
+const twitterImageMeta = resolvedImage?.src ? `<meta property="twitter:image" content="${resolvedImage.src}" />` : '';
+const twitterImageAltMeta = resolvedImage?.alt ? `<meta name="twitter:image:alt" content="${resolvedImage.alt}" />` : '';
 const canonicalURL = new URL(Astro.request.url, Astro.site);
 
 // Hreflang URLs for multilingual SEO
@@ -85,16 +91,16 @@ function formatCanonicalURL(url: string | URL) {
 <meta property="og:url" content={formatCanonicalURL(canonicalURL)} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
-{resolvedImage?.src && <meta property="og:image" content={resolvedImage.src} />}
-{resolvedImage?.alt && <meta property="og:image:alt" content={resolvedImage.alt} />}
+<Fragment set:html={ogImageMeta} />
+<Fragment set:html={ogImageAltMeta} />
 
 <!-- X/Twitter -->
 <meta property="twitter:card" content="summary_large_image" />
 <meta property="twitter:url" content={formatCanonicalURL(canonicalURL)} />
 <meta property="twitter:title" content={title} />
 <meta property="twitter:description" content={description} />
-{resolvedImage?.src && <meta property="twitter:image" content={resolvedImage.src} />}
-{resolvedImage?.alt && <meta name="twitter:image:alt" content={resolvedImage?.alt} />}
+<Fragment set:html={twitterImageMeta} />
+<Fragment set:html={twitterImageAltMeta} />
 
 <!-- Structured Data (JSON-LD) -->
 <script type="application/ld+json">
@@ -138,5 +144,3 @@ function formatCanonicalURL(url: string | URL) {
   }
 }
 </script>
-
- 
