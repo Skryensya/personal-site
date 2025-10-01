@@ -1,38 +1,40 @@
 ---
-name: "Kit Digital UC"
-hook: "Komponentbibliotek for Universidad Católica webøkosystem"
-cvDescription: "Komponentbibliotek for Universidad Católica webøkosystem (100+ nettsteder). Utvikling av tilgjengelige komponenter som følger WCAG 2.1 AA-standarder."
-publishDate: 2023-01-01
+name: 'Kit Digital UC'
+hook: 'Jeg utviklet og optimaliserte Kit Digital UC, et bibliotek i Vanilla JavaScript som sikrer tilgjengelighet, konsistens og ytelse på mer enn 100 institusjonelle nettsteder.'
+cvDescription: 'Komponentbibliotek for nett ved Det pavelige katolske universitetet i Chile, den teknologiske ryggraden i det institusjonelle digitale økosystemet.'
+publishDate: '2025-05-20'
 isFeatured: true
-color: "#0066CC"
-tags: ['javascript', 'html', 'css', 'sass', 'rollup', 'vue', 'nuxt']
+audioUrl: '/tts/no-kit-digital-uc.wav'
 ---
 
-## Kit Digital UC
+# Kit Digital UC
 
-Komplett webkomponentbibliotek for Universidad Católicas webøkosystem, brukt på over 100 institusjonelle nettsteder. Dette prosjektet representerer utviklingen av en omfattende løsning for å standardisere og forbedre den digitale opplevelsen gjennom hele universitetet.
+**Kit Digital UC** er ryggraden i det digitale økosystemet til **Det pavelige katolske universitetet i Chile**. Det er et **komponentbibliotek i Vanilla JavaScript** som sikrer visuell konsistens, tilgjengelighet og høy ytelse på mer enn 100 institusjonelle nettsteder.
 
-### Hovedfunksjoner
+Valget av Vanilla JS var ikke tilfeldig: det svarer på et nøkkelkrav i prosjektet, nemlig å **fungere på alle nettsteder**, uavhengig av om de bruker moderne rammeverk eller ikke. Dette gjør at både nye applikasjoner og tradisjonelle universitetsnettsteder kan integrere de samme komponentene og stilene uten friksjon.
 
-- **Tilgjengelige komponenter** som følger WCAG 2.1 AA-standarder
-- **Konsistent design** på tvers av alle UC-nettsteder
-- **Enkel implementering** med fullstendig dokumentasjon
-- **Ytelsesoptimalisering** for rask lasting
-- **Kryssplattform kompatibilitet** garantert
+## Mitt bidrag
 
-### Teknologier Brukt
+Jeg startet med å rette opp konkrete problemer innen tilgjengelighet og brukervennlighet, men etter hvert ble rollen min utvidet til å omfatte design av mer omfattende tekniske løsninger:
 
-- **JavaScript ES6+** for komponentlogikk
-- **Semantisk HTML** for tilgjengelig struktur
-- **CSS med SASS** for modulære og vedlikeholdbare stiler
-- **Rollup** som bundler for optimalisering
-- **Vue.js** for interaktive komponenter
-- **Nuxt.js** for SSR-prosjektimplementering
+- **Lastoptimalisering med dynamiske imports**  
+  Jeg erstattet den monolittiske innlastingen av biblioteket med et system som analyserer DOM-en og laster kun de komponentene som faktisk brukes. I stedet for å laste hele biblioteket får hvert nettsted bare det som er nødvendig, noe som forbedret ytelsen i hele økosystemet.
 
-### Påvirkning
+- **Forbedret tilgjengelighet og semantikk**  
+  Jeg erstattet bruken av `background-image` i over 50 komponenter med `<img>`-elementer med `alt`-attributter. Dette gjorde at skjermleserbrukere fikk tilgang til innhold som tidligere var utilgjengelig, samtidig som semantikken og søkemotoroptimaliseringen ble styrket.
 
-Dette prosjektet har transformert Universidad Católicas digitale tilstedeværelse, og forbedret visuell konsistens og brukeropplevelse på tvers av hele det institusjonelle webøkosystemet. Biblioteket sikrer at alle nettsteder opprettholder de høyeste standardene for tilgjengelighet og brukervennlighet.
+- **Kompatibilitet og distribusjon**  
+  Kit Digital UC er tilgjengelig via **CDN** og **NPM**, noe som gjør det mulig å integrere i prosjekter med moderne pipelines, men også i tradisjonelle nettsteder uten kompilering. Dette krever kontinuerlig bakoverkompatibilitet, slik at oppdateringer ikke bryter produksjonsprosjekter.
 
-### Min Rolle
+- **Helhetlig tilgjengelighetsgjennomgang**  
+  Jeg driver for tiden en full revisjon av komponentene i henhold til **WCAG 2.1 AA-standardene**, slik at enhver forbedring i tilgjengelighet umiddelbart kan gjenspeiles i prosjekter som er avhengige av biblioteket, som **UC-portalen** og **Agenda UC**.
 
-Som hovedutvikler var jeg ansvarlig for fullstendig komponentutvikling, implementering av tilgjengelighetsstandarder, ytelsesoptimalisering, og opprettelse av teknisk dokumentasjon for andre utviklere.
+## Brukte teknologier
+
+- **Vanilla JavaScript** for å garantere universell kompatibilitet.
+- **CSS/SCSS** for modulære og gjenbrukbare stiler i ethvert miljø.
+- **CDN og NPM** som distribusjonskanaler.
+
+## Effekt
+
+Kit Digital UC er ikke bare et bibliotek: det er den **felles infrastrukturen** som multipliserer verdien av hver forbedring. Hver justering i ytelse, tilgjengelighet eller brukervennlighet kommer hele universitetsfellesskapet til gode – fra studenter til undervisere og administrativt personale – gjennom titalls nettsteder som deler den samme teknologiske basen.

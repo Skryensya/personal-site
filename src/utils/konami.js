@@ -1,8 +1,5 @@
 // Konami Code detector
 // Sequence: ↑ ↑ ↓ ↓ ← → ← → B A
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { Kbd } from '../components/ui/Kbd.tsx';
 
 const KONAMI_SEQUENCE = [
     'ArrowUp', 'ArrowUp', 
@@ -12,60 +9,94 @@ const KONAMI_SEQUENCE = [
     'KeyB', 'KeyA'
 ];
 
+console.log('🎮 Konami.js loading... Expected sequence:', KONAMI_SEQUENCE);
+
 class KonamiCode {
     constructor() {
         this.sequence = [];
         this.isListening = false;
         this.callbacks = [];
         this.timeout = null;
-        this.keyElements = []; // Store the visual key elements and their React roots
+        this.keyElements = []; // Store the visual key elements
         this.lockoutUntil = 0; // Timestamp when lockout ends
+        console.log('🎮 KonamiCode instance created');
     }
 
-    // Convert key codes to visual symbols (now handled by Kbd component)
+    // Convert key codes to visual symbols
     getKeySymbol(keyCode) {
-        return keyCode; // Kbd component will handle the visual representation
+        const symbols = {
+            'ArrowUp': '↑',
+            'ArrowDown': '↓', 
+            'ArrowLeft': '←',
+            'ArrowRight': '→',
+            'KeyB': 'B',
+            'KeyA': 'A'
+        };
+        const symbol = symbols[keyCode] || keyCode;
+        console.log('🎮 Key symbol:', keyCode, '->', symbol);
+        return symbol;
     }
 
-    // Create and show a visual key element using React Kbd component
-    showKeyElement(keyCode, index) {
-        // Create container div
-        const container = document.createElement('div');
+    // Create and show a visual key element
+    showKeyElement(keySymbol, index) {
+        console.log('🎮 Showing key element:', keySymbol, 'at index:', index);
+        
+        const kbd = document.createElement('kbd');
+        kbd.textContent = keySymbol;
         
         // Calculate centered Y position
         const totalHeight = (10 - 1) * 28; // 10 keys max, 28px spacing
         const startY = (window.innerHeight - totalHeight) / 2;
         
-        // Position the container
-        container.style.cssText = `
+        kbd.style.cssText = `
             position: fixed;
             top: ${startY + (index * 28)}px;
             left: -40px;
-            transition: left 0.3s ease-out, transform 0.3s ease;
+            background: var(--color-secondary);
+            color: var(--color-main);
+            border: none;
+            padding: 0;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 12px;
             z-index: 10000;
+            border-radius: 3px;
+            transition: left 0.3s ease-out, transform 0.3s ease;
+            pointer-events: none;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            aspect-ratio: 1;
+            box-shadow: 
+                2px 2px 0px var(--color-main),
+                3px 3px 0px rgba(0,0,0,0.2),
+                inset -1px -1px 0px rgba(0,0,0,0.3),
+                inset 1px 1px 0px rgba(255,255,255,0.1);
+            text-shadow: 0px 1px 0px rgba(0,0,0,0.5);
         `;
         
-        document.body.appendChild(container);
-        
-        // Create React root and render Kbd component
-        const root = createRoot(container);
-        root.render(React.createElement(Kbd, { keyCode }));
-        
-        // Store both container and root for cleanup
-        this.keyElements.push({ container, root });
+        console.log('🎮 Appending kbd element to body...');
+        document.body.appendChild(kbd);
+        this.keyElements.push(kbd);
         
         // Animate in from left
         setTimeout(() => {
-            container.style.left = '20px';
+            console.log('🎮 Animating kbd element to position...');
+            kbd.style.left = '20px';
         }, 50);
         
-        return container;
+        return kbd;
     }
 
     // Shake all visible keys
     shakeKeys() {
+        console.log('🎮 Shaking keys, current elements:', this.keyElements.length);
+        
         // Add shake animation CSS if not already present
         if (!document.getElementById('konami-shake-style')) {
+            console.log('🎮 Adding shake CSS animation');
             const style = document.createElement('style');
             style.id = 'konami-shake-style';
             style.textContent = `
@@ -82,8 +113,8 @@ class KonamiCode {
         }
 
         // Apply shake to all visible elements
-        this.keyElements.forEach(({ container }) => {
-            container.classList.add('konami-shake');
+        this.keyElements.forEach(element => {
+            element.classList.add('konami-shake');
         });
 
         // Remove shake class and hide elements after animation
@@ -94,14 +125,13 @@ class KonamiCode {
 
     // Hide all key elements
     hideAllKeys() {
-        this.keyElements.forEach(({ container, root }) => {
-            container.classList.remove('konami-shake');
-            container.style.left = '-40px';
+        console.log('🎮 Hiding all keys, current count:', this.keyElements.length);
+        this.keyElements.forEach(element => {
+            element.classList.remove('konami-shake');
+            element.style.left = '-40px';
             setTimeout(() => {
-                // Unmount React component and remove container
-                root.unmount();
-                if (container.parentNode) {
-                    container.parentNode.removeChild(container);
+                if (element.parentNode) {
+                    element.parentNode.removeChild(element);
                 }
             }, 300);
         });
@@ -110,19 +140,25 @@ class KonamiCode {
 
     // Add callback for when Konami code is entered
     onActivate(callback) {
+        console.log('🎮 Adding activation callback');
         this.callbacks.push(callback);
     }
 
     // Start listening for the Konami code
     start() {
-        if (this.isListening) return;
+        if (this.isListening) {
+            console.log('🎮 Already listening, skipping start');
+            return;
+        }
         
+        console.log('🎮 Starting Konami code detection');
         this.isListening = true;
         document.addEventListener('keydown', this.handleKeyDown.bind(this));
     }
 
     // Stop listening
     stop() {
+        console.log('🎮 Stopping Konami code detection');
         this.isListening = false;
         document.removeEventListener('keydown', this.handleKeyDown.bind(this));
         this.reset();
@@ -130,9 +166,12 @@ class KonamiCode {
 
     // Handle keydown events
     handleKeyDown(event) {
+        console.log('🎮 Key pressed:', event.code, 'Current sequence:', this.sequence);
+        
         // Check if we're in lockout period
         const now = Date.now();
         if (now < this.lockoutUntil) {
+            console.log('🎮 In lockout period, ignoring input');
             return; // Ignore all inputs during lockout
         }
 
@@ -143,14 +182,18 @@ class KonamiCode {
 
         // Check if this key matches the expected next key in sequence
         const expectedKey = KONAMI_SEQUENCE[this.sequence.length];
+        console.log('🎮 Expected key:', expectedKey, 'Pressed key:', event.code);
         
         if (event.code === expectedKey) {
+            console.log('🎮 Correct key! Sequence progress:', this.sequence.length + 1, '/', KONAMI_SEQUENCE.length);
             // Correct key! Add to sequence and show visual feedback
             this.sequence.push(event.code);
-            this.showKeyElement(event.code, this.sequence.length - 1);
+            const keySymbol = this.getKeySymbol(event.code);
+            this.showKeyElement(keySymbol, this.sequence.length - 1);
             
             // Check if sequence is complete
             if (this.sequenceMatches()) {
+                console.log('🎮 KONAMI CODE COMPLETED! Activating...');
                 // Hide keys before activating
                 setTimeout(() => {
                     this.hideAllKeys();
@@ -159,17 +202,20 @@ class KonamiCode {
                 return;
             }
         } else {
+            console.log('🎮 Wrong key! Resetting sequence. Had', this.keyElements.length, 'elements');
             // Wrong key! Shake and hide all keys, then lockout
             if (this.keyElements.length > 0) {
                 this.shakeKeys();
                 // Set lockout period for 2 seconds
                 this.lockoutUntil = Date.now() + 2000;
+                console.log('🎮 Setting lockout for 2 seconds');
             }
             this.sequence = [];
         }
 
         // Reset sequence after 3 seconds of no input
         this.timeout = setTimeout(() => {
+            console.log('🎮 Timeout reached, resetting sequence');
             this.reset();
         }, 3000);
     }
@@ -185,14 +231,13 @@ class KonamiCode {
 
     // Activate callbacks
     activate() {
-        console.log('🎮 Konami Code activated!');
-        
+        console.log('🎮 Activating Konami code! Callbacks count:', this.callbacks.length);
         // Call all callbacks
         this.callbacks.forEach(callback => {
             try {
                 callback();
             } catch (error) {
-                console.error('Error in Konami callback:', error);
+                console.error('🎮 Error in Konami callback:', error);
             }
         });
 
@@ -202,6 +247,7 @@ class KonamiCode {
 
     // Reset the sequence
     reset() {
+        console.log('🎮 Resetting sequence');
         this.sequence = [];
         this.hideAllKeys();
         if (this.timeout) {

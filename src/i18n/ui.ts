@@ -98,8 +98,9 @@ export const ui = {
         'ui.loading': 'Cargando...',
         
         // Theme toast notifications
-        'theme.toast.unlocked': 'Temas adicionales desbloqueados por 24 horas. Revisa el selector de temas para ver las nuevas opciones disponibles.',
+        'theme.toast.unlocked': '¡Has desbloqueado {count} temas adicionales!',
         'theme.toast.locked': 'Temas adicionales bloqueados por 24 horas. El tema se ha restablecido al predeterminado.',
+        'theme.toast.company': 'Hola equipo de {company}. He activado su tema para que se sientan como en casa.',
         
         // Theme names (forced Spanish for all languages)
         'theme.gameboy': 'GAME BOY',
@@ -327,8 +328,9 @@ export const ui = {
         'ui.loading': 'Loading...',
         
         // Theme toast notifications
-        'theme.toast.unlocked': 'Additional themes unlocked for 24 hours. Check the theme selector to explore the new available options.',
+        'theme.toast.unlocked': 'You\'ve unlocked {count} additional themes!',
         'theme.toast.locked': 'Additional themes locked for 24 hours. Theme has been reset to default.',
+        'theme.toast.company': 'Hello {company} team! I\'ve activated your theme to make you feel right at home.',
         
         // Theme names (forced Spanish for all languages)
         'theme.gameboy': 'GAME BOY',
@@ -556,8 +558,9 @@ export const ui = {
         'ui.loading': 'Laster...',
         
         // Theme toast notifications
-        'theme.toast.unlocked': 'Ytterligere temaer låst opp i 24 timer. Sjekk temavalgeren for å utforske de nye tilgjengelige alternativene.',
+        'theme.toast.unlocked': 'Du har låst opp {count} ekstra temaer!',
         'theme.toast.locked': 'Ytterligere temaer låst i 24 timer. Tema har blitt tilbakestilt til standard.',
+        'theme.toast.company': 'Hei {company}-teamet! Jeg har aktivert temaet deres for at dere skal føle dere hjemme.',
         
         // Theme names (forced Spanish for all languages)
         'theme.gameboy': 'GAME BOY',

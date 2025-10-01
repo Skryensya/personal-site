@@ -1,38 +1,40 @@
 ---
-name: "Kit Digital UC"
-hook: "Librería de componentes para el ecosistema de sitios web de la Universidad Católica"
-cvDescription: "Librería de componentes para el ecosistema de sitios web de la Universidad Católica (100+ sitios). Desarrollo de componentes accesibles siguiendo estándares WCAG 2.1 AA."
-publishDate: 2023-01-01
+name: 'Kit Digital UC'
+hook: 'Desarrollé y optimicé el Kit Digital UC, una librería en Vanilla JavaScript que asegura accesibilidad, coherencia y rendimiento en más de 100 sitios institucionales.'
+cvDescription: 'Librería de componentes web para la Pontificia Universidad Católica de Chile, base tecnológica del ecosistema digital institucional.'
+publishDate: '2025-05-20'
 isFeatured: true
-color: "#0066CC"
-tags: ['javascript', 'html', 'css', 'sass', 'rollup', 'vue', 'nuxt']
+audioUrl: '/tts/es-kit-digital-uc.wav'
 ---
 
-## Kit Digital UC
+# Kit Digital UC
 
-Librería completa de componentes web para el ecosistema de sitios web de la Universidad Católica, utilizada en más de 100 sitios institucionales. Este proyecto representa el desarrollo de una solución integral para estandarizar y mejorar la experiencia digital de toda la universidad.
+El **Kit Digital UC** es la columna vertebral del ecosistema digital de la Pontificia Universidad Católica de Chile. Es una **librería de componentes en Vanilla JavaScript** que asegura coherencia visual, accesibilidad y rendimiento en más de 100 sitios institucionales.
 
-### Características Principales
+La elección de Vanilla JS no fue casualidad: responde a un requisito clave del proyecto, que es **funcionar en cualquier sitio**, sin importar si usa un framework moderno o no. Esto asegura que tanto aplicaciones nuevas como sitios tradicionales de la universidad puedan incorporar los mismos componentes y estilos sin fricciones.
 
-- **Componentes accesibles** siguiendo estándares WCAG 2.1 AA
-- **Diseño consistente** a través de todos los sitios de la UC
-- **Fácil implementación** con documentación completa
-- **Optimización de rendimiento** para carga rápida
-- **Compatibilidad cross-browser** garantizada
+## Mi contribución
 
-### Tecnologías Utilizadas
+Desde el inicio trabajé corrigiendo problemas puntuales de accesibilidad y usabilidad, pero con el tiempo mi rol se amplió hacia el diseño de soluciones técnicas de mayor impacto:
 
-- **JavaScript ES6+** para lógica de componentes
-- **HTML semántico** para estructura accesible
-- **CSS con SASS** para estilos modulares y mantenibles
-- **Rollup** como bundler para optimización
-- **Vue.js** para componentes interactivos
-- **Nuxt.js** para implementación en proyectos SSR
+- **Optimización de carga con dynamic imports**  
+  Reemplacé la carga monolítica del Kit por un sistema que analiza el DOM y descarga únicamente los componentes realmente usados. Así, en lugar de cargar la librería completa, cada sitio solo recibe lo indispensable, mejorando el rendimiento en todo el ecosistema.
 
-### Impacto
+- **Accesibilidad y semántica mejoradas**  
+  Reemplacé el uso de `background-image` en más de 50 componentes por elementos `<img>` con atributos `alt`. Esto permitió que los usuarios de lectores de pantalla accedieran a contenido antes inaccesible, además de mejorar la semántica y el posicionamiento de los sitios en buscadores.
 
-Este proyecto ha transformado la presencia digital de la Universidad Católica, mejorando la consistencia visual y la experiencia de usuario en todo el ecosistema web institucional. La librería asegura que todos los sitios mantengan los estándares de accesibilidad y usabilidad más altos.
+- **Compatibilidad y distribución**  
+  El Kit está disponible por **CDN** y **NPM**, lo que permite su integración en proyectos con pipelines modernos, pero también en sitios tradicionales sin compilación. Esto obliga a mantener compatibilidad retroactiva, cuidando que las actualizaciones no rompan proyectos en producción.
 
-### Mi Rol
+- **Revisión integral de accesibilidad**  
+  Actualmente estoy impulsando una revisión completa de los componentes del Kit bajo los estándares **WCAG 2.1 AA**, para que cualquier mejora en accesibilidad se replique de inmediato en proyectos que dependen de esta librería, como el **Portal UC** y la **Agenda UC**.
 
-Como desarrollador principal, fui responsable del desarrollo completo de los componentes, implementación de estándares de accesibilidad, optimización de rendimiento y creación de la documentación técnica para otros desarrolladores.
+## Tecnologías involucradas
+
+- **Vanilla JavaScript** para garantizar compatibilidad universal.
+- **CSS/SCSS** para estilos modulares y reutilizables en cualquier entorno.
+- **CDN y NPM** como vías de distribución.
+
+## Impacto
+
+El Kit Digital UC no es solo una librería: es la **infraestructura común** que multiplica el valor de cada mejora. Cada ajuste en rendimiento, accesibilidad o usabilidad beneficia a toda la comunidad universitaria, desde estudiantes hasta docentes y personal administrativo, a través de decenas de sitios que comparten la misma base tecnológica.
