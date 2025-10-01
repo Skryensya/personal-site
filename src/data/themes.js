@@ -4,6 +4,155 @@
 
 import themesData from './themes.json';
 
+// Get unlocked themes from localStorage with 1-day expiration
+function getUnlockedThemes() {
+    if (typeof window === 'undefined') return [];
+    try {
+        const konamiData = localStorage.getItem('konami-unlock');
+        if (!konamiData) return [];
+        
+        const { themes, timestamp } = JSON.parse(konamiData);
+        const now = Date.now();
+        const oneDay = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+        
+        // Check if more than 1 day has passed
+        if (now - timestamp > oneDay) {
+            // Expired, remove from localStorage
+            localStorage.removeItem('konami-unlock');
+            return [];
+        }
+        
+        return themes || [];
+    } catch {
+        return [];
+    }
+}
+
+// Save unlocked themes to localStorage with timestamp
+function saveUnlockedThemes(themes) {
+    if (typeof window === 'undefined') return;
+    try {
+        const konamiData = {
+            themes,
+            timestamp: Date.now()
+        };
+        localStorage.setItem('konami-unlock', JSON.stringify(konamiData));
+    } catch (e) {
+        console.warn('Failed to save konami unlock data:', e);
+    }
+}
+
+// Check if a theme is unlocked
+function isThemeUnlocked(themeId) {
+    const theme = themesData.themes.find(t => t.id === themeId);
+    if (!theme || !theme.hidden) return true; // Non-hidden themes are always unlocked
+    
+    const unlockedThemes = getUnlockedThemes();
+    return unlockedThemes.includes(themeId);
+}
+
+// Unlock a hidden theme
+export function unlockTheme(themeId) {
+    const theme = themesData.themes.find(t => t.id === themeId);
+    if (!theme || !theme.hidden) return false; // Can't unlock non-hidden themes
+    
+    const unlockedThemes = getUnlockedThemes();
+    if (!unlockedThemes.includes(themeId)) {
+        unlockedThemes.push(themeId);
+        saveUnlockedThemes(unlockedThemes);
+        
+        // Emit event for UI updates
+        if (typeof window !== 'undefined') {
+            const event = new CustomEvent('theme-unlocked', {
+                detail: { themeId, theme }
+            });
+            window.dispatchEvent(event);
+        }
+        
+        return true;
+    }
+    return false;
+}
+
+// Toggle all hidden themes (unlock if none unlocked, lock if any unlocked)
+export function toggleAllHiddenThemes() {
+    const hiddenThemes = themesData.themes.filter(t => t.hidden).map(t => t.id);
+    const unlockedThemes = getUnlockedThemes();
+    
+    // Check if any hidden themes are currently unlocked
+    const anyUnlocked = hiddenThemes.some(themeId => unlockedThemes.includes(themeId));
+    
+    if (anyUnlocked) {
+        // Lock all hidden themes (clear the unlocked list)
+        saveUnlockedThemes([]);
+        
+        // Emit event for UI updates
+        if (typeof window !== 'undefined') {
+            const event = new CustomEvent('themes-locked', {
+                detail: { hiddenThemes }
+            });
+            window.dispatchEvent(event);
+        }
+        
+        return { action: 'locked', themes: hiddenThemes };
+    } else {
+        // Unlock all hidden themes
+        saveUnlockedThemes([...hiddenThemes]);
+        
+        // Emit event for UI updates
+        if (typeof window !== 'undefined') {
+            const event = new CustomEvent('themes-unlocked', {
+                detail: { hiddenThemes }
+            });
+            window.dispatchEvent(event);
+        }
+        return { action: 'unlocked', themes: hiddenThemes };
+    }
+}
+
+// Check if current theme is hidden
+export function isCurrentThemeHidden() {
+    if (typeof window === 'undefined') return false;
+    const currentThemeId = localStorage.getItem('theme-id');
+    if (!currentThemeId) return false;
+    
+    const theme = themesData.themes.find(t => t.id === currentThemeId);
+    return theme ? theme.hidden === true : false;
+}
+
+// Get default theme (first non-hidden theme)
+export function getDefaultTheme() {
+    return themesData.themes.find(t => !t.hidden) || themesData.themes[0];
+}
+
+// Get time remaining until konami unlock expires
+export function getKonamiTimeRemaining() {
+    if (typeof window === 'undefined') return null;
+    try {
+        const konamiData = localStorage.getItem('konami-unlock');
+        if (!konamiData) return null;
+        
+        const { timestamp } = JSON.parse(konamiData);
+        const now = Date.now();
+        const oneDay = 24 * 60 * 60 * 1000;
+        const timeRemaining = (timestamp + oneDay) - now;
+        
+        if (timeRemaining <= 0) return null;
+        
+        return timeRemaining;
+    } catch {
+        return null;
+    }
+}
+
+// Get available themes (non-hidden + unlocked hidden)
+export function getAvailableThemes() {
+    return themesData.themes.filter(theme => {
+        if (!theme.hidden) return true;
+        return isThemeUnlocked(theme.id);
+    });
+}
+
 // Export themes from JSON with backwards compatibility
 export const themes = themesData.themes.map((theme) => ({
     ...theme,
@@ -49,11 +198,6 @@ export function applyTheme(themeId, isDark = false, mode = null) {
             console.warn('Failed to save theme to localStorage:', e);
         }
         
-        // Debug log
-        console.log('🎨 Theme applied via applyTheme():', themeId, 'isDark:', isDark, 'colors:', {
-            colorful: theme.colorful,
-            contrasty: theme.contrasty
-        });
     };
 
     // Use View Transitions API if available and supported

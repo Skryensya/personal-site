@@ -8,6 +8,7 @@ import WaveDivider from '../components/WaveDivider.astro';
 import NorwegianDisclaimer from '../components/NorwegianDisclaimer.astro';
 import FaviconManager from '../components/FaviconManager.tsx';
 import { type Language } from '../i18n/ui';
+import { getTranslations } from '../i18n/utils';
 import { themes } from '../data/themes.js';
 
 export interface Props extends HeadProps {
@@ -42,6 +43,13 @@ const defaultTheme = themes[0]; // Use first theme from themes.js
 const defaultColorful = defaultTheme.colorful;
 const defaultContrasty = defaultTheme.contrasty;
 const defaultThemeId = defaultTheme.id;
+
+// Get translations for theme toasts
+const t = getTranslations(lang);
+const themeMessages = {
+    unlocked: t('theme.toast.unlocked'),
+    locked: t('theme.toast.locked')
+};
 
 
 declare global {
@@ -175,6 +183,121 @@ declare global {
 
             // Re-apply after page transitions
             document.addEventListener('astro:page-load', applyBodyBackground);
+        </script>
+
+        <!-- Konami Code Integration -->
+        <script define:vars={{ themeMessages }}>
+            import konami from '../utils/konami.js';
+            import { toggleAllHiddenThemes, isCurrentThemeHidden, getDefaultTheme, applyTheme } from '../data/themes.js';
+
+            // Start Konami code detection
+            konami.start();
+
+            // Add callback for when Konami code is activated
+            konami.onActivate(() => {
+                // Toggle all hidden themes
+                const result = toggleAllHiddenThemes();
+                
+                // If locking themes and current theme is hidden, reset to default
+                if (result.action === 'locked' && isCurrentThemeHidden()) {
+                    const defaultTheme = getDefaultTheme();
+                    const savedMode = localStorage.getItem('theme-mode') || 'system';
+                    let isDark = false;
+                    if (savedMode === 'system') {
+                        isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                    } else {
+                        isDark = savedMode === 'dark';
+                    }
+                    
+                    applyTheme(defaultTheme.id, isDark, null);
+                    window.__THEME_ID__ = defaultTheme.id;
+                    window.__APPLY_THEME_INSTANTLY__();
+                    
+                }
+                
+                const unlocked = result.action === 'unlocked';
+                
+                if (unlocked) {
+                    // Show unlock notification
+                    const notification = document.createElement('div');
+                    notification.textContent = themeMessages.unlocked;
+                    notification.style.cssText = `
+                        position: fixed;
+                        top: 120px;
+                        right: -400px;
+                        background: var(--color-main);
+                        color: var(--color-secondary);
+                        border: 2px solid var(--color-secondary);
+                        padding: 12px 16px;
+                        font-family: monospace;
+                        font-weight: bold;
+                        font-size: 14px;
+                        z-index: 10000;
+                        max-width: 280px;
+                        border-radius: 4px;
+                        transition: right 0.4s ease-out;
+                        box-shadow: 4px 4px 0px var(--color-secondary);
+                    `;
+                    
+                    document.body.appendChild(notification);
+                    
+                    // Slide in from right
+                    setTimeout(() => {
+                        notification.style.right = '20px';
+                    }, 50);
+                    
+                    // Don't automatically switch theme, just show notification
+                    // User can manually select the theme from dropdown
+                    
+                    // Slide out and remove after 4 seconds
+                    setTimeout(() => {
+                        notification.style.right = '-400px';
+                        setTimeout(() => {
+                            notification.remove();
+                        }, 400);
+                    }, 4000);
+                } else {
+                    // Show lock notification
+                    const notification = document.createElement('div');
+                    notification.textContent = themeMessages.locked;
+                    notification.style.cssText = `
+                        position: fixed;
+                        top: 120px;
+                        right: -400px;
+                        background: var(--color-main);
+                        color: var(--color-secondary);
+                        border: 2px solid var(--color-secondary);
+                        padding: 12px 16px;
+                        font-family: monospace;
+                        font-weight: bold;
+                        font-size: 14px;
+                        z-index: 10000;
+                        max-width: 280px;
+                        border-radius: 4px;
+                        transition: right 0.4s ease-out;
+                        box-shadow: 4px 4px 0px var(--color-secondary);
+                    `;
+                    document.body.appendChild(notification);
+                    
+                    // Slide in from right
+                    setTimeout(() => {
+                        notification.style.right = '20px';
+                    }, 50);
+                    
+                    // Slide out and remove after 3 seconds
+                    setTimeout(() => {
+                        notification.style.right = '-400px';
+                        setTimeout(() => {
+                            notification.remove();
+                        }, 400);
+                    }, 3000);
+                }
+            });
+
+            // Clean up on page unload
+            window.addEventListener('beforeunload', () => {
+                konami.stop();
+            });
         </script>
         
         <style>

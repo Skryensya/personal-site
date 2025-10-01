@@ -57,7 +57,7 @@ export default function DropdownButton({
         open: isOpen,
         onOpenChange: setIsOpen,
         middleware: [
-            offset(4),
+            offset(8),
             flip({
                 fallbackPlacements: ['top-end', 'bottom-start', 'top-start']
             }),
@@ -121,23 +121,9 @@ export default function DropdownButton({
             case ' ':
                 event.preventDefault();
                 event.stopPropagation();
-                console.log('🔥 DROPDOWN: Enter/Space pressed!', { 
-                    activeIndex, 
-                    isOpen, 
-                    itemsLength: items.length,
-                    items: items.map(item => ({ tagName: item.tagName, className: item.className }))
-                });
                 
                 if (activeIndex >= 0 && activeIndex < items.length) {
                     const activeItem = items[activeIndex] as HTMLElement;
-                    console.log('🎯 DROPDOWN: About to click item:', { 
-                        activeIndex, 
-                        activeItem: {
-                            tagName: activeItem.tagName,
-                            className: activeItem.className,
-                            textContent: activeItem.textContent?.substring(0, 50)
-                        }
-                    });
                     if (activeItem) {
                         // Create a custom click event to better identify it as keyboard-triggered
                         const clickEvent = new MouseEvent('click', {
@@ -149,11 +135,8 @@ export default function DropdownButton({
                             screenX: 0,
                             screenY: 0
                         });
-                        console.log('🚀 DROPDOWN: Dispatching click event');
                         activeItem.dispatchEvent(clickEvent);
                     }
-                } else {
-                    console.log('❌ DROPDOWN: Invalid activeIndex or no items');
                 }
                 
                 // Don't close dropdown here - let the handleItemClick wrapper handle it
@@ -377,7 +360,7 @@ export default function DropdownButton({
                                 ...floatingStyles,
                                 overflow: 'visible'
                             }}
-                            className={`fixed z-[350] bg-secondary border-double border-2 border-main rounded-none min-w-[120px] max-w-[250px] ${dropdownClassName}`}
+                            className={`fixed z-[350] bg-secondary border-double border-2 border-main rounded-none min-w-[120px] ${dropdownClassName}`}
                             role="menu"
                             id="dropdown-menu"
                             aria-labelledby="dropdown-button"

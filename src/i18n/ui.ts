@@ -15,6 +15,7 @@ export const ui = {
         'nav.showcase': 'Showcase',
         'nav.cv': 'Currículum',
         'nav.about': 'Sobre mí',
+        'nav.menu': 'Menú',
 
         // Home page sections
         'home.technologies': 'Tecnologías',
@@ -95,6 +96,10 @@ export const ui = {
 
         // UI text
         'ui.loading': 'Cargando...',
+        
+        // Theme toast notifications
+        'theme.toast.unlocked': 'Temas adicionales desbloqueados por 24 horas. Revisa el selector de temas para ver las nuevas opciones disponibles.',
+        'theme.toast.locked': 'Temas adicionales bloqueados por 24 horas. El tema se ha restablecido al predeterminado.',
         
         // Theme names (forced Spanish for all languages)
         'theme.gameboy': 'GAME BOY',
@@ -239,6 +244,7 @@ export const ui = {
         'nav.showcase': 'Showcase',
         'nav.cv': 'Resume',
         'nav.about': 'About me',
+        'nav.menu': 'Menu',
 
         // Home page sections
         'home.technologies': 'Technologies',
@@ -319,6 +325,10 @@ export const ui = {
 
         // UI text
         'ui.loading': 'Loading...',
+        
+        // Theme toast notifications
+        'theme.toast.unlocked': 'Additional themes unlocked for 24 hours. Check the theme selector to explore the new available options.',
+        'theme.toast.locked': 'Additional themes locked for 24 hours. Theme has been reset to default.',
         
         // Theme names (forced Spanish for all languages)
         'theme.gameboy': 'GAME BOY',
@@ -463,6 +473,7 @@ export const ui = {
         'nav.showcase': 'Showcase',
         'nav.cv': 'Curriculum Vitae',
         'nav.about': 'Om',
+        'nav.menu': 'Meny',
 
         // Home page sections
         'home.technologies': 'Teknologier',
@@ -502,7 +513,7 @@ export const ui = {
         'home.specialties.uiux': 'UI/UX Design',
 
         // Hero section
-        'hero.heading': 'Hei, jeg er Allison Velkommen til min nettside',
+        'hero.heading': 'Hei, jeg er Allison. Velkommen til nettsiden min',
         'hero.description': 'Jeg elsker å lage nettsteder som fungerer godt og er enkle å bruke. Jeg jobber hovedsakelig med React og TypeScript.',
         'hero.cards.frontend.title': 'Frontend',
         'hero.cards.frontend.description': 'React, TypeScript, Astro',
@@ -528,7 +539,7 @@ export const ui = {
             'Utenom jobb lærer jeg norsk for moro skyld, elsker å spille sjakk og dykker ned i musikalsk utforskning. Jeg liker å knytte kontakt med likesinnede, enten for alvorlige prosjekter eller bare gode samtaler.'
         ],
         'about.cta.message': 'Hvis noe av dette resonerer, ta kontakt — jeg vil gjerne prate.',
-        'about.cta.button': 'La oss snakke',
+        'about.cta.button': 'La oss snakkes',
         'about.specialties.title': 'SPESIALITETER',
         'about.stack.title': 'HOVEDTEKNOLOGIER',
         'about.collaboration.title': 'INTERESSERT I SAMARBEID?',
@@ -543,6 +554,10 @@ export const ui = {
 
         // UI text
         'ui.loading': 'Laster...',
+        
+        // Theme toast notifications
+        'theme.toast.unlocked': 'Ytterligere temaer låst opp i 24 timer. Sjekk temavalgeren for å utforske de nye tilgjengelige alternativene.',
+        'theme.toast.locked': 'Ytterligere temaer låst i 24 timer. Tema har blitt tilbakestilt til standard.',
         
         // Theme names (forced Spanish for all languages)
         'theme.gameboy': 'GAME BOY',
@@ -617,7 +632,7 @@ export const ui = {
         'cv.experience.title': 'PROFESJONELL ERFARING',
         'cv.experience.company': 'Asimov Consultores',
         'cv.experience.position': 'Full-Stack Utvikler',
-        'cv.experience.period': '2022 - I dag',
+        'cv.experience.period': '2022 - nå',
         'cv.experience.description': 'Jeg utvikler komplette digitale løsninger, og transformerer konsepter til funksjonell kode. Jeg har vært en nøkkelsamarbeidspartner i prosjekter som forbedrer digital identitet og brukeropplevelse for våre klienter, implementerer grensesnitt og backend-systemer effektivt gjennom hele utviklingssyklusen.',
         'cv.projects.title': 'Utvalgte Prosjekter',
         'cv.references.position': 'Senior Utvikler',
@@ -629,7 +644,7 @@ export const ui = {
         'cv.certificate.wai01x.description': 'Innføring i webtilgjengelighet',
         
         // Norwegian disclaimer banner
-        'disclaimer.norwegian.compact': 'Jeg lærer norsk som et personlig mål, men for tydeligere kommunikasjon, kontakt meg gjerne på engelsk eller spansk.',
+        'disclaimer.norwegian.compact': 'Jeg lærer norsk som et personlig mål, men for tydeligere kommunikasjon kan du gjerne kontakte meg på engelsk eller spansk.',
         
         // Sidebar content
         'sidebar.toc': 'Innhold',
