@@ -45,6 +45,116 @@
                 "colorful": "#FA7FB5",
                 "contrasty": "#0A0A0A"
             }
+        },
+        {
+            "id": "konami",
+            "name": "Konami",
+            "description": "Secret unlock red theme",
+            "colors": {
+                "colorful": "#FF3333",
+                "contrasty": "#0A0000"
+            },
+            "hidden": true
+        },
+        {
+            "id": "neon",
+            "name": "Neon City",
+            "description": "Cyberpunk synthwave vibes",
+            "colors": {
+                "colorful": "#FF0080",
+                "contrasty": "#001122"
+            },
+            "hidden": true
+        },
+        {
+            "id": "forest",
+            "name": "Forest",
+            "description": "Deep woodland serenity",
+            "colors": {
+                "colorful": "#228B22",
+                "contrasty": "#0F1A0F"
+            },
+            "hidden": true
+        },
+        {
+            "id": "sunset",
+            "name": "Sunset",
+            "description": "Golden hour warmth",
+            "colors": {
+                "colorful": "#FF6B35",
+                "contrasty": "#2A1810"
+            },
+            "hidden": true
+        },
+        {
+            "id": "ocean",
+            "name": "Ocean",
+            "description": "Deep sea mystery",
+            "colors": {
+                "colorful": "#00CED1",
+                "contrasty": "#001A33"
+            },
+            "hidden": true
+        },
+        {
+            "id": "vampire",
+            "name": "Vampire",
+            "description": "Gothic blood moon",
+            "colors": {
+                "colorful": "#8B0000",
+                "contrasty": "#1A0A0A"
+            },
+            "hidden": true
+        },
+        {
+            "id": "space",
+            "name": "Space",
+            "description": "Cosmic purple nebula",
+            "colors": {
+                "colorful": "#9932CC",
+                "contrasty": "#0A0A1A"
+            },
+            "hidden": true
+        },
+        {
+            "id": "matrix",
+            "name": "Matrix",
+            "description": "Digital rain code",
+            "colors": {
+                "colorful": "#00FF00",
+                "contrasty": "#001100"
+            },
+            "hidden": true
+        },
+        {
+            "id": "lava",
+            "name": "Lava",
+            "description": "Molten volcanic fire",
+            "colors": {
+                "colorful": "#FF4500",
+                "contrasty": "#330A00"
+            },
+            "hidden": true
+        },
+        {
+            "id": "ice",
+            "name": "Ice",
+            "description": "Arctic crystal frost",
+            "colors": {
+                "colorful": "#B0E0E6",
+                "contrasty": "#0A1A33"
+            },
+            "hidden": true
+        },
+        {
+            "id": "gold",
+            "name": "Gold",
+            "description": "Luxury golden elegance",
+            "colors": {
+                "colorful": "#FFD700",
+                "contrasty": "#1A1A0A"
+            },
+            "hidden": true
         }
     ]
 }

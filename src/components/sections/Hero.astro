@@ -3,8 +3,8 @@
 import Button from '../Button.astro';
 import TextGenerate from '../TextGenerate.tsx'; 
 import CornersWithCrosses from '../CornersWithCrosses.astro';
-import HeroCards from '../HeroCards.tsx';
 import PixelBlastWithCssVar from '../PixelBlastWithCssVar.tsx'; // 👈
+import HeroCards from '../HeroCards.tsx';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import { getLocalizedUrl } from '@/utils/localized-routes';
@@ -15,12 +15,12 @@ const t = getTranslations(lang);
  
 ---
 
-<section class="hero-section pt-2 pb-24 ">
+<section class="hero-section pt-2 mb-12 relative">
   <div class="grid grid-cols-1 md:grid-cols-2 ">
     <!-- Text Content -->
     <CornersWithCrosses class="flex flex-col justify-center p-8 pr-16 h-[28rem] border-t border-l border-main/20 ">
-      <div class="space-y-8 ">
-        <h1 class="text-3xl md:text-5xl font-black text-main mb-6 text-balance font-mono uppercase tracking-wider">
+      <div class="space-y-4 ">
+        <h1 class="text-4xl md:!text-5xl font-black text-main mb-6 !text-balance font-mono uppercase tracking-wider ">
           {t('hero.heading')}
         </h1>
         <div class="mb-10">
@@ -29,7 +29,7 @@ const t = getTranslations(lang);
             client:load
           />
         </div>
-        <div class="flex flex-col md:flex-row gap-6">
+        <div class="flex flex-row flex-wrap gap-6">
           <Button href={getLocalizedUrl(lang, 'projects')} class="order-2 md:order-1">
             {t('home.heroProjectsButton')}
           </Button>
@@ -49,8 +49,8 @@ const t = getTranslations(lang);
           variant="diamond"
           pixelSize={2}
           patternScale={0.75}
-          patternDensity={1.25}
-          edgeFade={0.25}
+          patternDensity={1.5}
+          edgeFade={0.2}
           speed={1.5}
           transparent={true}
           antialias={false}
@@ -66,7 +66,7 @@ const t = getTranslations(lang);
                 <HeroCards
                 cardDistance={50}
                 verticalDistance={50}
-                delay={3000}
+                delay={6000}
                 pauseOnHover={false}
                 width={400}
                 height={300}
@@ -83,4 +83,9 @@ const t = getTranslations(lang);
       </div>
     </CornersWithCrosses>
   </div>
+  
+  <!-- OS Debug Toggle -->
+  <!-- <div class="mt-8">
+    <SimpleOSDebug client:load />
+  </div> -->
 </section>

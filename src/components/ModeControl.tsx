@@ -103,6 +103,14 @@ export default function ModeControl() {
     const handleModeChange = React.useCallback((mode: Mode) => {
         setCurrentMode(mode);
         applyModeToDocument(mode);
+        
+        // Emit custom event for mobile navbar
+        if (typeof window !== 'undefined') {
+            const event = new CustomEvent('mode-changed', {
+                detail: { mode }
+            });
+            window.dispatchEvent(event);
+        }
     }, [applyModeToDocument]);
 
     // Listen for system preference changes when in system mode

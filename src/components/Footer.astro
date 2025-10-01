@@ -67,7 +67,7 @@ const navigationLinks: NavigationLink[] = [
             {navigationLinks.map((link) => (
               <a
                 href={link.href}
-                class="font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border-l-2 border-secondary hover:border-main scramble-text flex items-center justify-between group"
+                class="font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-4 py-1.5 border-l-2 border-secondary scramble-text flex items-center justify-between group"
                 data-text={link.text}
               >
                 <span class="scramble-part">{link.text}</span>
@@ -82,13 +82,13 @@ const navigationLinks: NavigationLink[] = [
           <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text={t('footer.connect')}>
             {t('footer.connect')}
           </h3>
-          <nav class="space-y-2">
+          <nav class="space-y-1">
             {siteConfig.socialLinks?.map((link: Link) => (
               <a
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                class="group font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-2 py-1 border-l-2 border-secondary hover:border-main scramble-text flex items-center justify-between"
+                class="group font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-4 py-1.5 border-l-2 border-secondary scramble-text flex items-center justify-between"
                 data-text={`${link.text}`}
                 data-has-external="true"
               >

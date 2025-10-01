@@ -45,14 +45,14 @@ const navItems = [
 ---
 
 
-<nav class={`${isCVPage ? '!relative' : '!fixed !top-0 !left-0 !right-0'} z-[400] flex justify-center mx-auto max-w-[var(--max-w-size)] @container`} style="--navbar-height: 76px; view-transition-name: navbar;">
+<nav class={`${isCVPage ? '!relative' : '!fixed !top-0 !left-0 !right-0'} z-[400] flex justify-center mx-auto max-w-[var(--max-w-size)] @container`} style="--navbar-height: 96px; view-transition-name: navbar;">
   <div class={`max-w-[1280px] w-full px-4 pt-2`}>
     <div class="flex items-start justify-between gap-2 flex-nowrap p-2 @6xl:pl-0 diagonal-stripe" >
       <!-- Desktop Navigation -->
       <div class="hidden @6xl:flex items-start gap-x-2 gap-y-1 flex-wrap flex-1 mr-2 relative">
         <Button 
           size="sm"
-          class="!w-0 focus:!ml-2 !h-8 !px-0 !overflow-hidden !opacity-0 !border-0 focus-visible:!w-auto focus-visible:!px-2 focus-visible:!opacity-100 focus-visible:!border-2 motion-safe:!transition-all motion-safe:!duration-300 motion-safe:!ease-out"
+          class="!w-0 focus:!ml-2 !h-8 !px-0 !overflow-hidden !opacity-0 !border-0 focus-visible:!w-auto focus-visible:!px-0.5rem focus-visible:!opacity-100 focus-visible:!border-2 motion-safe:!transition-all motion-safe:!duration-300 motion-safe:!ease-out"
           onClick="skipToMainContent()"
           aria-label={t('nav.skipToContent')}
         >
@@ -106,7 +106,7 @@ const navItems = [
             <line x1="18" x2="6" y1="6" y2="18"/>
             <line x1="6" x2="18" y1="6" y2="18"/>
           </svg>
-          <span class="font-grotesk text-xs font-bold uppercase select-none">Menu</span>
+          <span class="font-grotesk text-xs font-bold uppercase select-none">{t('nav.menu')}</span>
         </button>
       </div>
 
@@ -238,8 +238,8 @@ const navItems = [
 <!-- Mobile Dropdown Menu -->
 <div
   id="mobile-dropdown"
-  class="@6xl:hidden fixed z-[9999] opacity-0 pointer-events-none"
-  style="top: calc(var(--navbar-height) + 10rem); right: calc(1.5rem );"
+  class="@6xl:hidden fixed z-[9999] opacity-0 pointer-events-none inset-x-4 top-14"
+
 >
   <!-- Simple backdrop for click-to-close -->
   <div 
@@ -248,7 +248,7 @@ const navItems = [
   ></div>
   
   <!-- Menu content -->
-  <div class="w-[220px] max-w-[85vw]">
+  <div class="w-full max-w-sm ml-auto">
     <div class="bg-secondary border-double border-2 border-main">
       <!-- Navigation Links -->
       <div class="p-2 flex flex-col space-y-1">
@@ -280,7 +280,7 @@ const navItems = [
             </svg>
           </button>
           <button 
-            class="flex-1 flex items-center justify-center gap-2 px-3 h-8 font-grotesk text-xs font-bold tracking-wide bg-secondary hover:bg-main hover:text-secondary border-0 cursor-pointer uppercase select-none"
+            class="flex-1 flex items-center justify-center gap-2 px-3 h-8 font-grotesk text-xs font-bold tracking-wide bg-secondary hover:bg-main hover:text-secondary border-0 cursor-pointer uppercase select-none ring-2 ring-inset ring-secondary"
             id="mobile-theme-center"
           >
           <div class="border border-main">
@@ -311,7 +311,7 @@ const navItems = [
             </svg>
           </button>
           <button 
-            class="flex-1 flex items-center justify-center gap-2 px-3 h-8 font-grotesk text-xs font-bold tracking-wide bg-secondary hover:bg-main hover:text-secondary border-0 cursor-pointer uppercase select-none"
+            class="flex-1 flex items-center justify-center gap-2 px-3 h-8 font-grotesk text-xs font-bold tracking-wide bg-secondary hover:bg-main hover:text-secondary border-0 cursor-pointer uppercase select-none ring-2 ring-inset ring-secondary"
             id="mobile-mode-center"
           >
             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" id="mobile-mode-icon">
@@ -342,7 +342,7 @@ const navItems = [
             </svg>
           </button>
           <button 
-            class="flex-1 flex items-center justify-center gap-2 px-3 h-8 font-grotesk text-xs font-bold tracking-wide bg-secondary hover:bg-main hover:text-secondary border-0 cursor-pointer uppercase select-none"
+            class="flex-1 flex items-center justify-center gap-2 px-3 h-8 font-grotesk text-xs font-bold tracking-wide bg-secondary hover:bg-main hover:text-secondary border-0 cursor-pointer uppercase select-none ring-2 ring-inset ring-secondary"
             id="mobile-lang-center"
           >
             <span id="mobile-lang-label">Idioma</span>
@@ -542,7 +542,6 @@ const navItems = [
       const hamburgerIcon = document.getElementById('hamburger-icon');
       const closeIcon = document.getElementById('close-icon');
       
-      console.log('setupMobileMenu called:', { button, dropdown, backdrop });
       
       if (!button || !dropdown || !backdrop) {
         console.error('Mobile menu elements not found!', { button, dropdown, backdrop });
@@ -571,7 +570,6 @@ const navItems = [
           el.setAttribute('tabindex', '-1');
         });
         
-        console.log('Closing dropdown...');
       }
 
       function openMenu() {
@@ -588,14 +586,12 @@ const navItems = [
           el.removeAttribute('tabindex');
         });
         
-        console.log('Opening dropdown...');
       }
 
       function handleToggle(e) {
         e.preventDefault();
         e.stopPropagation();
         
-        console.log('BUTTON CLICKED! isOpen:', isOpen);
         
         if (isOpen) {
           closeMenu();
@@ -624,11 +620,9 @@ const navItems = [
       button.addEventListener('touchend', function(e) {
         e.preventDefault();
         e.stopPropagation();
-        console.log('TOUCH END EVENT!');
         handleToggle(e);
       }, { passive: false });
 
-      console.log('Mobile menu setup complete!');
     }
 
     // Setup mobile menu accessibility
@@ -716,7 +710,7 @@ const navItems = [
       // Mode navigation
       if (modePrev) {
         modePrev.onclick = function() {
-          const desktopModeButton = document.querySelector('[data-theme-control] .inline-flex:nth-child(2) button:first-child');
+          const desktopModeButton = document.querySelector('#mode-control button:first-child');
           if (desktopModeButton) {
             desktopModeButton.click();
             setTimeout(updateMobileModeDisplay, 10);
@@ -726,7 +720,7 @@ const navItems = [
       
       if (modeNext) {
         modeNext.onclick = function() {
-          const desktopModeButton = document.querySelector('[data-theme-control] .inline-flex:nth-child(2) button:first-child');
+          const desktopModeButton = document.querySelector('#mode-control button:first-child');
           if (desktopModeButton) {
             desktopModeButton.click();
             setTimeout(updateMobileModeDisplay, 10);
@@ -736,7 +730,7 @@ const navItems = [
       
       if (modeCenter) {
         modeCenter.onclick = function() {
-          const desktopModeButton = document.querySelector('[data-theme-control] .inline-flex:nth-child(2) button:first-child');
+          const desktopModeButton = document.querySelector('#mode-control button:first-child');
           if (desktopModeButton) {
             desktopModeButton.click();
             setTimeout(updateMobileModeDisplay, 10);
@@ -880,23 +874,25 @@ const navItems = [
         updateMobileModeDisplay();
       }
     });
+    
+    // Also listen for custom events for mode changes
+    window.addEventListener('mode-changed', function() {
+      setTimeout(updateMobileModeDisplay, 50);
+    });
 
     // Initialize global theme state (theme already applied by inline script)
     initializeGlobalTheme();
     
     // Listen for individual component ready events
     const handleThemeReady = (event) => {
-      console.log('Theme control ready:', event.detail);
       showReactComponent('theme');
     };
     
     const handleModeReady = (event) => {
-      console.log('Mode control ready:', event.detail);
       showReactComponent('mode');
     };
     
     const handleLanguageReady = (event) => {
-      console.log('Language control ready:', event.detail);
       showReactComponent('language');
       // Update mobile language display when language control is ready
       updateMobileLangDisplay();
