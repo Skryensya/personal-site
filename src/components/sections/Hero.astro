@@ -16,9 +16,9 @@ const t = getTranslations(lang);
 ---
 
 <section class="hero-section pt-2 mb-12 relative">
-  <div class="grid grid-cols-1 md:grid-cols-2 ">
+  <div class="grid grid-cols-1 lg:grid-cols-2 ">
     <!-- Text Content -->
-    <CornersWithCrosses class="flex flex-col justify-center p-8 pr-16 h-[28rem] border-t border-l border-main/20 ">
+    <CornersWithCrosses class="flex flex-col justify-center p-8 pr-16 h-[28rem] border-t border-l border-main/20">
       <div class="space-y-4 ">
         <h1 class="text-4xl md:!text-5xl font-black text-main mb-6 !text-balance font-mono uppercase tracking-wider ">
           {t('hero.heading')}
@@ -30,7 +30,7 @@ const t = getTranslations(lang);
           />
         </div>
         <div class="flex flex-row flex-wrap gap-6">
-          <Button href={getLocalizedUrl(lang, 'projects')} class="order-2 md:order-1">
+          <Button href={getLocalizedUrl(lang, 'projects')} class="order-2 md:order-1" id="projects-button">
             {t('home.heroProjectsButton')}
           </Button>
           <Button href={getLocalizedUrl(lang, 'resume')} filled elevated class="order-1 md:order-2">
@@ -41,7 +41,7 @@ const t = getTranslations(lang);
     </CornersWithCrosses>
 
     <!-- Cards Section -->
-    <CornersWithCrosses class="flex items-center justify-center h-[28rem]" showLeft={false}>
+    <CornersWithCrosses class="flex items-center justify-center h-[28rem] " showLeft={false}>
       <div class="overflow-hidden w-full h-full relative border-b border-r border-main/20">
         <!-- PixelBlast Background -->
         <PixelBlastWithCssVar

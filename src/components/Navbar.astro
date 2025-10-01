@@ -50,14 +50,13 @@ const navItems = [
     <div class="flex items-start justify-between gap-2 flex-nowrap p-2 @6xl:pl-0 diagonal-stripe" >
       <!-- Desktop Navigation -->
       <div class="hidden @6xl:flex items-start gap-x-2 gap-y-1 flex-wrap flex-1 mr-2 relative">
-        <Button 
-          size="sm"
-          class="!w-0 focus:!ml-2 !h-8 !px-0 !overflow-hidden !opacity-0 !border-0 focus-visible:!w-auto focus-visible:!px-0.5rem focus-visible:!opacity-100 focus-visible:!border-2 motion-safe:!transition-all motion-safe:!duration-300 motion-safe:!ease-out"
-          onClick="skipToMainContent()"
+        <button
+          id="skip-to-content-desktop"
+          class="w-0 px-0 h-8 overflow-hidden opacity-0 border-0 bg-secondary text-main font-grotesk font-bold text-sm uppercase tracking-wide cursor-pointer border-double whitespace-nowrap flex items-center justify-center focus-visible:w-auto focus-visible:px-2 focus-visible:opacity-100 focus-visible:border-2 focus-visible:border-main focus-visible:shadow-[inset_0_0_0_2px_var(--color-secondary)] focus-visible:hover:bg-main focus-visible:hover:text-secondary motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-out"
           aria-label={t('nav.skipToContent')}
         >
           {t('nav.skipToContentShort')}
-        </Button>
+        </button>
         {navItems.map((item) => {
           const isCurrentPage = item.label === 'Allison Peña' ? isHomePage : (currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href + '/')) || (item.href !== '/' && currentPath.startsWith(item.href) && currentPath.length > item.href.length));
           return (
@@ -76,14 +75,13 @@ const navItems = [
 
       <!-- Mobile Navigation -->
       <div class="@6xl:hidden flex items-center flex-1 relative">
-        <Button 
-          size="sm"
-          class="!w-0 !h-8 !px-0 !overflow-hidden !opacity-0 !border-0 focus-visible:!w-auto focus-visible:!px-2 focus-visible:!opacity-100 focus-visible:!border-2 motion-safe:!transition-all motion-safe:!duration-300 motion-safe:!ease-out"
-          onClick="skipToMainContent()"
+        <button
+          id="skip-to-content-mobile"
+          class="w-0 px-0 h-8 overflow-hidden opacity-0 border-0 bg-secondary text-main font-grotesk font-bold text-sm uppercase tracking-wide cursor-pointer border-double whitespace-nowrap flex items-center justify-center focus-visible:w-auto focus-visible:px-2 focus-visible:opacity-100 focus-visible:border-2 focus-visible:border-main focus-visible:shadow-[inset_0_0_0_2px_var(--color-secondary)] focus-visible:hover:bg-main focus-visible:hover:text-secondary motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-out"
           aria-label={t('nav.skipToContent')}
         >
           {t('nav.skipToContentShort')}
-        </Button>
+        </button>
         <Button 
           href={getHomeUrl(currentLocale)}
           size="sm"
@@ -368,102 +366,78 @@ const navItems = [
 
   // Skip to main content functionality
   function skipToMainContent() {
-    // Obtener la navbar
-    const navbar = document.querySelector('nav');
-    if (!navbar) return;
-
-    // Lista de elementos focuseables que pueden tener tabindex explícito
-    const elementsWithTabindex = document.querySelectorAll('[tabindex]:not([tabindex="-1"])');
+    console.log('🔍 Skip to main content activated');
     
-    // Buscar el primer elemento con tabindex después de la navbar
-    let targetElement = null;
-    const navbarRect = navbar.getBoundingClientRect();
-    
-    for (const element of elementsWithTabindex) {
-      const elementRect = element.getBoundingClientRect();
-      // Verificar si el elemento está después de la navbar
-      if (elementRect.top > navbarRect.bottom) {
-        targetElement = element;
-        break;
-      }
+    // Focus directly on the projects button in Hero section (most reliable)
+    const projectsButton = document.getElementById('projects-button');
+    if (projectsButton) {
+      console.log('✅ Projects button found, focusing...');
+      
+      // Ensure the element is focusable and give it time to be ready
+      setTimeout(() => {
+        if (projectsButton.focus) {
+          projectsButton.focus();
+          
+          // Also scroll to it smoothly
+          projectsButton.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center',
+            inline: 'nearest'
+          });
+          
+          console.log('✅ Focus set on projects button');
+        }
+      }, 50);
+      return;
     }
 
-    // Si no hay elementos con tabindex después de la navbar, buscar elementos focuseables naturales
-    if (!targetElement) {
+    console.log('❌ Projects button not found or not focusable, using main content target');
+    
+    // Fallback: Try main content target  
+    const mainContent = document.getElementById('main-content');
+    if (mainContent) {
+      console.log('✅ Main content target found, focusing...');
+      mainContent.focus();
+      mainContent.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'start',
+        inline: 'nearest'
+      });
+      return;
+    }
+
+    console.log('❌ Skip targets not found, using general fallback');
+    
+    // Final fallback: find first focusable element in main content area
+    const mainElement = document.querySelector('main');
+    if (mainElement) {
       const focusableSelectors = [
         'a[href]:not([tabindex="-1"])',
         'button:not([disabled]):not([tabindex="-1"])',
         'input:not([disabled]):not([tabindex="-1"])',
         'textarea:not([disabled]):not([tabindex="-1"])',
         'select:not([disabled]):not([tabindex="-1"])',
+        '[tabindex]:not([tabindex="-1"])',
         'details',
         'summary'
       ].join(',');
 
-      const allFocusable = document.querySelectorAll(focusableSelectors);
+      const focusableInMain = mainElement.querySelectorAll(focusableSelectors);
       
-      for (const element of allFocusable) {
-        const elementRect = element.getBoundingClientRect();
-        if (elementRect.top > navbarRect.bottom) {
-          targetElement = element;
-          break;
-        }
+      if (focusableInMain.length > 0) {
+        const firstFocusable = focusableInMain[0];
+        console.log('✅ First focusable in main found:', firstFocusable);
+        firstFocusable.focus();
+        firstFocusable.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center',
+          inline: 'nearest'
+        });
+        return;
       }
     }
 
-    // Fallback: buscar contenido principal
-    if (!targetElement) {
-      const mainContentSelectors = [
-        'main',
-        '#project-content',
-        '[role="main"]',
-        '.prose',
-        'h1',
-        'article'
-      ];
-
-      for (const selector of mainContentSelectors) {
-        const element = document.querySelector(selector);
-        if (element) {
-          const elementRect = element.getBoundingClientRect();
-          if (elementRect.top > navbarRect.bottom) {
-            targetElement = element;
-            break;
-          }
-        }
-      }
-    }
-
-    if (targetElement) {
-      // Si el elemento no es naturalmente focuseable, hacerlo temporalmente focuseable
-      const wasTabIndex = targetElement.getAttribute('tabindex');
-      const needsTabIndex = !targetElement.matches('a, button, input, textarea, select, [tabindex]');
-      
-      if (needsTabIndex) {
-        targetElement.setAttribute('tabindex', '-1');
-      }
-
-      // Enfocar el elemento y scroll suave
-      targetElement.focus();
-      
-      // Scroll suave al elemento
-      targetElement.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start',
-        inline: 'nearest'
-      });
-
-      // Restaurar tabindex original después de un breve delay
-      if (needsTabIndex) {
-        setTimeout(() => {
-          if (wasTabIndex === null) {
-            targetElement.removeAttribute('tabindex');
-          } else {
-            targetElement.setAttribute('tabindex', wasTabIndex);
-          }
-        }, 100);
-      }
-    }
+    console.log('❌ No focusable element found');
   }
 
   // Initialize global theme state from localStorage immediately and update placeholder
@@ -510,6 +484,42 @@ const navItems = [
 
   // Mobile menu functionality
   document.addEventListener('astro:page-load', () => {
+    // Setup skip to content buttons
+    const skipButtonDesktop = document.getElementById('skip-to-content-desktop');
+    const skipButtonMobile = document.getElementById('skip-to-content-mobile');
+    
+    if (skipButtonDesktop) {
+      skipButtonDesktop.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('🖱️ Desktop skip button clicked');
+        skipToMainContent();
+      });
+      
+      skipButtonDesktop.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          console.log('⌨️ Desktop skip button key pressed:', e.key);
+          skipToMainContent();
+        }
+      });
+    }
+    
+    if (skipButtonMobile) {
+      skipButtonMobile.addEventListener('click', (e) => {
+        e.preventDefault();
+        console.log('🖱️ Mobile skip button clicked');
+        skipToMainContent();
+      });
+      
+      skipButtonMobile.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          console.log('⌨️ Mobile skip button key pressed:', e.key);
+          skipToMainContent();
+        }
+      });
+    }
+
     // Mobile menu elements
     const mobileMenuTrigger = document.getElementById('mobile-menu-trigger');
 
@@ -738,35 +748,67 @@ const navItems = [
         };
       }
 
-      // Language navigation
-      if (langPrev) {
-        langPrev.onclick = function() {
+      // Language navigation - enhanced with better reliability
+      function clickLanguageButton() {
+        // Wait for the language control to be ready
+        const maxAttempts = 10;
+        let attempts = 0;
+        
+        function tryClick() {
+          attempts++;
           const desktopLangButton = document.querySelector('[data-component="language-control"] .inline-flex button:first-child');
+          
           if (desktopLangButton) {
             desktopLangButton.click();
             setTimeout(updateMobileLangDisplay, 100);
+            return true;
+          } else if (attempts < maxAttempts) {
+            setTimeout(tryClick, 100);
+            return false;
+          } else {
+            console.error('🌍 MOBILE: Language button not found after all attempts');
+            // Fallback: manually cycle through languages
+            const currentLang = getCurrentLanguageFromURL();
+            const languages = ['es', 'en', 'no'];
+            const currentIndex = languages.indexOf(currentLang);
+            const nextIndex = (currentIndex + 1) % languages.length;
+            const nextLang = languages[nextIndex];
+            
+            // Build next URL
+            const currentPath = window.location.pathname;
+            let nextPath = '';
+            
+            if (nextLang === 'es') {
+              // Remove language prefix for Spanish
+              nextPath = currentPath.replace(/^\/[a-z]{2}\//, '/');
+              if (nextPath === '/') nextPath = '/';
+            } else {
+              // Add or replace language prefix
+              if (currentLang === 'es') {
+                nextPath = `/${nextLang}${currentPath}`;
+              } else {
+                nextPath = currentPath.replace(/^\/[a-z]{2}\//, `/${nextLang}/`);
+              }
+            }
+            
+            window.location.href = nextPath;
+            return false;
           }
-        };
+        }
+        
+        tryClick();
+      }
+      
+      if (langPrev) {
+        langPrev.onclick = clickLanguageButton;
       }
       
       if (langNext) {
-        langNext.onclick = function() {
-          const desktopLangButton = document.querySelector('[data-component="language-control"] .inline-flex button:first-child');
-          if (desktopLangButton) {
-            desktopLangButton.click();
-            setTimeout(updateMobileLangDisplay, 100);
-          }
-        };
+        langNext.onclick = clickLanguageButton;
       }
       
       if (langCenter) {
-        langCenter.onclick = function() {
-          const desktopLangButton = document.querySelector('[data-component="language-control"] .inline-flex button:first-child');
-          if (desktopLangButton) {
-            desktopLangButton.click();
-            setTimeout(updateMobileLangDisplay, 100);
-          }
-        };
+        langCenter.onclick = clickLanguageButton;
       }
     }
 
@@ -855,8 +897,10 @@ const navItems = [
       }
     }
 
-    // Initialize mobile controls
-    setupMobileControlButtons();
+    // Initialize mobile controls after a delay to ensure React components are ready
+    setTimeout(() => {
+      setupMobileControlButtons();
+    }, 300);
     
     // Update displays on page load
     setTimeout(() => {
@@ -884,15 +928,15 @@ const navItems = [
     initializeGlobalTheme();
     
     // Listen for individual component ready events
-    const handleThemeReady = (event) => {
+    const handleThemeReady = () => {
       showReactComponent('theme');
     };
     
-    const handleModeReady = (event) => {
+    const handleModeReady = () => {
       showReactComponent('mode');
     };
     
-    const handleLanguageReady = (event) => {
+    const handleLanguageReady = () => {
       showReactComponent('language');
       // Update mobile language display when language control is ready
       updateMobileLangDisplay();

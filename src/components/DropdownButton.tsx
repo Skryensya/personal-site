@@ -271,9 +271,12 @@ export default function DropdownButton({
             // Close dropdown after selection
             setIsOpen(false);
             setActiveIndex(-1);
-            // Return focus to button
+            // Don't return focus if navigation is happening - it will interfere
+            // Return focus to button only if we're still on the same page
             setTimeout(() => {
-                buttonRef.current?.focus();
+                if (buttonRef.current && document.contains(buttonRef.current)) {
+                    buttonRef.current?.focus();
+                }
             }, 0);
         };
     }, []);
@@ -316,7 +319,6 @@ export default function DropdownButton({
                         (buttonRef as React.MutableRefObject<HTMLButtonElement | null>).current = node;
                     }}
                     type="button"
-                    onClick={handleDropdownClick}
                     onKeyDown={handleButtonKeyDown}
                     onMouseEnter={handleMouseEnter}
                     onMouseOut={handleMouseOut}
@@ -326,11 +328,12 @@ export default function DropdownButton({
                         outlineWidth: '1px',
                         outlineOffset: '1px'
                     }}
+                    {...getReferenceProps()}
                     aria-haspopup="menu"
                     aria-expanded={isOpen}
                     aria-controls={isOpen ? 'dropdown-menu' : undefined}
                     id="dropdown-button"
-                    {...getReferenceProps()}
+                    onClick={handleDropdownClick}
                 >
                     {/* Icono de flecha */}
                     <svg
@@ -404,7 +407,7 @@ export function DropdownContent({
     return (
         <div role="none">
             {React.Children.map(children, (child, index) => {
-                if (React.isValidElement(child) && child.type === 'button') {
+                if (React.isValidElement(child) && (child.type === 'button' || child.type === 'a')) {
                     const originalOnClick = child.props.onClick;
                     const originalOnKeyDown = child.props.onKeyDown;
                     

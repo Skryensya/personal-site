@@ -101,6 +101,16 @@ export const pagesDictionary = {
     no: '/no/tilgjengelighetserklaering/'
   },
   // Projects pages (pagination)
+  '/projects': {
+    es: '/proyectos',
+    en: '/en/projects',
+    no: '/no/prosjekter'
+  },
+  '/projects/': {
+    es: '/proyectos/',
+    en: '/en/projects/',
+    no: '/no/prosjekter/'
+  },
   '/proyectos': {
     es: '/proyectos',
     en: '/en/projects',
@@ -110,6 +120,11 @@ export const pagesDictionary = {
     es: '/proyectos/',
     en: '/en/projects/',
     no: '/no/prosjekter/'
+  },
+  '/projects/1': {
+    es: '/proyectos/1',
+    en: '/en/projects/1',
+    no: '/no/prosjekter/1'
   },
   '/proyectos/1': {
     es: '/proyectos/1',
@@ -147,6 +162,11 @@ export const pagesDictionary = {
     no: '/no/prosjekter/1'
   },
   // Individual project pages - these share the same slugs across languages
+  '/projects/00-kit-digital-uc': {
+    es: '/proyectos/00-kit-digital-uc',
+    en: '/en/projects/00-kit-digital-uc',
+    no: '/no/prosjekter/00-kit-digital-uc'
+  },
   '/proyectos/00-kit-digital-uc': {
     es: '/proyectos/00-kit-digital-uc',
     en: '/en/projects/00-kit-digital-uc',
@@ -161,6 +181,11 @@ export const pagesDictionary = {
     es: '/proyectos/00-kit-digital-uc',
     en: '/en/projects/00-kit-digital-uc',
     no: '/no/prosjekter/00-kit-digital-uc'
+  },
+  '/projects/01-portal-uc': {
+    es: '/proyectos/01-portal-uc',
+    en: '/en/projects/01-portal-uc',
+    no: '/no/prosjekter/01-portal-uc'
   },
   '/proyectos/01-portal-uc': {
     es: '/proyectos/01-portal-uc',
@@ -177,6 +202,11 @@ export const pagesDictionary = {
     en: '/en/projects/01-portal-uc',
     no: '/no/prosjekter/01-portal-uc'
   },
+  '/projects/02-agenda-uc': {
+    es: '/proyectos/02-agenda-uc',
+    en: '/en/projects/02-agenda-uc',
+    no: '/no/prosjekter/02-agenda-uc'
+  },
   '/proyectos/02-agenda-uc': {
     es: '/proyectos/02-agenda-uc',
     en: '/en/projects/02-agenda-uc',
@@ -191,6 +221,11 @@ export const pagesDictionary = {
     es: '/proyectos/02-agenda-uc',
     en: '/en/projects/02-agenda-uc',
     no: '/no/prosjekter/02-agenda-uc'
+  },
+  '/projects/03-barrancas': {
+    es: '/proyectos/03-barrancas',
+    en: '/en/projects/03-barrancas',
+    no: '/no/prosjekter/03-barrancas'
   },
   '/proyectos/03-barrancas': {
     es: '/proyectos/03-barrancas',
@@ -281,7 +316,7 @@ export function getEquivalentPage(currentPath: string, targetLang: Language): st
     const slug = pathParts[pathParts.length - 1];
     
     // Skip if it's just a page number (handled separately)
-    if (!/^\d+$/.test(slug)) {
+    if (!/^\d+$/.test(slug) && slug !== 'proyectos' && slug !== 'projects' && slug !== 'prosjekter') {
       // Return the equivalent projects page with the same slug
       return getLocalizedUrl(targetLang, 'projects', slug);
     }
@@ -313,6 +348,18 @@ export function getEquivalentPage(currentPath: string, targetLang: Language): st
   const pathWithSlash = normalizedPath + '/';
   if (pagesDictionary[pathWithSlash as keyof typeof pagesDictionary]) {
     return pagesDictionary[pathWithSlash as keyof typeof pagesDictionary][targetLang];
+  }
+  
+  // Handle edge case: direct access to /projects/, /proyectos/, /prosjekter/ base paths
+  if (normalizedPath === '/projects' || normalizedPath === '/proyectos' || normalizedPath === '/prosjekter') {
+    return getLocalizedUrl(targetLang, 'projects');
+  }
+  
+  // Handle content tree routes if they don't exist in dictionary
+  if (normalizedPath === '/content-tree' || normalizedPath === '/arbol-de-contenido' || normalizedPath === '/innholdstre') {
+    if (targetLang === 'es') return '/arbol-de-contenido';
+    if (targetLang === 'en') return '/en/content-tree';
+    if (targetLang === 'no') return '/no/innholdstre';
   }
   
   // If no specific mapping found, try to get the language-appropriate home page

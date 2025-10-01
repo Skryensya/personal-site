@@ -80,14 +80,12 @@ export default function LanguageControl({ currentPath, initialLocale }: Language
     }, []);
 
     const handleLanguageSwitch = React.useCallback((lang: Language, url: string, viaKeyboard = false) => {
-        console.log('🔄 LANGUAGE: handleLanguageSwitch called', { lang, url, viaKeyboard });
         if (typeof window !== 'undefined') {
             localStorage.setItem('langChoice', lang);
             // Only save focus state if changed via keyboard
             if (viaKeyboard) {
                 localStorage.setItem('focusAfterNavigation', 'language-control');
             }
-            console.log('🔄 LANGUAGE: About to redirect to:', url);
             window.location.href = url;
         }
     }, []);
@@ -100,15 +98,6 @@ export default function LanguageControl({ currentPath, initialLocale }: Language
         handleLanguageSwitch(nextLang, url, true); // Always via keyboard when using main button
     }, [currentLang, alternateUrls, handleLanguageSwitch]);
 
-    // Separate handler for dropdown selections via keyboard
-    const handleDropdownKeyboardSelection = React.useCallback((lang: Language, url: string) => {
-        handleLanguageSwitch(lang, url, true); // Via keyboard
-    }, [handleLanguageSwitch]);
-
-    // Handler for dropdown selections via mouse
-    const handleDropdownMouseSelection = React.useCallback((lang: Language, url: string) => {
-        handleLanguageSwitch(lang, url, false); // Via mouse
-    }, [handleLanguageSwitch]);
 
     // Find the index of the current language
     const currentLangIndex = supportedLanguages.findIndex(lang => lang === currentLang);
@@ -122,42 +111,10 @@ export default function LanguageControl({ currentPath, initialLocale }: Language
             {supportedLanguages.map((lang) => {
                 const url = alternateUrls.find(alt => alt.lang === lang)?.url || '/';
                 return (
-                    <button
+                    <a
                         key={lang}
-                        type="button"
-                        onClick={(e) => {
-                            // Detect if this was triggered by keyboard (Enter/Space via dropdown navigation)
-                            // When DropdownButton calls activeItem.click(), it's a programmatic click
-                            // Check for synthetic events: no detail, or coordinates at 0,0, or isTrusted is false
-                            const isKeyboard = e.detail === 0 || 
-                                              (e.clientX === 0 && e.clientY === 0) ||
-                                              !e.isTrusted ||
-                                              e.type === 'click' && e.screenX === 0 && e.screenY === 0;
-                            
-                            console.log('🌍 LANGUAGE: Click received!', {
-                                lang,
-                                url,
-                                event: {
-                                    detail: e.detail,
-                                    clientX: e.clientX,
-                                    clientY: e.clientY,
-                                    screenX: e.screenX,
-                                    screenY: e.screenY,
-                                    isTrusted: e.isTrusted,
-                                    type: e.type
-                                },
-                                isKeyboard
-                            });
-                            
-                            if (isKeyboard) {
-                                console.log('⌨️ LANGUAGE: Handling as keyboard selection');
-                                handleDropdownKeyboardSelection(lang, url);
-                            } else {
-                                console.log('🖱️ LANGUAGE: Handling as mouse selection');
-                                handleDropdownMouseSelection(lang, url);
-                            }
-                        }}
-                        className="w-full px-1 py-0.5 text-left block cursor-pointer relative focus-visible:z-[9999]"
+                        href={url}
+                        className="w-full px-1 py-0.5 text-left block cursor-pointer relative focus-visible:z-[9999] no-underline"
                         data-selected={lang === currentLang ? 'true' : 'false'}
                         style={{
                             outlineWidth: '1px',
@@ -188,7 +145,7 @@ export default function LanguageControl({ currentPath, initialLocale }: Language
                                 )}
                             </div>
                         </div>
-                    </button>
+                    </a>
                 );
             })}
         </DropdownContent>

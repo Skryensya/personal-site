@@ -28,6 +28,34 @@ function getUnlockedThemes() {
     }
 }
 
+// Get special themes that are permanently unlocked (like chipax)
+function getSpecialUnlockedThemes() {
+    if (typeof window === 'undefined') return [];
+    try {
+        const specialData = localStorage.getItem('special-themes-unlocked');
+        if (!specialData) return [];
+        
+        const { themes } = JSON.parse(specialData);
+        return themes || [];
+    } catch {
+        return [];
+    }
+}
+
+// Save special themes to localStorage (permanent unlock)
+function saveSpecialUnlockedThemes(themes) {
+    if (typeof window === 'undefined') return;
+    try {
+        const specialData = {
+            themes,
+            timestamp: Date.now()
+        };
+        localStorage.setItem('special-themes-unlocked', JSON.stringify(specialData));
+    } catch (e) {
+        console.warn('Failed to save special unlock data:', e);
+    }
+}
+
 // Save unlocked themes to localStorage with timestamp
 function saveUnlockedThemes(themes) {
     if (typeof window === 'undefined') return;
@@ -47,6 +75,13 @@ function isThemeUnlocked(themeId) {
     const theme = themesData.themes.find(t => t.id === themeId);
     if (!theme || !theme.hidden) return true; // Non-hidden themes are always unlocked
     
+    // Check special themes (permanently unlocked)
+    if (theme.special) {
+        const specialUnlockedThemes = getSpecialUnlockedThemes();
+        return specialUnlockedThemes.includes(themeId);
+    }
+    
+    // Check regular unlocked themes (temporary)
     const unlockedThemes = getUnlockedThemes();
     return unlockedThemes.includes(themeId);
 }
@@ -65,6 +100,29 @@ export function unlockTheme(themeId) {
         if (typeof window !== 'undefined') {
             const event = new CustomEvent('theme-unlocked', {
                 detail: { themeId, theme }
+            });
+            window.dispatchEvent(event);
+        }
+        
+        return true;
+    }
+    return false;
+}
+
+// Unlock a special theme (permanent unlock)
+export function unlockSpecialTheme(themeId) {
+    const theme = themesData.themes.find(t => t.id === themeId);
+    if (!theme || !theme.hidden || !theme.special) return false; // Can only unlock special hidden themes
+    
+    const specialUnlockedThemes = getSpecialUnlockedThemes();
+    if (!specialUnlockedThemes.includes(themeId)) {
+        specialUnlockedThemes.push(themeId);
+        saveSpecialUnlockedThemes(specialUnlockedThemes);
+        
+        // Emit event for UI updates
+        if (typeof window !== 'undefined') {
+            const event = new CustomEvent('theme-unlocked', {
+                detail: { themeId, theme, special: true }
             });
             window.dispatchEvent(event);
         }
@@ -147,10 +205,19 @@ export function getKonamiTimeRemaining() {
 
 // Get available themes (non-hidden + unlocked hidden)
 export function getAvailableThemes() {
-    return themesData.themes.filter(theme => {
+    const availableThemes = themesData.themes.filter(theme => {
         if (!theme.hidden) return true;
         return isThemeUnlocked(theme.id);
     });
+
+    // If chipax is available, put it first in the list
+    const chipaxIndex = availableThemes.findIndex(theme => theme.id === 'chipax');
+    if (chipaxIndex > 0) {
+        const chipaxTheme = availableThemes.splice(chipaxIndex, 1)[0];
+        availableThemes.unshift(chipaxTheme);
+    }
+
+    return availableThemes;
 }
 
 // Export themes from JSON with backwards compatibility

@@ -1,6 +1,37 @@
 {
     "themes": [
         {
+            "id": "chipax",
+            "name": "Chipax",
+            "description": "Colorful teal corporate vibes",
+            "colors": {
+                "colorful": "#F6FCFC",
+                "contrasty": "#0D968B"
+            },
+            "hidden": true,
+            "special": true
+        },
+        {
+            "id": "skyward-ai",
+            "name": "Skyward AI",
+            "description": "AI-powered orange innovation",
+            "colors": {
+                "colorful": "#FFFAEA",
+                "contrasty": "#FC3E14"
+            },
+            "hidden": true,
+            "special": true
+        },
+        {
+            "id": "dos",
+            "name": "MS-DOS",
+            "description": "Command line interface",
+            "colors": {
+                "colorful": "#e5e5e6",
+                "contrasty": "#000000"
+            }
+        },
+        {
             "id": "pacman",
             "name": "Pac-Man",
             "description": "Warning tape industrial",
@@ -17,15 +48,6 @@
             "colors": {
                 "colorful": "#A4D110",
                 "contrasty": "#044F27"
-            }
-        },
-        {
-            "id": "dos",
-            "name": "MS-DOS",
-            "description": "Command line interface",
-            "colors": {
-                "colorful": "#e5e5e6",
-                "contrasty": "#000000"
             }
         },
         {

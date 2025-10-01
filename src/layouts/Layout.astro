@@ -48,7 +48,8 @@ const defaultThemeId = defaultTheme.id;
 const t = getTranslations(lang);
 const themeMessages = {
     unlocked: t('theme.toast.unlocked'),
-    locked: t('theme.toast.locked')
+    locked: t('theme.toast.locked'),
+    company: t('theme.toast.company')
 };
 
 
@@ -186,20 +187,113 @@ declare global {
         </script>
 
         <!-- Konami Code Integration -->
-        <script define:vars={{ themeMessages }}>
-            import konami from '../utils/konami.js';
-            import { toggleAllHiddenThemes, isCurrentThemeHidden, getDefaultTheme, applyTheme } from '../data/themes.js';
+        <script is:inline define:vars={{ themeMessages }}>
+            // Store theme messages for use in module script
+            window.__THEME_MESSAGES__ = themeMessages;
+        </script>
+        
+        <script type="module">
+            console.log('🎮 Loading Konami integration...');
+            
+            import konami from '/src/utils/konami.js';
+            import { toggleAllHiddenThemes, isCurrentThemeHidden, getDefaultTheme, applyTheme } from '/src/data/themes.js';
 
+            console.log('🎮 Konami module loaded, starting detection...');
+            
             // Start Konami code detection
             konami.start();
 
+            // Function to create confetti rain effect using React component
+            function createConfettiRain() {
+                console.log('🎊 Creating confetti rain effect...');
+                
+                // Create container for the React component
+                const confettiContainer = document.createElement('div');
+                confettiContainer.id = 'konami-confetti-container';
+                confettiContainer.style.cssText = `
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    pointer-events: none;
+                    z-index: 9999;
+                `;
+                document.body.appendChild(confettiContainer);
+                console.log('🎊 Container created and added to DOM');
+                
+                // Get current theme colors
+                const computedStyle = getComputedStyle(document.documentElement);
+                const mainColor = computedStyle.getPropertyValue('--color-main').trim();
+                console.log('🎊 Main color:', mainColor);
+                
+                // Import React, ReactDOM, and ConfettiRain component
+                Promise.all([
+                    import('react'),
+                    import('react-dom/client'),
+                    import('/src/components/ConfettiRain.tsx')
+                ]).then(([React, ReactDOM, ConfettiModule]) => {
+                    console.log('🎊 React modules loaded successfully');
+                    const ConfettiRain = ConfettiModule.default;
+                    const root = ReactDOM.createRoot(confettiContainer);
+                    
+                    // Render ConfettiRain with custom props
+                    const confettiProps = {
+                        count: 100,
+                        duration: 5,
+                        loop: false,
+                        color: mainColor || '#000000', // Fallback to black if CSS var doesn't resolve
+                        size: 6,
+                        spreadX: 100
+                    };
+                    
+                    console.log('🎊 Rendering ConfettiRain with props:', confettiProps);
+                    
+                    root.render(
+                        React.createElement(ConfettiRain, confettiProps)
+                    );
+                    
+                    console.log('🎊 ConfettiRain component rendered');
+                    
+                    // Clean up after animation completes
+                    setTimeout(() => {
+                        console.log('🎊 Starting cleanup...');
+                        try {
+                            root.unmount();
+                            console.log('🎊 React component unmounted');
+                        } catch (e) {
+                            console.error('🎊 Error unmounting:', e);
+                        }
+                        
+                        if (confettiContainer.parentNode) {
+                            confettiContainer.remove();
+                            console.log('🎊 Container removed from DOM');
+                        }
+                        console.log('🎊 ConfettiRain cleanup completed');
+                    }, 6000); // Match duration + buffer
+                }).catch(error => {
+                    console.error('🎊 Failed to load ConfettiRain:', error);
+                    // Fallback: remove container
+                    if (confettiContainer.parentNode) {
+                        confettiContainer.remove();
+                    }
+                });
+            }
+
             // Add callback for when Konami code is activated
             konami.onActivate(() => {
+                console.log('🎮 Konami callback activated!');
+                
+                // Trigger confetti rain immediately
+                createConfettiRain();
+                
                 // Toggle all hidden themes
                 const result = toggleAllHiddenThemes();
+                console.log('🎮 Toggle result:', result);
                 
                 // If locking themes and current theme is hidden, reset to default
                 if (result.action === 'locked' && isCurrentThemeHidden()) {
+                    console.log('🎮 Resetting to default theme...');
                     const defaultTheme = getDefaultTheme();
                     const savedMode = localStorage.getItem('theme-mode') || 'system';
                     let isDark = false;
@@ -216,11 +310,14 @@ declare global {
                 }
                 
                 const unlocked = result.action === 'unlocked';
+                const themeMessages = window.__THEME_MESSAGES__;
                 
                 if (unlocked) {
-                    // Show unlock notification
+                    console.log('🎮 Showing unlock notification...');
+                    // Show unlock notification with theme count
                     const notification = document.createElement('div');
-                    notification.textContent = themeMessages.unlocked;
+                    const themeCount = result.themes ? result.themes.length : 0;
+                    notification.textContent = themeMessages.unlocked.replace('{count}', themeCount);
                     notification.style.cssText = `
                         position: fixed;
                         top: 120px;
@@ -257,6 +354,7 @@ declare global {
                         }, 400);
                     }, 4000);
                 } else {
+                    console.log('🎮 Showing lock notification...');
                     // Show lock notification
                     const notification = document.createElement('div');
                     notification.textContent = themeMessages.locked;
@@ -298,6 +396,188 @@ declare global {
             window.addEventListener('beforeunload', () => {
                 konami.stop();
             });
+            
+            console.log('🎮 Konami integration setup complete!');
+        </script>
+
+        <!-- Company Theme Query Param Detection -->
+        <script type="module">
+            console.log('🎨 Loading company theme detection...');
+            
+            import { unlockSpecialTheme, themes } from '/src/data/themes.js';
+            
+            // Check for company theme query parameters on page load
+            function checkCompanyQueryParams() {
+                const urlParams = new URLSearchParams(window.location.search);
+                
+                // Get all special themes that can be unlocked via query params
+                const specialThemes = themes.filter(theme => theme.special && theme.hidden);
+                
+                // Check if any company theme parameter is present
+                for (const theme of specialThemes) {
+                    if (urlParams.has(theme.id)) {
+                        console.log(`🎨 ${theme.id} query param detected! Unlocking theme...`);
+                        
+                        // Try to unlock the company theme (returns true if newly unlocked, false if already unlocked)
+                        const unlocked = unlockSpecialTheme(theme.id);
+                        
+                        // Always apply the theme and show toast when parameter is detected
+                        // regardless of whether it was just unlocked or already unlocked
+                        if (unlocked || true) {
+                            if (unlocked) {
+                                console.log(`🎨 ${theme.id} theme unlocked and will be applied!`);
+                            } else {
+                                console.log(`🎨 ${theme.id} theme already unlocked, applying anyway!`);
+                            }
+                            
+                            // Auto-apply company theme first
+                            setTimeout(() => {
+                                import('/src/data/themes.js').then(({ applyTheme }) => {
+                                    const savedMode = localStorage.getItem('theme-mode') || 'system';
+                                    let isDark = false;
+                                    if (savedMode === 'system') {
+                                        isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                                    } else {
+                                        isDark = savedMode === 'dark';
+                                    }
+                                    
+                                    applyTheme(theme.id, isDark, null);
+                                    window.__THEME_ID__ = theme.id;
+                                    if (window.__APPLY_THEME_INSTANTLY__) {
+                                        window.__APPLY_THEME_INSTANTLY__();
+                                    }
+                                    
+                                    console.log('🎨 Theme applied, showing toast in 1 second...');
+                                    
+                                    // Show notification 1 second after theme is applied (using same style as konami)
+                                    setTimeout(() => {
+                                        console.log('🎨 Creating company toast...');
+                                        const themeMessages = window.__THEME_MESSAGES__;
+                                        const companyName = theme.id.charAt(0).toUpperCase() + theme.id.slice(1);
+                                        
+                                        // Create notification using same style as konami toast with timer
+                                        const notification = document.createElement('div');
+                                        
+                                        // Add icon + text content with close button and timer bar
+                                        notification.innerHTML = `
+                                            <div style="display: flex; align-items: flex-start; gap: 6px; padding-bottom: 4px;">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;">
+                                                    <circle cx="13.5" cy="6.5" r=".5"/>
+                                                    <circle cx="17.5" cy="10.5" r=".5"/>
+                                                    <circle cx="8.5" cy="7.5" r=".5"/>
+                                                    <circle cx="6.5" cy="12.5" r=".5"/>
+                                                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/>
+                                                </svg>
+                                                <span style="line-height: 1.3; flex: 1;">${themeMessages.company.replace('{company}', companyName)}</span>
+                                                <button onclick="this.parentElement.parentElement.remove()" style="background: none; border: none; color: var(--color-secondary); cursor: pointer; padding: 0; font-size: 14px; line-height: 1; flex-shrink: 0; opacity: 0.7; margin-left: 4px;">×</button>
+                                            </div>
+                                            <div style="position: absolute; bottom: 0; left: 0; height: 2px; background: var(--color-secondary); width: 100%;" class="toast-progress-bar"></div>
+                                        `;
+                                        
+                                        // Lean toast styles with relative positioning for timer
+                                        notification.style.cssText = `
+                                            position: fixed;
+                                            top: 120px;
+                                            right: -400px;
+                                            background: var(--color-main);
+                                            color: var(--color-secondary);
+                                            border: 2px solid var(--color-secondary);
+                                            padding: 10px 12px 12px 12px;
+                                            font-family: monospace;
+                                            font-weight: bold;
+                                            font-size: 13px;
+                                            z-index: 10000;
+                                            max-width: 280px;
+                                            border-radius: 4px;
+                                            transition: right 0.4s ease-out;
+                                            box-shadow: 4px 4px 0px var(--color-secondary);
+                                            position: relative;
+                                            overflow: hidden;
+                                        `;
+                                        
+                                        // Add timer animation CSS with reduced motion support
+                                        const style = document.createElement('style');
+                                        style.textContent = `
+                                            @keyframes companyToastProgress {
+                                                from { width: 100%; }
+                                                to { width: 0%; }
+                                            }
+                                            
+                                            .toast-progress-bar {
+                                                animation: companyToastProgress 5s linear forwards;
+                                            }
+                                            
+                                            @media (prefers-reduced-motion: reduce) {
+                                                .toast-progress-bar {
+                                                    animation: none;
+                                                    width: 0% !important;
+                                                }
+                                            }
+                                        `;
+                                        document.head.appendChild(style);
+                                        
+                                        document.body.appendChild(notification);
+                                        
+                                        // Check for reduced motion preference
+                                        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                                        
+                                        if (prefersReducedMotion) {
+                                            // No animation - show immediately at final position
+                                            notification.style.right = '20px';
+                                            notification.style.position = 'fixed';
+                                            notification.style.transition = 'none'; // Disable slide transition
+                                            console.log('🎨 Company toast shown without animation (reduced motion)');
+                                            
+                                            // Remove after 5 seconds without animation
+                                            setTimeout(() => {
+                                                if (notification.parentNode) {
+                                                    notification.remove();
+                                                }
+                                            }, 5000);
+                                        } else {
+                                            // Normal animation - slide in from right
+                                            setTimeout(() => {
+                                                notification.style.right = '20px';
+                                                notification.style.position = 'fixed'; // Ensure fixed positioning after animation
+                                                console.log('🎨 Company toast animated in');
+                                            }, 50);
+                                            
+                                            // Slide out and remove after 5 seconds (synced with timer)
+                                            setTimeout(() => {
+                                                notification.style.right = '-400px';
+                                                setTimeout(() => {
+                                                    if (notification.parentNode) {
+                                                        notification.remove();
+                                                    }
+                                                }, 400);
+                                            }, 5000);
+                                        }
+                                        
+                                    }, 1000); // Show toast 1 second after theme is applied
+                                    
+                                });
+                            }, 500);
+                            
+                            // Remove query param from URL to keep it clean
+                            const newUrl = new URL(window.location);
+                            newUrl.searchParams.delete(theme.id);
+                            window.history.replaceState({}, '', newUrl);
+                            
+                        }
+                        
+                        // Break after finding the first matching theme parameter
+                        break;
+                    }
+                }
+            }
+            
+            // Check on page load
+            checkCompanyQueryParams();
+            
+            // Also check on navigation (for SPAs)
+            document.addEventListener('astro:page-load', checkCompanyQueryParams);
+            
+            console.log('🎨 Company theme detection setup complete!');
         </script>
         
         <style>
@@ -333,6 +613,8 @@ declare global {
         <FaviconManager client:load />
         <NorwegianDisclaimer lang={lang} />
         <div class="pt-24 mt-8 mx-auto max-w-[var(--max-w-size)] ">
+            <!-- Skip target for accessibility -->
+            <a id="main-content" tabindex="-1" class="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:bg-main focus:text-secondary focus:p-2 focus:z-50">Main content starts here</a>
             <main class="text-left px-4">
                 <slot />
             </main>

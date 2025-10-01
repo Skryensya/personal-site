@@ -2,6 +2,7 @@
 import Layout from '@/layouts/Layout.astro';
 import ContentPage from '@/components/ContentPage.astro';
 import AccessibilityStatement from '@/components/AccessibilityStatement.astro';
+import TableOfContents from '@/components/TableOfContents.astro';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 
@@ -18,7 +19,14 @@ const t = getTranslations(lang);
   description={t('accessibility.description')}
   lang={lang}
 >
-  <ContentPage>
-    <AccessibilityStatement lang={lang} />
-  </ContentPage>
+  <div class="flex">
+    <main id="main-content" class="flex-1 mx-auto min-w-0 w-fit max-w-[850px] px-4 py-8">
+      <AccessibilityStatement lang={lang} />
+    </main>
+    
+    <TableOfContents 
+      contentId="main-content" 
+      lang={lang}
+    />
+  </div>
 </Layout>

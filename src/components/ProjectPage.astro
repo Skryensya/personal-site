@@ -52,63 +52,6 @@ const { Content } = await project.render();
                             </h1>
                         )}
                         
-                        <!-- Metrics Section - Supporting Data -->
-                        <section class="mt-12" aria-labelledby="metrics-heading">
-                            <h3 id="metrics-heading" class="text-xs font-mono font-medium text-main mb-4 uppercase tracking-widest opacity-75">Alcance del ecosistema</h3>
-                            <p class="text-sm text-main opacity-70 mb-6 max-w-prose">
-                                La infraestructura digital que desarrollé impacta directamente a toda la comunidad UC, desde estudiantes hasta docentes y personal administrativo.
-                            </p>
-                            
-                            <!-- Mobile: Stack vertically in 2 columns -->
-                            <div class="grid grid-cols-2 gap-2 sm:hidden" id="metrics-container-mobile" role="list" aria-label="Estadísticas del ecosistema UC">
-                                <div class="bg-main text-secondary px-2 py-2 border border-main" role="listitem">
-                                    <div class="text-lg font-mono font-bold mb-1" data-target="33000" aria-label="33,000 alumnos">0</div>
-                                    <div class="text-xs font-mono leading-tight" aria-hidden="true">alumnos<br/>activos</div>
-                                </div>
-                                <div class="bg-secondary text-main px-2 py-2 border border-main" role="listitem">
-                                    <div class="text-lg font-mono font-bold mb-1" data-target="3500" aria-label="3,500 profesores">0</div>
-                                    <div class="text-xs font-mono leading-tight" aria-hidden="true">profesores<br/>y staff</div>
-                                </div>
-                                <div class="bg-secondary text-main px-2 py-2 border border-main" role="listitem">
-                                    <div class="text-lg font-mono font-bold mb-1" data-target="6500" aria-label="6,500 nuevos ingresantes">0</div>
-                                    <div class="text-xs font-mono leading-tight" aria-hidden="true">nuevos<br/>ingresantes</div>
-                                </div>
-                                <div class="bg-main text-secondary px-2 py-2 border border-main" role="listitem">
-                                    <div class="text-lg font-mono font-bold mb-1" data-target="100" aria-label="Más de 100 sitios institucionales">0</div>
-                                    <div class="text-xs font-mono leading-tight" aria-hidden="true">sitios<br/>institucionales</div>
-                                </div>
-                            </div>
-
-                            <!-- Desktop: Horizontal layout -->
-                            <div class="hidden sm:flex flex-wrap gap-3" id="metrics-container-desktop" role="list" aria-label="Estadísticas del ecosistema UC" style="max-width: var(--paragraph-max-width)">
-                                <div class="bg-main text-secondary px-3 py-2 border border-main min-w-[100px]" role="listitem">
-                                    <div class="text-lg font-mono font-bold text-left" data-target="33000" aria-label="33,000 alumnos">0</div>
-                                    <div class="text-xs font-mono text-left whitespace-nowrap" aria-hidden="true">alumnos activos</div>
-                                </div>
-                                <div class="bg-secondary text-main px-3 py-2 border border-main min-w-[100px]" role="listitem">
-                                    <div class="text-lg font-mono font-bold text-left" data-target="3500" aria-label="3,500 profesores">0</div>
-                                    <div class="text-xs font-mono text-left whitespace-nowrap" aria-hidden="true">profesores y staff</div>
-                                </div>
-                                <div class="bg-main text-secondary px-3 py-2 border border-main min-w-[110px]" role="listitem">
-                                    <div class="text-lg font-mono font-bold text-left" data-target="6500" aria-label="6,500 nuevos ingresantes">0</div>
-                                    <div class="text-xs font-mono text-left whitespace-nowrap" aria-hidden="true">nuevos ingresantes</div>
-                                </div>
-                                <div class="bg-secondary text-main px-3 py-2 border border-main min-w-[120px]" role="listitem">
-                                    <div class="text-lg font-mono font-bold text-left" data-target="100" aria-label="Más de 100 sitios institucionales">0</div>
-                                    <div class="text-xs font-mono text-left whitespace-nowrap" aria-hidden="true">sitios institucionales</div>
-                                </div>
-                            </div>
-                        </section>
-                        
-                        {clientLogo && (
-                            <div class="mt-8 w-32 h-32" style={`view-transition-name: project-logo-${project.slug}`} data-client-logo={clientLogo}>
-                                <ThemedImage 
-                                    src={clientLogo} 
-                                    alt={`Logo del cliente - ${name}`}
-                                    class="w-full h-full"
-                                />
-                            </div>
-                        )}
                     </header>
                     
                     <!-- Article Content -->
