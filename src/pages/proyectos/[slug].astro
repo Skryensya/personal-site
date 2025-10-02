@@ -52,11 +52,6 @@ type Props = {
 };
 
 const { projectsByLang, slug } = Astro.props;
-
-// Redirect to home with anchor if flag is NOT enabled
-if (import.meta.env.PUBLIC_ENABLE_PROJECT_PAGES !== 'true') {
-    return Astro.redirect('/#proyectos');
-}
 ---
 
 <ProjectSinglePage

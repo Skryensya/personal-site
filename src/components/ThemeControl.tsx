@@ -35,14 +35,17 @@ export default function ThemeControl() {
             
             // Only set random theme if no theme was previously saved
             if (!(window as any).__THEME_READY__) {
-                const randomIndex = Math.floor(Math.random() * themes.length);
-                const randomTheme = themes[randomIndex] || themes[0];
-                
+                // Get only available themes (excluding hidden ones that aren't unlocked)
+                const availableThemes = getAvailableThemes();
+                const availableThemesAsTheme = availableThemes as unknown as Theme[];
+                const randomIndex = Math.floor(Math.random() * availableThemesAsTheme.length);
+                const randomTheme = availableThemesAsTheme[randomIndex] || themes.find((t) => !t.hidden) || themes[0];
+
                 // Save the random theme immediately
                 localStorage.setItem('theme-id', randomTheme.id);
                 (window as any).__THEME_ID__ = randomTheme.id;
                 (window as any).__THEME_READY__ = true;
-                
+
                 return randomTheme;
             }
         }
@@ -80,7 +83,7 @@ export default function ThemeControl() {
     React.useEffect(() => {
         const updateAvailableThemes = () => {
             if (typeof window !== 'undefined') {
-                setAvailableThemes(getAvailableThemes());
+                setAvailableThemes(getAvailableThemes() as unknown as Theme[]);
             }
         };
 
