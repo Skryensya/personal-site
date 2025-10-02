@@ -29,7 +29,8 @@ const {
 } = Astro.props;
 
 // Generate theme data for the client script
-const validThemes = themes.map(t => t.id);
+// Only include non-hidden themes as valid themes (hidden themes need to be unlocked first)
+const validThemes = themes.filter(t => !t.hidden).map(t => t.id);
 const themeColors = themes.reduce((acc, theme) => {
     acc[theme.id] = {
         colorful: theme.colorful, // Using backwards compatibility getters
@@ -38,8 +39,8 @@ const themeColors = themes.reduce((acc, theme) => {
     return acc;
 }, {} as Record<string, { colorful: string; contrasty: string }>);
 
-// Get the default theme (first theme in themes.js) colors
-const defaultTheme = themes[0]; // Use first theme from themes.js
+// Get the default theme (first non-hidden theme)
+const defaultTheme = themes.find(t => !t.hidden) || themes[0];
 const defaultColorful = defaultTheme.colorful;
 const defaultContrasty = defaultTheme.contrasty;
 const defaultThemeId = defaultTheme.id;
@@ -69,10 +70,22 @@ declare global {
         <script is:inline define:vars={{ validThemes, themeColors, defaultColorful, defaultContrasty, defaultThemeId }}>
             // ULTRA-FAST theme application for View Transitions compatibility
             (function() {
+                // Helper function to check if a special theme is unlocked
+                function isSpecialThemeUnlocked(themeId) {
+                    try {
+                        const specialData = localStorage.getItem('special-themes-unlocked');
+                        if (!specialData) return false;
+                        const { themes } = JSON.parse(specialData);
+                        return themes && themes.includes(themeId);
+                    } catch {
+                        return false;
+                    }
+                }
+
                 // Create reusable theme application function
                 function applyThemeInstantly() {
                     const html = document.documentElement;
-                    
+
                     // Get theme from localStorage immediately
                     let savedTheme, savedMode;
                     try {
@@ -81,9 +94,26 @@ declare global {
                     } catch (e) {
                         // localStorage unavailable - use defaults
                     }
-                    
+
                     // Determine theme immediately
-                    const themeId = (savedTheme && validThemes.includes(savedTheme)) ? savedTheme : defaultThemeId;
+                    // Check if saved theme is valid (non-hidden) OR if it's a special theme that's unlocked
+                    let themeId = defaultThemeId;
+                    if (savedTheme) {
+                        if (validThemes.includes(savedTheme)) {
+                            // Theme is in validThemes (non-hidden)
+                            themeId = savedTheme;
+                        } else if (isSpecialThemeUnlocked(savedTheme)) {
+                            // Theme is a special unlocked theme
+                            themeId = savedTheme;
+                        } else {
+                            // Saved theme is not valid - clear it and use default
+                            try {
+                                localStorage.removeItem('theme-id');
+                            } catch (e) {
+                                // Ignore error
+                            }
+                        }
+                    }
                     const mode = savedMode || 'system';
                     
                     // Get theme colors from embedded data
@@ -420,10 +450,10 @@ declare global {
                         
                         // Try to unlock the company theme (returns true if newly unlocked, false if already unlocked)
                         const unlocked = unlockSpecialTheme(theme.id);
-                        
+
                         // Always apply the theme and show toast when parameter is detected
                         // regardless of whether it was just unlocked or already unlocked
-                        if (unlocked || true) {
+                        if (unlocked !== undefined) {
                             if (unlocked) {
                                 console.log(`🎨 ${theme.id} theme unlocked and will be applied!`);
                             } else {
