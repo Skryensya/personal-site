@@ -114,7 +114,16 @@ export function unlockSpecialTheme(themeId) {
     const theme = themesData.themes.find(t => t.id === themeId);
     if (!theme || !theme.hidden || !theme.special) return false; // Can only unlock special hidden themes
     
-    const specialUnlockedThemes = getSpecialUnlockedThemes();
+    let specialUnlockedThemes = getSpecialUnlockedThemes();
+    
+    // Remove all other special themes when unlocking a new one (mutual exclusivity)
+    const otherSpecialThemes = themesData.themes
+        .filter(t => t.special && t.hidden && t.id !== themeId)
+        .map(t => t.id);
+    
+    // Filter out other special themes from the unlocked list
+    specialUnlockedThemes = specialUnlockedThemes.filter(id => !otherSpecialThemes.includes(id));
+    
     if (!specialUnlockedThemes.includes(themeId)) {
         specialUnlockedThemes.push(themeId);
         saveSpecialUnlockedThemes(specialUnlockedThemes);
@@ -128,8 +137,11 @@ export function unlockSpecialTheme(themeId) {
         }
         
         return true;
+    } else {
+        // Theme was already unlocked, but we still need to save to ensure other special themes are removed
+        saveSpecialUnlockedThemes(specialUnlockedThemes);
+        return false;
     }
-    return false;
 }
 
 // Toggle all hidden themes (unlock if none unlocked, lock if any unlocked)
