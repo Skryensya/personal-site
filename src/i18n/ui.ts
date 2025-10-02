@@ -216,7 +216,7 @@ export const ui = {
         'footer.info': 'Información',
         'footer.availableForProjects': 'Disponible para proyectos',
         'footer.sitemap': 'Sitemap',
-        'footer.wcag.title': 'Proporción de contraste',
+        'footer.aspectRatio.title': 'Proporción de contraste',
         'footer.motion.label': 'Reducir movimiento',
         'footer.motion.activated': 'Activado',
         'footer.motion.deactivated': 'Desactivado',
@@ -228,9 +228,9 @@ export const ui = {
         'accessibility.commitment.title': 'Compromiso con la accesibilidad',
         'accessibility.commitment.content': 'Estoy comprometido a que mi sitio personal sea accesible para la mayor cantidad de personas posible, sin importar la tecnología que utilicen o sus capacidades. Mi objetivo es ofrecer una experiencia clara, funcional y disfrutable para todos.',
         'accessibility.standards.title': 'Estándares y guías',
-        'accessibility.standards.items': [
-          'Este sitio procura cumplir con las Pautas de Accesibilidad para el Contenido Web (WCAG) 2.2 en nivel AA, que definen cómo hacer que los contenidos digitales sean más accesibles para personas con discapacidad.'
-        ],
+        'accessibility.standards.content': 'Este sitio procura cumplir con las Pautas de Accesibilidad para el Contenido Web (WCAG) 2.2 en nivel AA, que definen cómo hacer que los contenidos digitales sean más accesibles para personas con discapacidad.',
+        'accessibility.standards.wcag.text': 'WCAG',
+        'accessibility.standards.wcag.url': 'https://www.w3.org/TR/WCAG22/',
         'accessibility.features.title': 'Mejora continua',
         'accessibility.features.items': [
           'La accesibilidad es un proceso en constante evolución. Reviso y actualizo de forma periódica el diseño, el código y los contenidos de este sitio para mantener e incrementar su nivel de accesibilidad.'
@@ -451,7 +451,7 @@ export const ui = {
         'footer.info': 'Information',
         'footer.availableForProjects': 'Available for projects',
         'footer.sitemap': 'Sitemap',
-        'footer.wcag.title': 'Contrast ratio',
+        'footer.aspectRatio.title': 'Contrast ratio',
         'footer.motion.label': 'Reduce motion',
         'footer.motion.activated': 'Activated',
         'footer.motion.deactivated': 'Deactivated',
@@ -463,9 +463,9 @@ export const ui = {
         'accessibility.commitment.title': 'Accessibility Commitment',
         'accessibility.commitment.content': 'I am committed to making my personal website accessible to as many people as possible, regardless of technology or abilities. My goal is to provide a clear, functional and enjoyable experience for everyone.',
         'accessibility.standards.title': 'Standards and Guidelines',
-        'accessibility.standards.items': [
-          'This site aims to comply with the Web Content Accessibility Guidelines (WCAG) 2.2, Level AA, which define how to make digital content more accessible to people with disabilities.'
-        ],
+        'accessibility.standards.content': 'This site aims to comply with the Web Content Accessibility Guidelines (WCAG) 2.2, Level AA, which define how to make digital content more accessible to people with disabilities.',
+        'accessibility.standards.wcag.text': 'WCAG',
+        'accessibility.standards.wcag.url': 'https://www.w3.org/TR/WCAG22/',
         'accessibility.features.title': 'Continuous Improvement',
         'accessibility.features.items': [
           'Accessibility is a constantly evolving process. I regularly review and update the design, code and content of this site to maintain and increase its accessibility level.'
@@ -686,7 +686,7 @@ export const ui = {
         'footer.info': 'Informasjon',
         'footer.availableForProjects': 'Tilgjengelig for prosjekter',
         'footer.sitemap': 'Sitemap',
-        'footer.wcag.title': 'Kontrastforhold',
+        'footer.aspectRatio.title': 'Kontrastforhold',
         'footer.motion.label': 'Reduser bevegelse',
         'footer.motion.activated': 'Aktivert',
         'footer.motion.deactivated': 'Deaktivert',
@@ -698,9 +698,9 @@ export const ui = {
         'accessibility.commitment.title': 'Forpliktelse til tilgjengelighet',
         'accessibility.commitment.content': 'Jeg er forpliktet til å gjøre min personlige nettside tilgjengelig for så mange mennesker som mulig, uavhengig av teknologi eller evner. Målet mitt er å tilby en klar, funksjonell og hyggelig opplevelse for alle.',
         'accessibility.standards.title': 'Standarder og retningslinjer',
-        'accessibility.standards.items': [
-          'Denne nettsiden streber etter å oppfylle retningslinjene for tilgjengelig webinnhold (WCAG) 2.2, nivå AA, som definerer hvordan man gjør digitalt innhold mer tilgjengelig for personer med funksjonshemming.'
-        ],
+        'accessibility.standards.content': 'Denne nettsiden streber etter å oppfylle retningslinjene for tilgjengelig webinnhold (WCAG) 2.2, nivå AA, som definerer hvordan man gjør digitalt innhold mer tilgjengelig for personer med funksjonshemming.',
+        'accessibility.standards.wcag.text': 'WCAG',
+        'accessibility.standards.wcag.url': 'https://www.w3.org/TR/WCAG22/',
         'accessibility.features.title': 'Kontinuerlig forbedring',
         'accessibility.features.items': [
           'Tilgjengelighet er en prosess i konstant utvikling. Jeg gjennomgår og oppdaterer regelmessig design, kode og innhold på denne nettsiden for å opprettholde og øke tilgjengelighetsnivået.'

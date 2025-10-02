@@ -1,0 +1,413 @@
+---
+import DropdownButton from './ui/DropdownButton.astro';
+import DropdownContent from './ui/DropdownContent.astro';
+import { getTranslations } from '@/i18n/utils';
+import { getLangFromUrl } from '@/i18n/utils';
+
+const currentLocale = getLangFromUrl(Astro.url);
+const t = getTranslations(currentLocale);
+---
+
+<DropdownButton
+  onMainClick="nextTheme"
+  disabled={false}
+  dropdownClassName="max-w-[280px] @lg:w-fit @lg:max-w-[600px]"
+  class="w-7 h-7 @lg:w-full @lg:h-8"
+  id="theme-control"
+>
+  <div class="flex items-center gap-2 w-full">
+    <div
+      class="w-4 h-4 border border-main theme-preview-current flex-shrink-0"
+      style="background: linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%);"
+    ></div>
+    <span class="hidden @lg:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary truncate uppercase theme-name-display">
+      {t('ui.loading')}
+    </span>
+  </div>
+
+  <DropdownContent slot="dropdown-content">
+    <div id="theme-dropdown-content">
+      <!-- Desktop layout - dynamic columns -->
+      <div class="hidden @lg:block" id="theme-desktop-layout">
+        <!-- Content will be populated by JavaScript -->
+      </div>
+      
+      <!-- Mobile/tablet layout - single column -->
+      <div class="@lg:hidden" id="theme-mobile-layout">
+        <!-- Content will be populated by JavaScript -->
+      </div>
+    </div>
+  </DropdownContent>
+</DropdownButton>
+
+<script>
+  import { applyTheme, themes, getAvailableThemes } from '../data/themes.js';
+
+  // Global theme management functions
+  (window as any).themeControl = {
+    currentTheme: null,
+    availableThemes: [],
+    
+    // Initialize theme control
+    init() {
+      this.loadCurrentTheme();
+      this.loadAvailableThemes();
+      this.setupEventListeners();
+      this.updateDropdownWidth(); // Set initial width based on available themes
+      this.renderThemeOptions();
+      this.updateDisplay();
+      
+      // Signal that theme control is ready
+      setTimeout(() => {
+        const event = new CustomEvent('theme-control-ready', {
+          detail: { themeId: this.currentTheme?.id }
+        });
+        window.dispatchEvent(event);
+      }, 0);
+    },
+    
+    // Load current theme from global state or localStorage
+    loadCurrentTheme() {
+      // Check global state first (set by navbar script)
+      const globalThemeId = (window as any).__THEME_ID__;
+      if (globalThemeId) {
+        const globalTheme = themes.find((t) => t.id === globalThemeId);
+        if (globalTheme) {
+          this.currentTheme = globalTheme;
+          return;
+        }
+      }
+      
+      // Fallback to localStorage
+      const savedThemeId = localStorage.getItem('theme-id');
+      if (savedThemeId) {
+        const savedTheme = themes.find((t) => t.id === savedThemeId);
+        if (savedTheme) {
+          this.currentTheme = savedTheme;
+          return;
+        }
+      }
+      
+      // Only set random theme if no theme was previously saved
+      if (!(window as any).__THEME_READY__) {
+        const availableThemes = getAvailableThemes();
+        const randomIndex = Math.floor(Math.random() * availableThemes.length);
+        const randomTheme = availableThemes[randomIndex] || themes.find((t) => !t.hidden) || themes[0];
+
+        // Save the random theme immediately
+        localStorage.setItem('theme-id', randomTheme.id);
+        (window as any).__THEME_ID__ = randomTheme.id;
+        (window as any).__THEME_READY__ = true;
+
+        this.currentTheme = randomTheme;
+      } else {
+        this.currentTheme = themes[0];
+      }
+    },
+    
+    // Load available themes
+    loadAvailableThemes() {
+      this.availableThemes = getAvailableThemes() as any[];
+    },
+    
+    // Apply theme to document
+    applyThemeToDocument(theme: any) {
+      // Get current mode from localStorage or global state
+      const savedMode = localStorage.getItem('theme-mode') || (window as any).__THEME_MODE__ || 'system';
+      
+      let resolvedMode = savedMode;
+      if (savedMode === 'system') {
+        resolvedMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      
+      const isDark = resolvedMode === 'dark';
+      applyTheme(theme.id, isDark, null);
+      
+      // Save to localStorage
+      localStorage.setItem('theme-id', theme.id);
+      
+      // Update global state
+      (window as any).__THEME_ID__ = theme.id;
+      (window as any).__THEME_READY__ = true;
+    },
+    
+    // Handle theme selection
+    selectTheme(theme: any) {
+      this.currentTheme = theme;
+      this.applyThemeToDocument(theme);
+      this.updateDisplay();
+    },
+    
+    // Next theme (for main button)
+    nextTheme() {
+      if (!this.currentTheme || this.availableThemes.length === 0) return;
+      const currentIndex = this.availableThemes.findIndex((t: any) => t.id === this.currentTheme.id);
+      const nextIndex = (currentIndex + 1) % this.availableThemes.length;
+      const newTheme = this.availableThemes[nextIndex];
+      this.selectTheme(newTheme);
+    },
+    
+    // Previous theme
+    prevTheme() {
+      if (!this.currentTheme || this.availableThemes.length === 0) return;
+      const currentIndex = this.availableThemes.findIndex((t: any) => t.id === this.currentTheme.id);
+      const prevIndex = currentIndex === 0 ? this.availableThemes.length - 1 : currentIndex - 1;
+      const newTheme = this.availableThemes[prevIndex];
+      this.selectTheme(newTheme);
+    },
+    
+    // Update dropdown width based on available themes
+    updateDropdownWidth() {
+      const totalThemes = this.availableThemes.length;
+      const hasOnlyBasicThemes = totalThemes <= 5;
+      
+      const dropdownContent = document.getElementById('theme-dropdown-content');
+      if (dropdownContent) {
+        const parentDropdown = dropdownContent.closest('[data-dropdown-content]');
+        if (parentDropdown) {
+          // Reset width constraints
+          parentDropdown.classList.remove('@lg:max-w-[200px]');
+          
+          // Only add max-width constraint when basic themes only
+          if (hasOnlyBasicThemes) {
+            parentDropdown.classList.add('@lg:max-w-[200px]');
+          }
+        }
+      }
+    },
+    
+    // Update display elements
+    updateDisplay() {
+      const themeNameDisplay = document.querySelector('.theme-name-display');
+      if (themeNameDisplay && this.currentTheme) {
+        themeNameDisplay.textContent = this.currentTheme.name;
+      }
+      
+      // Update selected states in dropdown
+      const themeButtons = document.querySelectorAll('[data-theme-button]');
+      themeButtons.forEach(button => {
+        const buttonElement = button as HTMLElement;
+        const themeId = buttonElement.dataset.themeId;
+        const isSelected = themeId === this.currentTheme?.id;
+        buttonElement.setAttribute('data-selected', isSelected ? 'true' : 'false');
+        
+        // Update button classes for selected state
+        const baseClasses = "w-full px-3 py-1 text-left block cursor-pointer relative focus-visible:z-[9999] ring-inset";
+        const stateClasses = isSelected 
+          ? "bg-main text-secondary hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary" 
+          : "bg-secondary text-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary";
+        buttonElement.className = `${baseClasses} ${stateClasses}`;
+        
+        // Update checkmark visibility
+        const checkmark = buttonElement.querySelector('.theme-checkmark') as HTMLElement;
+        if (checkmark) {
+          checkmark.style.display = isSelected ? 'block' : 'none';
+        }
+      });
+    },
+    
+    // Render theme options in dropdown
+    renderThemeOptions() {
+      const desktopLayout = document.getElementById('theme-desktop-layout');
+      const mobileLayout = document.getElementById('theme-mobile-layout');
+      
+      if (!desktopLayout || !mobileLayout) return;
+      
+      const totalThemes = this.availableThemes.length;
+      
+      // Check if only basic themes are available (5 or fewer themes = basic only)
+      const hasOnlyBasicThemes = totalThemes <= 5;
+      
+      // Update dropdown width based on current theme count
+      this.updateDropdownWidth();
+      
+      // Calculate optimal number of columns (max 6 columns, 6 items per column)
+      const maxItemsPerColumn = 6;
+      const maxColumns = hasOnlyBasicThemes ? 1 : 6; // Force single column for basic themes only
+      const idealColumns = Math.min(Math.ceil(totalThemes / maxItemsPerColumn), maxColumns);
+      const itemsPerColumn = Math.ceil(totalThemes / idealColumns);
+      
+      // Create columns
+      const columns = [];
+      for (let i = 0; i < idealColumns; i++) {
+        const start = i * itemsPerColumn;
+        const end = Math.min(start + itemsPerColumn, totalThemes);
+        const columnThemes = this.availableThemes.slice(start, end);
+        columns.push(columnThemes);
+      }
+      
+      // Desktop layout - dynamic columns with proper width constraints
+      if (hasOnlyBasicThemes) {
+        desktopLayout.innerHTML = `
+          <div class="flex gap-0 w-full max-w-[200px]">
+            <div class="w-full flex-shrink-0">
+              ${this.availableThemes.map((theme: any) => this.createThemeButton(theme)).join('')}
+            </div>
+          </div>
+        `;
+      } else {
+        // Limit the width to prevent ugly overflow
+        const maxWidth = Math.min(idealColumns * 180, 600); // Max 600px total width
+        const actualColumns = Math.min(idealColumns, Math.floor(600 / 180)); // Max 3 columns to fit in 600px
+        
+        // Redistribute themes if we had to reduce columns
+        const redistributedColumns = [];
+        if (actualColumns < idealColumns) {
+          const itemsPerColumn = Math.ceil(totalThemes / actualColumns);
+          for (let i = 0; i < actualColumns; i++) {
+            const start = i * itemsPerColumn;
+            const end = Math.min(start + itemsPerColumn, totalThemes);
+            const columnThemes = this.availableThemes.slice(start, end);
+            redistributedColumns.push(columnThemes);
+          }
+        } else {
+          redistributedColumns.push(...columns);
+        }
+        
+        desktopLayout.innerHTML = `
+          <div class="flex gap-0" style="max-width: ${maxWidth}px;">
+            ${redistributedColumns.map((columnThemes: any[], index: number) => `
+              <div class="w-[180px] flex-shrink-0 ${index < redistributedColumns.length - 1 ? 'border-r-2 border-main' : ''}">
+                ${columnThemes.map((theme: any) => this.createThemeButton(theme)).join('')}
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+      
+      // Mobile layout - single column
+      mobileLayout.innerHTML = this.availableThemes.map((theme: any) => this.createThemeButton(theme)).join('');
+      
+      // Add event listeners
+      this.addThemeButtonListeners();
+    },
+    
+    // Create theme button HTML
+    createThemeButton(theme: any) {
+      const isSelected = theme.id === this.currentTheme?.id;
+      const baseClasses = "w-full px-3 py-1 text-left block cursor-pointer relative focus-visible:z-[9999] ring-inset";
+      const stateClasses = isSelected 
+        ? "bg-main text-secondary hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary" 
+        : "bg-secondary text-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary";
+      
+      return `
+        <button
+          type="button"
+          data-theme-button
+          data-theme-id="${theme.id}"
+          data-selected="${isSelected}"
+          class="${baseClasses} ${stateClasses}"
+          role="menuitem"
+          tabindex="-1"
+          style="min-height: 36px; outline-width: 1px; outline-offset: 1px;"
+        >
+          <div class="flex items-center gap-2 pointer-events-none">
+            <div
+              class="w-6 h-6 aspect-square flex-shrink-0 pointer-events-none"
+              style="background: linear-gradient(135deg, ${theme.colorful || theme.colors?.colorful || '#FF0000'} 50%, ${theme.contrasty || theme.colors?.contrasty || '#000000'} 50%); border: 2px solid ${theme.colorful || theme.colors?.colorful || '#FF0000'};"
+            ></div>
+            <span class="flex-1 px-1 py-1 font-grotesk text-base font-semibold pointer-events-none select-none uppercase whitespace-nowrap">${theme.name}</span>
+            <div class="w-4 h-4 flex items-center justify-center pointer-events-none">
+              <svg
+                class="w-4 h-4 pointer-events-none theme-checkmark"
+                style="display: ${isSelected ? 'block' : 'none'}"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <polyline points="20,6 9,17 4,12" />
+              </svg>
+            </div>
+          </div>
+        </button>
+      `;
+    },
+    
+    // Add event listeners to theme buttons
+    addThemeButtonListeners() {
+      const themeButtons = document.querySelectorAll('[data-theme-button]');
+      themeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const buttonElement = button as HTMLElement;
+          const themeId = buttonElement.dataset.themeId;
+          const theme = this.availableThemes.find((t: any) => t.id === themeId);
+          if (theme) {
+            this.selectTheme(theme);
+          }
+        });
+      });
+    },
+    
+    // Setup event listeners
+    setupEventListeners() {
+      // Listen for theme unlock/lock events
+      const handleThemeUpdates = () => {
+        this.loadAvailableThemes();
+        this.updateDropdownWidth();
+        this.renderThemeOptions();
+        this.updateDisplay();
+      };
+      
+      window.addEventListener('theme-unlocked', handleThemeUpdates);
+      window.addEventListener('themes-unlocked', handleThemeUpdates);
+      window.addEventListener('themes-locked', handleThemeUpdates);
+      
+      // Listen for company theme activation
+      const handleCompanyThemeActivated = (event: any) => {
+        const { themeId } = event.detail;
+        const activatedTheme = themes.find((t: any) => t.id === themeId);
+        if (activatedTheme) {
+          this.currentTheme = activatedTheme;
+          this.loadAvailableThemes();
+          this.updateDropdownWidth();
+          this.renderThemeOptions();
+          this.updateDisplay();
+        }
+      };
+      
+      window.addEventListener('company-theme-activated', handleCompanyThemeActivated);
+      
+      // Keyboard shortcuts for theme navigation
+      const handleKeyDown = (e: KeyboardEvent) => {
+        // Only respond to keyboard shortcuts if no input is focused
+        if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') {
+          return;
+        }
+
+        // Left/Right arrow keys for theme navigation
+        if (e.key === 'ArrowLeft' && (e.metaKey || e.ctrlKey)) {
+          e.preventDefault();
+          this.prevTheme();
+        } else if (e.key === 'ArrowRight' && (e.metaKey || e.ctrlKey)) {
+          e.preventDefault();
+          this.nextTheme();
+        }
+      };
+
+      document.addEventListener('keydown', handleKeyDown);
+    }
+  };
+
+  // Global function for main button - define immediately
+  (window as any).nextTheme = () => {
+    if ((window as any).themeControl && typeof (window as any).themeControl.nextTheme === 'function') {
+      (window as any).themeControl.nextTheme();
+    } else {
+    }
+  };
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      (window as any).themeControl.init();
+    });
+  } else {
+    (window as any).themeControl.init();
+  }
+
+  // Also initialize on Astro page transitions
+  document.addEventListener('astro:page-load', () => {
+    (window as any).themeControl.init();
+  });
+</script>

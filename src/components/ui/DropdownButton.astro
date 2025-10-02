@@ -1,0 +1,445 @@
+---
+export interface Props {
+  // Contenido del botón principal (lado izquierdo)
+  children?: any;
+  // Props opcionales
+  class?: string;
+  dropdownClassName?: string;
+  // Función que se ejecuta cuando se hace clic en el botón principal
+  onMainClick?: string; // JavaScript function name as string
+  // Si está deshabilitado
+  disabled?: boolean;
+  // Índice del elemento inicial seleccionado (opcional)
+  initialSelectedIndex?: number;
+  // ARIA label for accessibility
+  ariaLabel?: string;
+  // ID único para el dropdown
+  id?: string;
+}
+
+const {
+  class: className = '',
+  dropdownClassName = '',
+  onMainClick,
+  disabled = false,
+  initialSelectedIndex = 0,
+  ariaLabel,
+  id = crypto.randomUUID()
+} = Astro.props;
+
+// Generate unique IDs
+const buttonId = `dropdown-button-${id}`;
+const menuId = `dropdown-menu-${id}`;
+const mainButtonId = `main-button-${id}`;
+---
+
+<div class={`inline-flex ${className}`} data-dropdown-container>
+  <!-- Botón principal (lado izquierdo) -->
+  <button
+    type="button"
+    id={mainButtonId}
+    data-main-action={onMainClick}
+    disabled={disabled}
+    class="flex items-center justify-center px-3 h-8 bg-secondary border-double border-2 border-main border-r-0 hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)] pt-0 focus-visible:z-[9999] select-none"
+    style="outline-width: 1px; outline-offset: 1px;"
+    aria-label={ariaLabel}
+  >
+    <slot />
+  </button>
+
+  <!-- Botón dropdown (lado derecho) -->
+  <button
+    type="button"
+    id={buttonId}
+    disabled={disabled}
+    class="flex items-center justify-center min-w-8 w-8 h-8 bg-secondary border-double border-2 border-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)] focus-visible:z-[9999] select-none"
+    style="outline-width: 1px; outline-offset: 1px;"
+    aria-haspopup="menu"
+    aria-expanded="false"
+    aria-controls={menuId}
+    data-initial-selected-index={initialSelectedIndex}
+  >
+    <!-- Icono de flecha -->
+    <svg
+      class="w-4 h-4 text-main group-hover:text-secondary group-focus-visible:text-secondary dropdown-arrow"
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      style="transform: rotate(0deg); transition: none;"
+    >
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+    </svg>
+  </button>
+</div>
+
+<!-- Dropdown content -->
+<div
+  id={menuId}
+  class={`fixed z-[350] bg-secondary border-double border-2 border-main rounded-none min-w-[120px] ${dropdownClassName}`}
+  style="display: none; overflow: visible;"
+  role="menu"
+  aria-labelledby={buttonId}
+  tabindex="0"
+>
+  <div class="dropdown-content-wrapper" role="none">
+    <slot name="dropdown-content" />
+  </div>
+</div>
+
+<script>
+  // Global dropdown management
+  let globalOpenDropdown = null;
+  
+  // Global function to close all dropdowns
+  function closeAllDropdowns() {
+    const openDropdowns = document.querySelectorAll('[data-dropdown-container]');
+    openDropdowns.forEach(container => {
+      const dropdownButton = container.querySelector('[aria-haspopup="menu"]') as HTMLElement;
+      const dropdownMenu = document.getElementById(dropdownButton?.getAttribute('aria-controls') || '') as HTMLElement;
+      
+      if (dropdownButton && dropdownMenu && dropdownButton.getAttribute('aria-expanded') === 'true') {
+        // Close this dropdown
+        dropdownMenu.style.display = 'none';
+        dropdownButton.setAttribute('aria-expanded', 'false');
+        
+        // Update arrow
+        const arrow = container.querySelector('.dropdown-arrow') as HTMLElement;
+        if (arrow) {
+          arrow.style.transform = 'rotate(0deg)';
+        }
+        
+        // Reset interactive elements
+        const interactiveElements = dropdownMenu.querySelectorAll('button, a, [tabindex]');
+        interactiveElements.forEach(el => {
+          (el as HTMLElement).setAttribute('tabindex', '-1');
+        });
+      }
+    });
+    globalOpenDropdown = null;
+  }
+  
+  // Global click outside handler
+  function handleGlobalClickOutside(event: Event) {
+    if (!globalOpenDropdown) return;
+    
+    const target = event.target as Node;
+    const currentContainer = globalOpenDropdown.container;
+    const currentMenu = globalOpenDropdown.menu;
+    
+    // Check if click is outside both the container and the menu
+    if (!currentContainer.contains(target) && !currentMenu.contains(target)) {
+      closeAllDropdowns();
+    }
+  }
+  
+  // Global escape key handler
+  function handleGlobalEscape(event: KeyboardEvent) {
+    if (event.key === 'Escape' && globalOpenDropdown) {
+      closeAllDropdowns();
+      // Focus the dropdown button that was open
+      const dropdownButton = globalOpenDropdown.container.querySelector('[aria-haspopup="menu"]') as HTMLElement;
+      if (dropdownButton) {
+        dropdownButton.focus();
+      }
+    }
+  }
+  
+  // Simple dropdown functionality
+  function initializeDropdowns() {
+    const dropdownContainers = document.querySelectorAll('[data-dropdown-container]');
+    
+    // Add global event listeners once
+    document.removeEventListener('click', handleGlobalClickOutside);
+    document.addEventListener('click', handleGlobalClickOutside);
+    document.removeEventListener('keydown', handleGlobalEscape);
+    document.addEventListener('keydown', handleGlobalEscape);
+    
+    dropdownContainers.forEach((container) => {
+      const mainButton = container.querySelector('[data-main-action]') as HTMLElement;
+      const dropdownButton = container.querySelector('[aria-haspopup="menu"]') as HTMLElement;
+      const dropdownMenu = document.getElementById(dropdownButton.getAttribute('aria-controls') || '') as HTMLElement;
+      const arrow = container.querySelector('.dropdown-arrow') as HTMLElement;
+      
+      if (!dropdownButton || !dropdownMenu) return;
+      
+      let isOpen = false;
+      let activeIndex = -1;
+      const initialSelectedIndex = parseInt(dropdownButton.dataset.initialSelectedIndex || '0');
+      
+      // Main button functionality
+      if (mainButton) {
+        mainButton.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          const actionName = mainButton.dataset.mainAction;
+          if (actionName && (window as any)[actionName] && typeof (window as any)[actionName] === 'function') {
+            (window as any)[actionName]();
+          }
+        });
+        
+        mainButton.addEventListener('mouseenter', () => {
+          if (document.activeElement === mainButton) {
+            mainButton.blur();
+          }
+        });
+      }
+      
+      // Simple positioning - align dropdown to the right edge of the button container
+      const positionDropdown = () => {
+        const containerRect = container.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
+        // Position dropdown below the container, aligned to the right edge
+        let left = containerRect.right;
+        let top = containerRect.bottom + 4;
+        
+        // Get dropdown dimensions after it's visible
+        const dropdownRect = dropdownMenu.getBoundingClientRect();
+        
+        // Align to right edge (dropdown grows to the left)
+        left = containerRect.right - dropdownRect.width;
+        
+        // Make sure dropdown doesn't go off screen
+        if (left < 8) {
+          left = 8; // Keep 8px margin from left edge
+        }
+        if (left + dropdownRect.width > viewportWidth - 8) {
+          left = viewportWidth - dropdownRect.width - 8; // Keep 8px margin from right edge
+        }
+        
+        // Check if dropdown fits below, otherwise position above
+        if (top + dropdownRect.height > viewportHeight - 8) {
+          top = containerRect.top - dropdownRect.height - 4;
+          if (top < 8) {
+            top = 8; // Keep 8px margin from top
+          }
+        }
+        
+        dropdownMenu.style.left = `${left}px`;
+        dropdownMenu.style.top = `${top}px`;
+      };
+      
+      // Get dropdown items
+      const getDropdownItems = () => {
+        return Array.from(dropdownMenu.querySelectorAll('[role="menuitem"]:not([disabled])')) as HTMLElement[];
+      };
+      
+      // Update arrow rotation
+      const updateArrow = (open: boolean) => {
+        if (arrow) {
+          arrow.style.transform = open ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
+      };
+      
+      // Update active state
+      const updateActiveState = (index: number) => {
+        const items = getDropdownItems();
+        items.forEach((item, i) => {
+          item.setAttribute('data-active', i === index ? 'true' : 'false');
+        });
+      };
+      
+      // Close dropdown
+      const closeDropdown = () => {
+        isOpen = false;
+        activeIndex = -1;
+        dropdownMenu.style.display = 'none';
+        dropdownButton.setAttribute('aria-expanded', 'false');
+        updateArrow(false);
+        
+        const interactiveElements = dropdownMenu.querySelectorAll('button, a, [tabindex]');
+        interactiveElements.forEach(el => {
+          (el as HTMLElement).setAttribute('tabindex', '-1');
+        });
+        
+        // Clear global reference if this was the open dropdown
+        if (globalOpenDropdown && globalOpenDropdown.container === container) {
+          globalOpenDropdown = null;
+        }
+      };
+      
+      // Open dropdown
+      const openDropdown = () => {
+        // Close all other dropdowns first
+        closeAllDropdowns();
+        
+        isOpen = true;
+        dropdownMenu.style.display = 'block';
+        dropdownButton.setAttribute('aria-expanded', 'true');
+        updateArrow(true);
+        
+        // Set this as the globally open dropdown
+        globalOpenDropdown = {
+          container: container as HTMLElement,
+          menu: dropdownMenu,
+          close: closeDropdown
+        };
+        
+        // Position the dropdown
+        requestAnimationFrame(() => {
+          positionDropdown();
+          
+          const interactiveElements = dropdownMenu.querySelectorAll('[tabindex="-1"]');
+          interactiveElements.forEach(el => {
+            (el as HTMLElement).removeAttribute('tabindex');
+          });
+          
+          // Find the actually selected item based on data-selected attribute
+          const items = getDropdownItems();
+          let selectedIndex = -1;
+          
+          items.forEach((item, i) => {
+            if (item.getAttribute('data-selected') === 'true') {
+              selectedIndex = i;
+            }
+          });
+          
+          // If no selected item found, use initialSelectedIndex or fallback to 0
+          activeIndex = selectedIndex >= 0 ? selectedIndex : Math.max(0, initialSelectedIndex || 0);
+          updateActiveState(activeIndex);
+          
+          setTimeout(() => {
+            dropdownMenu.focus();
+          }, 0);
+        });
+      };
+      
+      // Handle dropdown toggle
+      dropdownButton.addEventListener('click', (event) => {
+        event.stopPropagation();
+        if (!dropdownButton.hasAttribute('disabled')) {
+          if (isOpen) {
+            closeDropdown();
+          } else {
+            openDropdown();
+          }
+        }
+      });
+      
+      // Handle button keyboard events
+      dropdownButton.addEventListener('keydown', (event) => {
+        if (dropdownButton.hasAttribute('disabled')) return;
+
+        switch (event.key) {
+          case 'ArrowDown':
+          case 'ArrowUp':
+            event.preventDefault();
+            if (!isOpen) {
+              openDropdown();
+            }
+            break;
+          case 'Enter':
+          case ' ':
+            if (!isOpen) {
+              event.preventDefault();
+              openDropdown();
+            }
+            break;
+          case 'Escape':
+            event.preventDefault();
+            closeDropdown();
+            break;
+        }
+      });
+      
+      // Handle dropdown keyboard navigation
+      dropdownMenu.addEventListener('keydown', (event) => {
+        if (!isOpen || dropdownButton.hasAttribute('disabled')) return;
+
+        const items = getDropdownItems();
+        
+        switch (event.key) {
+          case 'ArrowDown':
+            event.preventDefault();
+            event.stopPropagation();
+            activeIndex = activeIndex < items.length - 1 ? activeIndex + 1 : 0;
+            updateActiveState(activeIndex);
+            break;
+            
+          case 'ArrowUp':
+            event.preventDefault();
+            event.stopPropagation();
+            activeIndex = activeIndex > 0 ? activeIndex - 1 : items.length - 1;
+            updateActiveState(activeIndex);
+            break;
+            
+          case 'Enter':
+          case ' ':
+            event.preventDefault();
+            event.stopPropagation();
+            
+            if (activeIndex >= 0 && activeIndex < items.length) {
+              const activeItem = items[activeIndex];
+              if (activeItem) {
+                const clickEvent = new MouseEvent('click', {
+                  bubbles: true,
+                  cancelable: true,
+                  detail: 0
+                });
+                activeItem.dispatchEvent(clickEvent);
+              }
+            }
+            break;
+            
+          case 'Escape':
+            event.preventDefault();
+            closeDropdown();
+            dropdownButton.focus();
+            break;
+        }
+      });
+      
+      // Handle item clicks
+      const items = getDropdownItems();
+      items.forEach((item) => {
+        item.addEventListener('click', () => {
+          setTimeout(() => {
+            closeDropdown();
+            dropdownButton.focus();
+          }, 0);
+        });
+        
+        item.setAttribute('tabindex', '-1');
+      });
+      
+      // Note: Click outside handling is now managed globally
+      
+      // Handle mouse events
+      [mainButton, dropdownButton].forEach(btn => {
+        if (btn) {
+          btn.addEventListener('mouseenter', () => {
+            if (document.activeElement === btn) {
+              btn.blur();
+            }
+          });
+          btn.addEventListener('mouseleave', () => {
+            if (document.activeElement === btn) {
+              btn.blur();
+            }
+          });
+        }
+      });
+      
+      // Handle repositioning on scroll/resize
+      const handleReposition = () => {
+        if (isOpen) {
+          positionDropdown();
+        }
+      };
+      
+      window.addEventListener('resize', handleReposition);
+      window.addEventListener('scroll', handleReposition);
+    });
+  }
+
+  // Initialize on page load and navigation
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeDropdowns);
+  } else {
+    initializeDropdowns();
+  }
+
+  // Also initialize on Astro page transitions
+  document.addEventListener('astro:page-load', initializeDropdowns);
+</script>

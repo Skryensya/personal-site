@@ -5,6 +5,7 @@ import TextGenerate from '../TextGenerate.tsx';
 import CornersWithCrosses from '../CornersWithCrosses.astro';
 import PixelBlastWithCssVar from '../PixelBlastWithCssVar.tsx'; // 👈
 import HeroCards from '../HeroCards.tsx';
+import HeroCardsAstro from '../HeroCardsAstro.astro';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import { getLocalizedUrl } from '@/utils/localized-routes';
@@ -29,11 +30,11 @@ const t = getTranslations(lang);
             client:load
           />
         </div>
-        <div class="flex flex-row flex-wrap gap-6">
-          <Button href={getLocalizedUrl(lang, 'projects')} class="order-2 md:order-1" id="projects-button">
+        <div class="flex flex-col md:flex-row  gap-6">
+          <Button href={getLocalizedUrl(lang, 'projects')} class="" id="projects-button">
             {t('home.heroProjectsButton')}
           </Button>
-          <Button href={getLocalizedUrl(lang, 'resume')} filled elevated class="order-1 md:order-2">
+          <Button href={getLocalizedUrl(lang, 'resume')} filled elevated class="">
             {t('home.cvButton')}
           </Button>
         </div>
@@ -63,7 +64,7 @@ const t = getTranslations(lang);
         <!-- Hero Cards on top -->
         <div class="relative z-10">
             <div class="-translate-y-56">
-                <HeroCards
+                <HeroCardsAstro
                 cardDistance={50}
                 verticalDistance={50}
                 delay={6000}
@@ -76,7 +77,6 @@ const t = getTranslations(lang);
                 backendDescription={t('hero.cards.backend.description')}
                 designTitle={t('hero.cards.design.title')}
                 designDescription={t('hero.cards.design.description')}
-                client:load
                 />
             </div>
         </div>

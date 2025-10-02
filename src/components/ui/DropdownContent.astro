@@ -1,0 +1,97 @@
+---
+export interface Props {
+  class?: string;
+}
+
+const { class: className = '' } = Astro.props;
+---
+
+<div role="none" class={className}>
+  <slot />
+</div>
+
+<script>
+  // Helper function to enhance dropdown items with proper styling and behavior
+  function enhanceDropdownItems() {
+    const dropdownContents = document.querySelectorAll('[role="none"]');
+    
+    dropdownContents.forEach(content => {
+      const items = content.querySelectorAll('button, a');
+      
+      items.forEach((item, index) => {
+        // Only enhance items that don't already have proper dropdown styling
+        const hasDropdownStyling = item.classList.contains('w-full') && 
+                                  item.classList.contains('hover:bg-main') && 
+                                  item.classList.contains('hover:text-secondary');
+        
+        if (!hasDropdownStyling) {
+          const baseClasses = 'w-full px-3 py-1 text-left block border-2 border-transparent select-none ring-inset';
+          const stateClasses = 'bg-secondary text-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary';
+          
+          // Only clean and replace if the item doesn't have proper styling already
+          const cleanedClassName = (item.className || '')
+            .replace(/bg-\w+/g, '')
+            .replace(/text-\w+/g, '')
+            .replace(/hover:bg-\w+/g, '')
+            .replace(/hover:text-\w+/g, '')
+            .replace(/hover:ring-\w+/g, '')
+            .replace(/focus-visible:bg-\w+/g, '')
+            .replace(/focus-visible:text-\w+/g, '')
+            .replace(/focus-visible:ring-\w+/g, '');
+          
+          item.className = `${cleanedClassName} ${baseClasses} ${stateClasses}`.trim();
+        }
+
+        // Set proper ARIA attributes
+        item.setAttribute('role', 'menuitem');
+        item.setAttribute('tabindex', '-1');
+        item.setAttribute('data-dropdown-item', 'true');
+        item.setAttribute('data-active', 'false');
+        
+        // Handle active state and selected state styling
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (mutation.type === 'attributes' && 
+                (mutation.attributeName === 'data-active' || mutation.attributeName === 'data-selected')) {
+              const isActive = item.getAttribute('data-active') === 'true';
+              const isSelected = item.getAttribute('data-selected') === 'true';
+              
+              // Active state takes priority (for keyboard navigation)
+              if (isActive) {
+                item.classList.remove('bg-secondary', 'text-main');
+                item.classList.add('bg-main', 'text-secondary');
+              } else if (isSelected) {
+                // Selected state: different styling to show current selection
+                item.classList.remove('bg-secondary', 'text-main');
+                item.classList.add('bg-main', 'text-secondary');
+              } else {
+                // Default state
+                item.classList.remove('bg-main', 'text-secondary');
+                item.classList.add('bg-secondary', 'text-main');
+              }
+            }
+          });
+        });
+        
+        observer.observe(item, { attributes: true, attributeFilter: ['data-active', 'data-selected'] });
+        
+        // Apply initial styling based on current data-selected state
+        const initiallySelected = item.getAttribute('data-selected') === 'true';
+        if (initiallySelected) {
+          item.classList.remove('bg-secondary', 'text-main');
+          item.classList.add('bg-main', 'text-secondary');
+        }
+      });
+    });
+  }
+
+  // Initialize on page load and navigation
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', enhanceDropdownItems);
+  } else {
+    enhanceDropdownItems();
+  }
+
+  // Also initialize on Astro page transitions
+  document.addEventListener('astro:page-load', enhanceDropdownItems);
+</script>

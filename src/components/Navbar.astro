@@ -1,7 +1,7 @@
 ---
-import ThemeControl from './ThemeControl.tsx';
-import ModeControl from './ModeControl.tsx';
-import LanguageControl from './LanguageControl.tsx';
+import ThemeControl from './ThemeControl.astro';
+import ModeControl from './ModeControl.astro';
+import LanguageControl from './LanguageControl.astro';
 import Button from './Button.astro';
 import { getLangFromUrl } from '@/i18n/utils';
 import { getTranslations } from '@/i18n/utils';
@@ -165,16 +165,16 @@ const navItems = [
           </div>
         </div>
         
-        <!-- Individual React components -->
+        <!-- Individual Astro components -->
         <div class="absolute top-0 right-0 h-full flex flex-row items-center gap-x-2 gap-y-1 pointer-events-auto">
           <div style="visibility: hidden;" id="theme-control">
-            <ThemeControl client:load />
+            <ThemeControl />
           </div>
           <div style="visibility: hidden;" id="mode-control">
-            <ModeControl client:load />
+            <ModeControl />
           </div>
           <div style="visibility: hidden;" id="language-control">
-            <LanguageControl currentPath={Astro.url.pathname} initialLocale={currentLocale} client:load />
+            <LanguageControl currentPath={Astro.url.pathname} initialLocale={currentLocale} />
           </div>
         </div>
         
@@ -368,12 +368,12 @@ const navItems = [
 
   // Skip to main content functionality
   function skipToMainContent() {
-    console.log('🔍 Skip to main content activated');
+    // Skip to main content activated
     
     // Focus directly on the projects button in Hero section (most reliable)
     const projectsButton = document.getElementById('projects-button');
     if (projectsButton) {
-      console.log('✅ Projects button found, focusing...');
+      // Projects button found, focusing
       
       // Ensure the element is focusable and give it time to be ready
       setTimeout(() => {
@@ -387,7 +387,7 @@ const navItems = [
             inline: 'nearest'
           });
           
-          console.log('✅ Focus set on projects button');
+          // Focus set on projects button
         }
       }, 50);
       return;
@@ -449,6 +449,11 @@ const navItems = [
     // Get theme and mode from localStorage
     const savedThemeId = localStorage.getItem('theme-id');
     const savedMode = localStorage.getItem('theme-mode') || 'system';
+    
+    // If no mode was saved, set system as default
+    if (!localStorage.getItem('theme-mode')) {
+      localStorage.setItem('theme-mode', 'system');
+    }
     
     // The theme preview should always use CSS variables, no need to update colors
     // This maintains consistency with the design system
@@ -670,6 +675,46 @@ const navItems = [
     // Setup scroll prevention for header focus
     preventHeaderScrollOnFocus();
 
+    // Ensure desktop mode control works
+    function ensureDesktopModeControl() {
+      // Wait for mode control to be ready and add click handler
+      const maxAttempts = 20;
+      let attempts = 0;
+      
+      function trySetupDesktopMode() {
+        attempts++;
+        const modeControlContainer = document.getElementById('mode-control');
+        
+        if (modeControlContainer) {
+          const mainModeButton = modeControlContainer.querySelector('[data-main-action="toggleMode"]');
+          if (mainModeButton) {
+            // Ensure the button has the correct click handler
+            mainModeButton.addEventListener('click', function(e) {
+              e.preventDefault();
+              e.stopPropagation();
+              if (window.toggleMode && typeof window.toggleMode === 'function') {
+                window.toggleMode();
+              } else if (window.modeControl && typeof window.modeControl.toggleMode === 'function') {
+                window.modeControl.toggleMode();
+              }
+            });
+            console.log('Desktop mode control setup complete');
+            return true;
+          }
+        }
+        
+        if (attempts < maxAttempts) {
+          setTimeout(trySetupDesktopMode, 100);
+          return false;
+        } else {
+          console.warn('Could not setup desktop mode control after', maxAttempts, 'attempts');
+          return false;
+        }
+      }
+      
+      trySetupDesktopMode();
+    }
+
     // Mobile control buttons functionality
     function setupMobileControlButtons() {
       const themePrev = document.getElementById('mobile-theme-prev');
@@ -720,34 +765,28 @@ const navItems = [
       }
 
       // Mode navigation
+      function callModeToggle() {
+        if (window.toggleMode && typeof window.toggleMode === 'function') {
+          window.toggleMode();
+          setTimeout(updateMobileModeDisplay, 50);
+        } else if (window.modeControl && typeof window.modeControl.toggleMode === 'function') {
+          window.modeControl.toggleMode();
+          setTimeout(updateMobileModeDisplay, 50);
+        } else {
+          console.warn('No mode toggle function available');
+        }
+      }
+      
       if (modePrev) {
-        modePrev.onclick = function() {
-          const desktopModeButton = document.querySelector('#mode-control button:first-child');
-          if (desktopModeButton) {
-            desktopModeButton.click();
-            setTimeout(updateMobileModeDisplay, 10);
-          }
-        };
+        modePrev.onclick = callModeToggle;
       }
       
       if (modeNext) {
-        modeNext.onclick = function() {
-          const desktopModeButton = document.querySelector('#mode-control button:first-child');
-          if (desktopModeButton) {
-            desktopModeButton.click();
-            setTimeout(updateMobileModeDisplay, 10);
-          }
-        };
+        modeNext.onclick = callModeToggle;
       }
       
       if (modeCenter) {
-        modeCenter.onclick = function() {
-          const desktopModeButton = document.querySelector('#mode-control button:first-child');
-          if (desktopModeButton) {
-            desktopModeButton.click();
-            setTimeout(updateMobileModeDisplay, 10);
-          }
-        };
+        modeCenter.onclick = callModeToggle;
       }
 
       // Language navigation - enhanced with better reliability
@@ -899,6 +938,9 @@ const navItems = [
       }
     }
 
+    // Setup desktop mode control first
+    ensureDesktopModeControl();
+    
     // Initialize mobile controls after a delay to ensure React components are ready
     setTimeout(() => {
       setupMobileControlButtons();
@@ -932,6 +974,19 @@ const navItems = [
     // Listen for individual component ready events
     const handleThemeReady = () => {
       showReactComponent('theme');
+      // Ensure theme dropdown buttons work after being shown
+      setTimeout(() => {
+        const themeDropdownButtons = document.querySelectorAll('#theme-control [data-theme-button]');
+        if (themeDropdownButtons.length === 0) {
+          console.warn('Theme dropdown buttons not found after component ready');
+          // Try to reinitialize theme control
+          if (window.themeControl && typeof window.themeControl.init === 'function') {
+            window.themeControl.init();
+          }
+        } else {
+          console.log('Theme dropdown has', themeDropdownButtons.length, 'buttons');
+        }
+      }, 100);
     };
     
     const handleModeReady = () => {
@@ -951,6 +1006,18 @@ const navItems = [
     // Fallback: Show all components after a delay if events don't fire
     setTimeout(() => {
       showAllReactComponents();
+      // Also try to reinitialize theme control if dropdown is not working
+      setTimeout(() => {
+        const themeControl = document.getElementById('theme-control');
+        const themeDropdownButtons = document.querySelectorAll('#theme-control [data-theme-button]');
+        
+        if (themeControl && themeControl.style.visibility === 'visible' && themeDropdownButtons.length === 0) {
+          console.warn('Theme control is visible but dropdown buttons missing, reinitializing...');
+          if (window.themeControl && typeof window.themeControl.init === 'function') {
+            window.themeControl.init();
+          }
+        }
+      }, 500);
     }, 2000);
     
     // Cleanup function for page navigation

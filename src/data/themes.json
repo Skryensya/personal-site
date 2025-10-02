@@ -3,10 +3,10 @@
         {
             "id": "chipax",
             "name": "Chipax",
-            "description": "Colorful teal corporate vibes",
+            "description": "Elegant teal corporate sophistication",
             "colors": {
-                "colorful": "#F6FCFC",
-                "contrasty": "#0D968B"
+                "colorful": "#F0FFFE",
+                "contrasty": "#0B7A70"
             },
             "hidden": true,
             "special": true
@@ -14,10 +14,32 @@
         {
             "id": "skyward-ai",
             "name": "Skyward AI",
-            "description": "AI-powered orange innovation",
+            "description": "Premium orange technology innovation",
             "colors": {
-                "colorful": "#FFFAEA",
-                "contrasty": "#FC3E14"
+                "colorful": "#FFFBF5",
+                "contrasty": "#E5350A"
+            },
+            "hidden": true,
+            "special": true
+        },
+        {
+            "id": "matrix",
+            "name": "Matrix",
+            "description": "Digital rain code reality",
+            "colors": {
+                "colorful": "#00FF00",
+                "contrasty": "#000000"
+            },
+            "hidden": true,
+            "special": true
+        },
+        {
+            "id": "vaporwave",
+            "name": "Vaporwave",
+            "description": "Aesthetic retrowave vibes",
+            "colors": {
+                "colorful": "#FF00FF",
+                "contrasty": "#200040"
             },
             "hidden": true,
             "special": true
@@ -32,9 +54,9 @@
             }
         },
         {
-            "id": "pacman",
-            "name": "Pac-Man",
-            "description": "Warning tape industrial",
+            "id": "banana",
+            "name": "Banana",
+            "description": "Potassium-powered meme energy",
             "colors": {
                 "colorful": "#D4B340",
                 "contrasty": "#020123"
@@ -69,112 +91,22 @@
             }
         },
         {
-            "id": "konami",
-            "name": "Konami",
-            "description": "Secret unlock red theme",
+            "id": "sage",
+            "name": "Sage",
+            "description": "Muted green wisdom",
             "colors": {
-                "colorful": "#FF3333",
-                "contrasty": "#0A0000"
+                "colorful": "#9CAF88",
+                "contrasty": "#1A2E0A"
             },
             "hidden": true
         },
         {
-            "id": "neon",
-            "name": "Neon City",
-            "description": "Cyberpunk synthwave vibes",
+            "id": "rose",
+            "name": "Rose",
+            "description": "Elegant dusty pink",
             "colors": {
-                "colorful": "#FF0080",
-                "contrasty": "#001122"
-            },
-            "hidden": true
-        },
-        {
-            "id": "forest",
-            "name": "Forest",
-            "description": "Deep woodland serenity",
-            "colors": {
-                "colorful": "#228B22",
-                "contrasty": "#0F1A0F"
-            },
-            "hidden": true
-        },
-        {
-            "id": "sunset",
-            "name": "Sunset",
-            "description": "Golden hour warmth",
-            "colors": {
-                "colorful": "#FF6B35",
-                "contrasty": "#2A1810"
-            },
-            "hidden": true
-        },
-        {
-            "id": "ocean",
-            "name": "Ocean",
-            "description": "Deep sea mystery",
-            "colors": {
-                "colorful": "#00CED1",
-                "contrasty": "#001A33"
-            },
-            "hidden": true
-        },
-        {
-            "id": "vampire",
-            "name": "Vampire",
-            "description": "Gothic blood moon",
-            "colors": {
-                "colorful": "#8B0000",
-                "contrasty": "#1A0A0A"
-            },
-            "hidden": true
-        },
-        {
-            "id": "space",
-            "name": "Space",
-            "description": "Cosmic purple nebula",
-            "colors": {
-                "colorful": "#9932CC",
-                "contrasty": "#0A0A1A"
-            },
-            "hidden": true
-        },
-        {
-            "id": "matrix",
-            "name": "Matrix",
-            "description": "Digital rain code",
-            "colors": {
-                "colorful": "#00FF00",
-                "contrasty": "#001100"
-            },
-            "hidden": true
-        },
-        {
-            "id": "lava",
-            "name": "Lava",
-            "description": "Molten volcanic fire",
-            "colors": {
-                "colorful": "#FF4500",
-                "contrasty": "#330A00"
-            },
-            "hidden": true
-        },
-        {
-            "id": "ice",
-            "name": "Ice",
-            "description": "Arctic crystal frost",
-            "colors": {
-                "colorful": "#B0E0E6",
-                "contrasty": "#0A1A33"
-            },
-            "hidden": true
-        },
-        {
-            "id": "gold",
-            "name": "Gold",
-            "description": "Luxury golden elegance",
-            "colors": {
-                "colorful": "#FFD700",
-                "contrasty": "#1A1A0A"
+                "colorful": "#E6B3BA",
+                "contrasty": "#2E0A1A"
             },
             "hidden": true
         }

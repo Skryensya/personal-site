@@ -1,0 +1,345 @@
+---
+import DropdownButton from './ui/DropdownButton.astro';
+import DropdownContent from './ui/DropdownContent.astro';
+import { getTranslations } from '@/i18n/utils';
+import { getLangFromUrl } from '@/i18n/utils';
+
+const currentLocale = getLangFromUrl(Astro.url);
+const t = getTranslations(currentLocale);
+
+// Mode options
+const modes = [
+  { id: 'light', icon: 'sun' },
+  { id: 'dark', icon: 'moon' },
+  { id: 'system', icon: 'monitor' }
+];
+---
+
+<DropdownButton
+  onMainClick="toggleMode"
+  disabled={false}
+  ariaLabel={`${t('mode.current')} sistema. ${t('mode.toggle')}`}
+  class="w-7 h-7 @6xl:w-auto @6xl:h-8"
+  id="mode-control"
+>
+  <div class="flex items-center gap-2">
+    <div class="w-3.5 h-3.5 relative flex-shrink-0 translate-y-[-1px]" id="mode-icon-container">
+      <!-- System icon as default -->
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+        <line x1="8" y1="21" x2="16" y2="21"></line>
+        <line x1="12" y1="17" x2="12" y2="21"></line>
+      </svg>
+    </div>
+    <span class="hidden @6xl:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary uppercase" id="mode-name-display">
+      {t('ui.loading')}
+    </span>
+  </div>
+
+  <DropdownContent slot="dropdown-content">
+    <div id="mode-dropdown-content">
+      {modes.map((mode) => (
+        <button
+          type="button"
+          data-mode-button
+          data-mode-id={mode.id}
+          class="w-full px-1 py-0.5 text-left block cursor-pointer relative focus-visible:z-[9999] transition-all duration-150 bg-secondary text-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary"
+          style="outline-width: 1px; outline-offset: 1px; min-height: 32px;"
+        >
+          <div class="flex items-center gap-0 pointer-events-none">
+            <div class="w-3.5 h-3.5 relative flex-shrink-0 ml-1">
+              {mode.icon === 'sun' && (
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="5" />
+                  <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+                </svg>
+              )}
+              {mode.icon === 'moon' && (
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+              )}
+              {mode.icon === 'monitor' && (
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                  <line x1="8" y1="21" x2="16" y2="21"></line>
+                  <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+              )}
+            </div>
+            <span class="flex-1 px-1 py-1 font-grotesk text-sm font-semibold pointer-events-none select-none uppercase whitespace-nowrap mode-button-label">
+              {mode.id === 'light' ? (currentLocale === 'es' ? 'Claro' : currentLocale === 'no' ? 'Lys' : 'Light') : 
+               mode.id === 'dark' ? (currentLocale === 'es' ? 'Oscuro' : currentLocale === 'no' ? 'Mørk' : 'Dark') :
+               (currentLocale === 'es' ? 'Sistema' : currentLocale === 'no' ? 'System' : 'System')}
+            </span>
+            <div class="w-4 h-4 flex items-center justify-center pointer-events-none">
+              <svg
+                class="w-4 h-4 pointer-events-none mode-checkmark"
+                style="display: none;"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <polyline points="20,6 9,17 4,12" />
+              </svg>
+            </div>
+          </div>
+        </button>
+      ))}
+    </div>
+  </DropdownContent>
+</DropdownButton>
+
+<script>
+  import { applyTheme, themes } from '../data/themes.js';
+
+  // Global mode management functions
+  (window as any).modeControl = {
+    currentMode: 'system',
+    
+    // Initialize mode control
+    init() {
+      this.loadCurrentMode();
+      this.setupEventListeners();
+      this.updateDisplay();
+      this.addModeButtonListeners();
+      
+      // Signal that mode control is ready
+      setTimeout(() => {
+        const event = new CustomEvent('mode-control-ready', {
+          detail: { mode: this.currentMode }
+        });
+        window.dispatchEvent(event);
+      }, 0);
+    },
+    
+    // Load current mode from global state or localStorage
+    loadCurrentMode() {
+      // Check global state first
+      const globalMode = (window as any).__THEME_MODE__;
+      if (globalMode && (globalMode === 'light' || globalMode === 'dark' || globalMode === 'system')) {
+        this.currentMode = globalMode;
+        return;
+      }
+      
+      // Fallback to localStorage
+      const savedMode = localStorage.getItem('theme-mode');
+      if (savedMode === 'light' || savedMode === 'dark' || savedMode === 'system') {
+        this.currentMode = savedMode;
+        return;
+      }
+      
+      // Default to system mode
+      this.currentMode = 'system';
+      // Save the default to localStorage
+      localStorage.setItem('theme-mode', 'system');
+      (window as any).__THEME_MODE__ = 'system';
+    },
+    
+    // Apply mode to document
+    applyModeToDocument(mode: any) {
+      // Get current theme from localStorage or global state
+      const savedThemeId = localStorage.getItem('theme-id') || (window as any).__THEME_ID__;
+      const currentTheme = themes.find(t => t.id === savedThemeId) || themes[0];
+      
+      let resolvedMode = mode;
+      if (mode === 'system') {
+        resolvedMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      
+      const isDark = resolvedMode === 'dark';
+      applyTheme(currentTheme.id, isDark, null);
+      
+      // Save to localStorage
+      localStorage.setItem('theme-mode', mode);
+      
+      // Update global state
+      (window as any).__THEME_MODE__ = mode;
+    },
+    
+    // Handle mode change
+    changeMode(mode: any) {
+      this.currentMode = mode;
+      this.applyModeToDocument(mode);
+      this.updateDisplay();
+      
+      // Emit custom event for mobile navbar
+      const event = new CustomEvent('mode-changed', {
+        detail: { mode }
+      });
+      window.dispatchEvent(event);
+    },
+    
+    // Toggle mode (main button action)
+    toggleMode() {
+      let nextMode;
+
+      if (this.currentMode === 'system') {
+        nextMode = 'light';
+      } else if (this.currentMode === 'light') {
+        nextMode = 'dark';
+      } else {
+        nextMode = 'system';
+      }
+
+      this.changeMode(nextMode);
+    },
+    
+    // Get mode name in current language
+    getModeName(mode: string) {
+      const currentLang = this.getCurrentLanguage();
+      const translations: any = {
+        'es': { 'light': 'Claro', 'dark': 'Oscuro', 'system': 'Sistema' },
+        'en': { 'light': 'Light', 'dark': 'Dark', 'system': 'System' },
+        'no': { 'light': 'Lys', 'dark': 'Mørk', 'system': 'System' }
+      };
+      
+      const modeNames = translations[currentLang] || translations['es'];
+      return modeNames[mode] || mode.charAt(0).toUpperCase() + mode.slice(1);
+    },
+    
+    // Get current language from URL
+    getCurrentLanguage() {
+      const path = window.location.pathname;
+      if (path.startsWith('/en/')) return 'en';
+      if (path.startsWith('/no/')) return 'no';
+      return 'es';
+    },
+    
+    // Get mode icon HTML
+    getModeIcon(mode: string) {
+      switch (mode) {
+        case 'light':
+          return `
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="5" />
+              <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
+            </svg>
+          `;
+        case 'dark':
+          return `
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+            </svg>
+          `;
+        case 'system':
+        default:
+          return `
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg>
+          `;
+      }
+    },
+    
+    // Update display elements
+    updateDisplay() {
+      // Update main icon
+      const iconContainer = document.getElementById('mode-icon-container');
+      if (iconContainer) {
+        iconContainer.innerHTML = this.getModeIcon(this.currentMode);
+      }
+      
+      // Update main label
+      const nameDisplay = document.getElementById('mode-name-display');
+      if (nameDisplay) {
+        nameDisplay.textContent = this.getModeName(this.currentMode);
+      }
+      
+      // Update dropdown buttons
+      const modeButtons = document.querySelectorAll('[data-mode-button]');
+      modeButtons.forEach(button => {
+        const buttonElement = button as HTMLElement;
+        const modeId = buttonElement.dataset.modeId;
+        const isSelected = modeId === this.currentMode;
+        buttonElement.setAttribute('data-selected', isSelected ? 'true' : 'false');
+        
+        // Update button classes for selected state
+        const baseClasses = "w-full px-1 py-0.5 text-left block cursor-pointer relative focus-visible:z-[9999] transition-all duration-150";
+        const stateClasses = isSelected 
+          ? "bg-main text-secondary hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary" 
+          : "bg-secondary text-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary";
+        buttonElement.className = `${baseClasses} ${stateClasses}`;
+        buttonElement.style.outlineWidth = "1px";
+        buttonElement.style.outlineOffset = "1px";
+        buttonElement.style.minHeight = "32px";
+        
+        // Update checkmark visibility
+        const checkmark = buttonElement.querySelector('.mode-checkmark') as HTMLElement;
+        if (checkmark) {
+          checkmark.style.display = isSelected ? 'block' : 'none';
+        }
+        
+        // Update button label with current language
+        const label = buttonElement.querySelector('.mode-button-label') as HTMLElement;
+        if (label && modeId) {
+          label.textContent = this.getModeName(modeId);
+        }
+      });
+      
+      // Update ARIA label
+      const dropdown = document.getElementById('mode-control');
+      if (dropdown) {
+        const mainButton = dropdown.querySelector('button[data-main-action]');
+        if (mainButton) {
+          const currentLang = this.getCurrentLanguage();
+          const currentText = currentLang === 'es' ? 'Actual' : (currentLang === 'no' ? 'Nåværende' : 'Current');
+          const toggleText = currentLang === 'es' ? 'Cambiar modo' : (currentLang === 'no' ? 'Bytt modus' : 'Toggle mode');
+          mainButton.setAttribute('aria-label', `${currentText} ${this.getModeName(this.currentMode)}. ${toggleText}`);
+        }
+      }
+    },
+    
+    // Add event listeners to mode buttons
+    addModeButtonListeners() {
+      const modeButtons = document.querySelectorAll('[data-mode-button]');
+      modeButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const buttonElement = button as HTMLElement;
+          const modeId = buttonElement.dataset.modeId;
+          if (modeId && ['light', 'dark', 'system'].includes(modeId)) {
+            this.changeMode(modeId as any);
+          }
+        });
+      });
+    },
+    
+    // Setup event listeners
+    setupEventListeners() {
+      // Listen for system preference changes when in system mode
+      const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+      const handleSystemChange = () => {
+        if (this.currentMode === 'system') {
+          this.applyModeToDocument('system');
+        }
+      };
+
+      mediaQuery.addEventListener('change', handleSystemChange);
+    }
+  };
+
+  // Global function for main button
+  (window as any).toggleMode = () => {
+    if ((window as any).modeControl && typeof (window as any).modeControl.toggleMode === 'function') {
+      (window as any).modeControl.toggleMode();
+    } else {
+    }
+  };
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      (window as any).modeControl.init();
+    });
+  } else {
+    (window as any).modeControl.init();
+  }
+
+  // Also initialize on Astro page transitions
+  document.addEventListener('astro:page-load', () => {
+    (window as any).modeControl.init();
+  });
+</script>
