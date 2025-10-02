@@ -3,7 +3,7 @@ import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import Button from '../Button.astro';
 import ThemedImage from '../ThemedImage.astro';
-import { MapPin, CheckCircle, Mail, Github, Linkedin, Crown } from 'lucide-react';
+import { MapPin, CheckCircle, ExternalLink } from 'lucide-react';
 
 interface Props {
   className?: string;
@@ -89,45 +89,45 @@ const t = getTranslations(lang);
 
         <!-- Social Links -->
         <div class="border-t border-main/20 pt-4">
-          <div class="font-mono text-xs text-main/70 uppercase tracking-wide mb-3">Conectar</div>
-          <div class="space-y-2">
+          <div class="font-mono text-sm font-bold text-main uppercase mb-4">Conectar</div>
+          <nav class="space-y-1">
             <a
               href="mailto:allison.jpb@gmail.com"
               target="_blank"
               rel="noopener noreferrer"
-              class="group flex items-center gap-3 text-sm text-main hover:bg-main hover:text-secondary px-2 py-1 -mx-2 border border-transparent hover:border-main transition-colors select-none"
+              class="group font-mono text-sm text-main hover:bg-main hover:text-secondary px-4 py-2.5 md:py-1.5 border-l-2 border-main flex items-center justify-between"
             >
-              <Mail size={16} className="text-main group-hover:text-secondary flex-shrink-0" client:idle />
-              <span class="font-medium flex-1">Email</span>
+              <span>Email</span>
+              <ExternalLink size={14} className="text-main group-hover:text-secondary" client:idle />
             </a>
             <a
               href="https://github.com/Skryensya"
               target="_blank"
               rel="noopener noreferrer"
-              class="group flex items-center gap-3 text-sm text-main hover:bg-main hover:text-secondary px-2 py-1 -mx-2 border border-transparent hover:border-main transition-colors select-none"
+              class="group font-mono text-sm text-main hover:bg-main hover:text-secondary px-4 py-2.5 md:py-1.5 border-l-2 border-main flex items-center justify-between"
             >
-              <Github size={16} className="text-main group-hover:text-secondary flex-shrink-0" client:idle />
-              <span class="font-medium flex-1">GitHub</span>
+              <span>GitHub</span>
+              <ExternalLink size={14} className="text-main group-hover:text-secondary" client:idle />
             </a>
             <a
               href="https://linkedin.com/in/skryensya"
               target="_blank"
               rel="noopener noreferrer"
-              class="group flex items-center gap-3 text-sm text-main hover:bg-main hover:text-secondary px-2 py-1 -mx-2 border border-transparent hover:border-main transition-colors select-none"
+              class="group font-mono text-sm text-main hover:bg-main hover:text-secondary px-4 py-2.5 md:py-1.5 border-l-2 border-main flex items-center justify-between"
             >
-              <Linkedin size={16} className="text-main group-hover:text-secondary flex-shrink-0" client:idle />
-              <span class="font-medium flex-1">LinkedIn</span>
+              <span>LinkedIn</span>
+              <ExternalLink size={14} className="text-main group-hover:text-secondary" client:idle />
             </a>
             <a
               href="https://lichess.org/@/Skryensya"
               target="_blank"
               rel="noopener noreferrer"
-              class="group flex items-center gap-3 text-sm text-main hover:bg-main hover:text-secondary px-2 py-1 -mx-2 border border-transparent hover:border-main transition-colors select-none"
+              class="group font-mono text-sm text-main hover:bg-main hover:text-secondary px-4 py-2.5 md:py-1.5 border-l-2 border-main flex items-center justify-between"
             >
-              <Crown size={16} className="text-main group-hover:text-secondary flex-shrink-0" client:idle />
-              <span class="font-medium flex-1">Lichess</span>
+              <span>Lichess</span>
+              <ExternalLink size={14} className="text-main group-hover:text-secondary" client:idle />
             </a>
-          </div>
+          </nav>
         </div>
       </div>
     </div>
