@@ -1,0 +1,245 @@
+---
+import DropdownButton from './ui/DropdownButton.astro';
+import DropdownContent from './ui/DropdownContent.astro';
+import { supportedLanguages, languages, type Language } from '@/i18n/ui';
+import { getLangFromUrl } from '@/i18n/utils';
+import { getEquivalentPage } from '@/utils/localized-routes';
+
+export interface Props {
+  currentPath?: string;
+  initialLocale?: Language;
+}
+
+const currentLocale = getLangFromUrl(Astro.url);
+const pathname = Astro.url.pathname;
+
+// Generate alternate URLs for all languages
+const alternateUrls = supportedLanguages.map((lang) => ({
+  lang,
+  url: getEquivalentPage(pathname, lang)
+}));
+---
+
+<div data-component="language-control">
+  <DropdownButton
+    onMainClick="nextLanguage"
+    class="w-7 h-7 @6xl:w-auto @6xl:h-8"
+    id="language-control"
+  >
+    <div class="flex items-center gap-2">
+      <span class="font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary uppercase" id="language-name-display">
+        {languages[currentLocale]}
+      </span>
+    </div>
+
+    <DropdownContent slot="dropdown-content">
+      <div id="language-dropdown-content">
+        {supportedLanguages.map((lang) => {
+          const url = alternateUrls.find(alt => alt.lang === lang)?.url || '/';
+          return (
+            <a
+              href={url}
+              data-language-link
+              data-lang={lang}
+              data-url={url}
+              class="w-full px-1 py-0.5 text-left block cursor-pointer relative focus-visible:z-[9999] no-underline transition-all duration-150 bg-secondary text-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary"
+              style="outline-width: 1px; outline-offset: 1px; min-height: 32px;"
+            >
+              <div class="flex items-center gap-0 pointer-events-none">
+                <div class="flex-1 px-1 py-1 pointer-events-none select-none">
+                  <div class="font-grotesk text-sm font-semibold uppercase whitespace-nowrap">
+                    {languages[lang]}
+                  </div>
+                  <div class="font-grotesk text-sm opacity-70 mt-0.5 uppercase whitespace-nowrap language-translated-name">
+                    <!-- Will be populated by JavaScript -->
+                  </div>
+                </div>
+                <div class="w-4 h-4 flex items-center justify-center pointer-events-none">
+                  <svg
+                    class="w-4 h-4 pointer-events-none language-checkmark"
+                    style="display: none;"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                  >
+                    <polyline points="20,6 9,17 4,12" />
+                  </svg>
+                </div>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </DropdownContent>
+  </DropdownButton>
+</div>
+
+<script>
+  import { supportedLanguages, languages, type Language } from '@/i18n/ui';
+  import { getLangFromUrl } from '@/i18n/utils';
+  import { getEquivalentPage } from '@/utils/localized-routes';
+
+  // Global language management functions
+  (window as any).languageControl = {
+    currentLang: 'es',
+    alternateUrls: [],
+    
+    // Initialize language control
+    init() {
+      this.loadCurrentLanguage();
+      this.generateAlternateUrls();
+      this.updateDisplay();
+      this.addLanguageButtonListeners();
+      this.setupFocusRestoration();
+      
+      // Signal that language control is ready
+      setTimeout(() => {
+        const event = new CustomEvent('language-control-ready', {
+          detail: { language: this.currentLang }
+        });
+        window.dispatchEvent(event);
+      }, 100);
+    },
+    
+    // Load current language from URL
+    loadCurrentLanguage() {
+      this.currentLang = getLangFromUrl(new URL(window.location.href));
+    },
+    
+    // Generate alternate URLs for all languages
+    generateAlternateUrls() {
+      const pathname = window.location.pathname;
+      this.alternateUrls = supportedLanguages.map((lang) => ({
+        lang,
+        url: getEquivalentPage(pathname, lang)
+      }));
+    },
+    
+    // Get native language name
+    getNativeLanguageName(lang: Language) {
+      return languages[lang];
+    },
+    
+    // Get language name in current language
+    getLanguageNameInCurrent(lang: Language) {
+      const langNames: any = {
+        es: { es: 'Español', en: 'Inglés', no: 'Noruego' },
+        en: { es: 'Spanish', en: 'English', no: 'Norwegian' },
+        no: { es: 'Spansk', en: 'Engelsk', no: 'Norsk' }
+      };
+      return langNames[this.currentLang][lang];
+    },
+    
+    // Handle language switch
+    switchLanguage(lang: Language, url: string, viaKeyboard = false) {
+      localStorage.setItem('langChoice', lang);
+      // Only save focus state if changed via keyboard
+      if (viaKeyboard) {
+        localStorage.setItem('focusAfterNavigation', 'language-control');
+      }
+      window.location.href = url;
+    },
+    
+    // Next language (for main button)
+    nextLanguage() {
+      const currentIndex = supportedLanguages.findIndex(lang => lang === this.currentLang);
+      const nextIndex = (currentIndex + 1) % supportedLanguages.length;
+      const nextLang = supportedLanguages[nextIndex];
+      const url = this.alternateUrls.find((alt: any) => alt.lang === nextLang)?.url || '/';
+      this.switchLanguage(nextLang, url, true); // Always via keyboard when using main button
+    },
+    
+    // Update display elements
+    updateDisplay() {
+      // Update main display
+      const nameDisplay = document.getElementById('language-name-display');
+      if (nameDisplay) {
+        nameDisplay.textContent = this.getNativeLanguageName(this.currentLang);
+      }
+      
+      // Update dropdown items
+      const languageLinks = document.querySelectorAll('[data-language-link]');
+      languageLinks.forEach(link => {
+        const linkElement = link as HTMLElement;
+        const lang = linkElement.dataset.lang as Language;
+        const isSelected = lang === this.currentLang;
+        linkElement.setAttribute('data-selected', isSelected ? 'true' : 'false');
+        
+        // Update link classes for selected state
+        const baseClasses = "w-full px-1 py-0.5 text-left block cursor-pointer relative focus-visible:z-[9999] no-underline transition-all duration-150";
+        const stateClasses = isSelected 
+          ? "bg-main text-secondary hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary" 
+          : "bg-secondary text-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary";
+        linkElement.className = `${baseClasses} ${stateClasses}`;
+        linkElement.style.outlineWidth = "1px";
+        linkElement.style.outlineOffset = "1px";
+        linkElement.style.minHeight = "32px";
+        
+        // Update checkmark visibility
+        const checkmark = linkElement.querySelector('.language-checkmark') as HTMLElement;
+        if (checkmark) {
+          checkmark.style.display = isSelected ? 'block' : 'none';
+        }
+        
+        // Update translated name
+        const translatedName = linkElement.querySelector('.language-translated-name') as HTMLElement;
+        if (translatedName) {
+          translatedName.textContent = this.getLanguageNameInCurrent(lang);
+        }
+      });
+    },
+    
+    // Add event listeners to language buttons
+    addLanguageButtonListeners() {
+      const languageLinks = document.querySelectorAll('[data-language-link]');
+      languageLinks.forEach(link => {
+        // Override default link behavior to use our switch function
+        link.addEventListener('click', (event) => {
+          event.preventDefault();
+          const linkElement = link as HTMLElement;
+          const lang = linkElement.dataset.lang as Language;
+          const url = linkElement.dataset.url;
+          if (lang && url) {
+            this.switchLanguage(lang, url, false);
+          }
+        });
+      });
+    },
+    
+    // Setup focus restoration
+    setupFocusRestoration() {
+      // Check if we should restore focus after navigation
+      const shouldFocus = localStorage.getItem('focusAfterNavigation');
+      if (shouldFocus === 'language-control') {
+        localStorage.removeItem('focusAfterNavigation');
+        // Focus the main language control button after component is ready
+        setTimeout(() => {
+          const mainLanguageButton = document.querySelector('[data-component="language-control"] .inline-flex button:first-child') as HTMLElement;
+          if (mainLanguageButton) {
+            mainLanguageButton.focus();
+          }
+        }, 150);
+      }
+    }
+  };
+
+  // Global function for main button
+  (window as any).nextLanguage = () => {
+    (window as any).languageControl.nextLanguage();
+  };
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      (window as any).languageControl.init();
+    });
+  } else {
+    (window as any).languageControl.init();
+  }
+
+  // Also initialize on Astro page transitions
+  document.addEventListener('astro:page-load', () => {
+    (window as any).languageControl.init();
+  });
+</script>

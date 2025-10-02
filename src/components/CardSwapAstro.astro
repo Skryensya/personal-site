@@ -1,0 +1,432 @@
+---
+interface Props {
+  width?: number | string;
+  height?: number | string;
+  cardDistance?: number;
+  verticalDistance?: number;
+  delay?: number;
+  pauseOnHover?: boolean;
+  skewAmount?: number;
+  easing?: 'linear' | 'elastic';
+  class?: string;
+}
+
+const {
+  width = 500,
+  height = 400,
+  cardDistance = 60,
+  verticalDistance = 70,
+  delay = 5000,
+  pauseOnHover = false,
+  skewAmount = 6,
+  easing = 'elastic',
+  class: className = ''
+} = Astro.props;
+---
+
+<div 
+  class={`card-swap-container absolute top-1/2 right-0 transform translate-x-[calc(-35%+0px)] translate-y-[-40%] origin-center overflow-visible max-[768px]:translate-x-[calc(-15%+0px)] max-[768px]:translate-y-[-40%] max-[768px]:scale-[0.75] max-[480px]:translate-x-[calc(-5%+0px)] max-[480px]:translate-y-[-40%] max-[480px]:scale-[0.65] ${className}`}
+  style={`width: ${typeof width === 'number' ? width + 'px' : width}; height: ${typeof height === 'number' ? height + 'px' : height};`}
+  data-card-distance={cardDistance}
+  data-vertical-distance={verticalDistance}
+  data-delay={delay}
+  data-pause-on-hover={pauseOnHover}
+  data-skew-amount={skewAmount}
+  data-easing={easing}
+>
+  <slot />
+</div>
+
+<style>
+  /* Initial positioning to prevent CLS - ensure perspective and 3D context */
+  .card-swap-container {
+    perspective: 1200px;
+    transform-style: preserve-3d;
+    overflow-x: visible;
+  }
+  
+  .card-swap-card {
+    transform-origin: center center;
+    will-change: transform;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
+  }
+  
+  /* Cards appear one by one with staggered animation */
+  .card-swap-card.card-revealed {
+    opacity: 1 !important;
+    visibility: visible !important;
+  }
+  
+  /* Delay reveal for each card */
+  .card-swap-card {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 80%; /* 80% of container width */
+    max-width: 400px;
+    min-width: 200px;
+  }
+
+  /* Smaller cards for lg breakpoint (1024px) and below */
+  @media (max-width: 1024px) {
+    .card-swap-card {
+      width: 50%; /* Much smaller to prevent overflow */
+      max-width: 280px;
+    }
+  }
+  
+  .card-swap-card[data-card-index="0"] {
+    transform: translate(-50%, -50%) translate3d(0px, 0px, 0px) skewY(6deg);
+    z-index: 3;
+    transition-delay: 0.2s;
+  }
+  
+  .card-swap-card[data-card-index="1"] {
+    transform: translate(-50%, -50%) translate3d(35px, -35px, -20px) skewY(6deg);
+    z-index: 2;
+    transition-delay: 0.4s;
+  }
+  
+  .card-swap-card[data-card-index="2"] {
+    transform: translate(-50%, -50%) translate3d(70px, -70px, -40px) skewY(6deg);
+    z-index: 1;
+    transition-delay: 0.6s;
+  }
+</style>
+
+<script>
+  // Import GSAP from CDN or use existing GSAP if available
+  declare global {
+    interface Window {
+      gsap: any;
+    }
+  }
+
+  interface Slot {
+    x: number;
+    y: number;
+    z: number;
+    zIndex: number;
+  }
+
+  class CardSwapController {
+    private container: HTMLElement;
+    private cards: HTMLElement[];
+    private order: number[];
+    private timeline: any = null;
+    private interval: number | null = null;
+    private config: any;
+    private isAnimating: boolean = false;
+    private animationStartTime: number = 0;
+
+    constructor(container: HTMLElement) {
+      console.log('🏗️ Creating CardSwapController for container:', container);
+      this.container = container;
+      this.cards = Array.from(container.querySelectorAll('.card-swap-card'));
+      console.log('🃏 Found cards in container:', this.cards.length, this.cards);
+      this.order = Array.from({ length: this.cards.length }, (_, i) => i);
+      
+      // Get configuration from data attributes
+      const cardDistance = parseInt(container.dataset.cardDistance || '60');
+      const verticalDistance = parseInt(container.dataset.verticalDistance || '70');
+      const delay = parseInt(container.dataset.delay || '5000');
+      const pauseOnHover = container.dataset.pauseOnHover === 'true';
+      const skewAmount = parseInt(container.dataset.skewAmount || '6');
+      const easing = container.dataset.easing || 'elastic';
+
+      this.config = {
+        cardDistance,
+        verticalDistance,
+        delay,
+        pauseOnHover,
+        skewAmount,
+        easing: easing === 'elastic' 
+          ? {
+              ease: 'power2.out',
+              durDrop: 0.8,
+              durMove: 0.6,
+              durReturn: 0.6,
+              promoteOverlap: 0.8,
+              returnDelay: 0.05
+            }
+          : {
+              ease: 'power1.inOut',
+              durDrop: 0.8,
+              durMove: 0.8,
+              durReturn: 0.8,
+              promoteOverlap: 0.45,
+              returnDelay: 0.2
+            }
+      };
+
+      this.init();
+    }
+
+    private makeSlot(i: number, distX: number, distY: number, total: number): Slot {
+      return {
+        x: i * (distX * 0.7), // Make cards closer horizontally
+        y: -i * (distY * 0.7), // Make cards closer vertically
+        z: -i * 20, // Closer Z distance
+        zIndex: total - i
+      };
+    }
+
+    private calculateResponsiveScale(): number {
+      // Since cards are now 80% of container width with CSS,
+      // we just need a base scale that works well
+      return 1.0; // Let CSS handle the sizing
+    }
+
+    private placeNow(el: HTMLElement, slot: Slot, skew: number) {
+      if (window.gsap) {
+        window.gsap.set(el, {
+          x: slot.x,
+          y: slot.y,
+          z: slot.z,
+          xPercent: -50,
+          yPercent: -50,
+          skewY: skew,
+          transformOrigin: 'center center',
+          zIndex: slot.zIndex,
+          force3D: true,
+          rotation: 0
+        });
+      } else {
+        // Fallback without GSAP - set initial position immediately
+        el.style.transform = `translate(-50%, -50%) translate3d(${slot.x}px, ${slot.y}px, ${slot.z}px) skewY(${skew}deg)`;
+        el.style.transformOrigin = 'center center';
+        el.style.zIndex = slot.zIndex.toString();
+        el.style.willChange = 'transform';
+      }
+    }
+
+
+    private init() {
+      // Initial positioning (always apply, even without GSAP)
+      this.cards.forEach((card, i) => {
+        const slot = this.makeSlot(i, this.config.cardDistance, this.config.verticalDistance, this.cards.length);
+        this.placeNow(card, slot, this.config.skewAmount);
+      });
+
+      if (!window.gsap) {
+        console.warn('GSAP not found. CardSwap animations will be limited to initial positioning.');
+        return;
+      }
+
+      // Start animation cycle only if GSAP is available (wait for reveal to complete)
+      setTimeout(() => {
+        this.startSwapCycle();
+      }, 1000); // Wait for reveal to complete
+
+      // Setup hover pause if enabled
+      if (this.config.pauseOnHover) {
+        this.setupHoverPause();
+      }
+    }
+
+    private swap() {
+      if (!window.gsap || this.order.length < 2 || this.isAnimating) {
+        return;
+      }
+
+      this.isAnimating = true;
+
+      // Kill any existing timeline to prevent overlaps
+      if (this.timeline) {
+        this.timeline.kill();
+      }
+
+      // Create master timeline
+      const masterTL = window.gsap.timeline({
+        onComplete: () => {
+          this.isAnimating = false;
+          // Update order after animation completes
+          const [front, ...rest] = this.order;
+          this.order = [...rest, front];
+        }
+      });
+
+      // Get current state
+      const [frontIndex, ...restIndices] = this.order;
+      const frontCard = this.cards[frontIndex];
+
+      // Phase 1: Move front card down and out of the way
+      masterTL.to(frontCard, {
+        y: 400,
+        z: -100,
+        scale: 0.8,
+        rotation: -10,
+        duration: 0.4,
+        ease: 'power2.out'
+      });
+
+      // Phase 2: Animate remaining cards to their new positions (parallel)
+      restIndices.forEach((cardIndex, newPosition) => {
+        const card = this.cards[cardIndex];
+        const targetSlot = this.makeSlot(newPosition, this.config.cardDistance, this.config.verticalDistance, this.cards.length);
+        
+        masterTL.to(card, {
+          x: targetSlot.x,
+          y: targetSlot.y,
+          z: targetSlot.z,
+          zIndex: targetSlot.zIndex,
+          duration: 0.6,
+          ease: 'power2.out'
+        }, '-=0.2'); // Overlap with previous animation
+      });
+
+      // Phase 3: Move front card to back position
+      const backSlot = this.makeSlot(this.cards.length - 1, this.config.cardDistance, this.config.verticalDistance, this.cards.length);
+      masterTL.to(frontCard, {
+        x: backSlot.x,
+        y: backSlot.y,
+        z: backSlot.z,
+        zIndex: backSlot.zIndex,
+        scale: 1,
+        rotation: 0,
+        duration: 0.6,
+        ease: 'power2.out'
+      }, '-=0.3');
+
+      this.timeline = masterTL;
+    }
+
+    private startSwapCycle() {
+      // Clear any existing interval
+      if (this.interval) {
+        clearInterval(this.interval);
+      }
+      
+      // Start first swap
+      this.swap();
+      
+      // Set up robust interval with animation completion check
+      this.interval = window.setInterval(() => {
+        if (!this.isAnimating) {
+          this.swap();
+        }
+      }, this.config.delay);
+    }
+
+    private setupHoverPause() {
+      const pause = () => {
+        if (this.timeline) this.timeline.pause();
+        if (this.interval) {
+          clearInterval(this.interval);
+          this.interval = null;
+        }
+      };
+
+      const resume = () => {
+        if (this.timeline) this.timeline.play();
+        if (!this.interval && !this.isAnimating) {
+          this.interval = window.setInterval(() => {
+            if (!this.isAnimating) {
+              this.swap();
+            }
+          }, this.config.delay);
+        }
+      };
+
+      this.container.addEventListener('mouseenter', pause);
+      this.container.addEventListener('mouseleave', resume);
+    }
+
+    public destroy() {
+      this.isAnimating = false;
+      if (this.interval) {
+        clearInterval(this.interval);
+        this.interval = null;
+      }
+      if (this.timeline) {
+        this.timeline.kill();
+        this.timeline = null;
+      }
+    }
+  }
+
+  // Store controllers to prevent multiple initializations
+  const controllers = new WeakMap<HTMLElement, CardSwapController>();
+
+  // Initialize all CardSwap containers immediately for positioning
+  function initCardSwapPositioning() {
+    console.log('🎮 Initializing CardSwap positioning...');
+    const containers = document.querySelectorAll('.card-swap-container');
+    console.log('📦 Found CardSwap containers:', containers.length);
+    
+    containers.forEach((container, index) => {
+      const htmlContainer = container as HTMLElement;
+      
+      // Prevent multiple initializations
+      if (controllers.has(htmlContainer)) {
+        console.log(`🔄 Container ${index} already initialized, skipping`);
+        return;
+      }
+      
+      console.log(`🎯 Initializing container ${index}:`, container);
+      const controller = new CardSwapController(htmlContainer);
+      controllers.set(htmlContainer, controller);
+    });
+  }
+
+  // Initialize positioning immediately to prevent CLS
+  function immediateInit() {
+    initCardSwapPositioning();
+  }
+
+  // Wait for GSAP to be available for animations (if loaded via CDN)
+  function waitForGSAP(callback: () => void, maxWait = 5000) {
+    if (window.gsap) {
+      callback();
+      return;
+    }
+
+    let waited = 0;
+    const interval = setInterval(() => {
+      waited += 100;
+      if (window.gsap || waited >= maxWait) {
+        clearInterval(interval);
+        callback();
+      }
+    }, 100);
+  }
+
+  // Initialize positioning immediately, then animations when GSAP loads
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', immediateInit);
+  } else {
+    immediateInit();
+  }
+
+  // Handle Astro page transitions with cleanup
+  document.addEventListener('astro:page-load', () => {
+    // Clean up existing controllers
+    controllers.forEach((controller) => {
+      controller.destroy();
+    });
+    
+    // Re-initialize
+    immediateInit();
+  });
+  
+  // Clean up on page unload
+  document.addEventListener('astro:before-preparation', () => {
+    controllers.forEach((controller) => {
+      controller.destroy();
+    });
+  });
+</script>
+
+<!-- Load GSAP from CDN if not already available -->
+<script is:inline>
+  if (!window.gsap) {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js';
+    script.async = true;
+    document.head.appendChild(script);
+  }
+</script>

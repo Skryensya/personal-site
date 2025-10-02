@@ -1,0 +1,88 @@
+---
+interface Props {
+  text: string;
+  spinDuration?: number;
+  onHover?: 'slowDown' | 'speedUp' | 'pause' | 'goBonkers';
+  className?: string;
+}
+
+const {
+  text,
+  spinDuration = 20,
+  onHover = 'speedUp',
+  className = ''
+} = Astro.props;
+
+const letters = Array.from(text);
+---
+
+<div 
+  class={`circular-text-container m-0 mx-auto rounded-full w-[150px] h-[150px] relative font-black text-secondary text-center cursor-pointer origin-center ${className}`}
+  data-spin-duration={spinDuration}
+  data-on-hover={onHover}
+>
+  {letters.map((letter, i) => {
+    const rotationDeg = (360 / letters.length) * i;
+    const factor = Math.PI / letters.length;
+    const x = factor * i;
+    const y = factor * i;
+    const transform = `rotateZ(${rotationDeg}deg) translate3d(${x}px, ${y}px, 0)`;
+
+    return (
+      <span
+        class="circular-letter absolute inline-block inset-0 text-2xl"
+        style={`transform: ${transform}; -webkit-transform: ${transform};`}
+      >
+        {letter}
+      </span>
+    );
+  })}
+</div>
+
+<style>
+  .circular-text-container {
+    animation: spin var(--spin-duration, 20s) linear infinite;
+    transition: transform 150ms ease-out;
+  }
+
+  .circular-letter {
+    transition: all 500ms cubic-bezier(0, 0, 0, 1);
+  }
+
+  /* Hover effects disabled */
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const containers = document.querySelectorAll('.circular-text-container');
+    
+    containers.forEach((container) => {
+      const htmlContainer = container as HTMLElement;
+      const spinDuration = parseInt(htmlContainer.dataset.spinDuration || '20');
+      
+      // Set CSS custom property for animation duration
+      htmlContainer.style.setProperty('--spin-duration', `${spinDuration}s`);
+      
+      // Handle mouse events for smooth transitions
+      htmlContainer.addEventListener('mouseenter', () => {
+        // Animation changes are handled by CSS hover pseudo-classes
+        // This ensures smooth transitions between states
+      });
+      
+      htmlContainer.addEventListener('mouseleave', () => {
+        // Reset any inline styles that might interfere
+        htmlContainer.style.transform = '';
+        htmlContainer.style.animationPlayState = '';
+      });
+    });
+  });
+</script>

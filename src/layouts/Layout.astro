@@ -649,10 +649,8 @@ declare global {
         <Navbar />
         <FaviconManager client:load />
         <NorwegianDisclaimer lang={lang} />
-        <div class="pt-24 mt-8 mx-auto max-w-[var(--max-w-size)] ">
-            <!-- Skip target for accessibility -->
-            <a id="main-content" tabindex="-1" class="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 focus:bg-main focus:text-secondary focus:p-2 focus:z-50">Main content starts here</a>
-            <main class="text-left px-4">
+        <div class="pt-24 mt-8 mx-auto max-w-[var(--max-w-size)] overflow-hidden"> 
+            <main class="text-left px-4" id="main-content">
                 <slot />
             </main>
         </div> 

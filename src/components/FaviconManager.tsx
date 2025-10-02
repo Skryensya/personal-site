@@ -3,11 +3,13 @@ import { useFavicon } from '@/hooks/useFavicon';
 
 // Mapping of theme IDs to favicon file names
 const FAVICON_MAP = {
-  pacman: 'favicon-pacman',
+  banana: 'favicon-banana',
   gameboy: 'favicon-gameboy',
   dos: 'favicon-dos',
   commodore64: 'favicon-commodore64',
-  kurumi: 'favicon-kuromi' // Note: kurumi theme uses kuromi favicon
+  kurumi: 'favicon-kuromi', // Note: kurumi theme uses kuromi favicon
+  matrix: 'favicon-matrix',
+  vaporwave: 'favicon-vaporwave'
 } as const;
 
 type ThemeId = keyof typeof FAVICON_MAP;

@@ -292,10 +292,16 @@ const shadowClasses = cn(
           }
           
           if (isLocked) {
-            // Button is locked - apply normal hover styles immediately
+            // Button is locked - apply hover styles and shrinking effect like elevated buttons
             actualButton.classList.remove('bg-secondary', 'text-main', 'border-transparent');
             actualButton.classList.add('bg-main', 'text-secondary', 'border-double', 'border-main', 'shadow-[inset_0_0_0_2px_var(--color-secondary)]');
-            console.log('Applied hover styles to locked button');
+            
+            // Add shrinking effect like elevated buttons (30% less elevation)
+            const htmlButtonWrapper = buttonWrapper as HTMLElement;
+            htmlButtonWrapper.style.transform = 'translate(-8.4px, -8.4px)';
+            htmlButtonWrapper.style.transition = 'transform 150ms ease-out';
+            
+            console.log('Applied hover styles and shrinking effect to locked button');
             return;
           }
           
@@ -314,6 +320,34 @@ const shadowClasses = cn(
         actualButton.addEventListener('mouseenter', () => triggerAnimation('Mouse enter'));
         actualButton.addEventListener('focus', () => triggerAnimation('Focus'));
         
+        // Handle focus for locked buttons (same as hover)
+        actualButton.addEventListener('focus', () => {
+          if (isLocked) {
+            actualButton.classList.remove('bg-secondary', 'text-main', 'border-transparent');
+            actualButton.classList.add('bg-main', 'text-secondary', 'border-double', 'border-main', 'shadow-[inset_0_0_0_2px_var(--color-secondary)]');
+            
+            const htmlButtonWrapper = buttonWrapper as HTMLElement;
+            htmlButtonWrapper.style.transform = 'translate(-8.4px, -8.4px)';
+            htmlButtonWrapper.style.transition = 'transform 150ms ease-out';
+            
+            console.log('Applied focus styles and shrinking effect to locked button');
+          }
+        });
+        
+        // Handle blur for locked buttons (same as mouse leave)
+        actualButton.addEventListener('blur', () => {
+          if (isLocked) {
+            actualButton.classList.remove('bg-main', 'text-secondary', 'border-double', 'border-main', 'shadow-[inset_0_0_0_2px_var(--color-secondary)]');
+            actualButton.classList.add('bg-secondary', 'text-main', 'border-transparent');
+            
+            const htmlButtonWrapper = buttonWrapper as HTMLElement;
+            htmlButtonWrapper.style.transform = 'translate(-12px, -12px)';
+            htmlButtonWrapper.style.transition = 'transform 150ms ease-out';
+            
+            console.log('Removed focus styles and restored full elevation to locked button');
+          }
+        });
+        
         actualButton.addEventListener('mouseleave', () => {
           console.log('Mouse leave detected on button');
           
@@ -325,10 +359,16 @@ const shadowClasses = cn(
           isCurrentlyHovering = false;
           
           if (isLocked) {
-            // Remove hover styles from locked button
+            // Remove hover styles from locked button and restore full elevation
             actualButton.classList.remove('bg-main', 'text-secondary', 'border-double', 'border-main', 'shadow-[inset_0_0_0_2px_var(--color-secondary)]');
             actualButton.classList.add('bg-secondary', 'text-main', 'border-transparent');
-            console.log('Removed hover styles from locked button');
+            
+            // Restore full elevation like elevated buttons
+            const htmlButtonWrapper = buttonWrapper as HTMLElement;
+            htmlButtonWrapper.style.transform = 'translate(-12px, -12px)';
+            htmlButtonWrapper.style.transition = 'transform 150ms ease-out';
+            
+            console.log('Removed hover styles and restored full elevation to locked button');
             return;
           }
           

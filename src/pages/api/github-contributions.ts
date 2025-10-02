@@ -75,7 +75,7 @@ export const GET: APIRoute = async ({ url }) => {
             }
         );
     } catch (error) {
-        console.error('❌ Error fetching GitHub contributions:', error);
+        // Error will be handled by returning error response
 
         return new Response(
             JSON.stringify({

@@ -5,7 +5,7 @@ import { Heart, ChevronRight, ExternalLink } from 'lucide-react';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import { getLocalizedUrl, getHomeUrl } from '@/utils/localized-routes';
-import CircularText from '@/components/CircularText';
+import CircularTextAstro from '@/components/CircularTextAstro.astro';
 
 interface Props { 
   lang?: Language; 
@@ -111,19 +111,19 @@ const navigationLinks: NavigationLink[] = [
             <div class="block font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text={t('footer.availableForProjects')}>
               {t('footer.availableForProjects')}
             </div>
-            <div class="block font-mono text-sm px-2 py-1">
+            <div class="block font-mono text-sm py-1">
               <div class="text-secondary font-mono text-sm">
-                <div class="font-bold mb-2">[{t('footer.wcag.title')}]</div>
+                <div class="font-mono text-sm font-bold text-secondary my-2 uppercase scramble-text">{t('footer.aspectRatio.title')}</div>
                 <div class="flex gap-4 items-center ">
-                  <div id="footer-contrast-display" class="text-sm leading-tight  border text-secondary py-1 px-2 font-bold border-main">--:--</div>
+                  <div id="footer-contrast-display" class="text-sm leading-tight  border text-secondary py-1 px-2 font-bold border-main scramble-text">--:--</div>
                   <div id="footer-wcag-levels" class="flex gap-1"></div>
                 </div>
               </div>
             </div>
-            <div class="block font-mono text-sm px-2 py-1">
+            <div class="block font-mono text-sm py-1">
               <div class="text-secondary font-mono text-sm">
-                <div class="mb-2">{t('footer.motion.label')}</div>
-                <div class="font-bold"><span id="motion-status">{t('footer.motion.detecting')}</span></div>
+                <div class="font-mono text-sm font-bold text-secondary my-2 uppercase scramble-text">{t('footer.motion.label')}</div>
+                <div class=""><span id="motion-status" class="scramble-text">{t('footer.motion.detecting')}</span></div>
               </div>
             </div>
           </nav>
@@ -132,7 +132,7 @@ const navigationLinks: NavigationLink[] = [
 
       <!-- CircularText - 16.67% on desktop, full width on mobile -->
       <div class="md:w-[16.67%] w-full flex justify-center items-start" style="view-transition-name: none;">
-        <CircularText client:load text="ALLISON PEÑA * SKRYENSYA * " onHover="speedUp" spinDuration={20}/>
+        <CircularTextAstro text="ALLISON PEÑA * SKRYENSYA * " onHover="speedUp" spinDuration={20}/>
       </div>
     </div>
 

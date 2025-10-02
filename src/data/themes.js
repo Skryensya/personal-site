@@ -3,6 +3,7 @@
 // This file provides JavaScript utilities for theme management
 
 import themesData from './themes.json';
+import { warn } from '@/utils/debug-logger';
 
 // Get unlocked themes from localStorage with 1-day expiration
 function getUnlockedThemes() {
@@ -52,7 +53,7 @@ function saveSpecialUnlockedThemes(themes) {
         };
         localStorage.setItem('special-themes-unlocked', JSON.stringify(specialData));
     } catch (e) {
-        console.warn('Failed to save special unlock data:', e);
+        warn('Failed to save special unlock data:', e);
     }
 }
 
@@ -66,7 +67,7 @@ function saveUnlockedThemes(themes) {
         };
         localStorage.setItem('konami-unlock', JSON.stringify(konamiData));
     } catch (e) {
-        console.warn('Failed to save konami unlock data:', e);
+        warn('Failed to save konami unlock data:', e);
     }
 }
 
@@ -166,8 +167,17 @@ export function toggleAllHiddenThemes() {
         
         return { action: 'locked', themes: hiddenThemes };
     } else {
-        // Unlock all hidden themes
+        // Unlock all hidden themes AND unlock all special themes
         saveUnlockedThemes([...hiddenThemes]);
+        
+        // Unlock matrix and vaporwave themes when konami is activated (not chipax/skyward-ai)
+        const konamiSpecialThemes = ['matrix', 'vaporwave'];
+        konamiSpecialThemes.forEach(themeId => {
+            const theme = themesData.themes.find(t => t.id === themeId);
+            if (theme && theme.special) {
+                unlockSpecialTheme(themeId);
+            }
+        });
         
         // Emit event for UI updates
         if (typeof window !== 'undefined') {
@@ -176,7 +186,7 @@ export function toggleAllHiddenThemes() {
             });
             window.dispatchEvent(event);
         }
-        return { action: 'unlocked', themes: hiddenThemes };
+        return { action: 'unlocked', themes: [...hiddenThemes, ...specialThemes] };
     }
 }
 
@@ -222,14 +232,20 @@ export function getAvailableThemes() {
         return isThemeUnlocked(theme.id);
     });
 
-    // If chipax is available, put it first in the list
-    const chipaxIndex = availableThemes.findIndex(theme => theme.id === 'chipax');
-    if (chipaxIndex > 0) {
-        const chipaxTheme = availableThemes.splice(chipaxIndex, 1)[0];
-        availableThemes.unshift(chipaxTheme);
-    }
+    // Put konami special themes at the beginning if available (chipax/skyward-ai are query param only)
+    const konamiSpecialThemes = ['matrix', 'vaporwave'];
+    const availableKonamiSpecials = [];
+    
+    konamiSpecialThemes.forEach(specialId => {
+        const specialIndex = availableThemes.findIndex(theme => theme.id === specialId);
+        if (specialIndex >= 0) {
+            const specialTheme = availableThemes.splice(specialIndex, 1)[0];
+            availableKonamiSpecials.push(specialTheme);
+        }
+    });
 
-    return availableThemes;
+    // Put konami special themes first, then regular themes
+    return [...availableKonamiSpecials, ...availableThemes];
 }
 
 // Export themes from JSON with backwards compatibility
@@ -274,36 +290,13 @@ export function applyTheme(themeId, isDark = false, mode = null) {
             localStorage.setItem('theme-id', themeId);
             localStorage.setItem('theme-mode', isDark ? 'dark' : 'light');
         } catch (e) {
-            console.warn('Failed to save theme to localStorage:', e);
+            warn('Failed to save theme to localStorage:', e);
         }
         
     };
 
-    // Use View Transitions API if available and supported
-    if (typeof document !== 'undefined' && document.startViewTransition && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        // Start view transition for smooth theme change
-        document.startViewTransition(() => {
-            updateTheme();
-        });
-    } else {
-        // Fallback: Add CSS transitions temporarily for older browsers
-        const elementsToTransition = document.querySelectorAll('*');
-        
-        // Add temporary transitions to all elements
-        elementsToTransition.forEach(el => {
-            el.style.transition = 'background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease';
-        });
-        
-        // Apply theme change
-        updateTheme();
-        
-        // Remove temporary transitions after animation completes
-        setTimeout(() => {
-            elementsToTransition.forEach(el => {
-                el.style.transition = '';
-            });
-        }, 300);
-    }
+    // Apply theme changes instantly without transitions to prevent color blending
+    updateTheme();
 }
 
 // Get theme by id with fallback
@@ -325,7 +318,7 @@ export function loadThemeFromStorage() {
 
         return { themeId: theme, isDark, mode };
     } catch (e) {
-        console.warn('Failed to load theme from localStorage:', e);
+        warn('Failed to load theme from localStorage:', e);
         return { themeId: 'dos', isDark: false, mode: 'light' };
     }
 }

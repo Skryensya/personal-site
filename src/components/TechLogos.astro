@@ -1,0 +1,304 @@
+---
+// Technology logos data - ordered by relevance and current usage
+const technologies = [
+  { src: '/img/technologies/typescript.svg', name: 'TypeScript' },
+  { src: '/img/technologies/react.svg', name: 'React' },
+  { src: '/img/technologies/astro.svg', name: 'Astro' },
+  { src: '/img/technologies/nodejs.svg', name: 'Node.js' },
+  { src: '/img/technologies/tailwindcss.svg', name: 'Tailwind CSS' },
+  { src: '/img/technologies/nextjs2.svg', name: 'Next.js' },
+  { src: '/img/technologies/js.svg', name: 'JavaScript' },
+  { src: '/img/technologies/vitejs.svg', name: 'Vite' },
+  { src: '/img/technologies/git.svg', name: 'Git' },
+  { src: '/img/technologies/postgresql.svg', name: 'PostgreSQL' },
+  { src: '/img/technologies/docker.svg', name: 'Docker' },
+  { src: '/img/technologies/figma.svg', name: 'Figma' },
+  { src: '/img/technologies/php.svg', name: 'PHP' },
+  { src: '/img/technologies/laravel.svg', name: 'Laravel' },
+  { src: '/img/technologies/mysql.svg', name: 'MySQL' },
+  { src: '/img/technologies/sass.svg', name: 'Sass' }
+];
+---
+
+<div 
+  class="tech-logos-container relative w-full overflow-hidden"
+  role="region"
+  aria-label="Technologies I work with"
+  data-tech-carousel
+>
+  <!-- Left fade gradient -->
+  <div 
+    class="fade-left absolute inset-y-0 left-0 z-10 w-24 pointer-events-none"
+    aria-hidden="true"
+  ></div>
+  
+  <!-- Right fade gradient -->
+  <div 
+    class="fade-right absolute inset-y-0 right-0 z-10 w-24 pointer-events-none"
+    aria-hidden="true"
+  ></div>
+
+  <!-- Scrolling track -->
+  <div class="tech-logos-track" data-track>
+    <!-- First set of logos -->
+    <ul class="tech-logos-set flex items-center" role="list">
+      {technologies.map((tech) => (
+        <li 
+          class="tech-logo-item flex-none mr-16"
+          role="listitem"
+        >
+          <img
+            src={tech.src}
+            alt={tech.name}
+            title={tech.name}
+            class="h-10 w-auto select-none tech-icon"
+            draggable={false}
+            loading="lazy"
+            decoding="async"
+          />
+        </li>
+      ))}
+    </ul>
+
+    <!-- Second set (duplicate for seamless loop) -->
+    <ul class="tech-logos-set flex items-center" role="list" aria-hidden="true">
+      {technologies.map((tech) => (
+        <li 
+          class="tech-logo-item flex-none mr-16"
+          role="listitem"
+        >
+          <img
+            src={tech.src}
+            alt={tech.name}
+            title={tech.name}
+            class="h-10 w-auto select-none tech-icon"
+            draggable={false}
+            loading="lazy"
+            decoding="async"
+          />
+        </li>
+      ))}
+    </ul>
+
+    <!-- Third set (duplicate for seamless loop) -->
+    <ul class="tech-logos-set flex items-center" role="list" aria-hidden="true">
+      {technologies.map((tech) => (
+        <li 
+          class="tech-logo-item flex-none mr-16"
+          role="listitem"
+        >
+          <img
+            src={tech.src}
+            alt={tech.name}
+            title={tech.name}
+            class="h-10 w-auto select-none tech-icon"
+            draggable={false}
+            loading="lazy"
+            decoding="async"
+          />
+        </li>
+      ))}
+    </ul>
+  </div>
+</div>
+
+<style>
+  .tech-logos-container {
+    position: relative;
+  }
+
+  /* Fade gradients */
+  .fade-left {
+    background: linear-gradient(to right, var(--color-secondary) 0%, rgba(0,0,0,0) 100%);
+  }
+
+  .fade-right {
+    background: linear-gradient(to left, var(--color-secondary) 0%, rgba(0,0,0,0) 100%);
+  }
+
+  .tech-logos-track {
+    display: flex;
+    will-change: transform;
+    width: max-content;
+  }
+
+  .tech-logo-item {
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .tech-icon {
+    filter: drop-shadow(0 2px 1px var(--color-main));
+  }
+
+  /* Make logos slightly larger on larger screens */
+  @media (min-width: 768px) {
+    .tech-logo-item img {
+      height: 2.75rem; /* h-11 equivalent */
+    }
+    
+    .tech-logo-item {
+      height: 70px;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .tech-logo-item img {
+      height: 3rem; /* h-12 equivalent */
+    }
+    
+    .tech-logo-item {
+      height: 80px;
+    }
+  }
+
+  /* Respect user's motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .tech-logos-track {
+      transform: translateX(0) !important;
+    }
+  }
+</style>
+
+<script>
+  function initTechLogosCarousel() {
+    const container = document.querySelector('[data-tech-carousel]') as HTMLElement;
+    const track = document.querySelector('[data-track]') as HTMLElement;
+    
+    if (!container || !track) return;
+
+    // Check for reduced motion preference
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    
+    // First, wait for all images to load
+    const images = track.querySelectorAll('img');
+    let loadedImages = 0;
+    const totalImages = images.length;
+    
+    const onImageLoad = () => {
+      loadedImages++;
+      if (loadedImages === totalImages) {
+        // All images loaded, now start animation if motion is not reduced
+        if (!prefersReducedMotion) {
+          // Small delay to ensure smooth startup
+          setTimeout(() => {
+            startAnimation();
+          }, 100);
+        }
+      }
+    };
+    
+    // Add load event listeners to all images
+    images.forEach(img => {
+      if (img.complete) {
+        onImageLoad();
+      } else {
+        img.addEventListener('load', onImageLoad);
+        img.addEventListener('error', onImageLoad); // Handle errors gracefully
+      }
+    });
+    
+    let currentPosition = 0;
+    let isHovered = false;
+    let animationId: number;
+    let isAnimating = false;
+    let currentSpeed = 0;
+    
+    function startAnimation() {
+      if (isAnimating) return;
+      isAnimating = true;
+      
+      // Calculate the width of one set of logos
+      const logoSet = track.querySelector('.tech-logos-set') as HTMLElement;
+      if (!logoSet) return;
+      
+      const oneSetWidth = logoSet.offsetWidth;
+      
+      // Animation speeds
+      const maxSpeed = 1.2; // pixels per frame (normal speed)
+      const acceleration = 0.02; // How fast to speed up/slow down
+      
+      function animate() {
+        if (isAnimating) {
+          // Smooth speed transitions
+          const targetSpeed = isHovered ? 0 : maxSpeed;
+          
+          // Gradually adjust current speed towards target
+          if (currentSpeed < targetSpeed) {
+            currentSpeed = Math.min(currentSpeed + acceleration, targetSpeed);
+          } else if (currentSpeed > targetSpeed) {
+            currentSpeed = Math.max(currentSpeed - acceleration, targetSpeed);
+          }
+          
+          // Apply movement with current speed
+          if (currentSpeed > 0) {
+            currentPosition -= currentSpeed;
+            
+            // Reset position when we've moved one full set
+            if (Math.abs(currentPosition) >= oneSetWidth) {
+              currentPosition = 0;
+            }
+            
+            track.style.transform = `translateX(${currentPosition}px)`;
+          }
+          
+          animationId = requestAnimationFrame(animate);
+        }
+      }
+      
+      // Start the animation loop
+      animate();
+    }
+    
+    // Hover handlers with smooth transitions
+    const handleMouseEnter = () => {
+      isHovered = true;
+    };
+    
+    const handleMouseLeave = () => {
+      isHovered = false;
+    };
+    
+    container.addEventListener('mouseenter', handleMouseEnter);
+    container.addEventListener('mouseleave', handleMouseLeave);
+    
+    // Cleanup function
+    const cleanup = () => {
+      isAnimating = false;
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+      }
+      container.removeEventListener('mouseenter', handleMouseEnter);
+      container.removeEventListener('mouseleave', handleMouseLeave);
+      
+      // Remove image listeners
+      images.forEach(img => {
+        img.removeEventListener('load', onImageLoad);
+        img.removeEventListener('error', onImageLoad);
+      });
+    };
+    
+    // Store cleanup for later use
+    (window as any).techLogosCleanup = cleanup;
+    
+    return cleanup;
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTechLogosCarousel);
+  } else {
+    initTechLogosCarousel();
+  }
+
+  // Also initialize on Astro page transitions
+  document.addEventListener('astro:page-load', () => {
+    // Cleanup previous instance if exists
+    if ((window as any).techLogosCleanup) {
+      (window as any).techLogosCleanup();
+    }
+    initTechLogosCarousel();
+  });
+</script>
