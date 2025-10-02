@@ -3,6 +3,11 @@ import { getCollection } from 'astro:content';
 import { sortItemsByDateDesc } from '../../utils/data-utils';
 import ProjectsPage from '@/components/pages/ProjectsPage.astro';
 
+// Redirect to home with anchor if flag is NOT enabled
+if (import.meta.env.PUBLIC_ENABLE_PROJECT_PAGES !== 'true') {
+    return Astro.redirect('/#proyectos');
+}
+
 export async function getStaticPaths() {
     const allProjects = await getCollection('projects');
     const lang = 'es';
@@ -18,11 +23,6 @@ export async function getStaticPaths() {
 }
 
 const { projects } = Astro.props;
-
-// Redirect to home with anchor if flag is NOT enabled
-if (import.meta.env.PUBLIC_ENABLE_PROJECT_PAGES !== 'true') {
-    return Astro.redirect('/#proyectos');
-}
 ---
 
 <ProjectsPage lang="es" projects={projects} />
