@@ -218,8 +218,8 @@ export const ui = {
         'footer.sitemap': 'Sitemap',
         'footer.wcag.title': 'Proporción de contraste',
         'footer.motion.label': 'Reducir movimiento',
-        'footer.motion.activated': 'ACTIVADO',
-        'footer.motion.deactivated': 'DESACTIVADO',
+        'footer.motion.activated': 'Activado',
+        'footer.motion.deactivated': 'Desactivado',
         'footer.motion.detecting': 'detectando...',
 
         // Accessibility Statement
@@ -453,8 +453,8 @@ export const ui = {
         'footer.sitemap': 'Sitemap',
         'footer.wcag.title': 'Contrast ratio',
         'footer.motion.label': 'Reduce motion',
-        'footer.motion.activated': 'ACTIVATED',
-        'footer.motion.deactivated': 'DEACTIVATED',
+        'footer.motion.activated': 'Activated',
+        'footer.motion.deactivated': 'Deactivated',
         'footer.motion.detecting': 'detecting...',
 
         // Accessibility Statement
@@ -688,8 +688,8 @@ export const ui = {
         'footer.sitemap': 'Sitemap',
         'footer.wcag.title': 'Kontrastforhold',
         'footer.motion.label': 'Reduser bevegelse',
-        'footer.motion.activated': 'AKTIVERT',
-        'footer.motion.deactivated': 'DEAKTIVERT',
+        'footer.motion.activated': 'Aktivert',
+        'footer.motion.deactivated': 'Deaktivert',
         'footer.motion.detecting': 'oppdager...',
 
         // Accessibility Statement
