@@ -36,9 +36,11 @@ const themeColors = themes.reduce((acc, theme) => {
   return acc;
 }, {} as Record<string, { colorful: string; contrasty: string }>);
 
+const projectsAnchor = currentLocale === 'es' ? 'proyectos' : (currentLocale === 'no' ? 'prosjekter' : 'projects');
+
 const navItems = [
   { label: 'Allison Peña', href: getHomeUrl(currentLocale) },
-  { label: t('nav.projects'), href: getLocalizedUrl(currentLocale, 'projects') },
+  { label: t('nav.projects'), href: `${getHomeUrl(currentLocale)}#${projectsAnchor}` },
   { label: t('nav.cv'), href: getLocalizedUrl(currentLocale, 'resume') },
 ];
 

@@ -278,8 +278,15 @@ export const pagesDictionary = {
 // Helper function to get localized URL
 export function getLocalizedUrl(lang: Language, route: keyof typeof localizedRoutes, slug?: string): string {
   const localizedRoute = localizedRoutes[route][lang];
+
+  // If project pages are disabled and route is 'projects', return anchor link
+  if (route === 'projects' && import.meta.env.PUBLIC_ENABLE_PROJECT_PAGES !== 'true' && !slug) {
+    const anchor = lang === 'es' ? 'proyectos' : (lang === 'no' ? 'prosjekter' : 'projects');
+    return lang === 'es' ? `/#${anchor}` : `/${lang}/#${anchor}`;
+  }
+
   let basePath: string;
-  
+
   if (lang === 'es') {
     // Spanish is the default language, no prefix
     basePath = `/${localizedRoute}`;
@@ -287,7 +294,7 @@ export function getLocalizedUrl(lang: Language, route: keyof typeof localizedRou
     // Other languages get prefixed
     basePath = `/${lang}/${localizedRoute}`;
   }
-  
+
   return slug ? `${basePath}/${slug}` : basePath;
 }
 

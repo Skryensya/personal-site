@@ -18,7 +18,7 @@ const featuredProjects = (await getFeaturedProjectsByLanguage(lang))
   .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
 ---
 
-<section class="py-20 bg-secondary">
+<section id={lang === 'es' ? 'proyectos' : (lang === 'no' ? 'prosjekter' : 'projects')} class="py-20 bg-secondary">
   <div class="max-w-7xl mx-auto px-4">
     <h2 class="font-mono text-3xl font-bold text-main mb-12">{t('home.featuredProjects')}</h2>
     <ProjectCarousel projectCount={featuredProjects.length}>

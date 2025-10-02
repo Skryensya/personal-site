@@ -1,11 +1,9 @@
 ---
-import type { GetStaticPathsOptions, Page } from 'astro';
-import { type CollectionEntry, getCollection } from 'astro:content';
-import siteConfig from '../../../data/site-config';
+import { getCollection } from 'astro:content';
 import { sortItemsByDateDesc } from '../../../utils/data-utils';
-import ProjectsListPage from '@/components/pages/ProjectsListPage.astro';
+import ProjectsPage from '@/components/pages/ProjectsPage.astro';
 
-export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
+export async function getStaticPaths() {
     const allProjects = await getCollection('projects');
     const lang = 'no';
 
@@ -13,20 +11,18 @@ export async function getStaticPaths({ paginate }: GetStaticPathsOptions) {
         .filter(project => project.id.startsWith(`${lang}/`))
         .sort(sortItemsByDateDesc);
 
-    const paginatedPaths = paginate(projectsInLang, {
-        pageSize: siteConfig.projectsPerPage || 10,
-        props: { language: lang }
-    });
-
-    return paginatedPaths;
+    return [{
+        params: { page: undefined },
+        props: { projects: projectsInLang }
+    }];
 }
 
-type Props = {
-    page: Page<CollectionEntry<'projects'>>;
-    language: string;
-};
+const { projects } = Astro.props;
 
-const { page, language } = Astro.props;
+// Redirect to home with anchor if flag is NOT enabled
+if (import.meta.env.PUBLIC_ENABLE_PROJECT_PAGES !== 'true') {
+    return Astro.redirect('/no/#prosjekter');
+}
 ---
 
-<ProjectsListPage lang="no" page={page} />
+<ProjectsPage lang="no" projects={projects} />
