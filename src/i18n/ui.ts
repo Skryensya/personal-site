@@ -213,9 +213,14 @@ export const ui = {
         'footer.copyright': 'Todos los derechos reservados',
         'footer.builtWith': 'Construido con',
         'footer.andCode': 'y código',
-        'footer.info': 'Info',
+        'footer.info': 'Información',
         'footer.availableForProjects': 'Disponible para proyectos',
         'footer.sitemap': 'Sitemap',
+        'footer.wcag.title': 'Proporción de contraste',
+        'footer.motion.label': 'Reducir movimiento',
+        'footer.motion.activated': 'ACTIVADO',
+        'footer.motion.deactivated': 'DESACTIVADO',
+        'footer.motion.detecting': 'detectando...',
 
         // Accessibility Statement
         'accessibility.title': 'Declaración de Accesibilidad',
@@ -443,9 +448,14 @@ export const ui = {
         'footer.copyright': 'All rights reserved',
         'footer.builtWith': 'Built with',
         'footer.andCode': 'and code',
-        'footer.info': 'Info',
+        'footer.info': 'Information',
         'footer.availableForProjects': 'Available for projects',
         'footer.sitemap': 'Sitemap',
+        'footer.wcag.title': 'Contrast ratio',
+        'footer.motion.label': 'Reduce motion',
+        'footer.motion.activated': 'ACTIVATED',
+        'footer.motion.deactivated': 'DEACTIVATED',
+        'footer.motion.detecting': 'detecting...',
 
         // Accessibility Statement
         'accessibility.title': 'Accessibility Statement',
@@ -673,9 +683,14 @@ export const ui = {
         'footer.copyright': 'Alle rettigheter reservert',
         'footer.builtWith': 'Bygget med',
         'footer.andCode': 'og kode',
-        'footer.info': 'Info',
+        'footer.info': 'Informasjon',
         'footer.availableForProjects': 'Tilgjengelig for prosjekter',
         'footer.sitemap': 'Sitemap',
+        'footer.wcag.title': 'Kontrastforhold',
+        'footer.motion.label': 'Reduser bevegelse',
+        'footer.motion.activated': 'AKTIVERT',
+        'footer.motion.deactivated': 'DEAKTIVERT',
+        'footer.motion.detecting': 'oppdager...',
 
         // Accessibility Statement
         'accessibility.title': 'Tilgjengelighetserklæring',

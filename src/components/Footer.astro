@@ -101,24 +101,30 @@ const navigationLinks: NavigationLink[] = [
 
         <!-- Information - 33.33% of content area -->
         <div class="md:w-[33.33%] w-full">
-          <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text={lang === 'es' ? 'Información' : lang === 'en' ? 'Information' : 'Informasjon'}>
-            {lang === 'es' ? 'Información' : lang === 'en' ? 'Information' : 'Informasjon'}
+          <h3 class="font-mono text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text={t('footer.info')}>
+            {t('footer.info')}
           </h3>
           <nav class="space-y-2">
             <div class="block font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text="Santiago, Chile">
               Santiago, Chile
             </div>
-            <div class="block font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text={lang === 'es' ? 'Disponible para proyectos' : lang === 'en' ? 'Available for projects' : 'Tilgjengelig for prosjekter'}>
-              {lang === 'es' ? 'Disponible para proyectos' : lang === 'en' ? 'Available for projects' : 'Tilgjengelig for prosjekter'}
+            <div class="block font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text={t('footer.availableForProjects')}>
+              {t('footer.availableForProjects')}
             </div>
             <div class="block font-mono text-sm px-2 py-1">
-              <div class="bg-secondary text-main px-2 py-1 font-mono text-sm">
-                <div class="font-bold">{lang === 'es' ? 'Proporción de contraste' : lang === 'en' ? 'Contrast ratio' : 'Kontrastforhold'}</div>
-                <div id="footer-contrast-display">--:--</div>
+              <div class="text-secondary font-mono text-sm">
+                <div class="font-bold mb-2">[{t('footer.wcag.title')}]</div>
+                <div class="flex gap-4 items-center ">
+                  <div id="footer-contrast-display" class="text-sm leading-tight  border text-secondary py-1 px-2 font-bold border-main">--:--</div>
+                  <div id="footer-wcag-levels" class="flex gap-1"></div>
+                </div>
               </div>
             </div>
-            <div class="block font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text="">
-              <span id="motion-status">{lang === 'es' ? 'Reducir movimiento: detectando...' : lang === 'en' ? 'Reduce motion: detecting...' : 'Reduser bevegelse: oppdager...'}</span>
+            <div class="block font-mono text-sm px-2 py-1">
+              <div class="text-secondary font-mono text-sm">
+                <div class="mb-2">{t('footer.motion.label')}</div>
+                <div class="font-bold"><span id="motion-status">{t('footer.motion.detecting')}</span></div>
+              </div>
             </div>
           </nav>
         </div>
@@ -232,7 +238,49 @@ const navigationLinks: NavigationLink[] = [
         const contrastRatio = getContrastRatio(mainColor, secondaryColor);
         const wcagLevel = getWCAGLevel(contrastRatio);
 
-        contrastDisplay.textContent = `${contrastRatio.toFixed(1)}:1 (${wcagLevel})`;
+        const wcagLevelsElement = document.getElementById('footer-wcag-levels');
+        const ratio = contrastRatio.toFixed(1);
+        
+        contrastDisplay.textContent = `${ratio}:1`;
+        
+        if (wcagLevelsElement) {
+          // Get language from document
+          const currentLang = document.documentElement.getAttribute('lang') || 'es';
+          
+          // Clear previous content
+          wcagLevelsElement.innerHTML = '';
+          
+          // Define levels and their requirements
+          const levels = [
+            { name: 'A', requirement: 3, passed: contrastRatio >= 3 },
+            { name: 'AA', requirement: 4.5, passed: contrastRatio >= 4.5 },
+            { name: 'AAA', requirement: 7, passed: contrastRatio >= 7 }
+          ];
+          
+          levels.forEach(level => {
+            const levelBox = document.createElement('div');
+            levelBox.className = `bg-secondary text-main px-2 py-1 text-xs font-mono font-bold flex items-center gap-1 border border-main ${level.passed ? 'opacity-100' : 'opacity-30'}`;
+            
+            // Create icon element
+            const iconContainer = document.createElement('span');
+            iconContainer.className = 'inline-flex w-3 h-3 items-center justify-center';
+            
+            if (level.passed) {
+              // Use check mark for passed levels
+              iconContainer.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+            } else {
+              // Use X mark for failed levels
+              iconContainer.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
+            }
+            
+            const label = document.createElement('span');
+            label.textContent = level.name;
+            
+            levelBox.appendChild(iconContainer);
+            levelBox.appendChild(label);
+            wcagLevelsElement.appendChild(levelBox);
+          });
+        }
 
       } catch (error) {
         console.warn('Failed to calculate contrast ratio:', error);
@@ -248,13 +296,25 @@ const navigationLinks: NavigationLink[] = [
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const lang = document.documentElement.getAttribute('lang') || 'es';
       
-      const statusTexts = {
-        'es': prefersReducedMotion ? 'Reducir movimiento: activado' : 'Reducir movimiento: desactivado',
-        'en': prefersReducedMotion ? 'Reduce motion: activated' : 'Reduce motion: deactivated',
-        'no': prefersReducedMotion ? 'Reduser bevegelse: aktivert' : 'Reduser bevegelse: deaktivert'
-      };
+      // Get translations from the global translations object
+      const translations = (window as any).__ASTRO_I18N__;
+      let statusText = '';
+      
+      if (translations && translations[lang]) {
+        statusText = prefersReducedMotion ? 
+          translations[lang]['footer.motion.activated'] || 'Motion: reduced' :
+          translations[lang]['footer.motion.deactivated'] || 'Motion: enabled';
+      } else {
+        // Fallback
+        const statusTexts = {
+          'es': prefersReducedMotion ? 'Activado' : 'Desactivado',
+          'en': prefersReducedMotion ? 'Activated' : 'Deactivated',
+          'no': prefersReducedMotion ? 'Aktivert' : 'Deaktivert'
+        };
+        statusText = statusTexts[lang as keyof typeof statusTexts] || statusTexts.es;
+      }
 
-      motionStatus.textContent = statusTexts[lang as keyof typeof statusTexts] || statusTexts.es;
+      motionStatus.textContent = statusText;
     }
 
     // Scramble a single text node (span.scramble-part)

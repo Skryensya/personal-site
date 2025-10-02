@@ -443,9 +443,16 @@ declare global {
                                     
                                     applyTheme(theme.id, isDark, null);
                                     window.__THEME_ID__ = theme.id;
+                                    window.__THEME_READY__ = true;
                                     if (window.__APPLY_THEME_INSTANTLY__) {
                                         window.__APPLY_THEME_INSTANTLY__();
                                     }
+                                    
+                                    // Trigger theme control update by dispatching a custom event
+                                    const themeChangeEvent = new CustomEvent('company-theme-activated', {
+                                        detail: { themeId: theme.id, isDark, theme }
+                                    });
+                                    window.dispatchEvent(themeChangeEvent);
                                     
                                     console.log('🎨 Theme applied, showing toast in 1 second...');
                                     

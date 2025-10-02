@@ -98,11 +98,26 @@ export default function ThemeControl() {
         const handleThemesLocked = () => {
             updateAvailableThemes();
         };
+        
+        // Listen for company theme activation
+        const handleCompanyThemeActivated = (event: CustomEvent) => {
+            const { themeId, theme } = event.detail;
+            console.log('🎨 ThemeControl: Company theme activated:', themeId);
+            
+            // Find the theme in our themes list
+            const activatedTheme = themes.find(t => t.id === themeId);
+            if (activatedTheme) {
+                setCurrentTheme(activatedTheme);
+                updateAvailableThemes(); // Refresh available themes list
+                console.log('🎨 ThemeControl: Theme state updated to:', activatedTheme.name);
+            }
+        };
 
         if (typeof window !== 'undefined') {
             window.addEventListener('theme-unlocked', handleThemeUnlocked);
             window.addEventListener('themes-unlocked', handleThemesUnlocked);
             window.addEventListener('themes-locked', handleThemesLocked);
+            window.addEventListener('company-theme-activated', handleCompanyThemeActivated as EventListener);
         }
 
         return () => {
@@ -110,6 +125,7 @@ export default function ThemeControl() {
                 window.removeEventListener('theme-unlocked', handleThemeUnlocked);
                 window.removeEventListener('themes-unlocked', handleThemesUnlocked);
                 window.removeEventListener('themes-locked', handleThemesLocked);
+                window.removeEventListener('company-theme-activated', handleCompanyThemeActivated as EventListener);
             }
         };
     }, []);
@@ -190,13 +206,13 @@ export default function ThemeControl() {
             onMainClick={nextTheme}
             disabled={false}
             initialSelectedIndex={selectedIndex}
-            dropdownClassName="max-w-[280px] @6xl:min-w-[600px] @6xl:max-w-[720px]"
+            dropdownClassName="max-w-[280px] @lg:min-w-[400px] @lg:max-w-[600px]"
             dropdownContent={
                 <div>
-                    <div className="hidden @6xl:flex gap-0 min-w-[600px]">
+                    <div className="hidden @lg:flex gap-0 min-w-[400px]">
                         {/* First column */}
                         <div className="flex-1 border-r border-main">
-                            {availableThemes.slice(0, Math.ceil(availableThemes.length / 3)).map((theme) => (
+                            {availableThemes.slice(0, Math.ceil(availableThemes.length / 2)).map((theme) => (
                                 <button
                                     key={theme.id}
                                     type="button"
@@ -237,50 +253,8 @@ export default function ThemeControl() {
                         </div>
                         
                         {/* Second column */}
-                        <div className="flex-1 border-r border-main">
-                            {availableThemes.slice(Math.ceil(availableThemes.length / 3), Math.ceil(availableThemes.length * 2 / 3)).map((theme) => (
-                                <button
-                                    key={theme.id}
-                                    type="button"
-                                    onClick={() => handleThemeSelect(theme)}
-                                    className="w-full px-1 py-0.5 text-left block cursor-pointer relative focus-visible:z-[9999]"
-                                    data-selected={currentTheme?.id === theme.id ? 'true' : 'false'}
-                                    style={{ 
-                                        minHeight: '32px',
-                                        outlineWidth: '1px',
-                                        outlineOffset: '1px'
-                                    }}
-                                >
-                                    <div className="flex items-center gap-2 pointer-events-none">
-                                        <div
-                                            className="w-5 h-5 aspect-square flex-shrink-0 pointer-events-none"
-                                            style={{ 
-                                                background: `linear-gradient(135deg, ${theme.colorful || theme.colors?.colorful || '#FF0000'} 50%, ${theme.contrasty || theme.colors?.contrasty || '#000000'} 50%)`,
-                                                border: `1px solid ${theme.contrasty || theme.colors?.contrasty || '#000000'}`
-                                            }}
-                                        />
-                                        <span className="flex-1 px-1 py-1 font-grotesk text-base font-semibold pointer-events-none select-none uppercase text-main">{theme.name}</span>
-                                        <div className="w-4 h-4 flex items-center justify-center pointer-events-none">
-                                            {currentTheme?.id === theme.id && (
-                                                <svg
-                                                    className="w-4 h-4 pointer-events-none text-main"
-                                                    fill="none"
-                                                    stroke="currentColor"
-                                                    strokeWidth="2"
-                                                    viewBox="0 0 24 24"
-                                                >
-                                                    <polyline points="20,6 9,17 4,12" />
-                                                </svg>
-                                            )}
-                                        </div>
-                                    </div>
-                                </button>
-                            ))}
-                        </div>
-                        
-                        {/* Third column */}
                         <div className="flex-1">
-                            {availableThemes.slice(Math.ceil(availableThemes.length * 2 / 3)).map((theme) => (
+                            {availableThemes.slice(Math.ceil(availableThemes.length / 2)).map((theme) => (
                                 <button
                                     key={theme.id}
                                     type="button"
@@ -322,7 +296,7 @@ export default function ThemeControl() {
                     </div>
                     
                     {/* Mobile/tablet layout - single column */}
-                    <div className="@6xl:hidden">
+                    <div className="@lg:hidden">
                         {availableThemes.map((theme) => (
                             <button
                                 key={theme.id}
@@ -364,7 +338,7 @@ export default function ThemeControl() {
                     </div>
                 </div>
             }
-            className="w-7 h-7 @6xl:w-full @6xl:h-8"
+            className="w-7 h-7 @lg:w-full @lg:h-8"
         >
             <div className="flex items-center gap-2 w-full">
                 <div
@@ -373,7 +347,7 @@ export default function ThemeControl() {
                         background: `linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%)`
                     }}
                 />
-                <span className="hidden @6xl:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary truncate uppercase  ">
+                <span className="hidden @lg:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary truncate uppercase  ">
                     {currentTheme.name}
                 </span>
             </div>
