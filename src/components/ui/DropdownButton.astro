@@ -220,9 +220,28 @@ const mainButtonId = `main-button-${id}`;
         dropdownMenu.style.top = `${top}px`;
       };
       
-      // Get dropdown items
+      // Get dropdown items - only visible and interactive ones
       const getDropdownItems = () => {
-        return Array.from(dropdownMenu.querySelectorAll('[role="menuitem"]:not([disabled])')) as HTMLElement[];
+        const allItems = Array.from(dropdownMenu.querySelectorAll('[role="menuitem"]')) as HTMLElement[];
+        return allItems.filter(item => {
+          // Skip disabled items
+          if (item.hasAttribute('disabled') || item.getAttribute('aria-disabled') === 'true') {
+            return false;
+          }
+          
+          // Skip hidden items (display: none or visibility: hidden)
+          const computedStyle = window.getComputedStyle(item);
+          if (computedStyle.display === 'none' || computedStyle.visibility === 'hidden') {
+            return false;
+          }
+          
+          // Skip items with zero dimensions (could be collapsed)
+          if (item.offsetWidth === 0 && item.offsetHeight === 0) {
+            return false;
+          }
+          
+          return true;
+        });
       };
       
       // Update arrow rotation
@@ -239,16 +258,12 @@ const mainButtonId = `main-button-${id}`;
           const isActive = i === index;
           item.setAttribute('data-active', isActive ? 'true' : 'false');
 
-          // Apply visual feedback for keyboard navigation using border + ring inset
+          // Apply visual feedback for keyboard navigation
           if (isActive) {
-            item.style.outline = '1px solid var(--color-main)';
-            item.style.outlineOffset = '-1px';
-            item.style.boxShadow = 'inset 0 0 0 2px var(--color-secondary)';
+            item.style.border = '2px solid var(--color-main)';
             item.scrollIntoView({ block: 'nearest', behavior: 'instant' });
           } else {
-            item.style.outline = '';
-            item.style.outlineOffset = '';
-            item.style.boxShadow = '';
+            item.style.border = '';
           }
         });
       };
