@@ -3,17 +3,27 @@ interface Props {
     src: string;
     alt: string;
     class?: string;
+    width?: number;
+    height?: number;
+    loading?: 'lazy' | 'eager';
 }
 
-const { src, alt, class: className = '' } = Astro.props;
+const { src, alt, class: className = '', width, height, loading = 'lazy' } = Astro.props;
 ---
 
 <div class={`themed-image relative select-none ${className} overflow-hidden`}>
     <!-- Base grayscale image -->
     <img 
         src={src} 
-        alt={alt} 
+        alt={alt}
+        width={width}
+        height={height}
+        loading={loading}
+        decoding="async"
         class="w-full h-full object-cover object-center filter grayscale smooth-image select-none"
+        style={{
+            aspectRatio: width && height ? `${width} / ${height}` : undefined,
+        }}
     />
     
     <!-- Color overlay using CSS variable -->

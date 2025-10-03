@@ -99,7 +99,7 @@ export const ui = {
         
         // Theme toast notifications
         'theme.toast.unlocked': '¡Has desbloqueado {count} temas adicionales!',
-        'theme.toast.locked': 'Temas adicionales bloqueados por 24 horas. El tema se ha restablecido al predeterminado.',
+        'theme.toast.locked': 'Has ocultado los temas adicionales',
         'theme.toast.company': 'Hola equipo de {company}. He activado su tema para que se sientan como en casa.',
         
         // Theme names (forced Spanish for all languages)
@@ -334,7 +334,7 @@ export const ui = {
         
         // Theme toast notifications
         'theme.toast.unlocked': 'You\'ve unlocked {count} additional themes!',
-        'theme.toast.locked': 'Additional themes locked for 24 hours. Theme has been reset to default.',
+        'theme.toast.locked': 'You\'ve locked the additional themes until next time!',
         'theme.toast.company': 'Hello {company} team! I\'ve activated your theme to make you feel right at home.',
         
         // Theme names (forced Spanish for all languages)
@@ -569,7 +569,7 @@ export const ui = {
         
         // Theme toast notifications
         'theme.toast.unlocked': 'Du har låst opp {count} ekstra temaer!',
-        'theme.toast.locked': 'Ytterligere temaer låst i 24 timer. Tema har blitt tilbakestilt til standard.',
+        'theme.toast.locked': 'Du har låst de ekstra temaene til neste gang!',
         'theme.toast.company': 'Hei {company}-teamet! Jeg har aktivert temaet deres for at dere skal føle dere hjemme.',
         
         // Theme names (forced Spanish for all languages)

@@ -58,26 +58,33 @@ function formatCanonicalURL(url: string | URL) {
 <title>{title}</title>
 <meta name="generator" content={Astro.generator} />
 
-<!-- Preconnect to external domains for faster loading -->
-<link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-<link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-<link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
-
-<!-- Tech Fonts - async load for performance -->
+<!-- Critical resource preloading for fastest loading -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+<!-- Preload critical font files for instant text rendering -->
+<link rel="preload" href="https://fonts.gstatic.com/s/spacegrotesk/v16/V8mQQfWaYCYr3I1_w3xdIbL2l-4PNAw.woff2" as="font" type="font/woff2" crossorigin />
+<link rel="preload" href="https://fonts.gstatic.com/s/firacode/v22/uU9eCBsR6Z2vfE9aq3bL0Xa2BF6PNAw.woff2" as="font" type="font/woff2" crossorigin />
+
+<!-- Optimized font loading with font-display swap for instant text -->
 <link
-    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
     rel="stylesheet"
     media="print"
     onload="this.media='all'"
 />
 <noscript>
     <link
-        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
         rel="stylesheet"
     />
 </noscript>
+
+<!-- Preload critical images -->
+<link rel="preload" href="/img/me.png" as="image" />
+
+<!-- DNS prefetch for potential external resources -->
+<link rel="dns-prefetch" href="https://api.github.com" />
 
 <!-- Low Priority Global Metadata -->
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />

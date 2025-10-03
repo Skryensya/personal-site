@@ -26,6 +26,30 @@
     object {
         max-width: 100%;
         height: auto;
+        /* Prevent layout shifts with content-visibility */
+        content-visibility: auto;
+    }
+    
+    /* Optimize images for performance and prevent layout shifts */
+    img {
+        /* Prevent dragging */
+        -webkit-user-drag: none;
+        -khtml-user-drag: none;
+        -moz-user-drag: none;
+        -o-user-drag: none;
+        /* Better image rendering */
+        image-rendering: auto;
+        image-rendering: -webkit-optimize-contrast;
+        /* Prevent selection */
+        -webkit-user-select: none;
+        user-select: none;
+    }
+    
+    /* Performance optimizations for heavy content */
+    .performance-optimized {
+        contain: layout style paint;
+        content-visibility: auto;
+        contain-intrinsic-size: auto 500px;
     }
 
     /* Tech font optimization and global transitions */

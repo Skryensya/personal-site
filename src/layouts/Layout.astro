@@ -193,12 +193,18 @@ declare global {
         <ViewTransitions />
         
         <!-- Selection color animator - defer to reduce blocking -->
-        <script>
-            import { startGlobalSelectionAnimation } from '../utils/globalSelectionAnimator.ts';
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', startGlobalSelectionAnimation);
+        <script type="module">
+            // Use dynamic import and idle callback for non-critical animation
+            function initSelectionAnimation() {
+                import('../utils/globalSelectionAnimator.ts').then(({ startGlobalSelectionAnimation }) => {
+                    startGlobalSelectionAnimation();
+                });
+            }
+            
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(initSelectionAnimation, { timeout: 2000 });
             } else {
-                requestIdleCallback(startGlobalSelectionAnimation);
+                setTimeout(initSelectionAnimation, 100);
             }
         </script>
         
@@ -247,196 +253,193 @@ declare global {
         </script>
 
         <script type="module">
-            // Defer konami code to idle time
-            function initKonami() {
-                import('/src/utils/konami.js').then(({ default: konami }) => {
-                    import('/src/data/themes.js').then(({ toggleAllHiddenThemes, isCurrentThemeHidden, getDefaultTheme, applyTheme }) => {
-                        // Start Konami code detection
-                        konami.start();
-
-            // Function to create confetti rain effect using React component
-            function createConfettiRain() {
-                // Create container for the React component
-                const confettiContainer = document.createElement('div');
-                confettiContainer.id = 'konami-confetti-container';
-                confettiContainer.style.cssText = `
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100vw;
-                    height: 100vh;
-                    pointer-events: none;
-                    z-index: 9999;
-                `;
-                document.body.appendChild(confettiContainer);
-
-                // Get current theme colors
-                const computedStyle = getComputedStyle(document.documentElement);
-                const mainColor = computedStyle.getPropertyValue('--color-main').trim();
-
-                // Import React, ReactDOM, and ConfettiRain component
-                Promise.all([
-                    import('react'),
-                    import('react-dom/client'),
-                    import('/src/components/ConfettiRain.tsx')
-                ]).then(([React, ReactDOM, ConfettiModule]) => {
-                    const ConfettiRain = ConfettiModule.default;
-                    const root = ReactDOM.createRoot(confettiContainer);
-
-                    // Render ConfettiRain with custom props
-                    const confettiProps = {
-                        count: 100,
-                        duration: 5,
-                        loop: false,
-                        color: mainColor || '#000000',
-                        size: 6,
-                        spreadX: 100
-                    };
-
-                    root.render(
-                        React.createElement(ConfettiRain, confettiProps)
-                    );
-
-                    // Clean up after animation completes
-                    setTimeout(() => {
+            // Clean Konami code initialization with global singleton check
+            let konamiInitialized = false;
+            
+            // Check if Konami is already initialized globally
+            if (window.__KONAMI_INITIALIZED__) {
+                konamiInitialized = true;
+            }
+            
+            async function initKonami() {
+                if (konamiInitialized || window.__KONAMI_INITIALIZED__) {
+                    const { debugLogger } = await import('/src/utils/debug-logger.ts');
+                    debugLogger.warn('🎮 Konami already initialized globally, skipping');
+                    return;
+                }
+                
+                konamiInitialized = true;
+                window.__KONAMI_INITIALIZED__ = true;
+                
+                try {
+                    const { debugLogger } = await import('/src/utils/debug-logger.ts');
+                    debugLogger.group('🎮 Konami Code Initialization');
+                    debugLogger.log('Loading konami module...');
+                    
+                    const { default: konami } = await import('/src/utils/konami.js');
+                    debugLogger.log('✅ Konami module loaded successfully');
+                    
+                    // Start listening for key events
+                    konami.start();
+                    debugLogger.log('🎧 Konami event listener started');
+                    
+                    // Add activation callback
+                    konami.onActivate(async () => {
                         try {
-                            root.unmount();
-                        } catch (e) {
-                            console.error('Error unmounting confetti:', e);
+                            // Import debug logger first
+                            const { debugLogger } = await import('/src/utils/debug-logger.ts');
+                            debugLogger.group('🎮 Konami Code Activation');
+                            debugLogger.log('Starting Konami code activation sequence');
+                            
+                            // Load themes module
+                            const { toggleAllHiddenThemes, getSessionCompany, getDefaultTheme, applyTheme } = await import('/src/data/themes.js');
+                            debugLogger.log('✅ Themes module loaded successfully');
+
+                            // Toggle themes first to know if we should show confetti
+                            debugLogger.log('🎨 About to toggle hidden themes');
+                            const result = toggleAllHiddenThemes();
+                            debugLogger.log('🎨 Toggle result:', result);
+                            
+                            const themeMessages = window.__THEME_MESSAGES__;
+                            const unlocked = result.action === 'unlocked';
+                            debugLogger.log('🎨 Unlocked status:', unlocked);
+                            debugLogger.log('🎨 Theme messages:', themeMessages);
+
+                            // Only show confetti when UNLOCKING themes
+                            if (unlocked) {
+                                // Create simple confetti effect without React
+                                function createSimpleConfetti() {
+                                    debugLogger.log('🎊 Creating simple confetti effect');
+                                    const confettiContainer = document.createElement('div');
+                                    confettiContainer.style.cssText = `
+                                        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+                                        pointer-events: none; z-index: 9999; overflow: hidden;
+                                    `;
+                                    document.body.appendChild(confettiContainer);
+
+                                    const computedStyle = getComputedStyle(document.documentElement);
+                                    const mainColor = computedStyle.getPropertyValue('--color-main').trim() || '#000000';
+                                    
+                                    // Create simple falling squares as confetti
+                                    for (let i = 0; i < 50; i++) {
+                                        const particle = document.createElement('div');
+                                        particle.style.cssText = `
+                                            position: absolute;
+                                            width: 8px; height: 8px;
+                                            background: ${mainColor};
+                                            left: ${Math.random() * 100}vw;
+                                            top: -10px;
+                                            animation: confetti-fall ${2 + Math.random() * 3}s linear forwards;
+                                            transform: rotate(${Math.random() * 360}deg);
+                                        `;
+                                        confettiContainer.appendChild(particle);
+                                    }
+                                    
+                                    // Add animation keyframes if not exist
+                                    if (!document.getElementById('confetti-style')) {
+                                        const style = document.createElement('style');
+                                        style.id = 'confetti-style';
+                                        style.textContent = `
+                                            @keyframes confetti-fall {
+                                                to { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+                                            }
+                                        `;
+                                        document.head.appendChild(style);
+                                    }
+                                    
+                                    setTimeout(() => {
+                                        if (confettiContainer.parentNode) confettiContainer.remove();
+                                    }, 6000);
+                                }
+
+                                createSimpleConfetti();
+                                debugLogger.log('🎊 Confetti rain started for unlock');
+                            } else {
+                                debugLogger.log('🚫 No confetti for lock action');
+                            }
+
+                            // Dispatch event to update theme controls UI
+                            if (unlocked) {
+                                const themeEvent = new CustomEvent('themes-unlocked', {
+                                    detail: { themes: result.themes, action: result.action }
+                                });
+                                window.dispatchEvent(themeEvent);
+                                debugLogger.log('📡 Dispatched themes-unlocked event', themeEvent.detail);
+                            } else {
+                                const themeEvent = new CustomEvent('themes-locked', {
+                                    detail: { themes: result.themes, action: result.action }
+                                });
+                                window.dispatchEvent(themeEvent);
+                                debugLogger.log('📡 Dispatched themes-locked event', themeEvent.detail);
+                            }
+
+                            // Show notification
+                            const notification = document.createElement('div');
+                            if (unlocked) {
+                                const themeCount = result.themes ? result.themes.length : 0;
+                                notification.textContent = themeMessages.unlocked.replace('{count}', themeCount);
+                            } else {
+                                notification.textContent = themeMessages.locked;
+                            }
+                            
+                            notification.style.cssText = `
+                                position: fixed; top: 120px; right: -400px;
+                                background: var(--color-main); color: var(--color-secondary);
+                                border: 2px solid var(--color-secondary); padding: 12px 16px;
+                                font-family: monospace; font-weight: bold; font-size: 14px;
+                                z-index: 10000; max-width: 280px; border-radius: 4px;
+                                transition: right 0.4s ease-out; box-shadow: 4px 4px 0px var(--color-secondary);
+                            `;
+                            
+                            document.body.appendChild(notification);
+                            setTimeout(() => { notification.style.right = '20px'; }, 50);
+                            setTimeout(() => {
+                                notification.style.right = '-400px';
+                                setTimeout(() => notification.remove(), 400);
+                            }, unlocked ? 4000 : 3000);
+                            
+                            debugLogger.log('🎭 Notification shown and scheduled for removal');
+                            debugLogger.groupEnd();
+
+                        } catch (error) {
+                            debugLogger.error('❌ Konami callback error:', error);
+                            debugLogger.groupEnd();
                         }
-
-                        if (confettiContainer.parentNode) {
-                            confettiContainer.remove();
-                        }
-                    }, 6000);
-                }).catch(error => {
-                    console.error('Failed to load ConfettiRain:', error);
-                    if (confettiContainer.parentNode) {
-                        confettiContainer.remove();
-                    }
-                });
-            }
-
-            // Add callback for when Konami code is activated
-            konami.onActivate(() => {
-                // Trigger confetti rain immediately
-                createConfettiRain();
-
-                // Toggle all hidden themes
-                const result = toggleAllHiddenThemes();
-
-                // If locking themes and current theme is hidden, reset to default
-                if (result.action === 'locked' && isCurrentThemeHidden()) {
-                    const defaultTheme = getDefaultTheme();
-                    const savedMode = localStorage.getItem('theme-mode') || 'system';
-                    let isDark = false;
-                    if (savedMode === 'system') {
-                        isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    } else {
-                        isDark = savedMode === 'dark';
-                    }
-
-                    applyTheme(defaultTheme.id, isDark);
-                    window.__THEME_ID__ = defaultTheme.id;
-                    window.__APPLY_THEME_INSTANTLY__();
-
-                }
-
-                const unlocked = result.action === 'unlocked';
-                const themeMessages = window.__THEME_MESSAGES__;
-
-                if (unlocked) {
-                    // Show unlock notification with theme count
-                    const notification = document.createElement('div');
-                    const themeCount = result.themes ? result.themes.length : 0;
-                    notification.textContent = themeMessages.unlocked.replace('{count}', themeCount);
-                    notification.style.cssText = `
-                        position: fixed;
-                        top: 120px;
-                        right: -400px;
-                        background: var(--color-main);
-                        color: var(--color-secondary);
-                        border: 2px solid var(--color-secondary);
-                        padding: 12px 16px;
-                        font-family: monospace;
-                        font-weight: bold;
-                        font-size: 14px;
-                        z-index: 10000;
-                        max-width: 280px;
-                        border-radius: 4px;
-                        transition: right 0.4s ease-out;
-                        box-shadow: 4px 4px 0px var(--color-secondary);
-                    `;
-                    
-                    document.body.appendChild(notification);
-                    
-                    // Slide in from right
-                    setTimeout(() => {
-                        notification.style.right = '20px';
-                    }, 50);
-                    
-                    // Don't automatically switch theme, just show notification
-                    // User can manually select the theme from dropdown
-                    
-                    // Slide out and remove after 4 seconds
-                    setTimeout(() => {
-                        notification.style.right = '-400px';
-                        setTimeout(() => {
-                            notification.remove();
-                        }, 400);
-                    }, 4000);
-                } else {
-                    // Show lock notification
-                    const notification = document.createElement('div');
-                    notification.textContent = themeMessages.locked;
-                    notification.style.cssText = `
-                        position: fixed;
-                        top: 120px;
-                        right: -400px;
-                        background: var(--color-main);
-                        color: var(--color-secondary);
-                        border: 2px solid var(--color-secondary);
-                        padding: 12px 16px;
-                        font-family: monospace;
-                        font-weight: bold;
-                        font-size: 14px;
-                        z-index: 10000;
-                        max-width: 280px;
-                        border-radius: 4px;
-                        transition: right 0.4s ease-out;
-                        box-shadow: 4px 4px 0px var(--color-secondary);
-                    `;
-                    document.body.appendChild(notification);
-                    
-                    // Slide in from right
-                    setTimeout(() => {
-                        notification.style.right = '20px';
-                    }, 50);
-                    
-                    // Slide out and remove after 3 seconds
-                    setTimeout(() => {
-                        notification.style.right = '-400px';
-                        setTimeout(() => {
-                            notification.remove();
-                        }, 400);
-                    }, 3000);
-                }
                     });
-
+                    
                     // Clean up on page unload
-                    window.addEventListener('beforeunload', () => {
-                        konami.stop();
-                    });
-                });
-                });
+                    window.addEventListener('beforeunload', () => konami.stop());
+                    
+                    debugLogger.log('🎮 Konami initialization completed successfully');
+                    debugLogger.groupEnd();
+                    
+                } catch (error) {
+                    const { debugLogger } = await import('/src/utils/debug-logger.ts');
+                    debugLogger.error('❌ Konami initialization error:', error);
+                    debugLogger.groupEnd();
+                }
             }
 
-            // Use requestIdleCallback to defer execution
-            if ('requestIdleCallback' in window) {
-                requestIdleCallback(initKonami, { timeout: 2000 });
+            // Initialize Konami code after DOM is ready (only once)
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => setTimeout(initKonami, 50), { once: true });
             } else {
-                setTimeout(initKonami, 1000);
+                setTimeout(initKonami, 50);
             }
+            
+            // Re-initialize after page transitions (clear previous instance first)
+            document.addEventListener('astro:page-load', () => {
+                // Stop any existing instance first
+                import('/src/utils/konami.js').then(({ default: konami }) => {
+                    konami.stop();
+                    
+                    // Reset all initialization flags
+                    konamiInitialized = false;
+                    window.__KONAMI_INITIALIZED__ = false;
+                    
+                    setTimeout(initKonami, 50);
+                });
+            });
         </script>
 
         <!-- Company Theme Query Param Detection - only run if params exist -->
@@ -454,22 +457,34 @@ declare global {
                 const specialThemes = getSpecialThemes();
                 const unlockableThemes = [...companyThemes, ...specialThemes];
 
-                // Check if any theme parameter is present
-                for (const theme of unlockableThemes) {
-                    if (urlParams.has(theme.id)) {
-
-                        // Try to unlock the theme
-                        const isCompany = companyThemes.find(t => t.id === theme.id);
-                        const unlocked = isCompany
-                            ? unlockCompanyTheme(theme.id)
-                            : unlockSpecialTheme(theme.id);
+                // Check for modern ?theme=theme-name format first
+                const themeParam = urlParams.get('theme');
+                let matchedTheme = null;
+                
+                if (themeParam) {
+                    matchedTheme = unlockableThemes.find(t => t.id === themeParam);
+                }
+                
+                // Fallback to legacy format (?theme-name) for backwards compatibility
+                if (!matchedTheme) {
+                    for (const theme of unlockableThemes) {
+                        if (urlParams.has(theme.id)) {
+                            matchedTheme = theme;
+                            break;
+                        }
+                    }
+                }
+                
+                if (matchedTheme) {
+                    // Try to unlock the theme
+                    const isCompany = companyThemes.find(t => t.id === matchedTheme.id);
+                    const unlocked = isCompany
+                        ? unlockCompanyTheme(matchedTheme.id)
+                        : unlockSpecialTheme(matchedTheme.id);
 
                         // Always apply the theme and show toast when parameter is detected
                         // regardless of whether it was just unlocked or already unlocked
                         if (unlocked !== undefined) {
-                            if (unlocked) {
-                            } else {
-                            }
                             
                             // Auto-apply company theme first
                             setTimeout(() => {
@@ -482,8 +497,8 @@ declare global {
                                         isDark = savedMode === 'dark';
                                     }
 
-                                    applyTheme(theme.id, isDark);
-                                    window.__THEME_ID__ = theme.id;
+                                    applyTheme(matchedTheme.id, isDark);
+                                    window.__THEME_ID__ = matchedTheme.id;
                                     window.__THEME_READY__ = true;
                                     if (window.__APPLY_THEME_INSTANTLY__) {
                                         window.__APPLY_THEME_INSTANTLY__();
@@ -491,7 +506,7 @@ declare global {
                                     
                                     // Trigger theme control update by dispatching a custom event
                                     const themeChangeEvent = new CustomEvent('company-theme-activated', {
-                                        detail: { themeId: theme.id, isDark, theme }
+                                        detail: { themeId: matchedTheme.id, isDark, theme: matchedTheme }
                                     });
                                     window.dispatchEvent(themeChangeEvent);
 
@@ -499,7 +514,7 @@ declare global {
                                     // Show notification 1 second after theme is applied (using same style as konami)
                                     setTimeout(() => {
                                         const themeMessages = window.__THEME_MESSAGES__;
-                                        const companyName = theme.id.charAt(0).toUpperCase() + theme.id.slice(1);
+                                        const companyName = matchedTheme.id.charAt(0).toUpperCase() + matchedTheme.id.slice(1);
                                         
                                         // Create notification using same style as konami toast with timer
                                         const notification = document.createElement('div');
@@ -604,14 +619,14 @@ declare global {
                             
                             // Remove query param from URL to keep it clean
                             const newUrl = new URL(window.location);
-                            newUrl.searchParams.delete(theme.id);
+                            if (themeParam) {
+                                newUrl.searchParams.delete('theme');
+                            } else {
+                                newUrl.searchParams.delete(matchedTheme.id);
+                            }
                             window.history.replaceState({}, '', newUrl);
                             
                         }
-                        
-                        // Break after finding the first matching theme parameter
-                        break;
-                    }
                 }
             }
 

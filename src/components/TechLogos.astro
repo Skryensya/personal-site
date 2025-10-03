@@ -25,6 +25,7 @@ const technologies = [
   role="region"
   aria-label="Technologies I work with"
   data-tech-carousel
+  tabindex="-1"
 >
   <!-- Left fade gradient -->
   <div 
@@ -55,6 +56,10 @@ const technologies = [
             draggable={false}
             loading="lazy"
             decoding="async"
+            width="40"
+            height="40"
+            style="aspect-ratio: 1/1; min-width: 40px;"
+            tabindex="-1"
           />
         </li>
       ))}
@@ -75,6 +80,10 @@ const technologies = [
             draggable={false}
             loading="lazy"
             decoding="async"
+            width="40"
+            height="40"
+            style="aspect-ratio: 1/1; min-width: 40px;"
+            tabindex="-1"
           />
         </li>
       ))}
@@ -95,6 +104,10 @@ const technologies = [
             draggable={false}
             loading="lazy"
             decoding="async"
+            width="40"
+            height="40"
+            style="aspect-ratio: 1/1; min-width: 40px;"
+            tabindex="-1"
           />
         </li>
       ))}
@@ -217,8 +230,8 @@ const technologies = [
       const oneSetWidth = logoSet.offsetWidth;
       
       // Animation speeds
-      const maxSpeed = 1.2; // pixels per frame (normal speed)
-      const acceleration = 0.02; // How fast to speed up/slow down
+      const maxSpeed = 0.8; // pixels per frame (normal speed)
+      const acceleration = 0.015; // How fast to speed up/slow down
       
       function animate() {
         if (isAnimating) {

@@ -125,11 +125,17 @@ class KonamiCode {
     // Add callback for when Konami code is entered
     onActivate(callback) {
         this.callbacks.push(callback);
+        import('../utils/debug-logger.ts').then(({ debugLogger }) => {
+            debugLogger.log('🎮 Callback registered, total callbacks:', this.callbacks.length);
+        });
     }
 
     // Start listening for the Konami code
     start() {
         if (this.isListening) {
+            import('../utils/debug-logger.ts').then(({ debugLogger }) => {
+                debugLogger.warn('🎮 Konami already listening, skipping duplicate start');
+            });
             return;
         }
 
@@ -138,6 +144,10 @@ class KonamiCode {
         // Store bound handler so we can remove it later
         this.boundHandler = this.handleKeyDown.bind(this);
         document.addEventListener('keydown', this.boundHandler);
+        
+        import('../utils/debug-logger.ts').then(({ debugLogger }) => {
+            debugLogger.log('🎮 Konami listener started, callbacks registered:', this.callbacks.length);
+        });
     }
 
     // Stop listening
@@ -148,11 +158,23 @@ class KonamiCode {
             document.removeEventListener('keydown', this.boundHandler);
         }
 
+        // Clear callbacks to prevent duplicates
+        this.callbacks = [];
+        
+        import('../utils/debug-logger.ts').then(({ debugLogger }) => {
+            debugLogger.log('🎮 Konami stopped, callbacks cleared');
+        });
+
         this.reset();
     }
 
     // Handle keydown events
     handleKeyDown(event) {
+        // Import debug logger dynamically to avoid blocking
+        import('../utils/debug-logger.ts').then(({ debugLogger }) => {
+            debugLogger.log('🎮 Key pressed:', event.code, '| Expected:', KONAMI_SEQUENCE[this.sequence.length], '| Current sequence:', this.sequence);
+        });
+
         // Ignore if user is typing in an input, textarea, or contenteditable element
         const activeElement = document.activeElement;
         if (activeElement && (
@@ -160,6 +182,9 @@ class KonamiCode {
             activeElement.tagName === 'TEXTAREA' ||
             activeElement.isContentEditable
         )) {
+            import('../utils/debug-logger.ts').then(({ debugLogger }) => {
+                debugLogger.log('🎮 Ignoring key press - user is typing in input field');
+            });
             return;
         }
 
@@ -182,9 +207,16 @@ class KonamiCode {
             this.sequence.push(event.code);
             const keySymbol = this.getKeySymbol(event.code);
             this.showKeyElement(keySymbol, this.sequence.length - 1);
+            
+            import('../utils/debug-logger.ts').then(({ debugLogger }) => {
+                debugLogger.log('🎮 ✅ Correct key! Sequence now:', this.sequence, '| Length:', this.sequence.length);
+            });
 
             // Check if sequence is complete
             if (this.sequenceMatches()) {
+                import('../utils/debug-logger.ts').then(({ debugLogger }) => {
+                    debugLogger.log('🎮 🎊 KONAMI CODE COMPLETE! Activating callbacks...');
+                });
                 // Hide keys before activating
                 setTimeout(() => {
                     this.hideAllKeys();
@@ -194,6 +226,9 @@ class KonamiCode {
             }
         } else {
             // Wrong key! Shake and hide all keys, then lockout
+            import('../utils/debug-logger.ts').then(({ debugLogger }) => {
+                debugLogger.log('🎮 ❌ Wrong key! Expected:', expectedKey, 'Got:', event.code, '| Resetting sequence');
+            });
             if (this.keyElements.length > 0) {
                 this.shakeKeys();
                 // Set lockout period for 2 seconds
@@ -219,17 +254,32 @@ class KonamiCode {
 
     // Activate callbacks
     activate() {
+        import('../utils/debug-logger.ts').then(({ debugLogger }) => {
+            debugLogger.group('🎮 Konami Code Activation');
+            debugLogger.log('Calling', this.callbacks.length, 'registered callbacks');
+        });
+
         // Call all callbacks
-        this.callbacks.forEach(callback => {
+        this.callbacks.forEach((callback, index) => {
             try {
+                import('../utils/debug-logger.ts').then(({ debugLogger }) => {
+                    debugLogger.log('🎮 Executing callback', index + 1);
+                });
                 callback();
             } catch (error) {
-                console.error('🎮 Error in Konami callback:', error);
+                import('../utils/debug-logger.ts').then(({ debugLogger }) => {
+                    debugLogger.error('🎮 Error in Konami callback', index + 1, ':', error);
+                });
             }
         });
 
         // Reset sequence
         this.reset();
+        
+        import('../utils/debug-logger.ts').then(({ debugLogger }) => {
+            debugLogger.log('🎮 Konami activation completed, sequence reset');
+            debugLogger.groupEnd();
+        });
     }
 
     // Reset the sequence

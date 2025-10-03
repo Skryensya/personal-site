@@ -470,4 +470,11 @@ npm run astro add    # Add integrations - ONLY if requested
 - **Sections**: Self-contained page regions
 - **UI**: Reusable interface components
 
+## Coding Best Practices
+
+### Debugging Guidelines
+
+- **No console.log usage**: Always use `debugLogger` for consistent logging
+- Use appropriate logging levels in `debugLogger` for different scenarios
+
 Remember: Maintain the brutalist aesthetic, two-color system, and performance-first approach in all modifications.

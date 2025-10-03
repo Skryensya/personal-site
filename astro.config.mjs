@@ -18,6 +18,18 @@ export default defineConfig({
         port: 2008,
         host: true
     },
+    image: {
+        service: {
+            entrypoint: 'astro/assets/services/sharp'
+        }
+    },
+    prefetch: {
+        prefetchAll: true,
+        defaultStrategy: 'hover'
+    },
+    build: {
+        inlineStylesheets: 'auto'
+    },
     integrations: [react(), mdx(), sitemap()],
     vite: {
         plugins: [tailwindcss()],
@@ -29,6 +41,18 @@ export default defineConfig({
         resolve: {
             alias: {
                 '@': '/src'
+            }
+        },
+        build: {
+            rollupOptions: {
+                output: {
+                    manualChunks: {
+                        'react-vendor': ['react', 'react-dom'],
+                        'animation-vendor': ['framer-motion', 'gsap', 'lenis'],
+                        '3d-vendor': ['three', '@react-three/fiber', '@react-three/drei'],
+                        'ui-vendor': ['@radix-ui/react-avatar', '@radix-ui/react-dialog', '@radix-ui/react-tabs', '@radix-ui/react-tooltip', '@floating-ui/dom', '@floating-ui/react']
+                    }
+                }
             }
         }
     }
