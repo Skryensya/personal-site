@@ -673,43 +673,7 @@ const navItems = [
     // Setup scroll prevention for header focus
     preventHeaderScrollOnFocus();
 
-    // Ensure desktop mode control works
-    function ensureDesktopModeControl() {
-      // Wait for mode control to be ready and add click handler
-      const maxAttempts = 20;
-      let attempts = 0;
-      
-      function trySetupDesktopMode() {
-        attempts++;
-        const modeControlContainer = document.getElementById('mode-control');
-        
-        if (modeControlContainer) {
-          const mainModeButton = modeControlContainer.querySelector('[data-main-action="toggleMode"]');
-          if (mainModeButton) {
-            // Ensure the button has the correct click handler
-            mainModeButton.addEventListener('click', function(e) {
-              e.preventDefault();
-              e.stopPropagation();
-              if (window.toggleMode && typeof window.toggleMode === 'function') {
-                window.toggleMode();
-              } else if (window.modeControl && typeof window.modeControl.toggleMode === 'function') {
-                window.modeControl.toggleMode();
-              }
-            });
-            return true;
-          }
-        }
-        
-        if (attempts < maxAttempts) {
-          setTimeout(trySetupDesktopMode, 100);
-          return false;
-        } else {
-          return false;
-        }
-      }
-      
-      trySetupDesktopMode();
-    }
+    // Desktop mode control is handled by DropdownButton.astro, no additional setup needed
 
     // Mobile control buttons functionality
     function setupMobileControlButtons() {
@@ -932,8 +896,7 @@ const navItems = [
       }
     }
 
-    // Setup desktop mode control first
-    ensureDesktopModeControl();
+    // Desktop mode control is handled by DropdownButton.astro automatically
     
     // Initialize mobile controls after a delay to ensure React components are ready
     setTimeout(() => {

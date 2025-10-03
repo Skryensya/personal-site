@@ -19,7 +19,7 @@ const componentId = `circular-text-${Math.random().toString(36).substring(2, 9)}
 
 <div 
   id={componentId}
-  class={`circular-text-container m-0 mx-auto rounded-full w-[150px] h-[150px] relative font-black text-secondary text-center cursor-pointer origin-center ${className}`}
+  class={`circular-text-container m-0 mx-auto rounded-full w-[150px] h-[150px] relative font-black text-secondary text-center origin-center ${className}`}
   data-spin-duration={spinDuration}
   data-on-hover={onHover}
 >
@@ -44,29 +44,10 @@ const componentId = `circular-text-${Math.random().toString(36).substring(2, 9)}
 <style>
   .circular-text-container {
     animation: spin var(--spin-duration, 20s) linear infinite;
-    transition: transform 150ms ease-out, scale 150ms ease-out;
   }
 
   .circular-letter {
-    transition: all 500ms cubic-bezier(0, 0, 0, 1);
-  }
-
-  /* Hover effects */
-  .circular-text-container[data-on-hover="speedUp"]:hover {
-    animation-duration: calc(var(--spin-duration, 20s) / 4);
-  }
-
-  .circular-text-container[data-on-hover="slowDown"]:hover {
-    animation-duration: calc(var(--spin-duration, 20s) * 2);
-  }
-
-  .circular-text-container[data-on-hover="pause"]:hover {
-    animation-play-state: paused;
-  }
-
-  .circular-text-container[data-on-hover="goBonkers"]:hover {
-    animation-duration: calc(var(--spin-duration, 20s) / 20);
-    transform: scale(0.8);
+    /* No transitions needed without hover effects */
   }
 
   @keyframes spin {
