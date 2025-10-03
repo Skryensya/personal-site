@@ -37,66 +37,7 @@ const {
   <slot />
 </div>
 
-<style>
-  /* Initial positioning to prevent CLS - ensure perspective and 3D context */
-  .card-swap-container {
-    perspective: 1200px;
-    transform-style: preserve-3d;
-    overflow-x: visible;
-  }
-  
-  .card-swap-card {
-    transform-origin: center center;
-    will-change: transform;
-    transform-style: preserve-3d;
-    backface-visibility: hidden;
-    opacity: 0 !important;
-    visibility: hidden !important;
-    transition: opacity 0.4s ease-out, visibility 0.4s ease-out;
-  }
-  
-  /* Cards appear one by one with staggered animation */
-  .card-swap-card.card-revealed {
-    opacity: 1 !important;
-    visibility: visible !important;
-  }
-  
-  /* Delay reveal for each card */
-  .card-swap-card {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 80%; /* 80% of container width */
-    max-width: 400px;
-    min-width: 200px;
-  }
-
-  /* Smaller cards for lg breakpoint (1024px) and below */
-  @media (max-width: 1024px) {
-    .card-swap-card {
-      width: 50%; /* Much smaller to prevent overflow */
-      max-width: 280px;
-    }
-  }
-  
-  .card-swap-card[data-card-index="0"] {
-    transform: translate(-50%, -50%) translate3d(0px, 0px, 0px) skewY(6deg);
-    z-index: 3;
-    transition-delay: 0.2s;
-  }
-  
-  .card-swap-card[data-card-index="1"] {
-    transform: translate(-50%, -50%) translate3d(35px, -35px, -20px) skewY(6deg);
-    z-index: 2;
-    transition-delay: 0.4s;
-  }
-  
-  .card-swap-card[data-card-index="2"] {
-    transform: translate(-50%, -50%) translate3d(70px, -70px, -40px) skewY(6deg);
-    z-index: 1;
-    transition-delay: 0.6s;
-  }
-</style>
+ 
 
 <script>
   // Import GSAP from CDN or use existing GSAP if available
@@ -124,10 +65,10 @@ const {
     private animationStartTime: number = 0;
 
     constructor(container: HTMLElement) {
-      console.log('🏗️ Creating CardSwapController for container:', container);
+ 
       this.container = container;
       this.cards = Array.from(container.querySelectorAll('.card-swap-card'));
-      console.log('🃏 Found cards in container:', this.cards.length, this.cards);
+   
       this.order = Array.from({ length: this.cards.length }, (_, i) => i);
       
       // Get configuration from data attributes
@@ -350,26 +291,25 @@ const {
   }
 
   // Store controllers to prevent multiple initializations
-  const controllers = new WeakMap<HTMLElement, CardSwapController>();
+  const controllers = new Set<CardSwapController>();
 
   // Initialize all CardSwap containers immediately for positioning
   function initCardSwapPositioning() {
-    console.log('🎮 Initializing CardSwap positioning...');
+
     const containers = document.querySelectorAll('.card-swap-container');
-    console.log('📦 Found CardSwap containers:', containers.length);
-    
+
+
     containers.forEach((container, index) => {
       const htmlContainer = container as HTMLElement;
-      
-      // Prevent multiple initializations
-      if (controllers.has(htmlContainer)) {
-        console.log(`🔄 Container ${index} already initialized, skipping`);
+
+      // Skip if already initialized (check by data attribute)
+      if (htmlContainer.dataset.cardSwapInitialized === 'true') {
         return;
       }
-      
-      console.log(`🎯 Initializing container ${index}:`, container);
+
       const controller = new CardSwapController(htmlContainer);
-      controllers.set(htmlContainer, controller);
+      controllers.add(controller);
+      htmlContainer.dataset.cardSwapInitialized = 'true';
     });
   }
 
@@ -408,25 +348,37 @@ const {
     controllers.forEach((controller) => {
       controller.destroy();
     });
-    
+    controllers.clear();
+
     // Re-initialize
     immediateInit();
   });
-  
+
   // Clean up on page unload
   document.addEventListener('astro:before-preparation', () => {
     controllers.forEach((controller) => {
       controller.destroy();
     });
+    controllers.clear();
   });
 </script>
 
-<!-- Load GSAP from CDN if not already available -->
+<!-- Load GSAP from CDN if not already available - defer loading -->
 <script is:inline>
-  if (!window.gsap) {
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js';
-    script.async = true;
-    document.head.appendChild(script);
+  function loadGSAP() {
+    if (!window.gsap) {
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js';
+      script.async = true;
+      script.defer = true;
+      document.head.appendChild(script);
+    }
+  }
+
+  // Defer GSAP loading to idle time
+  if ('requestIdleCallback' in window) {
+    requestIdleCallback(loadGSAP, { timeout: 1500 });
+  } else {
+    setTimeout(loadGSAP, 500);
   }
 </script>

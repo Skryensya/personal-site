@@ -281,7 +281,20 @@ export function applyTheme(themeId: string, isDark = false): void {
     localStorage.setItem('theme-id', themeId);
     localStorage.setItem('theme-mode', isDark ? 'dark' : 'light');
   } catch (e) {
-    console.warn('Failed to save theme to localStorage:', e);
+    // Only import debugLogger if we need it for the warning
+    import('@/utils/debug-logger').then(({ debugLogger }) => {
+      debugLogger.warn('Failed to save theme to localStorage:', e);
+    });
+  }
+
+  // Sync to cookie for server-side rendering
+  try {
+    const expires = new Date();
+    expires.setFullYear(expires.getFullYear() + 1);
+    document.cookie = `theme-id=${themeId}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+    document.cookie = `theme-mode=${isDark ? 'dark' : 'light'}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+  } catch (e) {
+    // Cookie setting failed - not critical
   }
 }
 
@@ -294,8 +307,8 @@ export function loadThemeFromStorage(): { themeId: string; isDark: boolean; mode
     const savedMode = localStorage.getItem('theme-mode');
 
     // Validate saved theme exists in current theme list
-    const theme = savedThemeId && THEME_CONFIG.find(t => t.id === savedThemeId) 
-      ? savedThemeId 
+    const theme = savedThemeId && THEME_CONFIG.find(t => t.id === savedThemeId)
+      ? savedThemeId
       : defaultTheme.id;
 
     const isDark = savedMode === 'dark';
@@ -303,7 +316,10 @@ export function loadThemeFromStorage(): { themeId: string; isDark: boolean; mode
 
     return { themeId: theme, isDark, mode };
   } catch (e) {
-    console.warn('Failed to load theme from localStorage:', e);
+    // Only import debugLogger if we need it for the warning
+    import('@/utils/debug-logger').then(({ debugLogger }) => {
+      debugLogger.warn('Failed to load theme from localStorage:', e);
+    });
     return { themeId: defaultTheme.id, isDark: false, mode: 'light' };
   }
 }

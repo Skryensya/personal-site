@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Konami Test</title>
+    <style>
+        body {
+            font-family: monospace;
+            padding: 20px;
+            background: #000;
+            color: #0f0;
+        }
+        #log {
+            white-space: pre;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Konami Code Test</h1>
+    <p>Press: ↑ ↑ ↓ ↓ ← → ← → B A</p>
+    <div id="log"></div>
+
+    <script>
+        const log = document.getElementById('log');
+        const KONAMI_SEQUENCE = [
+            'ArrowUp', 'ArrowUp',
+            'ArrowDown', 'ArrowDown',
+            'ArrowLeft', 'ArrowRight',
+            'ArrowLeft', 'ArrowRight',
+            'KeyB', 'KeyA'
+        ];
+        let sequence = [];
+
+        document.addEventListener('keydown', (e) => {
+            log.textContent += `Key: ${e.code}\n`;
+            
+            const expected = KONAMI_SEQUENCE[sequence.length];
+            log.textContent += `Expected: ${expected}\n`;
+            
+            if (e.code === expected) {
+                sequence.push(e.code);
+                log.textContent += `✓ Correct! Progress: ${sequence.length}/${KONAMI_SEQUENCE.length}\n\n`;
+                
+                if (sequence.length === KONAMI_SEQUENCE.length) {
+                    log.textContent += '🎉 KONAMI CODE COMPLETE!\n\n';
+                    sequence = [];
+                }
+            } else {
+                log.textContent += `✗ Wrong! Resetting...\n\n`;
+                sequence = [];
+            }
+        });
+    </script>
+</body>
+</html>

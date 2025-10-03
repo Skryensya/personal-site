@@ -3,253 +3,219 @@
 // This file provides JavaScript utilities for theme management
 
 import themesData from './themes.json';
-import { warn } from '@/utils/debug-logger';
 
-// Get unlocked themes from localStorage with 1-day expiration
-function getUnlockedThemes() {
-    if (typeof window === 'undefined') return [];
-    try {
-        const konamiData = localStorage.getItem('konami-unlock');
-        if (!konamiData) return [];
-        
-        const { themes, timestamp } = JSON.parse(konamiData);
-        const now = Date.now();
-        const oneDay = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-        
-        // Check if more than 1 day has passed
-        if (now - timestamp > oneDay) {
-            // Expired, remove from localStorage
-            localStorage.removeItem('konami-unlock');
-            return [];
-        }
-        
-        return themes || [];
-    } catch {
-        return [];
-    }
+// Flatten all themes into a single array for backwards compatibility
+const allThemes = [
+    ...themesData.default,
+    ...themesData.company,
+    ...themesData.special
+];
+
+// Helper functions to get themes by category
+export const getDefaultThemes = () => themesData.default;
+export const getCompanyThemes = () => themesData.company;
+export const getSpecialThemes = () => themesData.special;
+
+// Session-only storage for visibility toggles
+const sessionVisibility = {
+    specialVisible: false,  // Konami code toggles this
+    activeCompany: null     // Only one company theme can be active
+};
+
+// Get active company theme (only one at a time)
+function getActiveCompanyTheme() {
+    if (typeof window === 'undefined') return null;
+    return sessionVisibility.activeCompany;
 }
 
-// Get special themes that are permanently unlocked (like chipax)
-function getSpecialUnlockedThemes() {
-    if (typeof window === 'undefined') return [];
-    try {
-        const specialData = localStorage.getItem('special-themes-unlocked');
-        if (!specialData) return [];
-        
-        const { themes } = JSON.parse(specialData);
-        return themes || [];
-    } catch {
-        return [];
-    }
+// Get special themes visibility status
+function areSpecialThemesVisible() {
+    if (typeof window === 'undefined') return false;
+    return sessionVisibility.specialVisible;
 }
 
-// Save special themes to localStorage (permanent unlock)
-function saveSpecialUnlockedThemes(themes) {
-    if (typeof window === 'undefined') return;
-    try {
-        const specialData = {
-            themes,
-            timestamp: Date.now()
-        };
-        localStorage.setItem('special-themes-unlocked', JSON.stringify(specialData));
-    } catch (e) {
-        warn('Failed to save special unlock data:', e);
-    }
-}
-
-// Save unlocked themes to localStorage with timestamp
-function saveUnlockedThemes(themes) {
-    if (typeof window === 'undefined') return;
-    try {
-        const konamiData = {
-            themes,
-            timestamp: Date.now()
-        };
-        localStorage.setItem('konami-unlock', JSON.stringify(konamiData));
-    } catch (e) {
-        warn('Failed to save konami unlock data:', e);
-    }
-}
-
-// Check if a theme is unlocked
+// Check if a theme is unlocked/visible
 function isThemeUnlocked(themeId) {
-    const theme = themesData.themes.find(t => t.id === themeId);
-    if (!theme || !theme.hidden) return true; // Non-hidden themes are always unlocked
-    
-    // Check special themes (permanently unlocked)
-    if (theme.special) {
-        const specialUnlockedThemes = getSpecialUnlockedThemes();
-        return specialUnlockedThemes.includes(themeId);
-    }
-    
-    // Check regular unlocked themes (temporary)
-    const unlockedThemes = getUnlockedThemes();
-    return unlockedThemes.includes(themeId);
-}
+    // Default themes are always unlocked
+    if (themesData.default.find(t => t.id === themeId)) return true;
 
-// Unlock a hidden theme
-export function unlockTheme(themeId) {
-    const theme = themesData.themes.find(t => t.id === themeId);
-    if (!theme || !theme.hidden) return false; // Can't unlock non-hidden themes
-    
-    const unlockedThemes = getUnlockedThemes();
-    if (!unlockedThemes.includes(themeId)) {
-        unlockedThemes.push(themeId);
-        saveUnlockedThemes(unlockedThemes);
-        
-        // Emit event for UI updates
-        if (typeof window !== 'undefined') {
-            const event = new CustomEvent('theme-unlocked', {
-                detail: { themeId, theme }
-            });
-            window.dispatchEvent(event);
-        }
-        
-        return true;
+    // Check company themes (only the active one is visible)
+    if (themesData.company.find(t => t.id === themeId)) {
+        return sessionVisibility.activeCompany === themeId;
     }
+
+    // Check special themes (visible when konami code is active)
+    if (themesData.special.find(t => t.id === themeId)) {
+        return sessionVisibility.specialVisible;
+    }
+
     return false;
 }
 
-// Unlock a special theme (permanent unlock)
-export function unlockSpecialTheme(themeId) {
-    const theme = themesData.themes.find(t => t.id === themeId);
-    if (!theme || !theme.hidden || !theme.special) return false; // Can only unlock special hidden themes
-    
-    let specialUnlockedThemes = getSpecialUnlockedThemes();
-    
-    // Remove all other special themes when unlocking a new one (mutual exclusivity)
-    const otherSpecialThemes = themesData.themes
-        .filter(t => t.special && t.hidden && t.id !== themeId)
-        .map(t => t.id);
-    
-    // Filter out other special themes from the unlocked list
-    specialUnlockedThemes = specialUnlockedThemes.filter(id => !otherSpecialThemes.includes(id));
-    
-    if (!specialUnlockedThemes.includes(themeId)) {
-        specialUnlockedThemes.push(themeId);
-        saveSpecialUnlockedThemes(specialUnlockedThemes);
-        
-        // Emit event for UI updates
-        if (typeof window !== 'undefined') {
-            const event = new CustomEvent('theme-unlocked', {
-                detail: { themeId, theme, special: true }
-            });
-            window.dispatchEvent(event);
-        }
-        
-        return true;
-    } else {
-        // Theme was already unlocked, but we still need to save to ensure other special themes are removed
-        saveSpecialUnlockedThemes(specialUnlockedThemes);
-        return false;
-    }
-}
+// Activate a company theme (session only, mutually exclusive, auto-applies)
+export function unlockCompanyTheme(themeId) {
+    const theme = themesData.company.find(t => t.id === themeId);
+    if (!theme) return false;
 
-// Toggle all hidden themes (unlock if none unlocked, lock if any unlocked)
-export function toggleAllHiddenThemes() {
-    const hiddenThemes = themesData.themes.filter(t => t.hidden).map(t => t.id);
-    const unlockedThemes = getUnlockedThemes();
-    
-    // Check if any hidden themes are currently unlocked
-    const anyUnlocked = hiddenThemes.some(themeId => unlockedThemes.includes(themeId));
-    
-    if (anyUnlocked) {
-        // Lock all hidden themes (clear the unlocked list)
-        saveUnlockedThemes([]);
-        
-        // Emit event for UI updates
-        if (typeof window !== 'undefined') {
-            const event = new CustomEvent('themes-locked', {
-                detail: { hiddenThemes }
-            });
-            window.dispatchEvent(event);
+    const wasActive = sessionVisibility.activeCompany === themeId;
+
+    // Set as active company theme (replaces any previous)
+    sessionVisibility.activeCompany = themeId;
+
+    // Auto-apply the theme
+    if (typeof window !== 'undefined') {
+        const savedMode = localStorage.getItem('theme-mode') || 'system';
+        let isDark = false;
+        if (savedMode === 'system') {
+            isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        } else {
+            isDark = savedMode === 'dark';
         }
-        
-        return { action: 'locked', themes: hiddenThemes };
-    } else {
-        // Unlock all hidden themes AND unlock all special themes
-        saveUnlockedThemes([...hiddenThemes]);
-        
-        // Unlock matrix and vaporwave themes when konami is activated (not chipax/skyward-ai)
-        const konamiSpecialThemes = ['matrix', 'vaporwave'];
-        konamiSpecialThemes.forEach(themeId => {
-            const theme = themesData.themes.find(t => t.id === themeId);
-            if (theme && theme.special) {
-                unlockSpecialTheme(themeId);
-            }
+
+        applyTheme(themeId, isDark);
+    }
+
+    // Emit event for UI updates
+    if (typeof window !== 'undefined') {
+        const event = new CustomEvent('theme-unlocked', {
+            detail: { themeId, theme, category: 'company' }
         });
-        
-        // Emit event for UI updates
-        if (typeof window !== 'undefined') {
-            const event = new CustomEvent('themes-unlocked', {
-                detail: { hiddenThemes }
-            });
-            window.dispatchEvent(event);
+        window.dispatchEvent(event);
+    }
+
+    return !wasActive;
+}
+
+// Make all special themes visible (session only - toggled by konami code)
+export function unlockSpecialThemes() {
+    sessionVisibility.specialVisible = true;
+
+    const specialThemeIds = themesData.special.map(t => t.id);
+
+    // Emit event for UI updates
+    if (typeof window !== 'undefined') {
+        const event = new CustomEvent('themes-unlocked', {
+            detail: { themeIds: specialThemeIds, category: 'special' }
+        });
+        window.dispatchEvent(event);
+    }
+
+    return true;
+}
+
+// Hide all special themes (session only - toggled by konami code)
+export function lockSpecialThemes() {
+    sessionVisibility.specialVisible = false;
+
+    const specialThemeIds = themesData.special.map(t => t.id);
+
+    // Emit event for UI updates
+    if (typeof window !== 'undefined') {
+        const event = new CustomEvent('themes-locked', {
+            detail: { themeIds: specialThemeIds, category: 'special' }
+        });
+        window.dispatchEvent(event);
+    }
+
+    return true;
+}
+
+// Activate a special theme by query param (makes special themes visible and applies the theme)
+export function unlockSpecialTheme(themeId) {
+    const theme = themesData.special.find(t => t.id === themeId);
+    if (!theme) return false;
+
+    const wasVisible = sessionVisibility.specialVisible;
+
+    // Make special themes visible
+    sessionVisibility.specialVisible = true;
+
+    // Auto-apply the theme
+    if (typeof window !== 'undefined') {
+        const savedMode = localStorage.getItem('theme-mode') || 'system';
+        let isDark = false;
+        if (savedMode === 'system') {
+            isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        } else {
+            isDark = savedMode === 'dark';
         }
-        return { action: 'unlocked', themes: [...hiddenThemes, ...specialThemes] };
+
+        applyTheme(themeId, isDark);
+    }
+
+    // Emit event for UI updates
+    if (typeof window !== 'undefined') {
+        const event = new CustomEvent('theme-unlocked', {
+            detail: { themeId, theme, category: 'special' }
+        });
+        window.dispatchEvent(event);
+    }
+
+    return !wasVisible;
+}
+
+// Toggle special themes visibility - used by konami code
+export function toggleAllHiddenThemes() {
+    const specialThemeIds = themesData.special.map(t => t.id);
+
+    // Toggle visibility
+    if (sessionVisibility.specialVisible) {
+        // Hide special themes
+        lockSpecialThemes();
+        return { action: 'locked', themes: specialThemeIds };
+    } else {
+        // Show special themes
+        unlockSpecialThemes();
+        return { action: 'unlocked', themes: specialThemeIds };
     }
 }
 
-// Check if current theme is hidden
+// Check if current theme is from non-default category
 export function isCurrentThemeHidden() {
     if (typeof window === 'undefined') return false;
     const currentThemeId = localStorage.getItem('theme-id');
     if (!currentThemeId) return false;
-    
-    const theme = themesData.themes.find(t => t.id === currentThemeId);
-    return theme ? theme.hidden === true : false;
+
+    // Check if it's a default theme (not hidden)
+    return !themesData.default.find(t => t.id === currentThemeId);
 }
 
-// Get default theme (first non-hidden theme)
+// Get default theme (first default theme)
 export function getDefaultTheme() {
-    return themesData.themes.find(t => !t.hidden) || themesData.themes[0];
+    return themesData.default[0];
 }
 
-// Get time remaining until konami unlock expires
+// Get time remaining until special themes unlock expires (not used anymore with session storage)
 export function getKonamiTimeRemaining() {
-    if (typeof window === 'undefined') return null;
-    try {
-        const konamiData = localStorage.getItem('konami-unlock');
-        if (!konamiData) return null;
-        
-        const { timestamp } = JSON.parse(konamiData);
-        const now = Date.now();
-        const oneDay = 24 * 60 * 60 * 1000;
-        const timeRemaining = (timestamp + oneDay) - now;
-        
-        if (timeRemaining <= 0) return null;
-        
-        return timeRemaining;
-    } catch {
-        return null;
-    }
+    // Special themes are now session-based, no expiration tracking needed
+    return null;
 }
 
-// Get available themes (non-hidden + unlocked hidden)
+// Get available themes (company if active → default → special if visible)
 export function getAvailableThemes() {
-    const availableThemes = themesData.themes.filter(theme => {
-        if (!theme.hidden) return true;
-        return isThemeUnlocked(theme.id);
-    });
+    const result = [];
 
-    // Put konami special themes at the beginning if available (chipax/skyward-ai are query param only)
-    const konamiSpecialThemes = ['matrix', 'vaporwave'];
-    const availableKonamiSpecials = [];
-    
-    konamiSpecialThemes.forEach(specialId => {
-        const specialIndex = availableThemes.findIndex(theme => theme.id === specialId);
-        if (specialIndex >= 0) {
-            const specialTheme = availableThemes.splice(specialIndex, 1)[0];
-            availableKonamiSpecials.push(specialTheme);
+    // 1. Include active company theme FIRST (only one at a time)
+    if (sessionVisibility.activeCompany) {
+        const companyTheme = themesData.company.find(t => t.id === sessionVisibility.activeCompany);
+        if (companyTheme) {
+            result.push(companyTheme);
         }
-    });
+    }
 
-    // Put konami special themes first, then regular themes
-    return [...availableKonamiSpecials, ...availableThemes];
+    // 2. Always include default themes
+    result.push(...themesData.default);
+
+    // 3. Include all special themes LAST (if visible via konami code)
+    if (sessionVisibility.specialVisible) {
+        result.push(...themesData.special);
+    }
+
+    return result;
 }
 
-// Export themes from JSON with backwards compatibility
-export const themes = themesData.themes.map((theme) => ({
+// Export all themes flattened with backwards compatibility
+export const themes = allThemes.map((theme) => ({
     ...theme,
     // Backwards compatibility getters
     get colorful() {
@@ -263,7 +229,7 @@ export const themes = themesData.themes.map((theme) => ({
 export const themeKeys = themes.map((theme) => theme.id);
 
 // Simple theme management with localStorage optimization and View Transitions API
-export function applyTheme(themeId, isDark = false, mode = null) {
+export function applyTheme(themeId, isDark = false) {
     const root = document.documentElement;
     
     // Get theme using backwards compatibility getters
@@ -290,7 +256,17 @@ export function applyTheme(themeId, isDark = false, mode = null) {
             localStorage.setItem('theme-id', themeId);
             localStorage.setItem('theme-mode', isDark ? 'dark' : 'light');
         } catch (e) {
-            warn('Failed to save theme to localStorage:', e);
+            console.warn('Failed to save theme to localStorage:', e);
+        }
+
+        // Sync to cookie for server-side rendering
+        try {
+            const expires = new Date();
+            expires.setFullYear(expires.getFullYear() + 1);
+            document.cookie = `theme-id=${themeId}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+            document.cookie = `theme-mode=${isDark ? 'dark' : 'light'}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+        } catch (e) {
+            console.warn('Failed to save theme to cookie:', e);
         }
         
     };
@@ -318,7 +294,7 @@ export function loadThemeFromStorage() {
 
         return { themeId: theme, isDark, mode };
     } catch (e) {
-        warn('Failed to load theme from localStorage:', e);
+        console.warn('Failed to load theme from localStorage:', e);
         return { themeId: 'dos', isDark: false, mode: 'light' };
     }
 }

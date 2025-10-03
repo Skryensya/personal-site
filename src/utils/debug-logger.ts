@@ -10,10 +10,12 @@ const isDebugMode = (): boolean => {
     const urlParams = new URLSearchParams(window.location.search);
     const urlDebug = urlParams.get('debug') === 'true';
     const localStorageDebug = localStorage.getItem('debug') === 'true';
-    return urlDebug || localStorageDebug || import.meta.env.DEV;
+    // Only enable if PUBLIC_DEBUG_LOGS is explicitly set to 'true'
+    const envDebug = import.meta.env.PUBLIC_DEBUG_LOGS === 'true';
+    return urlDebug || localStorageDebug || envDebug;
   } else {
-    // Server-side: check import.meta.env
-    return import.meta.env.DEV || import.meta.env.DEBUG === 'true';
+    // Server-side: only enable if PUBLIC_DEBUG_LOGS is explicitly set to 'true'
+    return import.meta.env.PUBLIC_DEBUG_LOGS === 'true';
   }
 };
 

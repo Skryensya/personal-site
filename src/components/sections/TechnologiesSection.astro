@@ -45,9 +45,9 @@ const technologies = [
 ];
 ---
 
-<BigSectionContainer title={t('home.technologies')} id="tecnologia" style="view-transition-name: technologies-section;"> 
+<BigSectionContainer title={t('home.technologies')} id="tecnologia" style="view-transition-name: technologies-section;">
     <MarqueeSection
-        client:load
+        client:visible
         links={technologies}
     />
 </BigSectionContainer>
