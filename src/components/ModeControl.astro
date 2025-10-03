@@ -94,8 +94,63 @@ const modes = [
 <script>
   import { applyTheme, themes } from '../data/themes.js';
 
+  // Declare global types
+  declare global {
+    interface Window {
+      modeControl: any;
+      toggleMode: () => void;
+    }
+  }
+
+  // Simple toggle function - works immediately
+  window.toggleMode = () => {
+    const savedMode = localStorage.getItem('theme-mode') || 'system';
+    let nextMode;
+
+    if (savedMode === 'system') {
+      nextMode = 'light';
+    } else if (savedMode === 'light') {
+      nextMode = 'dark';
+    } else {
+      nextMode = 'system';
+    }
+
+    // Save to localStorage
+    localStorage.setItem('theme-mode', nextMode);
+
+    // Get current theme
+    const savedThemeId = localStorage.getItem('theme-id') || 'gameboy';
+    
+    // Apply immediately
+    let resolvedMode = nextMode;
+    if (nextMode === 'system') {
+      resolvedMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    }
+
+    const isDark = resolvedMode === 'dark';
+    
+    // Apply to document
+    document.documentElement.classList.toggle('dark', isDark);
+    
+    // Update global state
+    window.__THEME_MODE__ = nextMode;
+    
+    // If modeControl exists, update it
+    if (window.modeControl) {
+      window.modeControl.currentMode = nextMode;
+      if (window.modeControl.updateDisplay) {
+        window.modeControl.updateDisplay();
+      }
+    }
+    
+    // Apply theme
+    import('../data/themes.js').then(({ applyTheme }) => {
+      applyTheme(savedThemeId, isDark);
+    });
+  };
+
   // Global mode management functions
-  (window as any).modeControl = {
+  window.modeControl = {
     currentMode: 'system',
     
     // Initialize mode control
@@ -330,25 +385,18 @@ const modes = [
     }
   };
 
-  // Global function for main button
-  (window as any).toggleMode = () => {
-    if ((window as any).modeControl && typeof (window as any).modeControl.toggleMode === 'function') {
-      (window as any).modeControl.toggleMode();
-    } else {
-    }
-  };
 
   // Initialize when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-      (window as any).modeControl.init();
+      window.modeControl.init();
     });
   } else {
-    (window as any).modeControl.init();
+    window.modeControl.init();
   }
 
   // Also initialize on Astro page transitions
   document.addEventListener('astro:page-load', () => {
-    (window as any).modeControl.init();
+    window.modeControl.init();
   });
 </script>

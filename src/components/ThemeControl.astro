@@ -43,8 +43,55 @@ const t = getTranslations(currentLocale);
 <script>
   import { applyTheme, themes, getAvailableThemes } from '../data/themes.js';
 
+  // Declare global types
+  declare global {
+    interface Window {
+      themeControl: any;
+      nextTheme: () => void;
+    }
+  }
+
+  // Simple theme toggle function - works immediately
+  window.nextTheme = () => {
+    import('../data/themes.js').then(({ getAvailableThemes, applyTheme }) => {
+      const availableThemes = getAvailableThemes();
+      if (availableThemes.length === 0) return;
+      
+      const currentThemeId = localStorage.getItem('theme-id') || availableThemes[0].id;
+      const currentIndex = availableThemes.findIndex(t => t.id === currentThemeId);
+      const nextIndex = (currentIndex + 1) % availableThemes.length;
+      const newTheme = availableThemes[nextIndex];
+      
+      // Save to localStorage
+      localStorage.setItem('theme-id', newTheme.id);
+      
+      // Get current mode
+      const savedMode = localStorage.getItem('theme-mode') || 'system';
+      let isDark = false;
+      if (savedMode === 'system') {
+        isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      } else {
+        isDark = savedMode === 'dark';
+      }
+      
+      // Apply theme
+      applyTheme(newTheme.id, isDark);
+      
+      // Update global state
+      window.__THEME_ID__ = newTheme.id;
+      
+      // If themeControl exists, update it
+      if (window.themeControl) {
+        window.themeControl.currentTheme = newTheme;
+        if (window.themeControl.updateDisplay) {
+          window.themeControl.updateDisplay();
+        }
+      }
+    });
+  };
+
   // Global theme management functions
-  (window as any).themeControl = {
+  window.themeControl = {
     currentTheme: null,
     availableThemes: [],
     
@@ -107,7 +154,16 @@ const t = getTranslations(currentLocale);
     
     // Load available themes
     loadAvailableThemes() {
+      const oldCount = this.availableThemes.length;
       this.availableThemes = getAvailableThemes() as any[];
+      
+      import('../utils/debug-logger.ts').then(({ debugLogger }) => {
+        debugLogger.group('🎛️ ThemeControl: Loading available themes');
+        debugLogger.log('Previous theme count:', oldCount);
+        debugLogger.log('New theme count:', this.availableThemes.length);
+        debugLogger.log('Available theme IDs:', this.availableThemes.map((t: any) => t.id));
+        debugLogger.groupEnd();
+      });
     },
     
     // Apply theme to document
@@ -208,6 +264,7 @@ const t = getTranslations(currentLocale);
     
     // Render theme options in dropdown
     renderThemeOptions() {
+      
       const desktopLayout = document.getElementById('theme-desktop-layout');
       const mobileLayout = document.getElementById('theme-mobile-layout');
       
@@ -238,13 +295,14 @@ const t = getTranslations(currentLocale);
       
       // Desktop layout - dynamic columns with proper width constraints
       if (hasOnlyBasicThemes) {
-        desktopLayout.innerHTML = `
+        const desktopHTML = `
           <div class="flex gap-0 w-full max-w-[200px]">
             <div class="w-full flex-shrink-0">
               ${this.availableThemes.map((theme: any) => this.createThemeButton(theme)).join('')}
             </div>
           </div>
         `;
+        desktopLayout.innerHTML = desktopHTML;
       } else {
         // Limit the width to prevent ugly overflow
         const maxWidth = Math.min(idealColumns * 180, 600); // Max 600px total width
@@ -264,7 +322,7 @@ const t = getTranslations(currentLocale);
           redistributedColumns.push(...columns);
         }
         
-        desktopLayout.innerHTML = `
+        const complexDesktopHTML = `
           <div class="flex gap-0" style="max-width: ${maxWidth}px;">
             ${redistributedColumns.map((columnThemes: any[], index: number) => `
               <div class="w-[180px] flex-shrink-0 ${index < redistributedColumns.length - 1 ? 'border-r-2 border-main' : ''}">
@@ -273,10 +331,12 @@ const t = getTranslations(currentLocale);
             `).join('')}
           </div>
         `;
+        desktopLayout.innerHTML = complexDesktopHTML;
       }
       
       // Mobile layout - single column
-      mobileLayout.innerHTML = this.availableThemes.map((theme: any) => this.createThemeButton(theme)).join('');
+      const mobileHTML = this.availableThemes.map((theme: any) => this.createThemeButton(theme)).join('');
+      mobileLayout.innerHTML = mobileHTML;
       
       // Add event listeners
       this.addThemeButtonListeners();
@@ -341,11 +401,24 @@ const t = getTranslations(currentLocale);
     // Setup event listeners
     setupEventListeners() {
       // Listen for theme unlock/lock events
-      const handleThemeUpdates = () => {
+      const handleThemeUpdates = (event: any) => {
+        import('../utils/debug-logger.ts').then(({ debugLogger }) => {
+          debugLogger.group('🎛️ ThemeControl: Received theme update event');
+          debugLogger.log('Event type:', event.type);
+          debugLogger.log('Event detail:', event.detail);
+          debugLogger.log('Current available themes before update:', this.availableThemes.length);
+        });
+        
         this.loadAvailableThemes();
         this.updateDropdownWidth();
         this.renderThemeOptions();
         this.updateDisplay();
+        
+        import('../utils/debug-logger.ts').then(({ debugLogger }) => {
+          debugLogger.log('Available themes after update:', this.availableThemes.length);
+          debugLogger.log('Updated themes:', this.availableThemes.map((t: any) => t.id));
+          debugLogger.groupEnd();
+        });
       };
       
       window.addEventListener('theme-unlocked', handleThemeUpdates);
@@ -366,6 +439,21 @@ const t = getTranslations(currentLocale);
       };
       
       window.addEventListener('company-theme-activated', handleCompanyThemeActivated);
+      
+      // Listen for general theme changes (like after konami lock)
+      const handleThemeChanged = (event: any) => {
+        const { themeId } = event.detail;
+        const changedTheme = themes.find((t: any) => t.id === themeId);
+        if (changedTheme) {
+          this.currentTheme = changedTheme;
+          this.loadAvailableThemes();
+          this.updateDropdownWidth();
+          this.renderThemeOptions();
+          this.updateDisplay();
+        }
+      };
+      
+      window.addEventListener('theme-changed', handleThemeChanged);
       
       // Keyboard shortcuts for theme navigation
       const handleKeyDown = (e: KeyboardEvent) => {
@@ -388,25 +476,18 @@ const t = getTranslations(currentLocale);
     }
   };
 
-  // Global function for main button - define immediately
-  (window as any).nextTheme = () => {
-    if ((window as any).themeControl && typeof (window as any).themeControl.nextTheme === 'function') {
-      (window as any).themeControl.nextTheme();
-    } else {
-    }
-  };
 
   // Initialize when DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
-      (window as any).themeControl.init();
+      window.themeControl.init();
     });
   } else {
-    (window as any).themeControl.init();
+    window.themeControl.init();
   }
 
   // Also initialize on Astro page transitions
   document.addEventListener('astro:page-load', () => {
-    (window as any).themeControl.init();
+    window.themeControl.init();
   });
 </script>

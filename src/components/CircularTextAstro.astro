@@ -14,9 +14,11 @@ const {
 } = Astro.props;
 
 const letters = Array.from(text);
+const componentId = `circular-text-${Math.random().toString(36).substring(2, 9)}`;
 ---
 
 <div 
+  id={componentId}
   class={`circular-text-container m-0 mx-auto rounded-full w-[150px] h-[150px] relative font-black text-secondary text-center cursor-pointer origin-center ${className}`}
   data-spin-duration={spinDuration}
   data-on-hover={onHover}
@@ -42,14 +44,30 @@ const letters = Array.from(text);
 <style>
   .circular-text-container {
     animation: spin var(--spin-duration, 20s) linear infinite;
-    transition: transform 150ms ease-out;
+    transition: transform 150ms ease-out, scale 150ms ease-out;
   }
 
   .circular-letter {
     transition: all 500ms cubic-bezier(0, 0, 0, 1);
   }
 
-  /* Hover effects disabled */
+  /* Hover effects */
+  .circular-text-container[data-on-hover="speedUp"]:hover {
+    animation-duration: calc(var(--spin-duration, 20s) / 4);
+  }
+
+  .circular-text-container[data-on-hover="slowDown"]:hover {
+    animation-duration: calc(var(--spin-duration, 20s) * 2);
+  }
+
+  .circular-text-container[data-on-hover="pause"]:hover {
+    animation-play-state: paused;
+  }
+
+  .circular-text-container[data-on-hover="goBonkers"]:hover {
+    animation-duration: calc(var(--spin-duration, 20s) / 20);
+    transform: scale(0.8);
+  }
 
   @keyframes spin {
     from {
@@ -61,28 +79,12 @@ const letters = Array.from(text);
   }
 </style>
 
-<script>
+<script define:vars={{ componentId, spinDuration, onHover }}>
   document.addEventListener('astro:page-load', () => {
-    const containers = document.querySelectorAll('.circular-text-container');
+    const container = document.getElementById(componentId);
+    if (!container) return;
     
-    containers.forEach((container) => {
-      const htmlContainer = container as HTMLElement;
-      const spinDuration = parseInt(htmlContainer.dataset.spinDuration || '20');
-      
-      // Set CSS custom property for animation duration
-      htmlContainer.style.setProperty('--spin-duration', `${spinDuration}s`);
-      
-      // Handle mouse events for smooth transitions
-      htmlContainer.addEventListener('mouseenter', () => {
-        // Animation changes are handled by CSS hover pseudo-classes
-        // This ensures smooth transitions between states
-      });
-      
-      htmlContainer.addEventListener('mouseleave', () => {
-        // Reset any inline styles that might interfere
-        htmlContainer.style.transform = '';
-        htmlContainer.style.animationPlayState = '';
-      });
-    });
+    // Set CSS custom property for animation duration
+    container.style.setProperty('--spin-duration', `${spinDuration}s`);
   });
 </script>
