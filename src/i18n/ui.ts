@@ -221,6 +221,12 @@ export const ui = {
         'footer.motion.activated': 'Activado',
         'footer.motion.deactivated': 'Desactivado',
         'footer.motion.detecting': 'detectando...',
+        'footer.wcag.a.title': 'WCAG A - Mínimo',
+        'footer.wcag.a.desc': 'Contraste 3:1 para elementos gráficos, iconos y componentes de interfaz',
+        'footer.wcag.aa.title': 'WCAG AA - Estándar',
+        'footer.wcag.aa.desc': 'Contraste 4.5:1 para texto normal y cumplimiento legal',
+        'footer.wcag.aaa.title': 'WCAG AAA - Superior',
+        'footer.wcag.aaa.desc': 'Contraste 7:1 para máxima accesibilidad y legibilidad',
 
         // Accessibility Statement
         'accessibility.title': 'Declaración de Accesibilidad',
@@ -456,6 +462,12 @@ export const ui = {
         'footer.motion.activated': 'Activated',
         'footer.motion.deactivated': 'Deactivated',
         'footer.motion.detecting': 'detecting...',
+        'footer.wcag.a.title': 'WCAG A - Minimum',
+        'footer.wcag.a.desc': '3:1 contrast for graphics, icons and UI components',
+        'footer.wcag.aa.title': 'WCAG AA - Standard',
+        'footer.wcag.aa.desc': '4.5:1 contrast for normal text and legal compliance',
+        'footer.wcag.aaa.title': 'WCAG AAA - Enhanced',
+        'footer.wcag.aaa.desc': '7:1 contrast for maximum accessibility and readability',
 
         // Accessibility Statement
         'accessibility.title': 'Accessibility Statement',
@@ -691,6 +703,12 @@ export const ui = {
         'footer.motion.activated': 'Aktivert',
         'footer.motion.deactivated': 'Deaktivert',
         'footer.motion.detecting': 'oppdager...',
+        'footer.wcag.a.title': 'WCAG A - Minimum',
+        'footer.wcag.a.desc': '3:1 kontrast for grafikk, ikoner og UI-komponenter',
+        'footer.wcag.aa.title': 'WCAG AA - Standard',
+        'footer.wcag.aa.desc': '4.5:1 kontrast for normal tekst og lovmessig overholdelse',
+        'footer.wcag.aaa.title': 'WCAG AAA - Forbedret',
+        'footer.wcag.aaa.desc': '7:1 kontrast for maksimal tilgjengelighet og lesbarhet',
 
         // Accessibility Statement
         'accessibility.title': 'Tilgjengelighetserklæring',
