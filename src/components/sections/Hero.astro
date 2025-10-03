@@ -27,7 +27,7 @@ const t = getTranslations(lang);
         <div class="mb-10">
           <TextGenerate
             words={t('hero.description')}
-            client:load
+            client:visible
           />
         </div>
         <div class="flex flex-col md:flex-row  gap-6">
@@ -56,9 +56,9 @@ const t = getTranslations(lang);
           transparent={true}
           antialias={false}
           enableRipples={true}
-          cssVar="--color-main"       
-          fallbackColor="#B19EEF"      
-          client:load                   
+          cssVar="--color-main"
+          fallbackColor="#B19EEF"
+          client:idle
         />
 
         <!-- Hero Cards on top -->

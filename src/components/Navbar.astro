@@ -393,12 +393,9 @@ const navItems = [
       return;
     }
 
-    console.log('❌ Projects button not found or not focusable, using main content target');
-    
-    // Fallback: Try main content target  
+    // Fallback: Try main content target
     const mainContent = document.getElementById('main-content');
     if (mainContent) {
-      console.log('✅ Main content target found, focusing...');
       mainContent.focus();
       mainContent.scrollIntoView({ 
         behavior: 'smooth', 
@@ -408,7 +405,6 @@ const navItems = [
       return;
     }
 
-    console.log('❌ Skip targets not found, using general fallback');
     
     // Final fallback: find first focusable element in main content area
     const mainElement = document.querySelector('main');
@@ -428,7 +424,6 @@ const navItems = [
       
       if (focusableInMain.length > 0) {
         const firstFocusable = focusableInMain[0];
-        console.log('✅ First focusable in main found:', firstFocusable);
         firstFocusable.focus();
         firstFocusable.scrollIntoView({ 
           behavior: 'smooth', 
@@ -439,7 +434,6 @@ const navItems = [
       }
     }
 
-    console.log('❌ No focusable element found');
   }
 
   // Initialize global theme state from localStorage immediately and update placeholder
@@ -453,6 +447,14 @@ const navItems = [
     // If no mode was saved, set system as default
     if (!localStorage.getItem('theme-mode')) {
       localStorage.setItem('theme-mode', 'system');
+      // Sync to cookie
+      try {
+        const expires = new Date();
+        expires.setFullYear(expires.getFullYear() + 1);
+        document.cookie = `theme-mode=system; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+      } catch (e) {
+        // Cookie setting failed - not critical
+      }
     }
     
     // The theme preview should always use CSS variables, no need to update colors
@@ -498,30 +500,26 @@ const navItems = [
     if (skipButtonDesktop) {
       skipButtonDesktop.addEventListener('click', (e) => {
         e.preventDefault();
-        console.log('🖱️ Desktop skip button clicked');
         skipToMainContent();
       });
-      
+
       skipButtonDesktop.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          console.log('⌨️ Desktop skip button key pressed:', e.key);
           skipToMainContent();
         }
       });
     }
-    
+
     if (skipButtonMobile) {
       skipButtonMobile.addEventListener('click', (e) => {
         e.preventDefault();
-        console.log('🖱️ Mobile skip button clicked');
         skipToMainContent();
       });
-      
+
       skipButtonMobile.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();
-          console.log('⌨️ Mobile skip button key pressed:', e.key);
           skipToMainContent();
         }
       });
@@ -559,9 +557,9 @@ const navItems = [
       const hamburgerIcon = document.getElementById('hamburger-icon');
       const closeIcon = document.getElementById('close-icon');
       
-      
+
       if (!button || !dropdown || !backdrop) {
-        console.error('Mobile menu elements not found!', { button, dropdown, backdrop });
+        console.warn('Mobile menu elements not found!', { button, dropdown, backdrop });
         return;
       }
 
@@ -698,7 +696,6 @@ const navItems = [
                 window.modeControl.toggleMode();
               }
             });
-            console.log('Desktop mode control setup complete');
             return true;
           }
         }
@@ -707,7 +704,6 @@ const navItems = [
           setTimeout(trySetupDesktopMode, 100);
           return false;
         } else {
-          console.warn('Could not setup desktop mode control after', maxAttempts, 'attempts');
           return false;
         }
       }
@@ -773,7 +769,6 @@ const navItems = [
           window.modeControl.toggleMode();
           setTimeout(updateMobileModeDisplay, 50);
         } else {
-          console.warn('No mode toggle function available');
         }
       }
       
@@ -807,7 +802,6 @@ const navItems = [
             setTimeout(tryClick, 100);
             return false;
           } else {
-            console.error('🌍 MOBILE: Language button not found after all attempts');
             // Fallback: manually cycle through languages
             const currentLang = getCurrentLanguageFromURL();
             const languages = ['es', 'en', 'no'];
@@ -978,13 +972,11 @@ const navItems = [
       setTimeout(() => {
         const themeDropdownButtons = document.querySelectorAll('#theme-control [data-theme-button]');
         if (themeDropdownButtons.length === 0) {
-          console.warn('Theme dropdown buttons not found after component ready');
           // Try to reinitialize theme control
           if (window.themeControl && typeof window.themeControl.init === 'function') {
             window.themeControl.init();
           }
         } else {
-          console.log('Theme dropdown has', themeDropdownButtons.length, 'buttons');
         }
       }, 100);
     };
@@ -1012,7 +1004,6 @@ const navItems = [
         const themeDropdownButtons = document.querySelectorAll('#theme-control [data-theme-button]');
         
         if (themeControl && themeControl.style.visibility === 'visible' && themeDropdownButtons.length === 0) {
-          console.warn('Theme control is visible but dropdown buttons missing, reinitializing...');
           if (window.themeControl && typeof window.themeControl.init === 'function') {
             window.themeControl.init();
           }

@@ -147,13 +147,22 @@ const modes = [
       if (mode === 'system') {
         resolvedMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
       }
-      
+
       const isDark = resolvedMode === 'dark';
-      applyTheme(currentTheme.id, isDark, null);
+      applyTheme(currentTheme.id, isDark);
       
       // Save to localStorage
       localStorage.setItem('theme-mode', mode);
-      
+
+      // Sync to cookie for server-side rendering
+      try {
+        const expires = new Date();
+        expires.setFullYear(expires.getFullYear() + 1);
+        document.cookie = `theme-mode=${mode}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+      } catch (e) {
+        console.warn('Failed to save mode to cookie:', e);
+      }
+
       // Update global state
       (window as any).__THEME_MODE__ = mode;
     },

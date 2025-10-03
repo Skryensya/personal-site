@@ -121,7 +121,7 @@ const t = getTranslations(currentLocale);
       }
       
       const isDark = resolvedMode === 'dark';
-      applyTheme(theme.id, isDark, null);
+      applyTheme(theme.id, isDark);
       
       // Save to localStorage
       localStorage.setItem('theme-id', theme.id);
@@ -298,7 +298,6 @@ const t = getTranslations(currentLocale);
           data-selected="${isSelected}"
           class="${baseClasses} ${stateClasses}"
           role="menuitem"
-          tabindex="-1"
           style="min-height: 36px; outline-width: 1px; outline-offset: 1px;"
         >
           <div class="flex items-center gap-2 pointer-events-none">

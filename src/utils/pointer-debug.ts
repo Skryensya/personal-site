@@ -1,4 +1,5 @@
 // Utilidad para testing de pointer capabilities en dev tools
+import { debugLogger } from '@/utils/debug-logger';
 
 declare global {
     interface Window {
@@ -18,13 +19,13 @@ export function setupPointerDebug() {
         enableTouchMode: () => {
             localStorage.setItem('force-touch-mode', 'true');
             window.dispatchEvent(new Event('resize')); // Trigger re-check
-            console.log('🚀 Touch mode enabled - cards should now show touch behavior');
+            debugLogger.log('🚀 Touch mode enabled - cards should now show touch behavior');
         },
 
         disableTouchMode: () => {
             localStorage.removeItem('force-touch-mode');
             window.dispatchEvent(new Event('resize')); // Trigger re-check
-            console.log('🖱️ Touch mode disabled - cards should now show pointer behavior');
+            debugLogger.log('🖱️ Touch mode disabled - cards should now show pointer behavior');
         },
 
         getTouchMode: () => {
@@ -59,7 +60,7 @@ export function setupPointerDebug() {
         }
     };
 
-    console.log(`
+    debugLogger.log(`
 🔧 Pointer Debug Tools Available:
 
 Para simular touch en dev tools:

@@ -142,12 +142,11 @@ const shadowClasses = cn(
 
     // Handle outline elevated animation
     const outlineElevatedButtons = document.querySelectorAll('.outline-elevated-button');
-    console.log('Found outline elevated buttons:', outlineElevatedButtons.length);
-    
+  
+
     outlineElevatedButtons.forEach((buttonWrapper, index) => {
       const actualButton = buttonWrapper.querySelector('button, a');
-      console.log(`Button wrapper ${index}:`, buttonWrapper);
-      console.log(`Actual button ${index}:`, actualButton);
+    
       
       let showTimeouts: number[] = [];
       let isAnimating = false;
@@ -178,16 +177,15 @@ const shadowClasses = cn(
         actualButton.appendChild(borderRight);
         actualButton.appendChild(borderBottom);
         actualButton.appendChild(borderLeft);
-        
-        console.log('Border elements created and added:', { borderTop, borderRight, borderBottom, borderLeft });
-        
+
+         
+
         // Function to show borders sequentially
-        function showBordersSequential() {
-          console.log('Starting sequential border show animation');
-          
+        function showBordersSequential() { 
+
           // Don't start if already animating or locked
           if (isAnimating || isLocked) {
-            console.log('Animation in progress or button locked, skipping');
+          
             return;
           }
           
@@ -265,26 +263,26 @@ const shadowClasses = cn(
               (actualButton as HTMLElement).style.boxSizing = 'border-box';
               // Force border via inline styles to ensure visibility
               (actualButton as HTMLElement).style.border = '2px double var(--color-main)';
-              console.log('Added border-double and box-sizing to button');
+        
             }
-            
+
             // If mouse is still hovering when animation completes, activate hover
             if (actualButton && isCurrentlyHovering) {
               actualButton.classList.remove('bg-secondary', 'text-main', 'border-transparent');
               actualButton.classList.add('bg-main', 'text-secondary', 'border-double', 'border-main', 'shadow-[inset_0_0_0_2px_var(--color-secondary)]');
-              console.log('Applied hover styles after animation completion');
+         
             }
-            
-            console.log('Show animation completed - button locked with border');
+
+      
           }, 1030); // After last border completes (780ms + 250ms)
           showTimeouts.push(timeout5);
         }
         
         
-        
+
         // Function to handle animation trigger (both hover and focus)
         const triggerAnimation = (eventType: string) => {
-          console.log(`${eventType} detected on button`);
+        
           
           // Clear any existing hover timeout
           if (hoverTimeout) {
@@ -300,8 +298,8 @@ const shadowClasses = cn(
             const htmlButtonWrapper = buttonWrapper as HTMLElement;
             htmlButtonWrapper.style.transform = 'translate(-8.4px, -8.4px)';
             htmlButtonWrapper.style.transition = 'transform 150ms ease-out';
-            
-            console.log('Applied hover styles and shrinking effect to locked button');
+
+  
             return;
           }
           
@@ -313,7 +311,7 @@ const shadowClasses = cn(
             const htmlButtonWrapper = buttonWrapper as HTMLElement;
             htmlButtonWrapper.style.transform = 'translate(-12px, -12px)';
             htmlButtonWrapper.style.transition = 'transform 200ms ease-out';
-            console.log('Button elevated after border animation completed');
+           
           }, 1030);
         };
 
@@ -329,8 +327,8 @@ const shadowClasses = cn(
             const htmlButtonWrapper = buttonWrapper as HTMLElement;
             htmlButtonWrapper.style.transform = 'translate(-8.4px, -8.4px)';
             htmlButtonWrapper.style.transition = 'transform 150ms ease-out';
-            
-            console.log('Applied focus styles and shrinking effect to locked button');
+
+           
           }
         });
         
@@ -343,13 +341,13 @@ const shadowClasses = cn(
             const htmlButtonWrapper = buttonWrapper as HTMLElement;
             htmlButtonWrapper.style.transform = 'translate(-12px, -12px)';
             htmlButtonWrapper.style.transition = 'transform 150ms ease-out';
-            
-            console.log('Removed focus styles and restored full elevation to locked button');
+
+        
           }
         });
-        
+
         actualButton.addEventListener('mouseleave', () => {
-          console.log('Mouse leave detected on button');
+   
           
           // Clear hover timeout and reset state
           if (hoverTimeout) {
@@ -367,13 +365,11 @@ const shadowClasses = cn(
             const htmlButtonWrapper = buttonWrapper as HTMLElement;
             htmlButtonWrapper.style.transform = 'translate(-12px, -12px)';
             htmlButtonWrapper.style.transition = 'transform 150ms ease-out';
-            
-            console.log('Removed hover styles and restored full elevation to locked button');
+ 
             return;
           }
-          
-          // Do nothing on mouse leave - button stays elevated and locked
-          console.log('Button stays elevated and locked');
+
+         
         });
         
         actualButton.addEventListener('mousedown', () => {

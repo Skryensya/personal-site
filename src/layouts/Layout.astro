@@ -19,14 +19,18 @@ export interface Props extends HeadProps {
     showGameOfLife?: boolean;
 }
 
-const { 
-    showHeader = true, 
-    headerTitle = null, 
-    headerSubtitle = null, 
-    lang = 'es', 
-    showGameOfLife = false, 
-    ...head 
+const {
+    showHeader = true,
+    headerTitle = null,
+    headerSubtitle = null,
+    lang = 'es',
+    showGameOfLife = false,
+    ...head
 } = Astro.props;
+
+// Read theme from cookie for server-side rendering
+const themeIdCookie = Astro.cookies.get('theme-id')?.value;
+const themeModeCookie = Astro.cookies.get('theme-mode')?.value;
 
 // Generate theme data for the client script
 // Only include non-hidden themes as valid themes (hidden themes need to be unlocked first)
@@ -44,6 +48,11 @@ const defaultTheme = themes.find(t => !t.hidden) || themes[0];
 const defaultColorful = defaultTheme.colorful;
 const defaultContrasty = defaultTheme.contrasty;
 const defaultThemeId = defaultTheme.id;
+
+// Use server-side theme from cookie if available, otherwise use default
+const serverThemeId = themeIdCookie && themeColors[themeIdCookie] ? themeIdCookie : defaultThemeId;
+const serverTheme = themeColors[serverThemeId] || { colorful: defaultColorful, contrasty: defaultContrasty };
+const serverMode = themeModeCookie || 'system';
 
 // Get translations for theme toasts
 const t = getTranslations(lang);
@@ -66,19 +75,19 @@ declare global {
 <!doctype html>
 <html lang={lang} class="antialiased break-words">
     <head>
-        <!-- INSTANT theme application - runs BEFORE any CSS and PERSISTS during View Transitions -->
-        <script is:inline define:vars={{ validThemes, themeColors, defaultColorful, defaultContrasty, defaultThemeId }}>
-            // ULTRA-FAST theme application for View Transitions compatibility
+        <!-- INSTANT theme application - runs BEFORE any CSS with server-side values -->
+        <script is:inline define:vars={{ validThemes, themeColors, defaultColorful, defaultContrasty, defaultThemeId, serverThemeId, serverMode }}>
+            // ULTRA-FAST theme application using server-side cookie values
             (function() {
-                // Helper function to check if a special theme is unlocked
-                function isSpecialThemeUnlocked(themeId) {
+                // Helper to sync localStorage to cookie
+                function syncThemeToCookie(themeId, mode) {
                     try {
-                        const specialData = localStorage.getItem('special-themes-unlocked');
-                        if (!specialData) return false;
-                        const { themes } = JSON.parse(specialData);
-                        return themes && themes.includes(themeId);
-                    } catch {
-                        return false;
+                        const expires = new Date();
+                        expires.setFullYear(expires.getFullYear() + 1);
+                        document.cookie = `theme-id=${themeId}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+                        document.cookie = `theme-mode=${mode}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+                    } catch (e) {
+                        // Cookie setting failed
                     }
                 }
 
@@ -92,29 +101,28 @@ declare global {
                         savedTheme = localStorage.getItem('theme-id');
                         savedMode = localStorage.getItem('theme-mode');
                     } catch (e) {
-                        // localStorage unavailable - use defaults
+                        // localStorage unavailable - use server values
+                        savedTheme = serverThemeId;
+                        savedMode = serverMode;
                     }
 
                     // Determine theme immediately
-                    // Check if saved theme is valid (non-hidden) OR if it's a special theme that's unlocked
-                    let themeId = defaultThemeId;
-                    if (savedTheme) {
-                        if (validThemes.includes(savedTheme)) {
-                            // Theme is in validThemes (non-hidden)
-                            themeId = savedTheme;
-                        } else if (isSpecialThemeUnlocked(savedTheme)) {
-                            // Theme is a special unlocked theme
-                            themeId = savedTheme;
-                        } else {
-                            // Saved theme is not valid - clear it and use default
-                            try {
-                                localStorage.removeItem('theme-id');
-                            } catch (e) {
-                                // Ignore error
-                            }
+                    // Use saved theme if it exists in themeColors, otherwise use server value
+                    let themeId = serverThemeId;
+                    if (savedTheme && themeColors[savedTheme]) {
+                        themeId = savedTheme;
+                    } else if (savedTheme && !themeColors[savedTheme]) {
+                        // Theme doesn't exist anymore, clear it
+                        try {
+                            localStorage.removeItem('theme-id');
+                        } catch (e) {
+                            // Ignore error
                         }
                     }
-                    const mode = savedMode || 'system';
+                    const mode = savedMode || serverMode;
+
+                    // Sync to cookie for server-side rendering
+                    syncThemeToCookie(themeId, mode);
                     
                     // Get theme colors from embedded data
                     const theme = themeColors[themeId] || { 
@@ -162,20 +170,36 @@ declare global {
         </script>
         
         <!-- CSS loads AFTER theme is already applied -->
-        <style>
-            /* Base structure - colors already set by script above */
-            /* No default values to prevent flash - script sets all values immediately */
+        <style is:inline>
+            /* Prevent flash of unstyled content */
+            :root {
+                /* Theme colors are set by inline script above - no defaults needed */
+                /* This prevents flash by ensuring the script runs before any rendering */
+            }
+
+            /* Prevent any white/default background flash */
+            html {
+                background-color: var(--color-secondary, #000);
+            }
+
+            body {
+                background-color: var(--color-secondary, #000);
+                color: var(--color-main, #fff);
+            }
         </style>
  
         
         <BaseHead {...head} lang={lang} />
-        <link rel="stylesheet" href="/src/styles/view-transitions.css">
         <ViewTransitions />
         
-        <!-- Selection color animator -->
+        <!-- Selection color animator - defer to reduce blocking -->
         <script>
             import { startGlobalSelectionAnimation } from '../utils/globalSelectionAnimator.ts';
-            startGlobalSelectionAnimation();
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', startGlobalSelectionAnimation);
+            } else {
+                requestIdleCallback(startGlobalSelectionAnimation);
+            }
         </script>
         
         <!-- Additional theme persistence for View Transitions -->
@@ -216,27 +240,22 @@ declare global {
             document.addEventListener('astro:page-load', applyBodyBackground);
         </script>
 
-        <!-- Konami Code Integration -->
+        <!-- Konami Code Integration - defer to reduce blocking -->
         <script is:inline define:vars={{ themeMessages }}>
             // Store theme messages for use in module script
             window.__THEME_MESSAGES__ = themeMessages;
         </script>
-        
-        <script type="module">
-            console.log('🎮 Loading Konami integration...');
-            
-            import konami from '/src/utils/konami.js';
-            import { toggleAllHiddenThemes, isCurrentThemeHidden, getDefaultTheme, applyTheme } from '/src/data/themes.js';
 
-            console.log('🎮 Konami module loaded, starting detection...');
-            
-            // Start Konami code detection
-            konami.start();
+        <script type="module">
+            // Defer konami code to idle time
+            function initKonami() {
+                import('/src/utils/konami.js').then(({ default: konami }) => {
+                    import('/src/data/themes.js').then(({ toggleAllHiddenThemes, isCurrentThemeHidden, getDefaultTheme, applyTheme }) => {
+                        // Start Konami code detection
+                        konami.start();
 
             // Function to create confetti rain effect using React component
             function createConfettiRain() {
-                console.log('🎊 Creating confetti rain effect...');
-                
                 // Create container for the React component
                 const confettiContainer = document.createElement('div');
                 confettiContainer.id = 'konami-confetti-container';
@@ -250,60 +269,48 @@ declare global {
                     z-index: 9999;
                 `;
                 document.body.appendChild(confettiContainer);
-                console.log('🎊 Container created and added to DOM');
-                
+
                 // Get current theme colors
                 const computedStyle = getComputedStyle(document.documentElement);
                 const mainColor = computedStyle.getPropertyValue('--color-main').trim();
-                console.log('🎊 Main color:', mainColor);
-                
+
                 // Import React, ReactDOM, and ConfettiRain component
                 Promise.all([
                     import('react'),
                     import('react-dom/client'),
                     import('/src/components/ConfettiRain.tsx')
                 ]).then(([React, ReactDOM, ConfettiModule]) => {
-                    console.log('🎊 React modules loaded successfully');
                     const ConfettiRain = ConfettiModule.default;
                     const root = ReactDOM.createRoot(confettiContainer);
-                    
+
                     // Render ConfettiRain with custom props
                     const confettiProps = {
                         count: 100,
                         duration: 5,
                         loop: false,
-                        color: mainColor || '#000000', // Fallback to black if CSS var doesn't resolve
+                        color: mainColor || '#000000',
                         size: 6,
                         spreadX: 100
                     };
-                    
-                    console.log('🎊 Rendering ConfettiRain with props:', confettiProps);
-                    
+
                     root.render(
                         React.createElement(ConfettiRain, confettiProps)
                     );
-                    
-                    console.log('🎊 ConfettiRain component rendered');
-                    
+
                     // Clean up after animation completes
                     setTimeout(() => {
-                        console.log('🎊 Starting cleanup...');
                         try {
                             root.unmount();
-                            console.log('🎊 React component unmounted');
                         } catch (e) {
-                            console.error('🎊 Error unmounting:', e);
+                            console.error('Error unmounting confetti:', e);
                         }
-                        
+
                         if (confettiContainer.parentNode) {
                             confettiContainer.remove();
-                            console.log('🎊 Container removed from DOM');
                         }
-                        console.log('🎊 ConfettiRain cleanup completed');
-                    }, 6000); // Match duration + buffer
+                    }, 6000);
                 }).catch(error => {
-                    console.error('🎊 Failed to load ConfettiRain:', error);
-                    // Fallback: remove container
+                    console.error('Failed to load ConfettiRain:', error);
                     if (confettiContainer.parentNode) {
                         confettiContainer.remove();
                     }
@@ -312,18 +319,14 @@ declare global {
 
             // Add callback for when Konami code is activated
             konami.onActivate(() => {
-                console.log('🎮 Konami callback activated!');
-                
                 // Trigger confetti rain immediately
                 createConfettiRain();
-                
+
                 // Toggle all hidden themes
                 const result = toggleAllHiddenThemes();
-                console.log('🎮 Toggle result:', result);
-                
+
                 // If locking themes and current theme is hidden, reset to default
                 if (result.action === 'locked' && isCurrentThemeHidden()) {
-                    console.log('🎮 Resetting to default theme...');
                     const defaultTheme = getDefaultTheme();
                     const savedMode = localStorage.getItem('theme-mode') || 'system';
                     let isDark = false;
@@ -332,18 +335,17 @@ declare global {
                     } else {
                         isDark = savedMode === 'dark';
                     }
-                    
-                    applyTheme(defaultTheme.id, isDark, null);
+
+                    applyTheme(defaultTheme.id, isDark);
                     window.__THEME_ID__ = defaultTheme.id;
                     window.__APPLY_THEME_INSTANTLY__();
-                    
+
                 }
-                
+
                 const unlocked = result.action === 'unlocked';
                 const themeMessages = window.__THEME_MESSAGES__;
-                
+
                 if (unlocked) {
-                    console.log('🎮 Showing unlock notification...');
                     // Show unlock notification with theme count
                     const notification = document.createElement('div');
                     const themeCount = result.themes ? result.themes.length : 0;
@@ -384,7 +386,6 @@ declare global {
                         }, 400);
                     }, 4000);
                 } else {
-                    console.log('🎮 Showing lock notification...');
                     // Show lock notification
                     const notification = document.createElement('div');
                     notification.textContent = themeMessages.locked;
@@ -420,44 +421,54 @@ declare global {
                         }, 400);
                     }, 3000);
                 }
-            });
+                    });
 
-            // Clean up on page unload
-            window.addEventListener('beforeunload', () => {
-                konami.stop();
-            });
-            
-            console.log('🎮 Konami integration setup complete!');
+                    // Clean up on page unload
+                    window.addEventListener('beforeunload', () => {
+                        konami.stop();
+                    });
+                });
+                });
+            }
+
+            // Use requestIdleCallback to defer execution
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(initKonami, { timeout: 2000 });
+            } else {
+                setTimeout(initKonami, 1000);
+            }
         </script>
 
-        <!-- Company Theme Query Param Detection -->
+        <!-- Company Theme Query Param Detection - only run if params exist -->
         <script type="module">
-            console.log('🎨 Loading company theme detection...');
-            
-            import { unlockSpecialTheme, themes } from '/src/data/themes.js';
-            
-            // Check for company theme query parameters on page load
+            // Quick check if any params exist before loading heavy modules
+            const hasQueryParams = window.location.search.length > 0;
+            if (hasQueryParams) {
+            import('/src/data/themes.js').then(({ unlockCompanyTheme, unlockSpecialTheme, getCompanyThemes, getSpecialThemes }) => {
+            // Check for company and special theme query parameters on page load
             function checkCompanyQueryParams() {
                 const urlParams = new URLSearchParams(window.location.search);
-                
-                // Get all special themes that can be unlocked via query params
-                const specialThemes = themes.filter(theme => theme.special && theme.hidden);
-                
-                // Check if any company theme parameter is present
-                for (const theme of specialThemes) {
+
+                // Get all company and special themes that can be unlocked via query params
+                const companyThemes = getCompanyThemes();
+                const specialThemes = getSpecialThemes();
+                const unlockableThemes = [...companyThemes, ...specialThemes];
+
+                // Check if any theme parameter is present
+                for (const theme of unlockableThemes) {
                     if (urlParams.has(theme.id)) {
-                        console.log(`🎨 ${theme.id} query param detected! Unlocking theme...`);
-                        
-                        // Try to unlock the company theme (returns true if newly unlocked, false if already unlocked)
-                        const unlocked = unlockSpecialTheme(theme.id);
+
+                        // Try to unlock the theme
+                        const isCompany = companyThemes.find(t => t.id === theme.id);
+                        const unlocked = isCompany
+                            ? unlockCompanyTheme(theme.id)
+                            : unlockSpecialTheme(theme.id);
 
                         // Always apply the theme and show toast when parameter is detected
                         // regardless of whether it was just unlocked or already unlocked
                         if (unlocked !== undefined) {
                             if (unlocked) {
-                                console.log(`🎨 ${theme.id} theme unlocked and will be applied!`);
                             } else {
-                                console.log(`🎨 ${theme.id} theme already unlocked, applying anyway!`);
                             }
                             
                             // Auto-apply company theme first
@@ -470,8 +481,8 @@ declare global {
                                     } else {
                                         isDark = savedMode === 'dark';
                                     }
-                                    
-                                    applyTheme(theme.id, isDark, null);
+
+                                    applyTheme(theme.id, isDark);
                                     window.__THEME_ID__ = theme.id;
                                     window.__THEME_READY__ = true;
                                     if (window.__APPLY_THEME_INSTANTLY__) {
@@ -483,12 +494,10 @@ declare global {
                                         detail: { themeId: theme.id, isDark, theme }
                                     });
                                     window.dispatchEvent(themeChangeEvent);
-                                    
-                                    console.log('🎨 Theme applied, showing toast in 1 second...');
-                                    
+
+
                                     // Show notification 1 second after theme is applied (using same style as konami)
                                     setTimeout(() => {
-                                        console.log('🎨 Creating company toast...');
                                         const themeMessages = window.__THEME_MESSAGES__;
                                         const companyName = theme.id.charAt(0).toUpperCase() + theme.id.slice(1);
                                         
@@ -563,8 +572,7 @@ declare global {
                                             notification.style.right = '20px';
                                             notification.style.position = 'fixed';
                                             notification.style.transition = 'none'; // Disable slide transition
-                                            console.log('🎨 Company toast shown without animation (reduced motion)');
-                                            
+
                                             // Remove after 5 seconds without animation
                                             setTimeout(() => {
                                                 if (notification.parentNode) {
@@ -576,7 +584,6 @@ declare global {
                                             setTimeout(() => {
                                                 notification.style.right = '20px';
                                                 notification.style.position = 'fixed'; // Ensure fixed positioning after animation
-                                                console.log('🎨 Company toast animated in');
                                             }, 50);
                                             
                                             // Slide out and remove after 5 seconds (synced with timer)
@@ -607,34 +614,45 @@ declare global {
                     }
                 }
             }
-            
+
             // Check on page load
             checkCompanyQueryParams();
-            
+
             // Also check on navigation (for SPAs)
             document.addEventListener('astro:page-load', checkCompanyQueryParams);
-            
-            console.log('🎨 Company theme detection setup complete!');
+            });
+            }
         </script>
         
-        <style>
-            /* View Transitions for theme changes */
+        <style is:inline>
+            /* View Transitions - instant to prevent flash */
             ::view-transition-old(root),
             ::view-transition-new(root) {
-                animation-duration: 0.3s;
-                animation-timing-function: ease-in-out;
+                animation: none;
+                animation-duration: 0s;
             }
-            
-            /* Smooth color transitions for theme elements */
+
+            /* Disable view transition for root to prevent theme flash */
             :root {
-                view-transition-name: root;
+                view-transition-name: none;
             }
-            
+
             /* Prevent navbar from participating in theme view transitions */
             ::view-transition-old(navbar),
             ::view-transition-new(navbar) {
                 animation: none;
                 animation-duration: 0s;
+            }
+
+            /* Instant color and background changes - no transition delay */
+            html, body, * {
+                transition-property: transform, opacity, filter;
+                transition-duration: inherit;
+            }
+
+            /* Remove transitions from colors to prevent flash */
+            html, body {
+                transition: none;
             }
         </style>
     </head>
@@ -647,7 +665,7 @@ declare global {
             <WaveDivider />
         </div>
         <Navbar />
-        <FaviconManager client:load />
+        <FaviconManager client:idle />
         <NorwegianDisclaimer lang={lang} />
         <div class="pt-24 mt-8 mx-auto max-w-[var(--max-w-size)] overflow-hidden"> 
             <main class="text-left px-4" id="main-content">

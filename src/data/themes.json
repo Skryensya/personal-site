@@ -1,49 +1,5 @@
 {
-    "themes": [
-        {
-            "id": "chipax",
-            "name": "Chipax",
-            "description": "Elegant teal corporate sophistication",
-            "colors": {
-                "colorful": "#F0FFFE",
-                "contrasty": "#0B7A70"
-            },
-            "hidden": true,
-            "special": true
-        },
-        {
-            "id": "skyward-ai",
-            "name": "Skyward AI",
-            "description": "Premium orange technology innovation",
-            "colors": {
-                "colorful": "#FFFBF5",
-                "contrasty": "#E5350A"
-            },
-            "hidden": true,
-            "special": true
-        },
-        {
-            "id": "matrix",
-            "name": "Matrix",
-            "description": "Digital rain code reality",
-            "colors": {
-                "colorful": "#00FF00",
-                "contrasty": "#000000"
-            },
-            "hidden": true,
-            "special": true
-        },
-        {
-            "id": "vaporwave",
-            "name": "Vaporwave",
-            "description": "Aesthetic retrowave vibes",
-            "colors": {
-                "colorful": "#FF00FF",
-                "contrasty": "#200040"
-            },
-            "hidden": true,
-            "special": true
-        },
+    "default": [
         {
             "id": "dos",
             "name": "MS-DOS",
@@ -62,7 +18,6 @@
                 "contrasty": "#020123"
             }
         },
-
         {
             "id": "gameboy",
             "name": "GameBoy",
@@ -89,6 +44,64 @@
                 "colorful": "#FA7FB5",
                 "contrasty": "#0A0A0A"
             }
+        }
+    ],
+    "company": [
+        {
+            "id": "chipax",
+            "name": "Chipax",
+            "description": "Elegant teal corporate sophistication",
+            "colors": {
+                "colorful": "#F0FFFE",
+                "contrasty": "#0B7A70"
+            }
+        },
+        {
+            "id": "skyward-ai",
+            "name": "Skyward AI",
+            "description": "Premium orange technology innovation",
+            "colors": {
+                "colorful": "#FFFBF5",
+                "contrasty": "#E5350A"
+            }
+        }
+    ],
+    "special": [
+        {
+            "id": "matrix",
+            "name": "Matrix",
+            "description": "Digital rain code reality",
+            "colors": {
+                "colorful": "#00FF00",
+                "contrasty": "#000000"
+            }
+        },
+        {
+            "id": "vaporwave",
+            "name": "Vaporwave",
+            "description": "Aesthetic retrowave vibes",
+            "colors": {
+                "colorful": "#FF00FF",
+                "contrasty": "#200040"
+            }
+        },
+        {
+            "id": "cyberpunk",
+            "name": "Cyberpunk",
+            "description": "Neon dystopian future",
+            "colors": {
+                "colorful": "#FFD700",
+                "contrasty": "#1A0033"
+            }
+        },
+        {
+            "id": "ocean",
+            "name": "Ocean",
+            "description": "Deep sea tranquility",
+            "colors": {
+                "colorful": "#4DD0E1",
+                "contrasty": "#001F3F"
+            }
         },
         {
             "id": "sage",
@@ -97,8 +110,7 @@
             "colors": {
                 "colorful": "#9CAF88",
                 "contrasty": "#1A2E0A"
-            },
-            "hidden": true
+            }
         },
         {
             "id": "rose",
@@ -107,8 +119,7 @@
             "colors": {
                 "colorful": "#E6B3BA",
                 "contrasty": "#2E0A1A"
-            },
-            "hidden": true
+            }
         }
     ]
 }

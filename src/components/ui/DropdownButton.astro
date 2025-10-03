@@ -75,7 +75,7 @@ const mainButtonId = `main-button-${id}`;
 <!-- Dropdown content -->
 <div
   id={menuId}
-  class={`fixed z-[350] bg-secondary border-double border-2 border-main rounded-none min-w-[120px] ${dropdownClassName}`}
+  class={`fixed z-[500] bg-secondary border-double border-2 border-main rounded-none min-w-[120px] ${dropdownClassName}`}
   style="display: none; overflow: visible;"
   role="menu"
   aria-labelledby={buttonId}
@@ -108,10 +108,10 @@ const mainButtonId = `main-button-${id}`;
           arrow.style.transform = 'rotate(0deg)';
         }
         
-        // Reset interactive elements
-        const interactiveElements = dropdownMenu.querySelectorAll('button, a, [tabindex]');
+        // Reset interactive elements - remove tabindex from items
+        const interactiveElements = dropdownMenu.querySelectorAll('[role="menuitem"]');
         interactiveElements.forEach(el => {
-          (el as HTMLElement).setAttribute('tabindex', '-1');
+          (el as HTMLElement).removeAttribute('tabindex');
         });
       }
     });
@@ -236,7 +236,20 @@ const mainButtonId = `main-button-${id}`;
       const updateActiveState = (index: number) => {
         const items = getDropdownItems();
         items.forEach((item, i) => {
-          item.setAttribute('data-active', i === index ? 'true' : 'false');
+          const isActive = i === index;
+          item.setAttribute('data-active', isActive ? 'true' : 'false');
+
+          // Apply visual feedback for keyboard navigation using border + ring inset
+          if (isActive) {
+            item.style.outline = '1px solid var(--color-main)';
+            item.style.outlineOffset = '-1px';
+            item.style.boxShadow = 'inset 0 0 0 2px var(--color-secondary)';
+            item.scrollIntoView({ block: 'nearest', behavior: 'instant' });
+          } else {
+            item.style.outline = '';
+            item.style.outlineOffset = '';
+            item.style.boxShadow = '';
+          }
         });
       };
       
@@ -248,9 +261,9 @@ const mainButtonId = `main-button-${id}`;
         dropdownButton.setAttribute('aria-expanded', 'false');
         updateArrow(false);
         
-        const interactiveElements = dropdownMenu.querySelectorAll('button, a, [tabindex]');
+        const interactiveElements = dropdownMenu.querySelectorAll('[role="menuitem"]');
         interactiveElements.forEach(el => {
-          (el as HTMLElement).setAttribute('tabindex', '-1');
+          (el as HTMLElement).removeAttribute('tabindex');
         });
         
         // Clear global reference if this was the open dropdown
@@ -280,10 +293,7 @@ const mainButtonId = `main-button-${id}`;
         requestAnimationFrame(() => {
           positionDropdown();
           
-          const interactiveElements = dropdownMenu.querySelectorAll('[tabindex="-1"]');
-          interactiveElements.forEach(el => {
-            (el as HTMLElement).removeAttribute('tabindex');
-          });
+          // Items don't need tabindex - navigation is via keyboard on dropdown container
           
           // Find the actually selected item based on data-selected attribute
           const items = getDropdownItems();
@@ -343,12 +353,16 @@ const mainButtonId = `main-button-${id}`;
         }
       });
       
+      // Typeahead search variables
+      let typeaheadTimeout: number;
+      let typeaheadBuffer = '';
+
       // Handle dropdown keyboard navigation
       dropdownMenu.addEventListener('keydown', (event) => {
         if (!isOpen || dropdownButton.hasAttribute('disabled')) return;
 
         const items = getDropdownItems();
-        
+
         switch (event.key) {
           case 'ArrowDown':
             event.preventDefault();
@@ -356,19 +370,33 @@ const mainButtonId = `main-button-${id}`;
             activeIndex = activeIndex < items.length - 1 ? activeIndex + 1 : 0;
             updateActiveState(activeIndex);
             break;
-            
+
           case 'ArrowUp':
             event.preventDefault();
             event.stopPropagation();
             activeIndex = activeIndex > 0 ? activeIndex - 1 : items.length - 1;
             updateActiveState(activeIndex);
             break;
-            
+
+          case 'Home':
+            event.preventDefault();
+            event.stopPropagation();
+            activeIndex = 0;
+            updateActiveState(activeIndex);
+            break;
+
+          case 'End':
+            event.preventDefault();
+            event.stopPropagation();
+            activeIndex = items.length - 1;
+            updateActiveState(activeIndex);
+            break;
+
           case 'Enter':
           case ' ':
             event.preventDefault();
             event.stopPropagation();
-            
+
             if (activeIndex >= 0 && activeIndex < items.length) {
               const activeItem = items[activeIndex];
               if (activeItem) {
@@ -381,11 +409,38 @@ const mainButtonId = `main-button-${id}`;
               }
             }
             break;
-            
+
           case 'Escape':
             event.preventDefault();
             closeDropdown();
             dropdownButton.focus();
+            break;
+
+          default:
+            // Typeahead search
+            if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
+              event.preventDefault();
+              event.stopPropagation();
+
+              clearTimeout(typeaheadTimeout);
+              typeaheadBuffer += event.key.toLowerCase();
+
+              // Find first matching item
+              const matchIndex = items.findIndex(item => {
+                const text = item.textContent?.trim().toLowerCase() || '';
+                return text.startsWith(typeaheadBuffer);
+              });
+
+              if (matchIndex !== -1) {
+                activeIndex = matchIndex;
+                updateActiveState(activeIndex);
+              }
+
+              // Clear buffer after 500ms
+              typeaheadTimeout = window.setTimeout(() => {
+                typeaheadBuffer = '';
+              }, 500);
+            }
             break;
         }
       });
@@ -399,8 +454,6 @@ const mainButtonId = `main-button-${id}`;
             dropdownButton.focus();
           }, 0);
         });
-        
-        item.setAttribute('tabindex', '-1');
       });
       
       // Note: Click outside handling is now managed globally

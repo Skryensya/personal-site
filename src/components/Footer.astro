@@ -283,7 +283,9 @@ const navigationLinks: NavigationLink[] = [
         }
 
       } catch (error) {
-        console.warn('Failed to calculate contrast ratio:', error);
+        import('@/utils/debug-logger').then(({ debugLogger }) => {
+          debugLogger.warn('Failed to calculate contrast ratio:', error);
+        });
         contrastDisplay.textContent = '--:--';
       }
     }
