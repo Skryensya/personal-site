@@ -102,51 +102,48 @@ const modes = [
     }
   }
 
-  // Simple toggle function - works immediately
+  // Global toggle function - direct implementation
   window.toggleMode = () => {
     const savedMode = localStorage.getItem('theme-mode') || 'system';
     let nextMode;
 
+    // Cycle: system → light → dark → system
     if (savedMode === 'system') {
       nextMode = 'light';
     } else if (savedMode === 'light') {
       nextMode = 'dark';
     } else {
-      nextMode = 'system';
+      nextMode = 'system';  // dark → system
     }
 
-    // Save to localStorage
-    localStorage.setItem('theme-mode', nextMode);
-
-    // Get current theme
-    const savedThemeId = localStorage.getItem('theme-id') || 'gameboy';
-    
-    // Apply immediately
-    let resolvedMode = nextMode;
-    if (nextMode === 'system') {
-      resolvedMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    // Apply the new mode
+    if (window.modeControl && window.modeControl.changeMode) {
+      window.modeControl.changeMode(nextMode);
+    } else {
+      // Fallback if modeControl isn't ready yet
+      localStorage.setItem('theme-mode', nextMode);
+      
+      // Apply theme manually
+      import('../data/themes.js').then(({ applyTheme }) => {
+        const savedThemeId = localStorage.getItem('theme-id') || 'gameboy';
+        let resolvedMode = nextMode;
+        if (nextMode === 'system') {
+          resolvedMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        }
+        const isDark = resolvedMode === 'dark';
+        applyTheme(savedThemeId, isDark);
+        
+        // Update global state
+        window.__THEME_MODE__ = nextMode;
+        document.documentElement.classList.toggle('dark', isDark);
+        
+        // Try to update display if modeControl exists
+        if (window.modeControl && window.modeControl.updateDisplay) {
+          window.modeControl.currentMode = nextMode;
+          window.modeControl.updateDisplay();
+        }
+      });
     }
-
-    const isDark = resolvedMode === 'dark';
-    
-    // Apply to document
-    document.documentElement.classList.toggle('dark', isDark);
-    
-    // Update global state
-    window.__THEME_MODE__ = nextMode;
-    
-    // If modeControl exists, update it
-    if (window.modeControl) {
-      window.modeControl.currentMode = nextMode;
-      if (window.modeControl.updateDisplay) {
-        window.modeControl.updateDisplay();
-      }
-    }
-    
-    // Apply theme
-    import('../data/themes.js').then(({ applyTheme }) => {
-      applyTheme(savedThemeId, isDark);
-    });
   };
 
   // Global mode management functions

@@ -226,25 +226,6 @@ declare global {
             });
         </script>
 
-        <!-- Apply background after everything is loaded -->
-        <script is:inline>
-            function applyBodyBackground() {
-                const body = document.getElementById('app-body');
-                if (body) {
-                    body.classList.add('bg-main');
-                }
-            }
-
-            // Apply background after DOM is loaded
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', applyBodyBackground);
-            } else {
-                applyBodyBackground();
-            }
-
-            // Re-apply after page transitions
-            document.addEventListener('astro:page-load', applyBodyBackground);
-        </script>
 
         <!-- Konami Code Integration - defer to reduce blocking -->
         <script is:inline define:vars={{ themeMessages }}>
@@ -690,5 +671,78 @@ declare global {
         <Footer lang={lang} />
          
            </div>
+
+        <!-- Lazy loading script to change body background from secondary to main after everything loads -->
+        <script is:inline>
+            // Function to apply main background color to body
+            function applyBodyMainBackground() {
+                const body = document.body;
+                const html = document.documentElement;
+                
+                // Wait a bit more to ensure theme variables are fully loaded
+                setTimeout(() => {
+                    // Get the computed main color value
+                    const computedStyle = getComputedStyle(html);
+                    const mainColor = computedStyle.getPropertyValue('--color-main').trim();
+                    
+                    if (mainColor && body) {
+                        // Apply main color as background instead of secondary
+                        body.style.setProperty('background-color', mainColor, 'important');
+                        console.log('🎨 Body background changed to main color:', mainColor);
+                    } else {
+                        console.log('⚠️ Could not get main color or body element');
+                    }
+                }, 100);
+            }
+
+            // Multiple strategies for lazy loading
+            function initLazyBodyMainBackground() {
+                // Strategy 1: Use requestIdleCallback for true lazy loading
+                if ('requestIdleCallback' in window) {
+                    requestIdleCallback(() => {
+                        console.log('🚀 requestIdleCallback triggered');
+                        applyBodyMainBackground();
+                    }, { timeout: 3000 });
+                } else {
+                    // Strategy 2: Fallback to setTimeout
+                    console.log('🕒 Using setTimeout fallback');
+                    setTimeout(applyBodyMainBackground, 500);
+                }
+            }
+
+            // Strategy 3: Multiple event listeners to ensure it runs
+            function setupLazyBackground() {
+                console.log('🔧 Setting up lazy background, readyState:', document.readyState);
+                
+                // If page is already complete
+                if (document.readyState === 'complete') {
+                    console.log('✅ Page already complete, initializing immediately');
+                    setTimeout(initLazyBodyMainBackground, 0);
+                } else {
+                    // Listen for load event
+                    window.addEventListener('load', () => {
+                        console.log('📄 Window load event fired');
+                        initLazyBodyMainBackground();
+                    });
+                    
+                    // Also listen for DOMContentLoaded as backup
+                    document.addEventListener('DOMContentLoaded', () => {
+                        console.log('🏗️ DOMContentLoaded fired');
+                        setTimeout(initLazyBodyMainBackground, 200);
+                    });
+                }
+            }
+
+            // Initialize immediately when this script runs
+            setupLazyBackground();
+
+            // Re-apply after page transitions
+            document.addEventListener('astro:page-load', () => {
+                console.log('🔄 Astro page transition detected');
+                setTimeout(() => {
+                    initLazyBodyMainBackground();
+                }, 100);
+            });
+        </script>
     </body>
 </html>

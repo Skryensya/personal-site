@@ -259,25 +259,132 @@ const navigationLinks: NavigationLink[] = [
           
           levels.forEach(level => {
             const levelBox = document.createElement('div');
-            levelBox.className = `bg-secondary text-main px-2 py-1 text-xs font-mono font-bold flex items-center gap-1 border border-main ${level.passed ? 'opacity-100' : 'opacity-30'}`;
+            levelBox.className = `bg-secondary text-main px-2 py-1 text-xs font-mono font-bold flex items-center gap-1 border border-main ${level.passed ? 'opacity-100' : 'opacity-30'} cursor-help relative`;
+            
+            // Get current language for translations
+            const lang = document.documentElement.getAttribute('lang') || 'es';
+            const titleKey = `footer.wcag.${level.name.toLowerCase()}.title`;
+            const descKey = `footer.wcag.${level.name.toLowerCase()}.desc`;
+            
+            // Get tooltip text from translations
+            let tooltipTitle = '';
+            let tooltipDesc = '';
+            if (lang === 'en') {
+              const enTranslations = {
+                'footer.wcag.a.title': 'WCAG A - Minimum',
+                'footer.wcag.a.desc': '3:1 contrast for graphics, icons and UI components',
+                'footer.wcag.aa.title': 'WCAG AA - Standard',
+                'footer.wcag.aa.desc': '4.5:1 contrast for normal text and legal compliance',
+                'footer.wcag.aaa.title': 'WCAG AAA - Enhanced',
+                'footer.wcag.aaa.desc': '7:1 contrast for maximum accessibility and readability'
+              };
+              tooltipTitle = enTranslations[titleKey] || '';
+              tooltipDesc = enTranslations[descKey] || '';
+            } else if (lang === 'no') {
+              const noTranslations = {
+                'footer.wcag.a.title': 'WCAG A - Minimum',
+                'footer.wcag.a.desc': '3:1 kontrast for grafikk, ikoner og UI-komponenter',
+                'footer.wcag.aa.title': 'WCAG AA - Standard',
+                'footer.wcag.aa.desc': '4.5:1 kontrast for normal tekst og lovmessig overholdelse',
+                'footer.wcag.aaa.title': 'WCAG AAA - Forbedret',
+                'footer.wcag.aaa.desc': '7:1 kontrast for maksimal tilgjengelighet og lesbarhet'
+              };
+              tooltipTitle = noTranslations[titleKey] || '';
+              tooltipDesc = noTranslations[descKey] || '';
+            } else {
+              const esTranslations = {
+                'footer.wcag.a.title': 'WCAG A - Mínimo',
+                'footer.wcag.a.desc': 'Contraste 3:1 para elementos gráficos, iconos y componentes de interfaz',
+                'footer.wcag.aa.title': 'WCAG AA - Estándar',
+                'footer.wcag.aa.desc': 'Contraste 4.5:1 para texto normal y cumplimiento legal',
+                'footer.wcag.aaa.title': 'WCAG AAA - Superior',
+                'footer.wcag.aaa.desc': 'Contraste 7:1 para máxima accesibilidad y legibilidad'
+              };
+              tooltipTitle = esTranslations[titleKey] || '';
+              tooltipDesc = esTranslations[descKey] || '';
+            }
             
             // Create icon element
             const iconContainer = document.createElement('span');
             iconContainer.className = 'inline-flex w-3 h-3 items-center justify-center';
             
             if (level.passed) {
-              // Use check mark for passed levels
-              iconContainer.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+              // Use circle-check-big icon for passed levels
+              iconContainer.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>';
             } else {
-              // Use X mark for failed levels
-              iconContainer.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
+              // Use ban icon for failed levels
+              iconContainer.innerHTML = '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.929 4.929 19.07 19.071"/><circle cx="12" cy="12" r="10"/></svg>';
             }
             
             const label = document.createElement('span');
             label.textContent = level.name;
             
+            // Create tooltip element
+            const tooltip = document.createElement('div');
+            tooltip.className = 'fixed bg-secondary text-main border-2 border-main shadow-[4px_4px_0px_var(--color-main)] z-[9999] pointer-events-none';
+            tooltip.style.width = '200px';
+            tooltip.style.opacity = '0';
+            tooltip.style.visibility = 'hidden';
+            
+            // Create tooltip content
+            const tooltipContent = document.createElement('div');
+            tooltipContent.className = 'p-3 flex flex-col gap-2';
+            
+            // Header with title and icon
+            const header = document.createElement('div');
+            header.className = 'flex items-center justify-between';
+            
+            const title = document.createElement('div');
+            title.className = 'text-xs font-mono font-bold';
+            title.textContent = tooltipTitle;
+            
+            // Status icon
+            const statusIcon = document.createElement('div');
+            statusIcon.className = 'w-5 h-5 flex items-center justify-center';
+            if (level.passed) {
+              statusIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>';
+            } else {
+              statusIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.929 4.929 19.07 19.071"/><circle cx="12" cy="12" r="10"/></svg>';
+            }
+            
+            header.appendChild(title);
+            header.appendChild(statusIcon);
+            
+            // Description
+            const desc = document.createElement('div');
+            desc.className = 'text-xs font-mono leading-tight text-left';
+            desc.textContent = tooltipDesc;
+            
+            tooltipContent.appendChild(header);
+            tooltipContent.appendChild(desc);
+            tooltip.appendChild(tooltipContent);
+            
             levelBox.appendChild(iconContainer);
             levelBox.appendChild(label);
+            
+            // Add hover events
+            levelBox.addEventListener('mouseenter', () => {
+              // Position tooltip relative to the levelBox
+              const rect = levelBox.getBoundingClientRect();
+              tooltip.style.left = `${rect.left + rect.width / 2}px`;
+              tooltip.style.top = `${rect.top - 8}px`;
+              tooltip.style.transform = 'translate(-50%, -100%)';
+              tooltip.style.opacity = '1';
+              tooltip.style.visibility = 'visible';
+              
+              // Append to body to avoid opacity inheritance
+              document.body.appendChild(tooltip);
+            });
+            
+            levelBox.addEventListener('mouseleave', () => {
+              tooltip.style.opacity = '0';
+              tooltip.style.visibility = 'hidden';
+              // Remove from body
+              if (tooltip.parentNode) {
+                tooltip.parentNode.removeChild(tooltip);
+              }
+            });
+            
             wcagLevelsElement.appendChild(levelBox);
           });
         }
