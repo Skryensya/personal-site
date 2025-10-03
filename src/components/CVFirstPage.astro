@@ -35,13 +35,13 @@ const featuredProjects: CollectionEntry<'projects'>[] = allProjects
             </div>
         </header>
 
-        <div class="flex flex-nowrap gap-5 mb-6">
+        <div class="flex flex-col lg:flex-row lg:flex-nowrap gap-5 mb-6">
             <!-- Left Sidebar: Contact Information -->
-            <div class="min-w-[200px] space-y-3">
+            <div class="lg:min-w-[200px] space-y-3">
                 <section>
                     <h2 class="text-base font-bold uppercase border-b-2 border-main mb-2">{t('cv.contact')}</h2>
 
-                    <div class="space-y-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2 lg:space-y-2 lg:gap-0">
                         <!-- Location -->
                         <a href="https://maps.google.com/?q=Santiago,Chile" target="_blank" rel="noopener noreferrer" class="flex gap-1.5 group">
                             <svg class="w-4 h-4 text-main mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -183,7 +183,7 @@ const featuredProjects: CollectionEntry<'projects'>[] = allProjects
                 </section>
 
                 <!-- QR -->
-                <section>
+                <section class="hidden lg:block">
                     <h2 class="text-base font-bold uppercase border-b-2 border-main">{t('cv.website.title')}</h2>
 
                     <div class="w-full h-full overflow-hidden">
