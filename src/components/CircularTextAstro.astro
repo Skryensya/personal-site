@@ -17,9 +17,9 @@ const letters = Array.from(text);
 const componentId = `circular-text-${Math.random().toString(36).substring(2, 9)}`;
 ---
 
-<div 
+<div
   id={componentId}
-  class={`circular-text-container m-0 mx-auto rounded-full w-[150px] h-[150px] relative font-black text-secondary text-center origin-center ${className}`}
+  class={`circular-text-container m-0 mx-auto rounded-full w-[150px] h-[150px] relative font-black font-mono text-secondary text-center origin-center ${className}`}
   data-spin-duration={spinDuration}
   data-on-hover={onHover}
 >
@@ -32,7 +32,7 @@ const componentId = `circular-text-${Math.random().toString(36).substring(2, 9)}
 
     return (
       <span
-        class="circular-letter absolute inline-block inset-0 text-2xl"
+        class="circular-letter absolute inline-block inset-0 text-2xl font-mono"
         style={`transform: ${transform}; -webkit-transform: ${transform};`}
       >
         {letter}
