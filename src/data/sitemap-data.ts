@@ -36,34 +36,42 @@ export const sitemapData: LanguageSitemap = {
       url: '/proyectos/',
       children: [
         {
-          title: 'API Agenda UC',
-          url: '/proyectos/api-agenda-uc/'
-        },
-        {
-          title: 'Barrancas',
-          url: '/proyectos/barrancas/'
-        },
-        {
-          title: 'Ecosistema UC',
-          url: '/proyectos/ecosistema-uc/'
+          title: 'Portal UC',
+          url: '/proyectos/portal-uc/'
         },
         {
           title: 'Kit Digital UC',
           url: '/proyectos/kit-digital-uc/'
         },
         {
+          title: 'API Agenda UC',
+          url: '/proyectos/agenda-uc/'
+        },
+        {
           title: 'Kit Digital USS',
           url: '/proyectos/kit-digital-uss/'
         },
         {
-          title: 'Portal UC',
-          url: '/proyectos/portal-uc/'
+          title: 'Hostal Micelio',
+          url: '/proyectos/hostal-micelio/'
+        },
+        {
+          title: 'TTU',
+          url: '/proyectos/ttu/'
+        },
+        {
+          title: 'Barrancas',
+          url: '/proyectos/barrancas/'
         }
       ]
     },
     {
       title: 'Currículum',
       url: '/curriculum/'
+    },
+    {
+      title: 'Sistema de Diseño',
+      url: '/sistema-de-diseno/'
     },
     {
       title: 'Declaración de Accesibilidad',
@@ -94,34 +102,42 @@ export const sitemapData: LanguageSitemap = {
       url: '/en/projects/',
       children: [
         {
-          title: 'API Agenda UC',
-          url: '/en/projects/api-agenda-uc/'
-        },
-        {
-          title: 'Barrancas',
-          url: '/en/projects/barrancas/'
-        },
-        {
-          title: 'Ecosistema UC',
-          url: '/en/projects/ecosistema-uc/'
+          title: 'Portal UC',
+          url: '/en/projects/portal-uc/'
         },
         {
           title: 'Kit Digital UC',
           url: '/en/projects/kit-digital-uc/'
         },
         {
+          title: 'API Agenda UC',
+          url: '/en/projects/agenda-uc/'
+        },
+        {
           title: 'Kit Digital USS',
           url: '/en/projects/kit-digital-uss/'
         },
         {
-          title: 'Portal UC',
-          url: '/en/projects/portal-uc/'
+          title: 'Hostal Micelio',
+          url: '/en/projects/hostal-micelio/'
+        },
+        {
+          title: 'TTU',
+          url: '/en/projects/ttu/'
+        },
+        {
+          title: 'Barrancas',
+          url: '/en/projects/barrancas/'
         }
       ]
     },
     {
       title: 'Resume',
       url: '/en/resume/'
+    },
+    {
+      title: 'Design System',
+      url: '/en/design-system/'
     },
     {
       title: 'Accessibility Statement',
@@ -152,34 +168,42 @@ export const sitemapData: LanguageSitemap = {
       url: '/no/prosjekter/',
       children: [
         {
-          title: 'API Agenda UC',
-          url: '/no/prosjekter/api-agenda-uc/'
-        },
-        {
-          title: 'Barrancas',
-          url: '/no/prosjekter/barrancas/'
-        },
-        {
-          title: 'Ecosistema UC',
-          url: '/no/prosjekter/ecosistema-uc/'
+          title: 'Portal UC',
+          url: '/no/prosjekter/portal-uc/'
         },
         {
           title: 'Kit Digital UC',
           url: '/no/prosjekter/kit-digital-uc/'
         },
         {
+          title: 'API Agenda UC',
+          url: '/no/prosjekter/agenda-uc/'
+        },
+        {
           title: 'Kit Digital USS',
           url: '/no/prosjekter/kit-digital-uss/'
         },
         {
-          title: 'Portal UC',
-          url: '/no/prosjekter/portal-uc/'
+          title: 'Hostal Micelio',
+          url: '/no/prosjekter/hostal-micelio/'
+        },
+        {
+          title: 'TTU',
+          url: '/no/prosjekter/ttu/'
+        },
+        {
+          title: 'Barrancas',
+          url: '/no/prosjekter/barrancas/'
         }
       ]
     },
     {
       title: 'CV',
       url: '/no/cv/'
+    },
+    {
+      title: 'Designsystem',
+      url: '/no/designsystem/'
     },
     {
       title: 'Tilgjengelighetserklæring',

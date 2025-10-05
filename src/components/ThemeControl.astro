@@ -11,8 +11,8 @@ const t = getTranslations(currentLocale);
 <DropdownButton
   onMainClick="nextTheme"
   disabled={false}
-  dropdownClassName="max-w-[280px] @lg:w-fit @lg:max-w-[600px]"
-  class="w-7 h-7 @lg:w-full @lg:h-8"
+  dropdownClassName="max-w-[280px] lg:w-fit lg:max-w-[600px]"
+  class="w-7 h-7 lg:w-full lg:h-8"
   id="theme-control"
 >
   <div class="flex items-center gap-2 w-full">
@@ -20,7 +20,7 @@ const t = getTranslations(currentLocale);
       class="w-4 h-4 border border-main theme-preview-current flex-shrink-0"
       style="background: linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%);"
     ></div>
-    <span class="hidden @lg:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary truncate uppercase theme-name-display">
+    <span class="hidden lg:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary truncate uppercase theme-name-display">
       {t('ui.loading')}
     </span>
   </div>
@@ -28,12 +28,12 @@ const t = getTranslations(currentLocale);
   <DropdownContent slot="dropdown-content">
     <div id="theme-dropdown-content">
       <!-- Desktop layout - dynamic columns -->
-      <div class="hidden @lg:block" id="theme-desktop-layout">
+      <div class="hidden lg:block" id="theme-desktop-layout">
         <!-- Content will be populated by JavaScript -->
       </div>
       
       <!-- Mobile/tablet layout - single column -->
-      <div class="@lg:hidden" id="theme-mobile-layout">
+      <div class="lg:hidden" id="theme-mobile-layout">
         <!-- Content will be populated by JavaScript -->
       </div>
     </div>
@@ -222,11 +222,11 @@ const t = getTranslations(currentLocale);
         const parentDropdown = dropdownContent.closest('[data-dropdown-content]');
         if (parentDropdown) {
           // Reset width constraints
-          parentDropdown.classList.remove('@lg:max-w-[200px]');
+          parentDropdown.classList.remove('lg:max-w-[200px]');
           
           // Only add max-width constraint when basic themes only
           if (hasOnlyBasicThemes) {
-            parentDropdown.classList.add('@lg:max-w-[200px]');
+            parentDropdown.classList.add('lg:max-w-[200px]');
           }
         }
       }

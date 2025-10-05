@@ -35,7 +35,7 @@ export default function ScrollProgress() {
         <progress 
             value={scrollProgress} 
             max={1}
-            className="print:hidden fixed top-0 left-0 w-full h-0.5 z-50 appearance-none [&::-webkit-progress-bar]:bg-transparent [&::-webkit-progress-value]:bg-main [&::-webkit-progress-value]:opacity-60 [&::-moz-progress-bar]:bg-main [&::-moz-progress-bar]:opacity-60"
+            className="print:hidden fixed top-0 left-0 w-[100dvw] h-0.5 z-50 appearance-none [&::-webkit-progress-bar]:bg-transparent [&::-webkit-progress-value]:bg-main [&::-webkit-progress-value]:opacity-60 [&::-moz-progress-bar]:bg-main [&::-moz-progress-bar]:opacity-60"
             aria-label="Progreso de lectura de la página"
         />
     );

@@ -1,7 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import SitemapTree from '@/components/SitemapTree.astro';
-import TableOfContents from '@/components/TableOfContents.astro';
+import Sidebar from '@/components/Sidebar.astro';
 import { getTranslations } from '@/i18n/utils';
 
 const lang = 'en';
@@ -13,8 +13,8 @@ const t = getTranslations(lang);
   description="Complete structure of Allison Peña's website, full-stack developer"
   lang={lang}
 >
-  <div class="flex">
-    <main id="main-content" class="flex-1 mx-auto max-w-[var(--max-w-size)] px-4 py-8">
+  <div class="flex gap-4">
+    <main id="main-content" class="flex-1 mx-auto max-w-[850px] py-8">
       <div class="mb-8">
         <h1 id="content" class="text-3xl font-mono font-bold text-main border-b-2 border-main pb-4 mb-4">
           Content Tree
@@ -23,29 +23,28 @@ const t = getTranslations(lang);
           Explore the complete website structure to easily navigate through all content.
         </p>
       </div>
-      
+
       <div id="structure" class="mb-8">
         <h2 class="text-xl font-mono font-bold text-main border-b border-main pb-2 mb-4">Website structure</h2>
         <SitemapTree lang={lang} />
       </div>
-      
+
       <div class="mt-12 space-y-8">
         <div class="space-y-6">
           <h2 id="info" class="text-xl font-mono font-bold text-main border-b border-main pb-2">Additional Information</h2>
           <div id="stats" class="grid gap-2 font-mono text-sm text-main ml-4">
-            <div>Total main pages: 5</div>
-            <div>Available projects: 6</div>
+            <div>Total main pages: 6</div>
+            <div>Available projects: 7</div>
             <div>Supported languages: 3 (Spanish, English, Norwegian)</div>
             <div>Last updated: {new Date().toLocaleDateString('en-US')}</div>
             <div>XML Sitemap: <a href="/sitemap.xml" class="text-main underline hover:no-underline">/sitemap.xml</a></div>
-            <div>Design System: <a href="/en/design-system" class="text-main underline hover:no-underline">/en/design-system</a></div>
           </div>
         </div>
       </div>
     </main>
-    
-    <TableOfContents 
-      contentId="main-content" 
+
+    <Sidebar
+      contentId="main-content"
       lang={lang}
     />
   </div>

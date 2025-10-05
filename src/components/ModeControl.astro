@@ -19,7 +19,7 @@ const modes = [
   onMainClick="toggleMode"
   disabled={false}
   ariaLabel={`${t('mode.current')} sistema. ${t('mode.toggle')}`}
-  class="w-7 h-7 @6xl:w-auto @6xl:h-8"
+  class="w-7 h-7 lg:w-auto lg:h-8"
   id="mode-control"
 >
   <div class="flex items-center gap-2">
@@ -31,7 +31,7 @@ const modes = [
         <line x1="12" y1="17" x2="12" y2="21"></line>
       </svg>
     </div>
-    <span class="hidden @6xl:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary uppercase" id="mode-name-display">
+    <span class="hidden lg:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary uppercase" id="mode-name-display">
       {t('ui.loading')}
     </span>
   </div>
