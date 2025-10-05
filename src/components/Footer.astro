@@ -30,13 +30,18 @@ const navigationLinks: NavigationLink[] = [
   },
   {
     href: getLocalizedUrl(lang, 'projects'),
-    textKey: 'footer.projects', 
+    textKey: 'footer.projects',
     text: t('footer.projects')
   },
   {
     href: getLocalizedUrl(lang, 'resume'),
     textKey: 'footer.resume',
     text: t('footer.resume')
+  },
+  {
+    href: lang === 'es' ? '/sistema-de-diseno' : lang === 'en' ? '/en/design-system' : '/no/designsystem',
+    textKey: '',
+    text: lang === 'es' ? 'Sistema de Diseño' : lang === 'en' ? 'Design System' : 'Designsystem'
   },
   {
     href: lang === 'es' ? '/arbol-de-contenido/' : lang === 'en' ? '/en/content-tree/' : '/no/innholdstre/',

@@ -22,7 +22,7 @@ const t = getTranslations(lang);
     </h2>
 
     <!-- Header - Desktop only -->
-    <div class="hidden md:flex gap-4 border-b border-main/30  py-2 px-6 bg-main/75 items-center ">
+    <div class="hidden md:flex gap-4 border-b border-main/30  py-2 px-6 bg-main items-center ">
       <div class="flex-[0_0_30%] flex gap-6 items-center">
         <div class="font-mono text-xs font-bold uppercase tracking-widest text-secondary w-[50px]">#</div>
         <div class="font-mono text-xs font-bold uppercase tracking-widest text-secondary flex-1">{t('projects.table.name')}</div>
@@ -39,7 +39,7 @@ const t = getTranslations(lang);
     {projects.map((project: CollectionEntry<'projects'>, index: number) => (
       <a
         href={getLocalizedUrl(lang, 'projects', getSlugFromId(project.id))}
-        class="project-row flex flex-col md:flex-row gap-3 md:gap-4 border-b-[1px] border-main/30  border-l-main bg-main/10 hover:bg-main/20 py-5 md:py-3 px-4 md:px-6 cursor-pointer group font-mono hover:no-underline transition-colors"
+        class="project-row flex flex-col md:flex-row gap-3 md:gap-4 border-b-[1px] border-main/30  border-l-main bg-main/[3%] hover:bg-main/[6%] py-5 md:py-3 px-4 md:px-6 cursor-pointer group font-mono hover:no-underline transition-colors"
       >
         <!-- Mobile: Number above title -->
         <div class="md:hidden">

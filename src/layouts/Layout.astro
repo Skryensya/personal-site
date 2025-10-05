@@ -28,10 +28,6 @@ const {
     ...head
 } = Astro.props;
 
-// Read theme from cookie for server-side rendering
-const themeIdCookie = Astro.cookies.get('theme-id')?.value;
-const themeModeCookie = Astro.cookies.get('theme-mode')?.value;
-
 // Generate theme data for the client script
 // Only include non-hidden themes as valid themes (hidden themes need to be unlocked first)
 const validThemes = themes.filter(t => !t.hidden).map(t => t.id);
@@ -48,11 +44,6 @@ const defaultTheme = themes.find(t => !t.hidden) || themes[0];
 const defaultColorful = defaultTheme.colorful;
 const defaultContrasty = defaultTheme.contrasty;
 const defaultThemeId = defaultTheme.id;
-
-// Use server-side theme from cookie if available, otherwise use default
-const serverThemeId = themeIdCookie && themeColors[themeIdCookie] ? themeIdCookie : defaultThemeId;
-const serverTheme = themeColors[serverThemeId] || { colorful: defaultColorful, contrasty: defaultContrasty };
-const serverMode = themeModeCookie || 'system';
 
 // Get translations for theme toasts
 const t = getTranslations(lang);
@@ -75,40 +66,27 @@ declare global {
 <!doctype html>
 <html lang={lang} class="antialiased break-words">
     <head>
-        <!-- INSTANT theme application - runs BEFORE any CSS with server-side values -->
-        <script is:inline define:vars={{ validThemes, themeColors, defaultColorful, defaultContrasty, defaultThemeId, serverThemeId, serverMode }}>
-            // ULTRA-FAST theme application using server-side cookie values
+        <!-- BLOCKING theme script - runs BEFORE any rendering to prevent flash -->
+        <script is:inline define:vars={{ validThemes, themeColors, defaultColorful, defaultContrasty, defaultThemeId }}>
+            // BLOCKING theme application - runs synchronously before any CSS
             (function() {
-                // Helper to sync localStorage to cookie
-                function syncThemeToCookie(themeId, mode) {
-                    try {
-                        const expires = new Date();
-                        expires.setFullYear(expires.getFullYear() + 1);
-                        document.cookie = `theme-id=${themeId}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-                        document.cookie = `theme-mode=${mode}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
-                    } catch (e) {
-                        // Cookie setting failed
-                    }
-                }
-
                 // Create reusable theme application function
                 function applyThemeInstantly() {
                     const html = document.documentElement;
 
-                    // Get theme from localStorage immediately
+                    // Get theme from localStorage immediately (synchronously)
                     let savedTheme, savedMode;
                     try {
                         savedTheme = localStorage.getItem('theme-id');
                         savedMode = localStorage.getItem('theme-mode');
                     } catch (e) {
-                        // localStorage unavailable - use server values
-                        savedTheme = serverThemeId;
-                        savedMode = serverMode;
+                        // localStorage unavailable - use defaults
+                        savedTheme = null;
+                        savedMode = null;
                     }
 
                     // Determine theme immediately
-                    // Use saved theme if it exists in themeColors, otherwise use server value
-                    let themeId = serverThemeId;
+                    let themeId = defaultThemeId;
                     if (savedTheme && themeColors[savedTheme]) {
                         themeId = savedTheme;
                     } else if (savedTheme && !themeColors[savedTheme]) {
@@ -119,17 +97,14 @@ declare global {
                             // Ignore error
                         }
                     }
-                    const mode = savedMode || serverMode;
+                    const mode = savedMode || 'system';
 
-                    // Sync to cookie for server-side rendering
-                    syncThemeToCookie(themeId, mode);
-                    
                     // Get theme colors from embedded data
-                    const theme = themeColors[themeId] || { 
-                        colorful: defaultColorful, 
-                        contrasty: defaultContrasty 
+                    const theme = themeColors[themeId] || {
+                        colorful: defaultColorful,
+                        contrasty: defaultContrasty
                     };
-                    
+
                     // Determine dark mode immediately
                     let isDark = false;
                     if (mode === 'system') {
@@ -137,33 +112,33 @@ declare global {
                     } else {
                         isDark = mode === 'dark';
                     }
-                    
-                    // Apply ALL theme properties SIMULTANEOUSLY
+
+                    // Apply ALL theme properties SIMULTANEOUSLY to prevent flash
                     html.setAttribute('data-theme', themeId);
                     html.classList.toggle('dark', isDark);
-                    
-                    // Set ALL CSS variables in one batch to prevent any flash
+
+                    // Set ALL CSS variables in one batch
                     const mainColor = isDark ? theme.colorful : theme.contrasty;
                     const secondaryColor = isDark ? theme.contrasty : theme.colorful;
-                    
+
                     html.style.setProperty('--theme-colorful', theme.colorful);
                     html.style.setProperty('--theme-contrasty', theme.contrasty);
                     html.style.setProperty('--color-main', mainColor);
                     html.style.setProperty('--color-secondary', secondaryColor);
-                    
+
                     // Store for React components
                     window.__THEME_ID__ = themeId;
                     window.__THEME_MODE__ = mode;
                     window.__THEME_READY__ = true;
                 }
-                
-                // Apply theme immediately on initial load
+
+                // Apply theme IMMEDIATELY (blocks rendering)
                 applyThemeInstantly();
-                
+
                 // Re-apply theme instantly before View Transitions start
                 document.addEventListener('astro:before-preparation', applyThemeInstantly);
                 document.addEventListener('astro:page-load', applyThemeInstantly);
-                
+
                 // Store the function globally so it can be called from anywhere
                 window.__APPLY_THEME_INSTANTLY__ = applyThemeInstantly;
             })();
