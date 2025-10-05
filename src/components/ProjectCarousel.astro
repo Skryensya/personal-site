@@ -1,4 +1,6 @@
 ---
+import Button from './Button.astro';
+
 interface Props {
   projectCount: number;
   class?: string;
@@ -26,29 +28,22 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
     </div>
 
     <!-- Navigation controls -->
-    <div class="flex justify-center items-center mt-8 gap-4">
-      <button
-        type="button"
-        data-embla-prev
-        class="border border-main bg-transparent p-2 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-main hover:text-secondary transition-colors"
-        aria-label="Previous projects"
-        disabled
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m15 18-6-6 6-6"/>
-        </svg>
-      </button>
+    <div class="flex justify-end items-center mt-8 gap-2" data-embla-controls>
+      <div data-embla-prev-wrapper class="opacity-30 cursor-not-allowed">
+        <Button type="button" filled={true} size="sm" class="carousel-control !w-12 !h-12 !p-0 flex items-center justify-center group pointer-events-none" disabled={true}>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-all duration-200 ease-out group-hover:scale-120 group-hover:stroke-[2.5]">
+            <path d="m15 18-6-6 6-6"/>
+          </svg>
+        </Button>
+      </div>
 
-      <button
-        type="button"
-        data-embla-next
-        class="border border-main bg-transparent p-2 disabled:opacity-30 disabled:cursor-not-allowed hover:bg-main hover:text-secondary transition-colors"
-        aria-label="Next projects"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="m9 18 6-6-6-6"/>
-        </svg>
-      </button>
+      <div data-embla-next-wrapper>
+        <Button type="button" filled={true} size="sm" class="carousel-control !w-12 !h-12 !p-0 flex items-center justify-center group">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-all duration-200 ease-out group-hover:scale-120 group-hover:stroke-[2.5]">
+            <path d="m9 18 6-6-6-6"/>
+          </svg>
+        </Button>
+      </div>
     </div>
   </div>
 )}
@@ -68,8 +63,13 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
     constructor(carouselElement: HTMLElement) {
       this.viewport = carouselElement.querySelector('[data-embla-viewport]') as HTMLElement;
       this.container = carouselElement.querySelector('[data-embla-container]') as HTMLElement;
-      this.prevButton = carouselElement.querySelector('[data-embla-prev]') as HTMLButtonElement;
-      this.nextButton = carouselElement.querySelector('[data-embla-next]') as HTMLButtonElement;
+
+      // Find buttons inside the wrappers
+      const prevWrapper = carouselElement.querySelector('[data-embla-prev-wrapper]');
+      const nextWrapper = carouselElement.querySelector('[data-embla-next-wrapper]');
+
+      this.prevButton = prevWrapper?.querySelector('button') as HTMLButtonElement;
+      this.nextButton = nextWrapper?.querySelector('button') as HTMLButtonElement;
 
       if (!this.viewport || !this.container || !this.prevButton || !this.nextButton) {
         import('@/utils/debug-logger').then(({ debugLogger }) => {
@@ -139,8 +139,45 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
     }
 
     private updateButtons() {
-      this.prevButton.disabled = !this.emblaApi.canScrollPrev();
-      this.nextButton.disabled = !this.emblaApi.canScrollNext();
+      const canScrollPrev = this.emblaApi.canScrollPrev();
+      const canScrollNext = this.emblaApi.canScrollNext();
+
+      this.prevButton.disabled = !canScrollPrev;
+      this.nextButton.disabled = !canScrollNext;
+
+      // Update wrapper opacity and cursor
+      const prevWrapper = this.prevButton.closest('[data-embla-prev-wrapper]') as HTMLElement;
+      const nextWrapper = this.nextButton.closest('[data-embla-next-wrapper]') as HTMLElement;
+      const controlsContainer = this.prevButton.closest('[data-embla-controls]') as HTMLElement;
+
+      if (prevWrapper) {
+        if (canScrollPrev) {
+          prevWrapper.classList.remove('opacity-30', 'cursor-not-allowed');
+          this.prevButton.classList.remove('pointer-events-none');
+        } else {
+          prevWrapper.classList.add('opacity-30', 'cursor-not-allowed');
+          this.prevButton.classList.add('pointer-events-none');
+        }
+      }
+
+      if (nextWrapper) {
+        if (canScrollNext) {
+          nextWrapper.classList.remove('opacity-30', 'cursor-not-allowed');
+          this.nextButton.classList.remove('pointer-events-none');
+        } else {
+          nextWrapper.classList.add('opacity-30', 'cursor-not-allowed');
+          this.nextButton.classList.add('pointer-events-none');
+        }
+      }
+
+      // Hide controls container if both buttons are disabled
+      if (controlsContainer) {
+        if (!canScrollPrev && !canScrollNext) {
+          controlsContainer.classList.add('hidden');
+        } else {
+          controlsContainer.classList.remove('hidden');
+        }
+      }
     }
 
     private bindEvents() {
@@ -161,6 +198,12 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
       this.viewport.addEventListener('mouseleave', () => {
         const autoplay = this.emblaApi.plugins().autoplay;
         if (autoplay) autoplay.play();
+      });
+
+      // Update buttons on window resize
+      window.addEventListener('resize', () => {
+        this.emblaApi.reInit();
+        this.updateButtons();
       });
     }
 
@@ -209,17 +252,10 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
     display: flex;
   }
 
-
-  /* Focus styles for accessibility */
-  [data-embla-prev]:focus,
-  [data-embla-next]:focus {
-    outline: 2px solid var(--color-main);
-    outline-offset: 2px;
-  }
-
-  [data-embla-dots] button:focus {
-    outline: 2px solid var(--color-main);
-    outline-offset: 2px;
+  /* Carousel control disabled state */
+  .carousel-control:disabled {
+    opacity: 0.3;
+    pointer-events: none;
   }
 
   /* Ensure proper slide sizing */

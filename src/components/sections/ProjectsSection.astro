@@ -1,7 +1,8 @@
 ---
 import ProjectCard from '../ProjectCard.astro';
 import ProjectCarousel from '../ProjectCarousel.astro';
-import { getFeaturedProjectsByLanguage, getSlugFromId } from '@/utils/content-utils';
+import ProjectsTable from '../ProjectsTable.astro';
+import { getFeaturedProjectsByLanguage, getProjectsByLanguage, getSlugFromId } from '@/utils/content-utils';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import { getLocalizedUrl } from '@/utils/localized-routes';
@@ -16,10 +17,16 @@ const t = getTranslations(lang);
 // Get all featured projects in the current language
 const featuredProjects = (await getFeaturedProjectsByLanguage(lang))
   .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
+
+// Get all non-featured projects in the current language
+const allProjects = await getProjectsByLanguage(lang);
+const nonFeaturedProjects = allProjects
+  .filter((project) => !project.data.isFeatured)
+  .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
 ---
 
 <section id={lang === 'es' ? 'proyectos' : (lang === 'no' ? 'prosjekter' : 'projects')} class="py-20 bg-secondary">
-  <div class="max-w-7xl mx-auto px-4">
+  <div class="w-full">
     <h2 class="font-mono text-3xl font-bold text-main mb-12">{t('home.featuredProjects')}</h2>
     <ProjectCarousel projectCount={featuredProjects.length}>
       {featuredProjects.map((project, index) => (
@@ -35,5 +42,15 @@ const featuredProjects = (await getFeaturedProjectsByLanguage(lang))
         />
       ))}
     </ProjectCarousel>
+
+    {nonFeaturedProjects.length > 0 && (
+      <div class="mt-16">
+        <ProjectsTable
+          projects={nonFeaturedProjects}
+          startIndex={featuredProjects.length}
+          lang={lang}
+        />
+      </div>
+    )}
   </div>
 </section>
