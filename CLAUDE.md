@@ -197,7 +197,6 @@ React components for dynamic functionality:
 - `HeaderControls.tsx` - Theme and language switching
 - `DropdownButton.tsx` - Reusable dropdown interface
 - `MarqueeSection.tsx` - Infinite scrolling technology list
-- `GithubGrid.tsx` - Git contribution visualization
 
 ### Props and Type Safety
 
