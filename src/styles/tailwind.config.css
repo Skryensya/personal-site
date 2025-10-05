@@ -1,14 +1,23 @@
 @import 'tailwindcss';
 
 @theme {
-    --font-family-grotesk: 'Space Grotesk', sans-serif;
-    --font-family-mono: 'Fira Code', 'Cascadia Code', 'SF Mono', monospace;
-    --font-family-serif: 'Times New Roman', 'Times', serif;
-    --font-mono: 'Fira Code', 'Cascadia Code', 'SF Mono', monospace;
+    /* Typography System */
+    --font-sans: 'Atkinson Hyperlegible', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Space Grotesk', var(--font-sans);
+    --font-mono: 'Atkinson Hyperlegible Mono', ui-monospace, monospace;
 
+    /* Legacy compatibility */
+    --font-family-grotesk: var(--font-display);
+    --font-family-mono: var(--font-mono);
+
+    /* Font family utilities */
+    --font-family-sans: var(--font-sans);
+    --font-family-display: var(--font-display);
+
+    /* Color System */
     --color-main: var(--color-main);
     --color-secondary: var(--color-secondary);
-    
+
     /* Container sizes for native container queries */
     --container-6xl: 72rem;
 }

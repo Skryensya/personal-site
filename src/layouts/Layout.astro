@@ -1,8 +1,9 @@
 ---
 import { ViewTransitions } from 'astro:transitions';
+import { AstroFont } from 'astro-font';
 import BaseHead, { type Props as HeadProps } from '../components/BaseHead.astro';
 import Navbar from '../components/Navbar.astro';
-import Footer from "../components/Footer.astro" 
+import Footer from "../components/Footer.astro"
 import WaveDivider from '../components/WaveDivider.astro';
 import NorwegianDisclaimer from '../components/NorwegianDisclaimer.astro';
 import FaviconManager from '../components/FaviconManager.tsx';
@@ -65,6 +66,68 @@ declare global {
 <!doctype html>
 <html lang={lang} class="antialiased break-words">
     <head>
+        <AstroFont
+            config={[
+                {
+                    name: 'Atkinson Hyperlegible',
+                    src: [
+                        {
+                            weight: '400',
+                            style: 'normal',
+                            path: 'https://cdn.jsdelivr.net/fontsource/fonts/atkinson-hyperlegible@latest/latin-400-normal.woff2'
+                        },
+                        {
+                            weight: '700',
+                            style: 'normal',
+                            path: 'https://cdn.jsdelivr.net/fontsource/fonts/atkinson-hyperlegible@latest/latin-700-normal.woff2'
+                        }
+                    ],
+                    preload: true,
+                    display: 'swap',
+                    selector: 'body',
+                    fallback: 'sans-serif'
+                },
+                {
+                    name: 'Space Grotesk',
+                    src: [
+                        {
+                            weight: '400',
+                            style: 'normal',
+                            path: 'https://fonts.gstatic.com/s/spacegrotesk/v16/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gOoraIAEj7oUUsjNsFjTDJK.woff2'
+                        },
+                        {
+                            weight: '600',
+                            style: 'normal',
+                            path: 'https://fonts.gstatic.com/s/spacegrotesk/v16/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gOoraIAEj62VksjNsFjTDJK.woff2'
+                        }
+                    ],
+                    preload: true,
+                    display: 'swap',
+                    selector: 'h1, h2, h3, h4, h5, h6',
+                    fallback: 'sans-serif'
+                },
+                {
+                    name: 'Atkinson Hyperlegible Mono',
+                    src: [
+                        {
+                            weight: '400',
+                            style: 'normal',
+                            path: 'https://cdn.jsdelivr.net/fontsource/fonts/atkinson-hyperlegible-mono@latest/latin-400-normal.woff2'
+                        },
+                        {
+                            weight: '700',
+                            style: 'normal',
+                            path: 'https://cdn.jsdelivr.net/fontsource/fonts/atkinson-hyperlegible-mono@latest/latin-700-normal.woff2'
+                        }
+                    ],
+                    preload: true,
+                    display: 'swap',
+                    selector: 'code, pre, .mono',
+                    fallback: 'monospace'
+                }
+            ]}
+        />
+
         <!-- BLOCKING theme script - runs BEFORE any rendering to prevent flash -->
         <script is:inline define:vars={{ validThemes, themeColors, defaultColorful, defaultContrasty, defaultThemeId }}>
             // BLOCKING theme application - runs synchronously before any CSS

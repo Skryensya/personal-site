@@ -76,7 +76,7 @@
     }
 
     body {
-        font-family: 'Space Grotesk', sans-serif;
+        font-family: var(--font-sans);
         font-weight: 400;
         font-variant-numeric: tabular-nums;
     }
@@ -87,7 +87,7 @@
     h4,
     h5,
     h6 {
-        font-family: 'Space Grotesk', sans-serif;
+        font-family: var(--font-display);
         font-weight: 600;
         letter-spacing: -0.025em;
     }
@@ -95,7 +95,7 @@
     code,
     pre,
     .mono {
-        font-family: 'Fira Code', 'Cascadia Code', 'SF Mono', monospace;
+        font-family: var(--font-mono);
         font-weight: 400;
         font-variant-ligatures: none;
     }
