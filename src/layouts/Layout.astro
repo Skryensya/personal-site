@@ -2,8 +2,7 @@
 import { ViewTransitions } from 'astro:transitions';
 import BaseHead, { type Props as HeadProps } from '../components/BaseHead.astro';
 import Navbar from '../components/Navbar.astro';
-import Footer from "../components/Footer.astro"
-import GameOfLifeBackground from '../components/GameOfLifeBackground.astro';
+import Footer from "../components/Footer.astro" 
 import WaveDivider from '../components/WaveDivider.astro';
 import NorwegianDisclaimer from '../components/NorwegianDisclaimer.astro';
 import FaviconManager from '../components/FaviconManager.tsx';
@@ -609,11 +608,11 @@ declare global {
             }
 
             /* Prevent navbar from participating in theme view transitions */
-            ::view-transition-old(navbar),
+            /* ::view-transition-old(navbar),
             ::view-transition-new(navbar) {
                 animation: none;
                 animation-duration: 0s;
-            }
+            } */
 
             /* Instant color and background changes - no transition delay */
             html, body, * {
@@ -627,8 +626,8 @@ declare global {
             }
         </style>
     </head>
-    <body class="relative overflow-hidden" id="app-body">
-        <div class="text-main (--max-w-size:1280px) bg-secondary">
+    <body class="relative" id="app-body">
+        <div class="text-main bg-secondary">
 
       
         <div class="bg-main w-full h-2"></div> 

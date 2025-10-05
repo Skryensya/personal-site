@@ -1,6 +1,5 @@
 ---
 import TableOfContents from '@/components/TableOfContents.astro';
-import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 
 interface Props {
@@ -9,22 +8,16 @@ interface Props {
     lang?: Language;
 }
 
-const { 
+const {
     contentId = 'main-content',
     className = '',
     lang = defaultLang
 } = Astro.props;
-
-const t = getTranslations(lang);
 ---
 
-<aside class={`w-[250px] flex-shrink-0 hidden lg:block ${className}`} id="content-sidebar">
-    <div class="sticky top-20 py-8 px-4">
-        <!-- Table of Contents -->
-        <TableOfContents contentId={contentId} lang={lang} />
-        
-        
-    </div>
+<aside class={`sticky top-20 w-[250px] min-w-[250px] max-h-[60dvh] flex-shrink-0 hidden lg:block overflow-y-auto py-8 px-4 ${className}`} id="content-sidebar">
+    <!-- Table of Contents -->
+    <TableOfContents contentId={contentId} lang={lang} />
 </aside>
 
 

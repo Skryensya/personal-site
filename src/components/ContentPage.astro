@@ -24,14 +24,14 @@ const {
 <ScrollProgress client:idle />
 
 <!-- Full height layout with content and sidebar -->
-<div class={`flex min-h-screen ${containerClassName}`} id={`${contentId}-container`}>
+<div class={`flex ${containerClassName}`} id={`${contentId}-container`}>
     <!-- Main content area -->
     <main class={`mx-auto min-w-0 w-fit max-w-[850px] ${contentClassName}`} id={contentId}>
         <slot />
     </main>
-    
+
     <!-- Desktop Sidebar -->
-    <Sidebar 
+    <Sidebar
         contentId={contentId}
         className={sidebarClassName}
         lang={lang}

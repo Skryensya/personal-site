@@ -1,7 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import SitemapTree from '@/components/SitemapTree.astro';
-import TableOfContents from '@/components/TableOfContents.astro';
+import Sidebar from '@/components/Sidebar.astro';
 import { getTranslations } from '@/i18n/utils';
 
 const lang = 'no';
@@ -13,8 +13,8 @@ const t = getTranslations(lang);
   description="Komplett struktur av Allison Peñas nettsted, full-stack utvikler"
   lang={lang}
 >
-  <div class="flex">
-    <main id="main-content" class="flex-1 mx-auto max-w-[var(--max-w-size)] px-4 py-8">
+  <div class="flex gap-4">
+    <main id="main-content" class="flex-1 mx-auto max-w-[850px] py-8">
       <div class="mb-8">
         <h1 id="innhold" class="text-3xl font-mono font-bold text-main border-b-2 border-main pb-4 mb-4">
           Innholdstre
@@ -23,29 +23,28 @@ const t = getTranslations(lang);
           Utforsk den komplette nettstedsstrukturen for å enkelt navigere gjennom alt innholdet.
         </p>
       </div>
-      
+
       <div id="struktur" class="mb-8">
         <h2 class="text-xl font-mono font-bold text-main border-b border-main pb-2 mb-4">Nettstedsstruktur</h2>
         <SitemapTree lang={lang} />
       </div>
-      
+
       <div class="mt-12 space-y-8">
         <div class="space-y-6">
           <h2 id="info" class="text-xl font-mono font-bold text-main border-b border-main pb-2">Tilleggsinformasjon</h2>
           <div id="stats" class="grid gap-2 font-mono text-sm text-main ml-4">
-            <div>Totalt hovedsider: 5</div>
-            <div>Tilgjengelige prosjekter: 6</div>
+            <div>Totalt hovedsider: 6</div>
+            <div>Tilgjengelige prosjekter: 7</div>
             <div>Støttede språk: 3 (Spansk, Engelsk, Norsk)</div>
             <div>Sist oppdatert: {new Date().toLocaleDateString('no-NO')}</div>
             <div>XML Sitemap: <a href="/sitemap.xml" class="text-main underline hover:no-underline">/sitemap.xml</a></div>
-            <div>Designsystem: <a href="/no/designsystem" class="text-main underline hover:no-underline">/no/designsystem</a></div>
           </div>
         </div>
       </div>
     </main>
-    
-    <TableOfContents 
-      contentId="main-content" 
+
+    <Sidebar
+      contentId="main-content"
       lang={lang}
     />
   </div>
