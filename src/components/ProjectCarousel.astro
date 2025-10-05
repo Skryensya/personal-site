@@ -8,30 +8,25 @@ interface Props {
 
 const { projectCount, class: className = '' } = Astro.props;
 
-// Generate unique ID for this carousel instance
 const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
 ---
 
 {projectCount <= 3 ? (
-  <!-- Simple grid for 3 or fewer projects -->
-  <div class={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 ${className}`}>
+  <div class:list={['grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'gap-4', className]}>
     <slot />
   </div>
 ) : (
-  <!-- Full carousel for more than 3 projects -->
-  <div class={`relative ${className}`} data-carousel={carouselId}>
-    <!-- Embla viewport -->
+  <div class:list={['relative', className]} data-carousel={carouselId}>
     <div class="overflow-visible" data-embla-viewport>
       <div class="flex" data-embla-container>
         <slot />
       </div>
     </div>
 
-    <!-- Navigation controls -->
     <div class="flex justify-end items-center mt-8 gap-2" data-embla-controls>
       <div data-embla-prev-wrapper class="opacity-30 cursor-not-allowed">
         <Button type="button" filled={true} size="sm" class="carousel-control !w-12 !h-12 !p-0 flex items-center justify-center group pointer-events-none" disabled={true}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-all duration-200 ease-out group-hover:scale-120 group-hover:stroke-[2.5]">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m15 18-6-6 6-6"/>
           </svg>
         </Button>
@@ -39,7 +34,7 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
 
       <div data-embla-next-wrapper>
         <Button type="button" filled={true} size="sm" class="carousel-control !w-12 !h-12 !p-0 flex items-center justify-center group">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-all duration-200 ease-out group-hover:scale-120 group-hover:stroke-[2.5]">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="m9 18 6-6-6-6"/>
           </svg>
         </Button>
@@ -50,7 +45,6 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
 
 <script>
   import EmblaCarousel from 'embla-carousel';
-  import Autoplay from 'embla-carousel-autoplay';
 
   class ProjectCarousel {
     private emblaApi: any;
@@ -64,7 +58,6 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
       this.viewport = carouselElement.querySelector('[data-embla-viewport]') as HTMLElement;
       this.container = carouselElement.querySelector('[data-embla-container]') as HTMLElement;
 
-      // Find buttons inside the wrappers
       const prevWrapper = carouselElement.querySelector('[data-embla-prev-wrapper]');
       const nextWrapper = carouselElement.querySelector('[data-embla-next-wrapper]');
 
@@ -88,22 +81,18 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
     }
 
     private setupSlides() {
-      // Get all direct children as slides and setup their styling
       this.slides = Array.from(this.container.children) as HTMLElement[];
-      
+
       this.slides.forEach((slide, index) => {
-        // Set up responsive slide sizing
         slide.classList.add('flex-shrink-0', 'px-2');
         if (index === 0) slide.classList.add('pl-0');
         if (index === this.slides.length - 1) slide.classList.add('pr-0');
-        
-        // Responsive width classes
+
         slide.classList.add('w-full', 'md:w-1/2', 'lg:w-1/3');
       });
     }
 
     private initEmbla() {
-      // Embla options with responsive breakpoints
       const options = {
         loop: false,
         align: 'start' as const,
@@ -115,17 +104,8 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
         }
       };
 
-      // Initialize Embla with autoplay
-      const autoplayOptions = {
-        delay: 4000,
-        stopOnInteraction: false,
-        stopOnMouseEnter: true,
-        stopOnFocusIn: true
-      };
+      this.emblaApi = EmblaCarousel(this.viewport, options);
 
-      this.emblaApi = EmblaCarousel(this.viewport, options, [Autoplay(autoplayOptions)]);
-      
-      // Set up event listeners
       this.emblaApi.on('select', this.onSelect.bind(this));
       this.emblaApi.on('init', this.onInit.bind(this));
     }
@@ -145,7 +125,6 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
       this.prevButton.disabled = !canScrollPrev;
       this.nextButton.disabled = !canScrollNext;
 
-      // Update wrapper opacity and cursor
       const prevWrapper = this.prevButton.closest('[data-embla-prev-wrapper]') as HTMLElement;
       const nextWrapper = this.nextButton.closest('[data-embla-next-wrapper]') as HTMLElement;
       const controlsContainer = this.prevButton.closest('[data-embla-controls]') as HTMLElement;
@@ -170,7 +149,6 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
         }
       }
 
-      // Hide controls container if both buttons are disabled
       if (controlsContainer) {
         if (!canScrollPrev && !canScrollNext) {
           controlsContainer.classList.add('hidden');
@@ -189,18 +167,6 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
         this.emblaApi.scrollNext();
       });
 
-      // Pause autoplay on hover/focus
-      this.viewport.addEventListener('mouseenter', () => {
-        const autoplay = this.emblaApi.plugins().autoplay;
-        if (autoplay) autoplay.stop();
-      });
-
-      this.viewport.addEventListener('mouseleave', () => {
-        const autoplay = this.emblaApi.plugins().autoplay;
-        if (autoplay) autoplay.play();
-      });
-
-      // Update buttons on window resize
       window.addEventListener('resize', () => {
         this.emblaApi.reInit();
         this.updateButtons();
@@ -214,7 +180,6 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
     }
   }
 
-  // Initialize all carousels on the page
   function initCarousels() {
     const carousels = document.querySelectorAll('[data-carousel]');
     const carouselInstances: ProjectCarousel[] = [];
@@ -224,25 +189,21 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
       carouselInstances.push(instance);
     });
 
-    // Clean up on page unload
     window.addEventListener('beforeunload', () => {
       carouselInstances.forEach(instance => instance.destroy());
     });
   }
 
-  // Initialize on DOM ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initCarousels);
   } else {
     initCarousels();
   }
 
-  // Re-initialize on Astro page navigation
   document.addEventListener('astro:page-load', initCarousels);
 </script>
 
 <style>
-  /* Embla carousel specific styles */
   [data-embla-viewport] {
     overflow: visible;
     position: relative;
@@ -252,18 +213,15 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
     display: flex;
   }
 
-  /* Carousel control disabled state */
   .carousel-control:disabled {
     opacity: 0.3;
     pointer-events: none;
   }
 
-  /* Ensure proper slide sizing */
   [data-embla-container] > * {
     min-width: 0;
   }
 
-  /* Mobile responsive behavior */
   @media (max-width: 767px) {
     [data-embla-container] > * {
       flex: 0 0 100%;
