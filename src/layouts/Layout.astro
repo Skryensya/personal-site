@@ -652,7 +652,7 @@ declare global {
             }
         </style>
     </head>
-    <body class="relative" id="app-body">
+    <body class="relative overflow-hidden" id="app-body">
         <div class="text-main (--max-w-size:1280px) bg-secondary">
 
       
@@ -663,7 +663,7 @@ declare global {
         <Navbar />
         <FaviconManager client:idle />
         <NorwegianDisclaimer lang={lang} />
-        <div class="pt-24 mt-8 mx-auto max-w-[var(--max-w-size)] overflow-hidden"> 
+        <div class="pt-24 mt-8 mx-auto max-w-[var(--max-w-size)] "> 
             <main class="text-left px-4" id="main-content">
                 <slot />
             </main>

@@ -22,6 +22,7 @@ export const ui = {
         'home.about': 'About',
         'home.hello': '¡Hola!',
         'home.featuredProjects': 'Proyectos Destacados',
+        'home.allProjects': 'Todos los Proyectos',
 
         // Bio content
         'home.bio.intro':
@@ -202,6 +203,10 @@ export const ui = {
         'pagination.previous': 'Anterior',
         'pagination.next': 'Siguiente',
 
+        // Projects table
+        'projects.table.name': 'Nombre',
+        'projects.table.description': 'Descripción',
+
         // Footer
         'footer.navigation': 'Navegación',
         'footer.connect': 'Conectar',
@@ -263,6 +268,7 @@ export const ui = {
         'home.about': 'About',
         'home.hello': 'Hello!',
         'home.featuredProjects': 'Featured Projects',
+        'home.allProjects': 'All Projects',
 
         // Bio content
         'home.bio.intro':
@@ -443,6 +449,10 @@ export const ui = {
         'pagination.previous': 'Previous',
         'pagination.next': 'Next',
 
+        // Projects table
+        'projects.table.name': 'Name',
+        'projects.table.description': 'Description',
+
         // Footer
         'footer.navigation': 'Navigation',
         'footer.connect': 'Connect',
@@ -504,6 +514,7 @@ export const ui = {
         'home.about': 'Om',
         'home.hello': 'Hei!',
         'home.featuredProjects': 'Utvalgte Prosjekter',
+        'home.allProjects': 'Alle Prosjekter',
 
         // Bio content
         'home.bio.intro':
@@ -683,6 +694,10 @@ export const ui = {
         'pagination.of': 'av',
         'pagination.previous': 'Forrige',
         'pagination.next': 'Neste',
+
+        // Projects table
+        'projects.table.name': 'Navn',
+        'projects.table.description': 'Beskrivelse',
 
         // Footer
         'footer.navigation': 'Navigasjon',
