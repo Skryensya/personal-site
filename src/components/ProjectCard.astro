@@ -20,20 +20,21 @@ const {
 } = Astro.props;
 ---
 
-<div 
+<article
     class="w-full max-w-[300px] aspect-[2/3] relative group mx-auto"
     style={{ viewTransitionName: `project-card-${slug}`, perspective: '1000px' }}
+    aria-labelledby={`project-title-${slug}`}
 >
     <div class="relative w-full h-full [transform-style:preserve-3d] [transform-origin:right_center] [transform:rotateY(-8deg)_translateZ(15px)_translateY(-5px)]">
         <!-- Arrow icon -->
-        <div class="absolute top-2 right-2 z-40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] flex items-center justify-center">
+        <div class="absolute top-2 right-2 z-40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] flex items-center justify-center" aria-hidden="true">
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" class="text-main">
-                <path 
-                    d="M7 17L17 7M17 7H7M17 7V17" 
-                    stroke="currentColor" 
-                    stroke-width="2" 
-                    stroke-linecap="round" 
-                    stroke-linejoin="round" 
+                <path
+                    d="M7 17L17 7M17 7H7M17 7V17"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
                 />
             </svg>
         </div>
@@ -42,43 +43,49 @@ const {
             href={href}
             class="relative block w-full h-full cursor-pointer z-10 focus:outline-none focus-within:opacity-100"
             data-project-index={dataIndex}
+            aria-label={`Ver detalles del proyecto ${name}`}
         >
             <!-- Card face -->
             <div
                 class="absolute w-full h-full bg-main border-2 border-main [transform:translateZ(25px)] [clip-path:polygon(0_0,calc(100%_-_95px)_0,100%_95px,100%_100%,0_100%)]"
             >
-                <!-- Title in outer card -->
-                <div class="px-2 py-2.5">
-                    <h3 
-                        class="font-sans text-xl font-bold mb-3 text-secondary" 
+                <!-- Header: Project title -->
+                <header class="px-2 py-2.5">
+                    <h3
+                        id={`project-title-${slug}`}
+                        class="font-sans text-xl font-bold mb-3 text-secondary"
                         style={{ viewTransitionName: `project-content-${slug}` }}
                     >
                         {name}
                     </h3>
-                </div>
+                </header>
 
                 <!-- Inner content container with opposite color -->
                 <div
                     class="absolute inset-0.5 top-12 bg-secondary border-2 border-main [clip-path:polygon(0_0,calc(100%_-_51px)_0,100%_51px,100%_100%,0_100%)]"
                 >
                     <!-- Content with CSS exclusions -->
-                    <div class="px-3 py-2 h-full flex flex-col">
+                    <div class="px-3 py-2 h-full flex flex-col bg-main/[3%] hover:bg-main/[6%] transition-colors duration-300 ease-out">
                         {hook && (
                             <p class="text-lg text-main leading-relaxed line-clamp-10 text-pretty flex-1 mr-0 before:content-[''] before:float-right before:w-[21px] before:h-[21px] before:[shape-outside:polygon(0%_0%,100%_0%,100%_100%)] before:[clip-path:polygon(0%_0%,100%_0%,100%_100%)]">
                                 {hook}
                             </p>
                         )}
 
-                        <!-- Project number at bottom left -->
-                        <div class="mt-auto pt-4 flex justify-between">
-                            <span class="text-main font-mono text-4xl font-bold">
+                        <!-- Footer: Project number and CTA -->
+                        <footer class="mt-auto pt-4 flex justify-between items-end">
+                            <span class="text-main font-mono text-4xl font-bold" aria-label={`Proyecto número ${dataIndex}`}>
                                 #{String(dataIndex || 0).padStart(2, '0')}
                             </span>
-                        </div>
+                            <span class="text-main text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200" aria-hidden="true">
+                                Ver más
+                            </span>
+                        </footer>
+
                     </div>
                 </div>
             </div>
         </a>
     </div>
-</div>
+</article>
 

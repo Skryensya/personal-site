@@ -16,6 +16,11 @@ export const localizedRoutes = {
     es: 'declaracion-de-accesibilidad',
     en: 'accessibility-statement',
     no: 'tilgjengelighetserklaering'
+  },
+  designSystem: {
+    es: 'sistema-de-diseno',
+    en: 'design-system',
+    no: 'designsystem'
   }
 } as const;
 
@@ -272,6 +277,37 @@ export const pagesDictionary = {
     es: '/arbol-de-contenido/',
     en: '/en/content-tree/',
     no: '/no/innholdstre/'
+  },
+  // Design System pages
+  '/sistema-de-diseno': {
+    es: '/sistema-de-diseno',
+    en: '/en/design-system',
+    no: '/no/designsystem'
+  },
+  '/sistema-de-diseno/': {
+    es: '/sistema-de-diseno/',
+    en: '/en/design-system/',
+    no: '/no/designsystem/'
+  },
+  '/en/design-system': {
+    es: '/sistema-de-diseno',
+    en: '/en/design-system',
+    no: '/no/designsystem'
+  },
+  '/en/design-system/': {
+    es: '/sistema-de-diseno/',
+    en: '/en/design-system/',
+    no: '/no/designsystem/'
+  },
+  '/no/designsystem': {
+    es: '/sistema-de-diseno',
+    en: '/en/design-system',
+    no: '/no/designsystem'
+  },
+  '/no/designsystem/': {
+    es: '/sistema-de-diseno/',
+    en: '/en/design-system/',
+    no: '/no/designsystem/'
   }
 } as const;
 
