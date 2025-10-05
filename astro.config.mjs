@@ -28,7 +28,7 @@ export default defineConfig({
         defaultStrategy: 'hover'
     },
     build: {
-        inlineStylesheets: 'auto'
+        inlineStylesheets: 'always'  // Inline crítico CSS para evitar render blocking
     },
     integrations: [react(), mdx(), sitemap()],
     vite: {
@@ -44,16 +44,45 @@ export default defineConfig({
             }
         },
         build: {
+            modulePreload: {
+                polyfill: false  // Navegadores modernos soportan modulepreload nativamente
+            },
             rollupOptions: {
                 output: {
-                    manualChunks: {
-                        'react-vendor': ['react', 'react-dom'],
-                        'animation-vendor': ['framer-motion', 'gsap', 'lenis'],
-                        '3d-vendor': ['three', '@react-three/fiber', '@react-three/drei'],
-                        'ui-vendor': ['@radix-ui/react-avatar', '@radix-ui/react-dialog', '@radix-ui/react-tabs', '@radix-ui/react-tooltip', '@floating-ui/dom', '@floating-ui/react']
-                    }
+                    // Optimizar chunks para reducir dependencias en cadena
+                    manualChunks: (id) => {
+                        // Core React - carga temprano
+                        if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
+                            return 'react-vendor';
+                        }
+                        // Animations - lazy load
+                        if (id.includes('framer-motion') || id.includes('gsap') || id.includes('lenis')) {
+                            return 'animation-vendor';
+                        }
+                        // 3D - lazy load
+                        if (id.includes('three') || id.includes('@react-three')) {
+                            return '3d-vendor';
+                        }
+                        // UI libraries - carga bajo demanda
+                        if (id.includes('@radix-ui') || id.includes('@floating-ui')) {
+                            return 'ui-vendor';
+                        }
+                        // Theme system - crítico, separar para cache
+                        if (id.includes('/data/themes') || id.includes('/utils/debug-logger')) {
+                            return 'theme-core';
+                        }
+                        // Astro runtime - debe ser pequeño y rápido
+                        if (id.includes('astro/dist/runtime')) {
+                            return 'astro-runtime';
+                        }
+                    },
+                    // Configurar tamaño óptimo de chunks
+                    chunkFileNames: '_astro/[name].[hash].js',
+                    assetFileNames: '_astro/[name].[hash][extname]'
                 }
-            }
+            },
+            // Optimizar tamaño de chunks
+            chunkSizeWarningLimit: 600
         }
     }
 });

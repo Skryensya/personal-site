@@ -49,9 +49,9 @@ const navItems = [
 
 <nav class={`${isCVPage ? '!relative' : '!fixed !top-0 !left-0 !right-0'} z-[400] flex justify-center mx-auto max-w-[var(--max-w-size)]`} style="--navbar-height: 96px; view-transition-name: navbar;">
   <div class={`max-w-[1280px] w-full px-4 pt-2`}>
-    <div class="flex items-start justify-between gap-2 flex-nowrap p-2 lg:pl-0 diagonal-stripe" >
+    <div class="flex items-start justify-between gap-2 p-2 lg:pl-0 diagonal-stripe overflow-hidden" >
       <!-- Desktop Navigation -->
-      <div class="hidden lg:flex items-start gap-x-2 gap-y-1 flex-wrap flex-1 mr-2 relative">
+      <div class="hidden lg:flex items-start gap-x-2 gap-y-1 flex-nowrap relative min-w-0">
         <button
           id="skip-to-content-desktop"
           class="w-0 px-0 h-8 overflow-hidden opacity-0 border-0 bg-secondary text-main font-grotesk font-bold text-sm uppercase tracking-wide cursor-pointer border-double whitespace-nowrap flex items-center justify-center focus-visible:w-auto focus-visible:px-2 focus-visible:opacity-100 focus-visible:border-2 focus-visible:border-main focus-visible:shadow-[inset_0_0_0_2px_var(--color-secondary)] focus-visible:hover:bg-main focus-visible:hover:text-secondary motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-out"
@@ -62,7 +62,7 @@ const navItems = [
         {navItems.map((item) => {
           const isCurrentPage = item.label === 'Allison Peña' ? isHomePage : (currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href + '/')) || (item.href !== '/' && currentPath.startsWith(item.href) && currentPath.length > item.href.length));
           return (
-            <Button 
+            <Button
               href={item.href}
               size="sm"
               filled={isCurrentPage}
@@ -110,75 +110,11 @@ const navItems = [
         </button>
       </div>
 
-      <!-- Desktop Navbar Controls - Container with fixed positioning to prevent CLS -->
-      <div class="hidden lg:flex items-center gap-2 relative">
-        <!-- Individual Placeholders -->
-        <div class=" h-full flex items-center gap-x-2 gap-y-1 pointer-events-none">
-          <!-- Theme Switcher Placeholder -->
-          <div class="w-7 h-7 @lg:w-full @lg:h-8 inline-flex" id="theme-placeholder">
-            <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
-              <div class="flex items-center gap-2 w-full">
-                <div class="w-4 h-4 border border-main  " ></div>
-                <span class="hidden @lg:block font-grotesk text-xs font-semibold text-main flex-1 text-left uppercase select-none">{t('ui.loading')}</span>
-              </div>
-            </div>
-            <div class="hidden @lg:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
-              <svg class="w-4 h-4 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </div>
-          </div>
-
-          <!-- Mode Toggle Placeholder -->
-          <div class="w-7 h-7 @6xl:w-auto @6xl:h-8 inline-flex" id="mode-placeholder">
-            <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
-              <div class="flex items-center gap-2">
-                <div class="w-3.5 h-3.5 flex-shrink-0">
-                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                    <line x1="8" y1="21" x2="16" y2="21"></line>
-                    <line x1="12" y1="17" x2="12" y2="21"></line>
-                  </svg>
-                </div>
-                <span class="hidden @6xl:block font-grotesk text-xs font-semibold text-main uppercase select-none">{t('ui.loading')}</span>
-              </div>
-            </div>
-            <div class="hidden @6xl:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
-              <svg class="w-4 h-4 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </div>
-          </div>
-          
-          <!-- Language Switcher Placeholder -->
-          <div class="w-7 h-7 @6xl:w-auto @6xl:h-8 inline-flex" id="language-placeholder">
-            <div class="flex items-center justify-center px-3 py-2 bg-secondary border-double border-2 border-main border-r-0">
-              <div class="flex items-center gap-2">
-                <span class="font-grotesk text-xs font-semibold text-main uppercase select-none">{t('ui.loading')}</span>
-              </div>
-            </div>
-            <div class="hidden @6xl:flex items-center justify-center w-8 bg-secondary border-double border-2 border-main">
-              <svg class="w-4 h-4 text-main" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Individual Astro components -->
-        <div class="  h-full flex flex-row items-center gap-x-2 gap-y-1 pointer-events-auto">
-          <div style="visibility: hidden;" id="theme-control">
-            <ThemeControl />
-          </div>
-          <div style="visibility: hidden;" id="mode-control">
-            <ModeControl />
-          </div>
-          <div style="visibility: hidden;" id="language-control">
-            <LanguageControl currentPath={Astro.url.pathname} initialLocale={currentLocale} />
-          </div>
-        </div>
-        
- 
+      <!-- Desktop Navbar Controls -->
+      <div class="hidden lg:flex items-center gap-x-2 gap-y-1 relative">
+        <ThemeControl />
+        <ModeControl />
+        <LanguageControl currentPath={Astro.url.pathname} initialLocale={currentLocale} />
       </div>
     </div>
   </div>
@@ -419,26 +355,6 @@ const navItems = [
       window.__THEME_MODE__ = savedMode;
       window.__THEME_READY__ = false;
     }
-  }
-
-  // Individual placeholder management
-  function showReactComponent(componentName) {
-    const placeholder = document.getElementById(`${componentName}-placeholder`);
-    const reactComponent = document.getElementById(`${componentName}-control`);
-
-    if (placeholder && reactComponent) {
-      // Hide individual placeholder and show React component (use opacity to prevent CLS)
-      placeholder.style.opacity = '0';
-      placeholder.style.pointerEvents = 'none';
-      reactComponent.style.visibility = 'visible';
-    }
-  }
-  
-  // Show all components at once (fallback)
-  function showAllReactComponents() {
-    showReactComponent('theme');
-    showReactComponent('mode');
-    showReactComponent('language');
   }
 
   // Mobile menu functionality
@@ -877,62 +793,6 @@ const navItems = [
 
     // Initialize global theme state (theme already applied by inline script)
     initializeGlobalTheme();
-    
-    // Listen for individual component ready events
-    const handleThemeReady = () => {
-      showReactComponent('theme');
-      // Ensure theme dropdown buttons work after being shown
-      setTimeout(() => {
-        const themeDropdownButtons = document.querySelectorAll('#theme-control [data-theme-button]');
-        if (themeDropdownButtons.length === 0) {
-          // Try to reinitialize theme control
-          if (window.themeControl && typeof window.themeControl.init === 'function') {
-            window.themeControl.init();
-          }
-        } else {
-        }
-      }, 100);
-    };
-    
-    const handleModeReady = () => {
-      showReactComponent('mode');
-    };
-    
-    const handleLanguageReady = () => {
-      showReactComponent('language');
-      // Update mobile language display when language control is ready
-      updateMobileLangDisplay();
-    };
-    
-    window.addEventListener('theme-control-ready', handleThemeReady);
-    window.addEventListener('mode-control-ready', handleModeReady);
-    window.addEventListener('language-control-ready', handleLanguageReady);
-    
-    // Fallback: Show all components after a delay if events don't fire
-    setTimeout(() => {
-      showAllReactComponents();
-      // Also try to reinitialize theme control if dropdown is not working
-      setTimeout(() => {
-        const themeControl = document.getElementById('theme-control');
-        const themeDropdownButtons = document.querySelectorAll('#theme-control [data-theme-button]');
-        
-        if (themeControl && themeControl.style.visibility === 'visible' && themeDropdownButtons.length === 0) {
-          if (window.themeControl && typeof window.themeControl.init === 'function') {
-            window.themeControl.init();
-          }
-        }
-      }, 500);
-    }, 2000);
-    
-    // Cleanup function for page navigation
-    const cleanup = () => {
-      window.removeEventListener('theme-control-ready', handleThemeReady);
-      window.removeEventListener('mode-control-ready', handleModeReady);
-      window.removeEventListener('language-control-ready', handleLanguageReady);
-    };
-    
-    // Clean up on navigation
-    document.addEventListener('astro:before-preparation', cleanup);
     
     
     // Navigation elements
