@@ -3,8 +3,11 @@ import Layout from '@/layouts/Layout.astro';
 import Button from '@/components/Button.astro';
 import ProjectCard from '@/components/ProjectCard.astro';
 import ContentPage from '@/components/ContentPage.astro';
+import ThemeCard from '@/components/ThemeCard.astro';
+import themesData from '@/data/themes.json';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
+import WaveDivider from '@/components/WaveDivider.astro';
 
 interface Props {
     lang?: Language;
@@ -13,362 +16,539 @@ interface Props {
 const { lang = defaultLang } = Astro.props;
 const t = getTranslations(lang);
 
-// Get language-specific meta
-const titles = {
-    es: 'Sistema de Diseño - Showcase',
-    en: 'Design System - Showcase',
-    no: 'Designsystem - Showcase'
+// Localized heading pangram preview aligned to each language
+const headingPangram =
+    lang === 'es'
+        ? '“El pequeño zorro bajó feliz y juguetón al río mientras cantaba.”'
+        : lang === 'no'
+          ? '“Den lille reven gikk glad og lekende ned til elva mens han sang.”'
+          : '“The quick little fox joyfully went down to the river singing a warm tune.”';
+const opacities = [100, 80, 60, 40, 20, 10] as const;
+const mainBgClasses: Record<(typeof opacities)[number], string> = {
+    100: 'bg-main',
+    80: 'bg-main/80',
+    60: 'bg-main/60',
+    40: 'bg-main/40',
+    20: 'bg-main/20',
+    10: 'bg-main/10'
 };
-
-const descriptions = {
-    es: 'Documentación completa del sistema de diseño minimalista brutalist: componentes, tipografía, colores y principios.',
-    en: 'Complete documentation of the brutalist minimalist design system: components, typography, colors and principles.',
-    no: 'Komplett dokumentasjon av det brutalistiske minimalistiske designsystemet: komponenter, typografi, farger og prinsipper.'
+const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
+    100: 'bg-secondary',
+    80: 'bg-secondary/80',
+    60: 'bg-secondary/60',
+    40: 'bg-secondary/40',
+    20: 'bg-secondary/20',
+    10: 'bg-secondary/10'
 };
 ---
 
-<Layout
-    title={titles[lang]}
-    description={descriptions[lang]}
-    lang={lang}
->
-    <ContentPage
-        contentId="main-content"
-        lang={lang}
-        contentClassName="py-8 md:py-16 space-y-12 md:space-y-20"
-    >
+<Layout title={`${t('designSystem.title')} - Showcase`} description={t('designSystem.intro.description')} lang={lang}>
+    <ContentPage contentId="main-content" lang={lang} useClerkTOC={true} contentClassName="space-y-12 md:space-y-20">
         <!-- Hero Header -->
-        <header id="introduccion" class="space-y-6 md:space-y-8">
-            <h1 class="font-mono text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
-                {lang === 'es' ? 'Sistema de Diseño' : lang === 'en' ? 'Design System' : 'Designsystem'}
-            </h1>
-
-            <div class="space-y-4 max-w-3xl">
-                {lang === 'es' ? (
+        <header id="introduccion" class="relative space-y-6 md:space-y-8">
+            <div class="mt-6 md:mt-8">
+                <h1 id="inicio" class="h1">{t('designSystem.intro.heading')}</h1>
+            </div>
+            <div class="space-y-4 md:space-y-6 max-w-3xl text-lg leading-relaxed text-balance">
+                {lang === 'es' && (
                     <>
-                        <p class="text-lg md:text-xl leading-relaxed">
-                            Un sistema de diseño minimalista brutalist construido sobre dos principios fundamentales: <strong>simplicidad radical</strong> y <strong>funcionalidad directa</strong>.
-                        </p>
-                        <p class="text-base md:text-lg leading-relaxed text-main/80">
-                            Cada elemento está diseñado para comunicar sin decoración innecesaria. Sin gradientes, sin sombras suaves, sin animaciones superfluas. Solo dos colores que se invierten, bordes definidos y tipografía clara. El resultado: interfaces honestas que priorizan el contenido y la accesibilidad sobre el estilo visual.
-                        </p>
+                        <p>Quise algo simple pero con carácter. Soy diseñador y prefiero la coherencia a través de restricciones: dos colores que se invierten, bordes definidos y tipografía clara. Limitar el espacio de decisiones me ayuda a decidir mejor y a poner el contenido primero.</p>
+                        <p>También pienso la accesibilidad como parte del sistema: suficiente contraste, jerarquías legibles y estructura semántica clara. Cada componente está hecho para ser entendido, visible y usable sin esfuerzo.</p>
+                        <p class="">Si quieres profundizar, puedes leer la <a href="/declaracion-de-accesibilidad" class="underline font-mono">Declaración de Accesibilidad</a>.</p>
                     </>
-                ) : lang === 'en' ? (
+                )}
+                {lang === 'en' && (
                     <>
-                        <p class="text-lg md:text-xl leading-relaxed">
-                            A brutalist minimalist design system built on two fundamental principles: <strong>radical simplicity</strong> and <strong>direct functionality</strong>.
-                        </p>
-                        <p class="text-base md:text-lg leading-relaxed text-main/80">
-                            Every element is designed to communicate without unnecessary decoration. No gradients, no soft shadows, no superfluous animations. Just two colors that invert, defined borders and clear typography. The result: honest interfaces that prioritize content and accessibility over visual style.
-                        </p>
+                        <p>I wanted something simple yet bold. I’m not a designer, so I chose coherence through constraints: two colors that invert, sharp borders, and clear typography. Fewer choices make every decision intentional and keep content first.</p>
+                        <p>This system uses opacity for nuance (e.g., <code class="font-mono">main/10</code> or <code class="font-mono">secondary/10</code>), preserves contrast in light/dark, and limits motion to what’s functional. Accessibility is the backbone: contrast, legibility, focus, and semantic structure.</p>
+                        <p class=""><a href={lang === 'en' ? '/en/accessibility-statement' : '#'} class="underline font-mono">Accessibility Statement</a></p>
                     </>
-                ) : (
+                )}
+                {lang === 'no' && (
                     <>
-                        <p class="text-lg md:text-xl leading-relaxed">
-                            Et brutalistisk minimalistisk designsystem bygget på to grunnleggende prinsipper: <strong>radikal enkelhet</strong> og <strong>direkte funksjonalitet</strong>.
-                        </p>
-                        <p class="text-base md:text-lg leading-relaxed text-main/80">
-                            Hvert element er designet for å kommunisere uten unødvendig dekorasjon. Ingen gradienter, ingen myke skygger, ingen overflødige animasjoner. Bare to farger som inverterer, definerte kanter og tydelig typografi. Resultatet: ærlige grensesnitt som prioriterer innhold og tilgjengelighet over visuell stil.
-                        </p>
+                        <p>Jeg ønsket noe enkelt, men med karakter. Jeg er ikke designer, så jeg valgte sammenheng gjennom begrensninger: to farger som inverteres, skarpe kanter og tydelig typografi. Færre valg gjør hver beslutning mer bevisst og setter innholdet først.</p>
+                        <p>Systemet bruker opasitet for nyanser (f.eks. <code class="font-mono">main/10</code> eller <code class="font-mono">secondary/10</code>), bevarer kontrast i lys/mørk, og begrenser bevegelse til det funksjonelle. Tilgjengelighet er grunnmuren: kontrast, lesbarhet, fokus og semantikk.</p>
+                        <p class=""><a href={lang === 'no' ? '/no/tilgjengelighetserklaering' : '#'} class="underline font-mono">Tilgjengelighetserklæring</a></p>
                     </>
                 )}
             </div>
         </header>
 
-        <!-- Design Principles -->
-        <section id="principios" class="space-y-6">
-            <h2 class="font-mono text-2xl md:text-3xl font-bold">
-                {lang === 'es' ? 'Principios de Diseño' : lang === 'en' ? 'Design Principles' : 'Designprinsipper'}
+        <!-- Color System -->
+        <section id="colores" class="space-y-6 md:space-y-8">
+            <h2 id="colores" class="h2">
+                {t('designSystem.colors.heading')}
             </h2>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="bg-main/10 p-6 space-y-3">
-                    <h3 class="font-mono text-lg md:text-xl font-bold">
-                        {lang === 'es' ? 'Sistema de Dos Colores' : lang === 'en' ? 'Two-Color System' : 'To-Fargesystem'}
-                    </h3>
-                    <p class="text-sm md:text-base">
-                        {lang === 'es'
-                            ? 'Limitación estricta a colores principales y secundarios que se intercambian en modo oscuro. Sin grises, acentos o colores adicionales.'
-                            : lang === 'en'
-                            ? 'Strict limitation to main and secondary colors that swap in dark mode. No grays, accents, or additional colors.'
-                            : 'Streng begrensning til hoved- og sekundærfarger som bytter i mørk modus. Ingen grå, aksenter eller tilleggsfarger.'}
-                    </p>
+            <p class="md:text-lg leading-relaxed text-main max-w-3xl">
+                {t('designSystem.colors.intro')}
+            </p>
+
+            <div class="space-y-4 md:space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 border">
+                    <div class="bg-secondary p-4 md:p-6 space-y-2 md:space-y-3 border-r">
+                        <div class="w-full bg-main flex flex-col justify-end items-end aspect-5/3">
+                            <p class="font-mono p-2 w-fit leading-tight text-secondary">--color-main</p>
+                        </div>
+
+                        <p class="text-main">
+                            {t('designSystem.colors.main.description')}
+                        </p>
+                    </div>
+                    <div class="bg-main p-4 md:p-6 space-y-2 md:space-y-3 ring ring-inset ring-secondary">
+                        <div class="w-full bg-secondary flex flex-col justify-end items-end aspect-5/3">
+                            <p class="font-mono p-2 w-fit leading-tight text-main">--color-secondary</p>
+                        </div>
+
+                        <p class="text-secondary">
+                            {t('designSystem.colors.secondary.description')}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Opacity showcase -->
+            <div>
+                <h3 class="h3">{t('designSystem.colors.opacity.title')}</h3>
+                <p class="text-body max-w-3xl text-main/80">{t('designSystem.colors.opacity.intro')}</p>
+                <p class="text-body-sm text-main/70">{t('designSystem.colors.opacity.helper')}</p>
+
+                <!-- Main over Secondary (title above, single container with contrast background) -->
+                <div class="space-y-3 md:space-y-4 mt-4">
+                    <h4 class="h4">{t('designSystem.colors.opacity.mainOverSecondary')}</h4>
+                    <div class="w-full border border-main bg-secondary">
+                        <div class="p-2">
+                            <div class="flex w-full">
+                                {
+                                    opacities.map((o) => (
+                                        <div class="relative w-full h-28 md:h-52 overflow-hidden">
+                                            <div class={`absolute inset-0 ${mainBgClasses[o]}`} />
+                                            <span class="absolute top-1 left-1 font-mono text-[10px] md:text-xs px-1.5 py-0.5 bg-secondary text-main border border-main">
+                                                main/{o}
+                                            </span>
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="bg-main/10 p-6 space-y-3">
-                    <h3 class="font-mono text-lg md:text-xl font-bold">
-                        {lang === 'es' ? 'Bordes Definidos' : lang === 'en' ? 'Sharp Edges' : 'Skarpe Kanter'}
-                    </h3>
-                    <p class="text-sm md:text-base">
-                        {lang === 'es'
-                            ? 'Sin esquinas redondeadas excepto para elementos funcionales. Rectángulos limpios y formas geométricas en todo el sistema.'
-                            : lang === 'en'
-                            ? 'No rounded corners except for functional elements. Clean rectangles and geometric shapes throughout.'
-                            : 'Ingen avrundede hjørner bortsett fra funksjonelle elementer. Rene rektangler og geometriske former gjennomgående.'}
-                    </p>
-                </div>
-
-                <div class="bg-main/10 p-6 space-y-3">
-                    <h3 class="font-mono text-lg md:text-xl font-bold">
-                        {lang === 'es' ? 'Cambios Instantáneos' : lang === 'en' ? 'Instant Changes' : 'Øyeblikkelige Endringer'}
-                    </h3>
-                    <p class="text-sm md:text-base">
-                        {lang === 'es'
-                            ? 'Sin animaciones o transiciones para cambios de estado. Feedback visual instantáneo para todas las interacciones.'
-                            : lang === 'en'
-                            ? 'No animations or transitions for state changes. Instant visual feedback for all interactions.'
-                            : 'Ingen animasjoner eller overganger for tilstandsendringer. Umiddelbar visuell tilbakemelding for alle interaksjoner.'}
-                    </p>
-                </div>
-
-                <div class="bg-main/10 p-6 space-y-3">
-                    <h3 class="font-mono text-lg md:text-xl font-bold">
-                        {lang === 'es' ? 'Grid de 8px' : lang === 'en' ? '8px Grid' : '8px Rutenett'}
-                    </h3>
-                    <p class="text-sm md:text-base">
-                        {lang === 'es'
-                            ? 'Espaciado consistente usando incrementos de 8px (2, 4, 6, 8) para layouts predecibles.'
-                            : lang === 'en'
-                            ? 'Consistent spacing using 8px increments (2, 4, 6, 8) for predictable layouts.'
-                            : 'Konsistent avstand med 8px-økninger (2, 4, 6, 8) for forutsigbare layouts.'}
-                    </p>
+                <!-- Secondary over Main (title above, single container with contrast background) -->
+                <div class="space-y-3 md:space-y-4 mt-6">
+                    <h4 class="h4">{t('designSystem.colors.opacity.secondaryOverMain')}</h4>
+                    <div class="w-full border border-main bg-main">
+                        <div class="p-2">
+                            <div class="flex w-full">
+                                {
+                                    opacities.map((o) => (
+                                        <div class="relative w-full h-28 md:h-52 overflow-hidden">
+                                            <div class={`absolute inset-0 ${secondaryBgClasses[o]}`} />
+                                            <span class="absolute top-1 left-1 font-mono text-[10px] md:text-xs px-1.5 py-0.5 bg-main text-secondary border border-secondary">
+                                                secondary/{o}
+                                            </span>
+                                        </div>
+                                    ))
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- Typography Section -->
-        <section id="tipografia" class="space-y-6">
-            <h2 class="font-mono text-2xl md:text-3xl font-bold">
-                {lang === 'es' ? 'Tipografía' : lang === 'en' ? 'Typography' : 'Typografi'}
+        <!-- Available Themes -->
+        <section id="temas" class="space-y-6 md:space-y-8">
+            <h2 id="temas" class="h2">
+                {t('designSystem.colors.themes.title')}
             </h2>
 
-            <div class="space-y-6 bg-main/10 p-6">
-                <div class="space-y-3">
-                    <p class="text-sm text-main/60">{lang === 'es' ? 'Display - font-mono' : lang === 'en' ? 'Display - font-mono' : 'Display - font-mono'}</p>
-                    <h1 class="font-mono text-4xl md:text-5xl font-bold">The quick brown fox</h1>
+            <p class="md:text-lg leading-relaxed text-main max-w-4xl">
+                <span set:html={t('designSystem.colors.themes.intro')} />
+            </p>
+
+            <!-- Themes container styled like buttons box -->
+            <div class="bg-main/10 p-0 space-y-0">
+                <!-- Tile header (full width, filled in main) -->
+                <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+                    {t('designSystem.colors.themes.available')}
+                </div>
+                <!-- Tile content -->
+                <div class="flex items-center justify-center p-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="default-themes">
+                        {
+                            themesData.company.map((theme) => (
+                                <div class="company-theme hidden" data-theme-id={theme.id}>
+                                    <ThemeCard theme={theme} lang={lang} isActive={false} />
+                                </div>
+                            ))
+                        }
+                        {themesData.default.map((theme) => <ThemeCard theme={theme} lang={lang} isActive={false} />)}
+
+                        {
+                            themesData.special.map((theme) => (
+                                <div class="special-theme hidden" data-theme-id={theme.id}>
+                                    <ThemeCard theme={theme} lang={lang} isActive={false} />
+                                </div>
+                            ))
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                // These labels are injected from the server-side for use in the script
+                const colorfulLabel = "{t('designSystem.colors.themes.colorful')}";
+                const contrastyLabel = "{t('designSystem.colors.themes.contrasty')}";
+                document.addEventListener('astro:page-load', () => {
+                    function getMode() {
+                        const savedMode = localStorage.getItem('theme-mode') || 'system';
+                        if (savedMode === 'system') {
+                            return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                        }
+                        return savedMode;
+                    }
+
+                    function updateActiveChecks() {
+                        const activeId = localStorage.getItem('theme-id');
+                        const cards = document.querySelectorAll('.theme-card');
+                        cards.forEach((card) => {
+                            const id = card.getAttribute('data-theme-id');
+                            const checked = card.querySelector('.theme-checked');
+                            const unchecked = card.querySelector('.theme-unchecked');
+                            if (!checked || !unchecked) return;
+                            if (id === activeId) {
+                                checked.classList.remove('hidden');
+                                unchecked.classList.add('hidden');
+                            } else {
+                                checked.classList.add('hidden');
+                                unchecked.classList.remove('hidden');
+                            }
+                        });
+                    }
+
+                    function applyVisibilityState() {
+                        // Company: only show the active company theme if any
+                        const activeCompany = sessionStorage.getItem('active-company-theme');
+                        const companyWrappers = document.querySelectorAll('.company-theme');
+                        companyWrappers.forEach((el) => {
+                            const id = el.getAttribute('data-theme-id');
+                            if (activeCompany && id === activeCompany) {
+                                el.classList.remove('hidden');
+                            } else {
+                                el.classList.add('hidden');
+                            }
+                        });
+
+                        // Special: show all when unlocked
+                        const specialUnlocked = localStorage.getItem('special-themes-visible') === 'true';
+                        const specialWrappers = document.querySelectorAll('.special-theme');
+                        specialWrappers.forEach((el) => {
+                            if (specialUnlocked) el.classList.remove('hidden');
+                            else el.classList.add('hidden');
+                        });
+                    }
+
+                    function wireApplyButtons() {
+                        const buttons = document.querySelectorAll('.apply-theme-btn');
+                        buttons.forEach((btn) => {
+                            btn.addEventListener('click', async (e) => {
+                                e.preventDefault();
+                                const themeId = btn.getAttribute('data-theme-id');
+                                if (!themeId) return;
+                                const mode = getMode();
+                                const isDark = mode === 'dark';
+                                const mod = await import('../data/themes.js');
+                                mod.applyTheme(themeId, isDark);
+                                updateActiveChecks();
+                            });
+                        });
+                    }
+
+                    // Initial state
+                    applyVisibilityState();
+                    updateActiveChecks();
+                    wireApplyButtons();
+
+                    // React to unlock/activation events
+                    const handleVisibilityEvent = () => {
+                        applyVisibilityState();
+                        updateActiveChecks();
+                    };
+
+                    window.addEventListener('themes-unlocked', handleVisibilityEvent);
+                    window.addEventListener('themes-locked', handleVisibilityEvent);
+                    window.addEventListener('theme-unlocked', handleVisibilityEvent);
+                    window.addEventListener('theme-changed', handleVisibilityEvent);
+                    window.addEventListener('company-theme-activated', handleVisibilityEvent);
+                    window.addEventListener('company-theme-deactivated', handleVisibilityEvent);
+
+                    // Sync with storage changes (multi-tab or external toggles)
+                    window.addEventListener('storage', (e) => {
+                        if (e.key === 'special-themes-visible' || e.key === 'theme-id') {
+                            handleVisibilityEvent();
+                        }
+                    });
+                });
+            </script>
+        </section>
+
+        <!-- Typography Section -->
+        <section id="tipografia" class="space-y-2 md:space-y-4">
+            <h2 id="tipografia" class="h2">
+                {t('designSystem.typography.heading')}
+            </h2>
+
+            <p class="md:text-lg leading-relaxed text-main max-w-3xl">
+                {t('designSystem.typography.intro')}
+            </p>
+
+            <div class="space-y-2 md:space-y-4">
+                <!-- Headings -->
+                <div class="bg-main/10">
+                    <div class="">
+                              <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+           
+                         {t('designSystem.typography.labels.headings')}
+                    </div>
+              
+                        <div class="flex-1 p-6 md:p-8 space-y-3 md:space-y-4">
+                            <div>
+                                <span class="font-mono text-secondary bg-main/80 px-2">{t('designSystem.typography.labels.h1')}</span>
+                                <p class="h1 !mt-0 !mb-10">{headingPangram}</p>
+                            </div>
+                            <div>
+                                <span class="font-mono text-secondary bg-main/80 px-2">{t('designSystem.typography.labels.h2')}</span>
+                                <p class="h2 !mt-0 !mb-10">{headingPangram}</p>
+                            </div>
+                            <div>
+                                <span class="font-mono text-secondary bg-main/80 px-2">{t('designSystem.typography.labels.h3')}</span>
+                                <p class="h3 !mt-0 !mb-10">{headingPangram}</p>
+                            </div>
+                            <div>
+                                <span class="font-mono text-secondary bg-main/80 px-2">{t('designSystem.typography.labels.h4toh6')}</span>
+                                <p class="h4 !mt-0 !mb-10">{headingPangram}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="space-y-3">
-                    <p class="text-sm text-main/60">{lang === 'es' ? 'Título - font-mono' : lang === 'en' ? 'Heading - font-mono' : 'Overskrift - font-mono'}</p>
-                    <h2 class="font-mono text-2xl md:text-3xl font-bold">The quick brown fox</h2>
+                <!-- Body Sans -->
+                <div class="bg-main/10">
+                    <div class=" ">
+                         <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+           
+                            
+                                {t('designSystem.typography.labels.body')}
+                             
+                        </div>
+                        <div class="flex-1 p-6 md:p-8 space-y-3 md:space-y-4">
+                            <div>
+                                <span class="font-mono text-secondary bg-main/80 px-2">{t('designSystem.typography.labels.bodyBase')}</span>
+                                <p class="text-body !mt-0 !mb-10">{t('designSystem.typography.samples.sans')}</p>
+                            </div>
+                            <div>
+                                <span class="font-mono text-secondary bg-main/80 px-2">{t('designSystem.typography.labels.bodySm')}</span>
+                                <p class="text-body-sm !mt-0 !mb-10">{t('designSystem.typography.samples.sans')}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="space-y-3">
-                    <p class="text-sm text-main/60">{lang === 'es' ? 'Subtítulo - font-sans' : lang === 'en' ? 'Subtitle - font-sans' : 'Undertittel - font-sans'}</p>
-                    <h3 class="font-sans text-lg md:text-xl font-bold">The quick brown fox jumps over the lazy dog</h3>
-                </div>
-
-                <div class="space-y-3">
-                    <p class="text-sm text-main/60">{lang === 'es' ? 'Cuerpo - Regular' : lang === 'en' ? 'Body - Regular' : 'Brødtekst - Regular'}</p>
-                    <p class="text-base">The quick brown fox jumps over the lazy dog. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                </div>
-
-                <div class="space-y-3">
-                    <p class="text-sm text-main/60">{lang === 'es' ? 'Pequeño - font-mono' : lang === 'en' ? 'Small - font-mono' : 'Liten - font-mono'}</p>
-                    <p class="text-sm font-mono">The quick brown fox jumps over the lazy dog</p>
+                <!-- Body Mono -->
+                <div class="bg-main/10">
+                    <div class=" ">
+                         <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+           
+                           
+                                {t('designSystem.typography.labels.mono')}
+                       
+                        </div>
+                        <div class="flex-1 p-6 md:p-8 space-y-3 md:space-y-4">
+                            <div>
+                                <span class="font-mono text-secondary bg-main/80 px-2">{t('designSystem.typography.labels.monoBase')}</span>
+                                <p class="text-body-mono mt-1">{t('designSystem.typography.samples.monoPrimary')}</p>
+                            </div>
+                            <div>
+                                <span class="font-mono text-secondary bg-main/80 px-2">{t('designSystem.typography.labels.monoSm')}</span>
+                                <p class="text-body-mono-sm mt-1">{t('designSystem.typography.samples.monoSecondary')}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Buttons Section -->
-        <section id="botones" class="space-y-6">
-            <h2 class="font-mono text-2xl md:text-3xl font-bold">
-                {lang === 'es' ? 'Botones' : lang === 'en' ? 'Buttons' : 'Knapper'}
+        <section id="botones" class="">
+            <h2 id="botones" class="h2">
+                {t('designSystem.buttons.heading')}
             </h2>
 
-            <!-- Normal Buttons -->
-            <div class="space-y-4">
-                <h3 class="font-sans text-lg md:text-xl font-bold">
-                    {lang === 'es' ? 'Botones Normales' : lang === 'en' ? 'Normal Buttons' : 'Normale Knapper'}
-                </h3>
-                <div class="bg-main/10 p-6 flex flex-wrap gap-4 items-center">
-                    <Button variant="normal" size="normal">Default Button</Button>
-                    <Button variant="normal" size="normal" filled>Filled Button</Button>
-                    <Button variant="normal" size="sm">Small Button</Button>
-                    <Button variant="normal" size="sm" filled>Small Filled</Button>
+            <!-- Mesh of components: each in its own box -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <!-- Default -->
+                <div class="bg-main/10 p-0 space-y-0">
+                    <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+                        {t('designSystem.buttons.labels.default')}
+                    </div>
+                    <div class="flex items-center justify-center p-4 aspect-5/2">
+                        <Button variant="normal" size="normal">{t('designSystem.buttons.labels.default')}</Button>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Elevated Buttons -->
-            <div class="space-y-4">
-                <h3 class="font-sans text-lg md:text-xl font-bold">
-                    {lang === 'es' ? 'Botones Elevados' : lang === 'en' ? 'Elevated Buttons' : 'Hevede Knapper'}
-                </h3>
-                <div class="bg-main/10 p-6 flex flex-wrap gap-8 items-center">
-                    <Button variant="normal" size="normal" elevated>Elevated Default</Button>
-                    <Button variant="normal" size="normal" filled elevated>Elevated Filled</Button>
-                    <Button variant="normal" size="sm" elevated>Small Elevated</Button>
+                <!-- Filled -->
+                <div class="bg-main/10 p-0 space-y-0">
+                    <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+                        {t('designSystem.buttons.labels.filled')}
+                    </div>
+                    <div class="flex items-center justify-center p-4 aspect-5/2">
+                        <Button variant="normal" size="normal" filled>{t('designSystem.buttons.labels.filled')}</Button>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Outline Buttons -->
-            <div class="space-y-4">
-                <h3 class="font-sans text-lg md:text-xl font-bold">
-                    {lang === 'es' ? 'Botones Outline' : lang === 'en' ? 'Outline Buttons' : 'Kontur Knapper'}
-                </h3>
-                <div class="bg-main/10 p-6 flex flex-wrap gap-4 items-center">
-                    <Button variant="outline" size="normal">Outline Normal</Button>
-                    <Button variant="outline" size="sm">Outline Small</Button>
+                <!-- Small -->
+                <div class="bg-main/10 p-0 space-y-0">
+                    <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+                        {t('designSystem.buttons.labels.small')}
+                    </div>
+                    <div class="flex items-center justify-center p-4 aspect-5/2">
+                        <Button variant="normal" size="sm">{t('designSystem.buttons.labels.small')}</Button>
+                    </div>
                 </div>
-            </div>
 
-            <!-- Outline Elevated Buttons -->
-            <div class="space-y-4">
-                <h3 class="font-sans text-lg md:text-xl font-bold">
-                    {lang === 'es' ? 'Botones Outline Elevados (Animados)' : lang === 'en' ? 'Outline Elevated Buttons (Animated)' : 'Kontur Hevede Knapper (Animert)'}
-                </h3>
-                <div class="bg-main/10 p-6 flex flex-wrap gap-8 items-center">
-                    <Button variant="outline" size="normal" elevated>Outline Elevated</Button>
-                    <Button variant="outline" size="sm" elevated>Small Outline</Button>
+                <!-- Small Filled -->
+                <div class="bg-main/10 p-0 space-y-0">
+                    <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+                        {t('designSystem.buttons.labels.smallFilled')}
+                    </div>
+                    <div class="flex items-center justify-center p-4 aspect-5/2">
+                        <Button variant="normal" filled size="sm">{t('designSystem.buttons.labels.smallFilled')}</Button>
+                    </div>
+                </div>
+
+                <!-- Elevated Default -->
+                <div class="bg-main/10 p-0 space-y-0">
+                    <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+                        {t('designSystem.buttons.elevated')} — {t('designSystem.buttons.labels.default')}
+                    </div>
+                    <div class="flex items-center justify-center p-4 aspect-5/2">
+                        <div class="h-[50px] w-[200px] -mr-4">
+                            <Button variant="normal" size="normal" elevated>{t('designSystem.buttons.labels.default')}</Button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Elevated Filled -->
+                <div class="bg-main/10 p-0 space-y-0">
+                    <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+                        {t('designSystem.buttons.elevated')} — {t('designSystem.buttons.labels.filled')}
+                    </div>
+                    <div class="flex items-center justify-center p-4 aspect-5/2">
+                        <div class="h-[50px] w-[200px] -mr-4">
+                            <Button variant="normal" size="normal" filled elevated>{t('designSystem.buttons.labels.filled')}</Button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Outline -->
+                <div class="bg-main/10 p-0 space-y-0">
+                    <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+                        {t('designSystem.buttons.outline')}
+                    </div>
+                    <div class="flex items-center justify-center p-4 aspect-5/2">
+                        <Button variant="outline" size="normal">{t('designSystem.buttons.outline')}</Button>
+                    </div>
+                </div>
+
+                <!-- Outline Elevated -->
+                <div class="bg-main/10 p-0 space-y-0">
+                    <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+                        {t('designSystem.buttons.outlineElevated')}
+                    </div>
+                    <div class="flex items-center justify-center p-4 aspect-5/2">
+                        <div class="h-[50px] w-[200px] -mr-4">
+                            <Button variant="outline" size="normal" elevated>{t('designSystem.buttons.outline')}</Button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
         <!-- Cards Section -->
-        <section id="tarjetas" class="space-y-6">
-            <h2 class="font-mono text-2xl md:text-3xl font-bold">
-                {lang === 'es' ? 'Tarjetas de Proyecto' : lang === 'en' ? 'Project Cards' : 'Prosjektkort'}
+        <section id="tarjetas" class="space-y-8 md:space-y-10">
+            <h2 id="tarjetas" class="h2">
+                {t('designSystem.cards.heading')}
             </h2>
 
-            <div class="bg-main/10 p-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="bg-main/10 p-0 space-y-0">
+                <!-- Tile header (full width, filled in main) -->
+                <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-xs uppercase tracking-[0.2em]">
+                    {t('designSystem.cards.singleTitle')}
+                </div>
+                <!-- Tile content -->
+                <div class="flex items-center justify-center p-4">
                     <ProjectCard
-                        name={lang === 'es' ? 'Proyecto Ejemplo' : lang === 'en' ? 'Example Project' : 'Eksempelprosjekt'}
-                        hook={lang === 'es'
-                            ? 'Este es un ejemplo de tarjeta de proyecto con un hook descriptivo que muestra cómo se ve el contenido.'
-                            : lang === 'en'
-                            ? 'This is an example project card with a descriptive hook showing how the content looks.'
-                            : 'Dette er et eksempel på prosjektkort med en beskrivende hook som viser hvordan innholdet ser ut.'}
+                        name={t('designSystem.cards.example1.name')}
+                        hook={t('designSystem.cards.example1.hook')}
                         href={lang === 'es' ? '/sistema-de-diseno' : lang === 'en' ? '/en/design-system' : '/no/designsystem'}
-                        slug="example-1"
+                        slug="demo-card"
                         dataIndex={1}
                         lang={lang}
                     />
-
-                    <ProjectCard
-                        name={lang === 'es' ? 'Otra Tarjeta' : lang === 'en' ? 'Another Card' : 'Et Annet Kort'}
-                        hook={lang === 'es'
-                            ? 'Tarjeta de ejemplo con descripción más corta para mostrar la variación.'
-                            : lang === 'en'
-                            ? 'Example card with shorter description to show variation.'
-                            : 'Eksempelkort med kortere beskrivelse for å vise variasjon.'}
-                        href={lang === 'es' ? '/sistema-de-diseno' : lang === 'en' ? '/en/design-system' : '/no/designsystem'}
-                        slug="example-2"
-                        dataIndex={2}
-                        lang={lang}
-                    />
-
-                    <ProjectCard
-                        name={lang === 'es' ? 'Tercer Ejemplo' : lang === 'en' ? 'Third Example' : 'Tredje Eksempel'}
-                        hook={lang === 'es'
-                            ? 'La tercera tarjeta muestra cómo se alinean múltiples cards en una grilla responsive.'
-                            : lang === 'en'
-                            ? 'The third card shows how multiple cards align in a responsive grid.'
-                            : 'Det tredje kortet viser hvordan flere kort justeres i et responsivt rutenett.'}
-                        href={lang === 'es' ? '/sistema-de-diseno' : lang === 'en' ? '/en/design-system' : '/no/designsystem'}
-                        slug="example-3"
-                        dataIndex={3}
-                        lang={lang}
-                    />
                 </div>
             </div>
         </section>
 
-        <!-- Color System -->
-        <section id="colores" class="space-y-6">
-            <h2 class="font-mono text-2xl md:text-3xl font-bold">
-                {lang === 'es' ? 'Sistema de Color' : lang === 'en' ? 'Color System' : 'Fargesystem'}
+        <!-- Visual Elements -->
+        <section id="elementos-visuales" class=" ">
+            <h2 id="elementos-visuales" class="h2">
+                {t('designSystem.visual.heading')}
             </h2>
 
-            <div class="space-y-4 bg-main/10 p-6">
-                <p class="font-mono text-sm">
-                    {lang === 'es'
-                        ? 'Sistema de dos colores (cambia con el tema)'
-                        : lang === 'en'
-                        ? 'Two-color system (changes with theme)'
-                        : 'To-fargesystem (endres med tema)'}
-                </p>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-main/5 p-4 space-y-2">
-                        <div class="w-full h-24 bg-main"></div>
-                        <p class="font-mono text-sm">--color-main</p>
-                        <p class="text-xs text-main/60">
-                            {lang === 'es'
-                                ? 'Texto, bordes, elementos primarios'
-                                : lang === 'en'
-                                ? 'Text, borders, primary elements'
-                                : 'Tekst, kanter, primære elementer'}
+            <!-- Diagonal Stripe -->
+            <div class="bg-main/10 mb-4">
+                <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+                    {t('designSystem.visual.diagonalStripe.title')}
+                </div>
+                <div class="p-4 space-y-4"> 
+                    <div> 
+                        <p class="text-body-sm text-main/80 max-w-3xl">
+                            {t('designSystem.visual.diagonalStripe.desc')}
                         </p>
                     </div>
-                    <div class="bg-main/5 p-4 space-y-2">
-                        <div class="w-full h-24 bg-secondary"></div>
-                        <p class="font-mono text-sm">--color-secondary</p>
-                        <p class="text-xs text-main/60">
-                            {lang === 'es'
-                                ? 'Fondos, texto alternativo'
-                                : lang === 'en'
-                                ? 'Backgrounds, alternate text'
-                                : 'Bakgrunner, alternativ tekst'}
-                        </p>
+
+                    <div class="border-2 border-main ">
+                        <div class="h-32 diagonal-stripe"></div>
+                        <span class="sr-only">Ejemplo de patrón de franja diagonal</span>
                     </div>
                 </div>
             </div>
-        </section>
 
-        <!-- Borders & Spacing -->
-        <section id="bordes" class="space-y-6">
-            <h2 class="font-mono text-2xl md:text-3xl font-bold">
-                {lang === 'es' ? 'Bordes y Espaciado' : lang === 'en' ? 'Borders & Spacing' : 'Kanter og Avstand'}
-            </h2>
-
-            <div class="space-y-6 bg-main/10 p-6">
-                <div class="space-y-4">
-                    <div class="border-2 border-main p-4 bg-main/5">
-                        <p class="font-mono text-sm mb-2">border-2 border-main</p>
-                        <p class="text-xs text-main/60">
-                            {lang === 'es' ? 'Borde estándar (2px sólido)' : lang === 'en' ? 'Standard border (2px solid)' : 'Standard kant (2px solid)'}
-                        </p>
-                    </div>
-
-                    <div class="border-double border-2 border-main p-4 bg-main/5">
-                        <p class="font-mono text-sm mb-2">border-double border-2</p>
-                        <p class="text-xs text-main/60">
-                            {lang === 'es' ? 'Borde doble para botones' : lang === 'en' ? 'Double border for buttons' : 'Dobbel kant for knapper'}
-                        </p>
-                    </div>
-
-                    <div class="border-4 border-main p-4 bg-main/5">
-                        <p class="font-mono text-sm mb-2">border-4 border-main</p>
-                        <p class="text-xs text-main/60">
-                            {lang === 'es' ? 'Borde grueso para énfasis' : lang === 'en' ? 'Thick border for emphasis' : 'Tykk kant for vekt'}
-                        </p>
-                    </div>
+            <!-- Wavy Divider --> 
+            <div class="bg-main/10 mb-4">
+                <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+                   {t('designSystem.visual.wavy.title')}
                 </div>
+                <div class="p-4 space-y-4"> 
+                    <div> 
+                        <p class="text-body-sm text-main/80 max-w-3xl">
+                            {t('designSystem.visual.wavy.desc')}
+                        </p>
+                    </div>
 
-                <div class="space-y-3">
-                    <p class="font-mono text-sm">
-                        {lang === 'es' ? 'Escala de Espaciado (grid 8px)' : lang === 'en' ? 'Spacing Scale (8px grid)' : 'Avstandsskala (8px rutenett)'}
-                    </p>
-                    <div class="space-y-2">
-                        <div class="flex items-center gap-4">
-                            <div class="bg-main h-2 w-8"></div>
-                            <p class="text-xs font-mono">px-2 (8px)</p>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="bg-main h-2 w-16"></div>
-                            <p class="text-xs font-mono">px-4 (16px)</p>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="bg-main h-2 w-24"></div>
-                            <p class="text-xs font-mono">px-6 (24px)</p>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <div class="bg-main h-2 w-32"></div>
-                            <p class="text-xs font-mono">px-8 (32px)</p>
-                        </div>
+                    <div class="border-2 border-main ">
+                        <WaveDivider inverted />
                     </div>
                 </div>
             </div>
-        </section>
+        </section> 
+
+        <div class="text-center text-xs text-main/20">
+            {t('designSystem.visual.konami.prompt')}
+        </div>
+
+
+        
     </ContentPage>
 </Layout>

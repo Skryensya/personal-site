@@ -17,7 +17,7 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
   </div>
 ) : (
   <div class:list={['relative', className]} data-carousel={carouselId}>
-    <div class="overflow-visible" data-embla-viewport>
+    <div class="  relative" data-embla-viewport>
       <div class="flex" data-embla-container>
         <slot />
       </div>
@@ -204,10 +204,7 @@ const carouselId = `carousel-${Math.random().toString(36).substr(2, 9)}`;
 </script>
 
 <style>
-  [data-embla-viewport] {
-    overflow: visible;
-    position: relative;
-  }
+ 
 
   [data-embla-container] {
     display: flex;

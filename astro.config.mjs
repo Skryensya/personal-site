@@ -28,15 +28,21 @@ export default defineConfig({
         defaultStrategy: 'hover'
     },
     build: {
-        inlineStylesheets: 'always'  // Inline crítico CSS para evitar render blocking
+        inlineStylesheets: 'always',  // Inline crítico CSS para evitar render blocking
+        assets: '_astro'  // Directorio para assets con hash (para caché inmutable)
     },
-    integrations: [react(), mdx(), sitemap()],
+    integrations: [
+        react({
+            include: ['**/react/*', '**/tsx'],
+            experimentalReactChildren: true
+        }),
+        mdx(),
+        sitemap()
+    ],
     vite: {
         plugins: [tailwindcss()],
         server: {
-            hmr: {
-                port: 4324
-            }
+            hmr: true
         },
         resolve: {
             alias: {
@@ -47,6 +53,8 @@ export default defineConfig({
             modulePreload: {
                 polyfill: false  // Navegadores modernos soportan modulepreload nativamente
             },
+            assetsInlineLimit: 4096,  // Inline assets < 4KB para reducir requests
+            minify: 'esbuild',
             rollupOptions: {
                 output: {
                     // Optimizar chunks para reducir dependencias en cadena

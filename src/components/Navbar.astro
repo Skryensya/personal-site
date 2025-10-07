@@ -67,6 +67,7 @@ const navItems = [
               size="sm"
               filled={isCurrentPage}
               data-nav-link
+              aria-current={isCurrentPage ? 'page' : undefined}
               aria-label={item.label}
             >
               <span class="font-semibold select-none">{item.label}</span>
@@ -89,6 +90,8 @@ const navItems = [
           size="sm"
           filled={isHomePage}
           class="flex items-center gap-1.5"
+          data-nav-link
+          aria-current={isHomePage ? 'page' : undefined}
         >
           <span class="font-semibold select-none">Allison Peña</span>
         </Button>
@@ -142,6 +145,8 @@ const navItems = [
             <Button 
               href={item.href}  
               class="!w-full !flex !items-center !justify-center font-grotesk text-sm uppercase select-none"
+              data-nav-link
+              aria-current={currentPath.startsWith(item.href) ? 'page' : undefined}
             >
               {item.label}
             </Button>
@@ -444,13 +449,13 @@ const navItems = [
         hamburgerIcon?.classList.remove('hidden');
         closeIcon?.classList.add('hidden');
         button.classList.remove('menu-open');
-        
+
         // Set tabindex=-1 for all interactive elements when closed
         const interactiveElements = dropdown.querySelectorAll('button, a, [tabindex]');
         interactiveElements.forEach(el => {
           el.setAttribute('tabindex', '-1');
         });
-        
+
       }
 
       function openMenu() {
@@ -480,6 +485,9 @@ const navItems = [
           openMenu();
         }
       }
+
+      // expose close handler for navigation scripts
+      window.__closeMobileMenu = closeMenu;
 
       button.onclick = handleToggle;
 
@@ -802,20 +810,41 @@ const navItems = [
     // Navigation: Set active state based on current page
     navLinks.forEach(link => {
       const href = link.getAttribute('href');
-      if (href && (href === currentPath || (currentPath.startsWith(href) && href !== '/'))) {
+      if (href && !href.includes('#') && (href === currentPath || (currentPath.startsWith(href) && href !== '/'))) {
         link.classList.add('!bg-main', '!text-secondary');
       }
-      
-      // Prevent default click behavior and handle on mouseup
-      link.addEventListener('click', (e) => {
-        e.preventDefault();
-      });
-      
-      link.addEventListener('mouseup', () => {
-        const href = link.getAttribute('href');
-        if (href) {
-          window.location.href = href;
+
+      link.addEventListener('click', (event) => {
+        const hrefValue = link.getAttribute('href');
+        if (!hrefValue) {
+          return;
         }
+
+        const targetUrl = new URL(hrefValue, window.location.origin);
+        const samePath = targetUrl.pathname === window.location.pathname;
+        const hasHash = targetUrl.hash && targetUrl.hash !== '#';
+
+        const closeMobileMenu = typeof window.__closeMobileMenu === 'function' ? window.__closeMobileMenu : null;
+
+        if (samePath && !hasHash) {
+          event.preventDefault();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          closeMobileMenu?.();
+          return;
+        }
+
+        if (samePath && hasHash) {
+          event.preventDefault();
+          const targetElement = document.querySelector(targetUrl.hash);
+          if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            history.replaceState(null, '', `${targetUrl.pathname}${targetUrl.hash}`);
+          }
+          closeMobileMenu?.();
+          return;
+        }
+
+        closeMobileMenu?.();
       });
     });
 

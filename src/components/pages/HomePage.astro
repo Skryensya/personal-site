@@ -1,11 +1,10 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import siteConfig from '@/data/site-config';
-import Hero from '@/components/sections/Hero.astro';
-import TechnologiesSection from '@/components/sections/TechnologiesSection.astro';
+import Hero from '@/components/sections/Hero.astro'; 
 import AboutSection from '@/components/sections/AboutSection.astro';
 import ProjectsSection from '@/components/sections/ProjectsSection.astro';
-import TechLogos from '@/components/TechLogos.astro';
+import TechLogos from '@/components/TechLogos.astro'; 
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 
@@ -22,6 +21,7 @@ const t = getTranslations(lang);
     <div class="py-12">
         <TechLogos />
     </div>
+ 
 
     <AboutSection lang={lang} />
     <ProjectsSection lang={lang} />

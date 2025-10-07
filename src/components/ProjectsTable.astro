@@ -17,7 +17,7 @@ const t = getTranslations(lang);
 
 {projects.length > 0 && (
   <div class="w-full">
-    <h2 class="font-sans text-3xl md:text-4xl font-bold text-main mb-8">
+    <h2 class="h2 mb-8"> 
       {t('home.allProjects')}
     </h2>
 
@@ -52,7 +52,7 @@ const t = getTranslations(lang);
           <span class="hidden md:inline text-main font-mono text-xl md:text-lg font-bold opacity-50 group-hover:opacity-100 transition-opacity duration-400 project-number w-[50px]">#{String(startIndex + index + 1).padStart(2, '0')}</span>
 
           <div class="flex-1">
-            <h3 class="m-0 text-3xl md:text-xl font-bold text-main font-sans max-w-[85dvw] md:max-w-none break-words">
+            <h3 class="h3 !my-0">
               {project.data.name}
             </h3>
           </div>
@@ -60,7 +60,7 @@ const t = getTranslations(lang);
 
         <!-- Description -->
         <div class="flex-1 self-start">
-          <p class="m-0 max-w-none text-lg md:text-base leading-relaxed text-main font-hyperlegible">
+          <p class="text-body">
             {project.data.hook}
           </p>
         </div>

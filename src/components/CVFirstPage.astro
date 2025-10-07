@@ -3,6 +3,8 @@ import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import ThemedImage from '@/components/ThemedImage.astro';
 import CVTag from '@/components/CVTag.tsx';
+import { getSlugFromId } from '@/utils/content-utils';
+import { getLocalizedUrl } from '@/utils/localized-routes';
 import { getCollection, type CollectionEntry } from 'astro:content';
 
 interface Props {
@@ -20,7 +22,7 @@ const featuredProjects: CollectionEntry<'projects'>[] = allProjects
     .slice(0, 5); // Limit to 5 projects for CV
 ---
 
-<div class="bg-secondary text-main">
+<div class="bg-transparent text-main">
     <div class="w-full">
         <!-- Professional Header with Image -->
         <header class="print:mb-4 print:!block">
@@ -37,7 +39,7 @@ const featuredProjects: CollectionEntry<'projects'>[] = allProjects
 
         <div class="flex flex-col lg:flex-row lg:flex-nowrap gap-5 mb-6">
             <!-- Left Sidebar: Contact Information -->
-            <div class="lg:min-w-[200px] space-y-3">
+            <div class="lg:min-w-[220px] space-y-3">
                 <section>
                     <h2 class="text-base font-bold uppercase border-b-2 border-main mb-2">{t('cv.contact')}</h2>
 
@@ -183,7 +185,7 @@ const featuredProjects: CollectionEntry<'projects'>[] = allProjects
                 </section>
 
                 <!-- QR -->
-                <section class="hidden lg:block">
+                <!-- <section class="hidden lg:block">
                     <h2 class="text-base font-bold uppercase border-b-2 border-main">{t('cv.website.title')}</h2>
 
                     <div class="w-full h-full overflow-hidden">
@@ -193,7 +195,7 @@ const featuredProjects: CollectionEntry<'projects'>[] = allProjects
                              <div class="flex justify-center print:block">
                             <a href="https://skryensya.dev" class="font-mono text-main block text-xs break-all mt-1 hover:underline print:inline"> {t('cv.website.value')} </a>
                         </div>
-                </section>
+                </section> -->
             </div>
 
             <!-- Right Content: About Me, Experience and References -->
@@ -225,23 +227,17 @@ const featuredProjects: CollectionEntry<'projects'>[] = allProjects
                         <h2 class="text-base font-bold uppercase border-b-2 border-main mb-2">{t('cv.projects.title')}</h2>
                         <div class="space-y-2 pl-3 ml-2 border-l">
                             {featuredProjects.map((project: CollectionEntry<'projects'>) => (
-                                <div class="relative">
-                                    <h4
-                                        class="font-bold text-sm text-main mb-0.5 relative before:content-[''] before:absolute before:left-[-18px] before:top-[4px] before:h-3 before:w-3 before:rounded-full before:bg-secondary before:border before:border-main print:before:!bg-white"
-                                    >
+                                <a
+                                    href={getLocalizedUrl(lang, 'projects', getSlugFromId(project.id))}
+                                    class="relative block rounded-sm px-2 py-1 -mx-2 transition-colors group hover:bg-main/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-main before:content-[''] before:absolute before:left-[-18px] before:top-3 before:h-3 before:w-3 before:rounded-full before:bg-secondary before:border before:border-main print:hover:bg-transparent print:before:!bg-white"
+                                >
+                                    <h4 class="font-bold text-sm text-main mb-0.5 group-hover:underline">
                                         {project.data.name}
                                     </h4>
-                                    <p class="text-[15px] print:!text-sm mb-1">
+                                    <p class="text-[15px] print:!text-sm mb-1 group-hover:text-main/90">
                                         {project.data.cvDescription}
                                     </p>
-                                    {project.data.tags && project.data.tags.length > 0 && (
-                                        <div class="flex flex-wrap gap-0.5">
-                                            {project.data.tags.map((tag: string) => (
-                                                <CVTag text={tag} client:idle />
-                                            ))}
-                                        </div>
-                                    )}
-                                </div>
+                                </a>
                             ))}
                         </div>
                     </div>

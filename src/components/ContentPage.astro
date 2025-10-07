@@ -9,6 +9,7 @@ interface Props {
     containerClassName?: string;
     contentClassName?: string;
     lang?: Language;
+    useClerkTOC?: boolean;
 }
 
 const {
@@ -16,7 +17,8 @@ const {
     sidebarClassName = '',
     containerClassName = '',
     contentClassName = '',
-    lang = defaultLang
+    lang = defaultLang,
+    useClerkTOC = false,
 } = Astro.props;
 ---
 
@@ -35,5 +37,6 @@ const {
         contentId={contentId}
         className={sidebarClassName}
         lang={lang}
+        useClerkTOC={useClerkTOC}
     />
 </div>

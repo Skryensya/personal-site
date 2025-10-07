@@ -54,7 +54,7 @@ const TextGenerate: React.FC<TextGenerateProps> = ({ words, speed = 20, cursorCh
     const isTyping = currentIndex <= words.length;
 
     return (
-        <div className="relative text-base md:text-lg text-main/70 max-w-2xl">
+        <div className="relative  md:text-lg text-main/70 max-w-2xl">
             {/* 1. Capa Fantasma: Reserva el espacio. Es invisible pero ocupa su altura y anchura. */}
             <span className="opacity-0" aria-hidden="true">
                 {words}

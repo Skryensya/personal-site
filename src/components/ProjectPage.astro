@@ -37,7 +37,7 @@ const { Content } = await project.render();
                     <header class="pb-8 border-b border-dotted border-main/30 w-full" style={`max-width: var(--paragraph-max-width); view-transition-name: folder-body-${project.slug}`}>
                         <!-- Project Name and Reading Time -->
                         <div class="flex justify-between items-center mb-8">
-                            <div class="text-base font-mono font-medium text-main opacity-60 uppercase tracking-wider" style={`view-transition-name: folder-tab-${project.slug}`}>
+                            <div class=" font-mono font-medium text-main opacity-60 uppercase tracking-wider" style={`view-transition-name: folder-tab-${project.slug}`}>
                                 {name}
                             </div>
                             <div class="text-sm font-mono font-medium text-main opacity-50 uppercase tracking-wider" id="reading-time">
@@ -55,7 +55,7 @@ const { Content } = await project.render();
                     </header>
                     
                     <!-- Article Content -->
-                    <div class="prose w-full [&>p]:text-base [&>p]:lg:text-lg [&>p]:leading-relaxed [&>p]:mb-6 [&>h1]:text-4xl [&>h1]:font-bold [&>h1]:mt-12 [&>h1]:mb-6 [&>h1]:scroll-mt-12 [&>h2]:text-3xl [&>h2]:font-bold [&>h2]:mt-10 [&>h2]:mb-4 [&>h2]:scroll-mt-12 [&>h3]:text-2xl [&>h3]:font-semibold [&>h3]:mt-8 [&>h3]:mb-3 [&>h3]:scroll-mt-12 [&>h4]:text-xl [&>h4]:font-semibold [&>h4]:mt-6 [&>h4]:mb-2 [&>h4]:scroll-mt-12 [&>h5]:scroll-mt-12 [&>h6]:scroll-mt-12" style="max-width: var(--paragraph-max-width)">
+                    <div class="prose w-full [&>p]: [&>p]:lg:text-lg [&>p]:leading-relaxed [&>p]:mb-6 [&>h1]:text-4xl [&>h1]:font-bold [&>h1]:mt-12 [&>h1]:mb-6 [&>h1]:scroll-mt-12 [&>h2]:text-3xl [&>h2]:font-bold [&>h2]:mt-10 [&>h2]:mb-4 [&>h2]:scroll-mt-12 [&>h3]:text-2xl [&>h3]:font-semibold [&>h3]:mt-8 [&>h3]:mb-3 [&>h3]:scroll-mt-12 [&>h4]:text-xl [&>h4]:font-semibold [&>h4]:mt-6 [&>h4]:mb-2 [&>h4]:scroll-mt-12 [&>h5]:scroll-mt-12 [&>h6]:scroll-mt-12" style="max-width: var(--paragraph-max-width)">
                         <Content />
                     </div>
                 </div>
