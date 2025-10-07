@@ -1,0 +1,38 @@
+# Cache headers for static assets
+# Compatible with Netlify, Cloudflare Pages, and other static hosts
+
+# Hashed assets - Immutable cache for 1 year (never changes due to hash)
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Fonts - Cache for 1 year
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Images - Cache for 30 days
+/img/*
+  Cache-Control: public, max-age=2592000
+
+# Audio files - Cache for 30 days
+/buttonPress.wav
+  Cache-Control: public, max-age=2592000
+
+# TTS audio - Cache for 30 days
+/tts/*
+  Cache-Control: public, max-age=2592000
+
+# Static documents - Cache for 7 days
+/*.pdf
+  Cache-Control: public, max-age=604800
+
+# SVG assets - Cache for 30 days
+/*.svg
+  Cache-Control: public, max-age=2592000
+
+# HTML pages - Always revalidate (for SPA navigation)
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# Root - Always revalidate
+/
+  Cache-Control: public, max-age=0, must-revalidate

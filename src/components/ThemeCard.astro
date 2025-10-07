@@ -1,0 +1,112 @@
+---
+import { getTranslations } from '@/i18n/utils';
+import { defaultLang, type Language } from '@/i18n/ui';
+
+interface Props {
+    theme: {
+        id: string;
+        name: string;
+        description: string;
+        colors: {
+            colorful: string;
+            contrasty: string;
+        };
+    };
+    lang?: Language;
+    isActive?: boolean;
+}
+
+const { theme, lang = defaultLang, isActive = false } = Astro.props;
+const t = getTranslations(lang);
+// Create a stable slug from theme name for anchor linking
+const slug = 'theme-' + theme.name
+  .toLowerCase()
+  .normalize('NFD')
+  .replace(/[\u0300-\u036f]/g, '') // strip accents
+  .replace(/[^a-z0-9]+/g, '-')
+  .replace(/(^-|-$)/g, '');
+---
+
+<div data-anchor-id={slug}
+    class="border-2 overflow-hidden flex flex-col theme-card"
+    style={`border-color: ${theme.colors.colorful}; outline: 2px solid ${theme.colors.contrasty}`}
+    data-theme-id={theme.id}
+>
+    <div
+        class="p-4 flex-1"
+        style={`background-color: ${theme.colors.colorful}; color: ${theme.colors.contrasty}; border-color: ${theme.colors.colorful}`}
+    >
+        <div class="flex items-start justify-between gap-2 mb-2">
+            <div class="flex-1">
+                <a id={slug} href={`#${slug}`} class="font-bold uppercase underline-offset-4 hover:underline focus:underline">
+                    {theme.name}
+                </a>
+                {(() => {
+                    const key = (`theme.desc.${theme.id}`) as any;
+                    const localized = t(key);
+                    const desc = (typeof localized === 'string' && localized.startsWith('theme.desc.')) ? theme.description : localized;
+                    return <p class="text-sm opacity-80 pb-2" style="min-height: 3rem;">{desc}</p>;
+                })()}
+            </div>
+            <button
+                type="button"
+                class="apply-theme-btn flex-shrink-0"
+                data-theme-id={theme.id}
+                aria-label={`Apply ${theme.name} theme`}
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class:list={["lucide lucide-circle w-6 h-6 theme-unchecked opacity-40 hover:opacity-100", { hidden: isActive }]}
+                >
+                    <circle cx="12" cy="12" r="10"/>
+                </svg>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class:list={["lucide lucide-circle-check-big w-6 h-6 theme-checked opacity-100", { hidden: !isActive }]}
+                >
+                    <path d="M21.801 10A10 10 0 1 1 17 3.335"/>
+                    <path d="m9 11 3 3L22 4"/>
+                </svg>
+            </button>
+        </div>
+        <p class="text-xs font-mono">{t('designSystem.colors.themes.colorful')}: {theme.colors.colorful}</p>
+    </div>
+
+    <div
+        class="p-4 flex-1"
+        style={`background-color: ${theme.colors.contrasty}; color: ${theme.colors.colorful}`}
+    >
+        <p class="font-mono text-xs font-bold">{t('designSystem.colors.themes.contrasty')}: {theme.colors.contrasty}</p>
+    </div>
+</div>
+
+<script is:inline define:vars={{ slug }}>
+    document.addEventListener('astro:page-load', () => {
+        const card = document.querySelector(`[data-anchor-id="${slug}"]`);
+        const title = document.getElementById(slug);
+        if (!card || !title) return;
+        card.addEventListener('click', (e) => {
+            const target = e.target as HTMLElement | null;
+            if (target && target.closest && target.closest('.apply-theme-btn')) return;
+            try { history.replaceState(null, '', `#${slug}`); } catch {}
+            title.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            title.focus?.();
+        });
+    });
+</script>

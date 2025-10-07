@@ -65,7 +65,7 @@ const navigationLinks: NavigationLink[] = [
       <div class="flex flex-col md:flex-row gap-8 md:w-[83.33%] w-full">
         <!-- Navigation - 33.33% of content area -->
         <div class="md:w-[33.33%] w-full">
-          <h3 class="font-display text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text={t('footer.navigation')}>
+          <h3 class="text-body-mono font-bold !mb-2 !mt-1 text-secondary scramble-text" data-text={t('footer.navigation')}>
             {t('footer.navigation')}
           </h3>
           <nav class="space-y-1">
@@ -84,7 +84,7 @@ const navigationLinks: NavigationLink[] = [
 
         <!-- Social - 33.33% of content area -->
         <div class="md:w-[33.33%] w-full">
-          <h3 class="font-display text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text={t('footer.connect')}>
+          <h3 class="text-body-mono font-bold !mb-2 !mt-1 text-secondary scramble-text" data-text={t('footer.connect')}>
             {t('footer.connect')}
           </h3>
           <nav class="space-y-1">
@@ -106,7 +106,7 @@ const navigationLinks: NavigationLink[] = [
 
         <!-- Information - 33.33% of content area -->
         <div class="md:w-[33.33%] w-full">
-          <h3 class="font-display text-sm font-bold text-secondary mb-4 uppercase scramble-text" data-text={t('footer.info')}>
+          <h3 class="text-body-mono font-bold !mb-2 !mt-1 text-secondary scramble-text" data-text={t('footer.info')}>
             {t('footer.info')}
           </h3>
           <nav class="space-y-2">
@@ -118,7 +118,7 @@ const navigationLinks: NavigationLink[] = [
             </div>
             <div class="block font-mono text-sm py-1">
               <div class="text-secondary font-mono text-sm">
-                <div class="font-display text-sm font-bold text-secondary my-2 uppercase scramble-text">{t('footer.aspectRatio.title')}</div>
+                <div class="text-body-mono font-bold !mb-2 !mt-1 text-secondary scramble-text">{t('footer.aspectRatio.title')}</div>
                 <div class="flex gap-4 items-center ">
                   <div id="footer-contrast-display" class="text-sm leading-tight  border text-secondary py-1 px-2 font-bold border-main scramble-text">--:--</div>
                   <div id="footer-wcag-levels" class="flex gap-1"></div>
@@ -127,7 +127,7 @@ const navigationLinks: NavigationLink[] = [
             </div>
             <div class="block font-mono text-sm py-1">
               <div class="text-secondary font-mono text-sm">
-                <div class="font-display text-sm font-bold text-secondary my-2 uppercase scramble-text">{t('footer.motion.label')}</div>
+                <div class="text-body-mono font-bold !mb-2 !mt-1 text-secondary scramble-text">{t('footer.motion.label')}</div>
                 <div class=""><span id="motion-status" class="scramble-text">{t('footer.motion.detecting')}</span></div>
               </div>
             </div>
@@ -136,7 +136,7 @@ const navigationLinks: NavigationLink[] = [
       </div>
 
       <!-- CircularText - 16.67% on desktop, full width on mobile -->
-      <div class="md:w-[16.67%] w-full flex justify-center items-start" style="view-transition-name: none;">
+      <div class="md:w-[16.67%] w-full flex justify-center items-start overflow-hidden" style="view-transition-name: none;">
         <CircularTextAstro text="ALLISON PEÑA * SKRYENSYA * " onHover="speedUp" spinDuration={20}/>
       </div>
     </div>
@@ -340,7 +340,7 @@ const navigationLinks: NavigationLink[] = [
             header.className = 'flex items-center justify-between';
             
             const title = document.createElement('div');
-            title.className = 'text-xs font-mono font-bold';
+            title.className = 'text-body-mono-sm font-bold';
             title.textContent = tooltipTitle;
             
             // Status icon
@@ -433,7 +433,7 @@ const navigationLinks: NavigationLink[] = [
 
     // Scramble a single text node (span.scramble-part)
     function scrambleText(element: HTMLElement, originalText: string, duration: number = 800): void {
-      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+      const chars = 'abcdefghijkstuvwxyzABCDEFGHWXYZ01234!@#$%&*:.?';
       let i = 0;
       const stepMs = 30;
       const maxSteps = Math.ceil(duration / stepMs);
@@ -519,15 +519,9 @@ const navigationLinks: NavigationLink[] = [
 </script>
 
 <style>
-  footer::after {
-    content: '';
-    position: fixed;
-    top: 100vh;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: var(--color-main);
-    pointer-events: none;
-    z-index: -1;
-  }
+ .text-body-mono {
+        font-family: var(--font-mono);
+        font-size: var(--fs-body);
+        line-height: var(--lh-normal);
+    }
 </style>

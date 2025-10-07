@@ -93,12 +93,12 @@ declare global {
                         {
                             weight: '400',
                             style: 'normal',
-                            path: 'https://fonts.gstatic.com/s/spacegrotesk/v16/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gOoraIAEj7oUUsjNsFjTDJK.woff2'
+                            path: 'https://cdn.jsdelivr.net/fontsource/fonts/space-grotesk@latest/latin-400-normal.woff2'
                         },
                         {
                             weight: '600',
                             style: 'normal',
-                            path: 'https://fonts.gstatic.com/s/spacegrotesk/v16/V8mQoQDjQSkFtoMM3T6r8E7mF71Q-gOoraIAEj62VksjNsFjTDJK.woff2'
+                            path: 'https://cdn.jsdelivr.net/fontsource/fonts/space-grotesk@latest/latin-600-normal.woff2'
                         }
                     ],
                     preload: true,
@@ -206,24 +206,7 @@ declare global {
             })();
         </script>
         
-        <!-- CSS loads AFTER theme is already applied -->
-        <style is:inline>
-            /* Prevent flash of unstyled content */
-            :root {
-                /* Theme colors are set by inline script above - no defaults needed */
-                /* This prevents flash by ensuring the script runs before any rendering */
-            }
-
-            /* Prevent any white/default background flash */
-            html {
-                background-color: var(--color-secondary, #000);
-            }
-
-            body {
-                background-color: var(--color-secondary, #000);
-                color: var(--color-main, #fff);
-            }
-        </style>
+    
  
         
         <BaseHead {...head} lang={lang} />
@@ -233,11 +216,15 @@ declare global {
         <script type="module">
             // Use dynamic import and idle callback for non-critical animation
             function initSelectionAnimation() {
-                import('../utils/globalSelectionAnimator.ts').then(({ startGlobalSelectionAnimation }) => {
+                import('/src/utils/globalSelectionAnimator.ts').then(({ startGlobalSelectionAnimation }) => {
                     startGlobalSelectionAnimation();
+                }).catch(err => {
+                    if (window.debugLogger) {
+                        window.debugLogger.warn('Selection animator failed to load:', err);
+                    }
                 });
             }
-            
+
             if ('requestIdleCallback' in window) {
                 requestIdleCallback(initSelectionAnimation, { timeout: 2000 });
             } else {
@@ -683,13 +670,10 @@ declare global {
                 transition-duration: inherit;
             }
 
-            /* Remove transitions from colors to prevent flash */
-            html, body {
-                transition: none;
-            }
+     
         </style>
     </head>
-    <body class="relative" id="app-body">
+    <body class="relative bg-main" id="app-body">
         <div class="text-main bg-secondary">
 
       
@@ -721,13 +705,17 @@ declare global {
                     // Get the computed main color value
                     const computedStyle = getComputedStyle(html);
                     const mainColor = computedStyle.getPropertyValue('--color-main').trim();
-                    
+
                     if (mainColor && body) {
                         // Apply main color as background instead of secondary
                         body.style.setProperty('background-color', mainColor, 'important');
-                        console.log('🎨 Body background changed to main color:', mainColor);
+                        if (window.debugLogger) {
+                            window.debugLogger.log('🎨 Body background changed to main color:', mainColor);
+                        }
                     } else {
-                        console.log('⚠️ Could not get main color or body element');
+                        if (window.debugLogger) {
+                            window.debugLogger.warn('⚠️ Could not get main color or body element');
+                        }
                     }
                 }, 100);
             }
@@ -737,34 +725,46 @@ declare global {
                 // Strategy 1: Use requestIdleCallback for true lazy loading
                 if ('requestIdleCallback' in window) {
                     requestIdleCallback(() => {
-                        console.log('🚀 requestIdleCallback triggered');
+                        if (window.debugLogger) {
+                            window.debugLogger.log('🚀 requestIdleCallback triggered');
+                        }
                         applyBodyMainBackground();
                     }, { timeout: 3000 });
                 } else {
                     // Strategy 2: Fallback to setTimeout
-                    console.log('🕒 Using setTimeout fallback');
+                    if (window.debugLogger) {
+                        window.debugLogger.log('🕒 Using setTimeout fallback');
+                    }
                     setTimeout(applyBodyMainBackground, 500);
                 }
             }
 
             // Strategy 3: Multiple event listeners to ensure it runs
             function setupLazyBackground() {
-                console.log('🔧 Setting up lazy background, readyState:', document.readyState);
-                
+                if (window.debugLogger) {
+                    window.debugLogger.log('🔧 Setting up lazy background, readyState:', document.readyState);
+                }
+
                 // If page is already complete
                 if (document.readyState === 'complete') {
-                    console.log('✅ Page already complete, initializing immediately');
+                    if (window.debugLogger) {
+                        window.debugLogger.log('✅ Page already complete, initializing immediately');
+                    }
                     setTimeout(initLazyBodyMainBackground, 0);
                 } else {
                     // Listen for load event
                     window.addEventListener('load', () => {
-                        console.log('📄 Window load event fired');
+                        if (window.debugLogger) {
+                            window.debugLogger.log('📄 Window load event fired');
+                        }
                         initLazyBodyMainBackground();
                     });
-                    
+
                     // Also listen for DOMContentLoaded as backup
                     document.addEventListener('DOMContentLoaded', () => {
-                        console.log('🏗️ DOMContentLoaded fired');
+                        if (window.debugLogger) {
+                            window.debugLogger.log('🏗️ DOMContentLoaded fired');
+                        }
                         setTimeout(initLazyBodyMainBackground, 200);
                     });
                 }
@@ -775,7 +775,9 @@ declare global {
 
             // Re-apply after page transitions
             document.addEventListener('astro:page-load', () => {
-                console.log('🔄 Astro page transition detected');
+                if (window.debugLogger) {
+                    window.debugLogger.log('🔄 Astro page transition detected');
+                }
                 setTimeout(() => {
                     initLazyBodyMainBackground();
                 }, 100);

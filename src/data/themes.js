@@ -45,30 +45,35 @@ const getVisibilityState = () => {
             activeCompany: null
         };
     }
-    
+
     try {
         // Get special themes visibility from localStorage (persistent)
         const storageValue = localStorage.getItem('special-themes-visible');
         const specialVisible = storageValue === 'true';
-        
+
         // Keep company theme in sessionStorage for session exclusivity
         const activeCompany = getSessionCompany();
-        
+
         const state = {
             specialVisible,
             activeCompany
         };
-        
-        debugLogger.log('📊 getVisibilityState result:', {
-            storageValue,
-            specialVisible,
-            activeCompany,
-            finalState: state
+
+        // Debug logging (async import to avoid blocking)
+        import('@/utils/debug-logger.ts').then(({ debugLogger }) => {
+            debugLogger.log('📊 getVisibilityState result:', {
+                storageValue,
+                specialVisible,
+                activeCompany,
+                finalState: state
+            });
         });
-        
+
         return state;
     } catch (e) {
-        debugLogger.warn('❌ Error in getVisibilityState:', e);
+        import('@/utils/debug-logger.ts').then(({ debugLogger }) => {
+            debugLogger.warn('❌ Error in getVisibilityState:', e);
+        });
         return {
             specialVisible: false,
             activeCompany: null
@@ -304,14 +309,27 @@ export function unlockSpecialTheme(themeId) {
 export function toggleAllHiddenThemes() {
     const specialThemeIds = themesData.special.map(t => t.id);
 
+    // Get current state and log it
+    const currentState = getVisibilityState();
+    debugLogger.group('🔄 toggleAllHiddenThemes');
+    debugLogger.log('Current visibility state:', currentState);
+    debugLogger.log('specialVisible:', currentState.specialVisible);
+    debugLogger.log('localStorage value:', localStorage.getItem('special-themes-visible'));
+
     // Toggle visibility based on current state from localStorage
-    if (getVisibilityState().specialVisible) {
+    if (currentState.specialVisible) {
         // Hide special themes
+        debugLogger.log('➡️ Currently visible, will LOCK (hide)');
         lockSpecialThemes();
+        debugLogger.log('✅ Locked, new value:', localStorage.getItem('special-themes-visible'));
+        debugLogger.groupEnd();
         return { action: 'locked', themes: specialThemeIds };
     } else {
         // Show special themes
+        debugLogger.log('➡️ Currently hidden, will UNLOCK (show)');
         unlockSpecialThemes();
+        debugLogger.log('✅ Unlocked, new value:', localStorage.getItem('special-themes-visible'));
+        debugLogger.groupEnd();
         return { action: 'unlocked', themes: specialThemeIds };
     }
 }

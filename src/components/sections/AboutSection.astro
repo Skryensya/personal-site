@@ -15,26 +15,24 @@ const t = getTranslations(lang);
 ---
 
 <section id="about" aria-labelledby="about-heading" class={`relative ${className}`} style="view-transition-name: about-section;">
-  <h2 id="about-heading" class="text-4xl font-black text-main mb-12 font-mono uppercase tracking-wider">{t('about.title')}</h2>
+  <h2 id="about-heading" class="h2">{t('about.title')}</h2>
 
-  <div class="grid items-start gap-8 lg:grid-cols-[1fr_minmax(12rem,16rem)]">
+  <div class="grid items-start gap-4 lg:grid-cols-[1fr_minmax(12rem,16rem)]">
     <!-- Content -->
-    <div class="space-y-8">
+    <div class=" ">
       <!-- TL;DR Block -->
-      <section class="border-2 border-main bg-main px-6 py-4 w-full">
-        <h3 class="mb-3 text-sm font-extrabold uppercase tracking-[0.4em] text-secondary/90 font-mono">
+      <section class="border-2 border-main bg-main p-4 w-full !max-w-[850ch]">
+        <h3 class="text-body-mono !my-0 text-secondary">
           TL;DR
         </h3>
-        <p class="text-2xl leading-[1.25] text-secondary font-semibold text-balance">
+        <p class="text-2xl leading-[1.25] text-secondary font-semibold text-balance ">
           {t('about.tldr')}
         </p>
       </section>
-
-      <!-- Divider -->
-      <hr class="h-px w-full border-0 bg-main/30" />
+ 
 
       <!-- Expanded content -->
-      <div class="space-y-6 text-main">
+      <div class="space-y-4 mt-10 text-main !max-w-[850ch]">
         {(() => {
           const expanded = t('about.expanded');
           if (Array.isArray(expanded)) {
@@ -50,7 +48,7 @@ const t = getTranslations(lang);
 
       <!-- Contact CTA -->
       <section class="pt-6 mt-6 border-t border-dashed border-main/20">
-        <div class="text-base leading-relaxed text-main !flex items-center gap-4 w-full">
+        <div class=" leading-relaxed text-main !flex items-center gap-4 w-full">
           <span>  Si algo de esto resuena contigo, </span>
           <span>
             <Button variant="outline" elevated >

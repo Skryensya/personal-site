@@ -13,6 +13,7 @@ export interface Props {
   type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
   id?: string;
+  [key: string]: unknown;
 }
 
 const {
@@ -27,21 +28,22 @@ const {
   type = 'button',
   disabled = false,
   id,
-} = Astro.props;
+  ...rest
+} = Astro.props as Props;
 
 
 const Tag = href ? 'a' : 'button';
 
 
 const buttonClasses = cn(
-  'font-bold uppercase tracking-wide cursor-pointer border-double border-2 whitespace-nowrap flex items-center justify-center no-underline',
+  'font-bold uppercase tracking-wide cursor-pointer border-double border-2 whitespace-nowrap flex items-center justify-center no-underline w-fit h-fit',
   {
     // Size variants
     'px-6 text-sm h-12': size === 'normal',
     'px-2 h-8 font-grotesk font-bold': size === 'sm',
     // Position and elevation
     'relative top-0 left-0 z-20': !elevated && variant !== 'outline',
-    'absolute top-0 left-0 z-30 elevated-button': elevated && variant !== 'outline',
+    'relative z-30 elevated-button': elevated && variant !== 'outline',
     'relative top-0 left-0 z-30 active:top-0 active:left-0': variant === 'outline' && !elevated,
     'relative top-0 left-0 z-30 border-secondary': variant === 'outline' && elevated,
     // Colors and states
@@ -52,14 +54,19 @@ const buttonClasses = cn(
   className
 );
 
-const shadowClasses = cn(
-  'absolute top-0 left-0 border-2 whitespace-nowrap pointer-events-none font-bold uppercase tracking-wide flex items-center justify-center diagonal-stripe',
-  'bg-secondary bg-opacity-60 z-10',
+// A sizer that matches the label container (content box) sizing
+const sizerClasses = cn(
+  'whitespace-nowrap font-bold uppercase tracking-wide flex items-center justify-center invisible select-none',
   {
-    // Size variants for shadow
     'px-6 text-sm h-12': size === 'normal',
     'px-2 h-8 font-grotesk font-bold': size === 'sm',
   }
+);
+
+// Shadow fills the exact label container area via inset-0
+const shadowClasses = cn(
+  'absolute inset-0 border-2 pointer-events-none font-bold uppercase tracking-wide flex items-center justify-center diagonal-stripe',
+  'bg-secondary bg-opacity-60 z-10'
 );
 ---
 
@@ -69,26 +76,19 @@ const shadowClasses = cn(
 })}>
   {variant === 'outline' && elevated ? (
     <div class="relative w-fit h-fit">
-      <!-- Fixed shadow at base position -->
-      <div class="absolute top-0 left-0 z-10">
-        <div
-          class={shadowClasses}
-          
-        >
-          <span class="invisible">
-            <slot />
-          </span>
-        </div>
+      <!-- Fixed shadow at base position filling label container -->
+      <div class="absolute inset-0 z-10">
+        <div class={shadowClasses} aria-hidden="true"></div>
       </div>
       <!-- Movable button -->
       <div class="outline-elevated-button relative z-20">
-        <Tag class={cn(buttonClasses, 'group outline-animated-button', { 'button-with-sound': elevated })} href={href} style={size === 'sm' ? `font-size: 14px; ${style || ''}` : style} onclick={onClick} type={type} disabled={disabled} id={id}>
+        <Tag class={cn(buttonClasses, 'group outline-animated-button', { 'button-with-sound': elevated })} href={href} style={size === 'sm' ? `font-size: 14px; ${style || ''}` : style} onclick={onClick} type={type} disabled={disabled} id={id} {...rest}>
           <slot />
         </Tag>
       </div>
     </div>
   ) : (
-    <Tag class={cn(buttonClasses, { 'button-with-sound': elevated })} href={href} style={size === 'sm' ? `font-size: 14px; ${style || ''}` : style} onclick={onClick} type={type} disabled={disabled} id={id}>
+    <Tag class={cn(buttonClasses, { 'button-with-sound': elevated })} href={href} style={size === 'sm' ? `font-size: 14px; ${style || ''}` : style} onclick={onClick} type={type} disabled={disabled} id={id} {...rest}>
       {variant === 'outline' && (
         <>
           <div class="absolute top-0 left-0 w-full h-0 border-t-2 border-double border-main transform -translate-x-full group-hover:translate-x-0 group-hover:delay-0 transition-transform duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] delay-600"></div>
@@ -102,14 +102,7 @@ const shadowClasses = cn(
   )}
 
   {elevated && variant !== 'outline' && (
-    <div
-      class={shadowClasses}
-      aria-hidden="true"
-    >
-      <span class="invisible">
-        <slot />
-      </span>
-    </div>
+    <div class={shadowClasses} aria-hidden="true"></div>
   )}
 </div>
 
@@ -409,36 +402,34 @@ const shadowClasses = cn(
         }
       }, 1000);
       
-      // Handle hover for filled buttons (30% less elevation)
-      if (isFilled) {
-        htmlButton.addEventListener('mouseenter', () => {
-          if (hasElevated && htmlButton.style) {
-            htmlButton.style.transform = 'translate(-8.4px, -8.4px)';
-            htmlButton.style.transition = 'transform 150ms ease-out';
-          }
-        });
-        
-        htmlButton.addEventListener('mouseleave', () => {
-          if (hasElevated && htmlButton.style) {
-            htmlButton.style.transform = 'translate(-12px, -12px)';
-            htmlButton.style.transition = 'transform 150ms ease-out';
-          }
-        });
-        
-        htmlButton.addEventListener('focus', () => {
-          if (hasElevated && htmlButton.style) {
-            htmlButton.style.transform = 'translate(-8.4px, -8.4px)';
-            htmlButton.style.transition = 'transform 150ms ease-out';
-          }
-        });
-        
-        htmlButton.addEventListener('blur', () => {
-          if (hasElevated && htmlButton.style) {
-            htmlButton.style.transform = 'translate(-12px, -12px)';
-            htmlButton.style.transition = 'transform 150ms ease-out';
-          }
-        });
-      }
+      // Handle hover for elevated buttons (30% less elevation)
+      htmlButton.addEventListener('mouseenter', () => {
+        if (hasElevated && htmlButton.style) {
+          htmlButton.style.transform = 'translate(-8.4px, -8.4px)';
+          htmlButton.style.transition = 'transform 150ms ease-out';
+        }
+      });
+      
+      htmlButton.addEventListener('mouseleave', () => {
+        if (hasElevated && htmlButton.style) {
+          htmlButton.style.transform = 'translate(-12px, -12px)';
+          htmlButton.style.transition = 'transform 150ms ease-out';
+        }
+      });
+      
+      htmlButton.addEventListener('focus', () => {
+        if (hasElevated && htmlButton.style) {
+          htmlButton.style.transform = 'translate(-8.4px, -8.4px)';
+          htmlButton.style.transition = 'transform 150ms ease-out';
+        }
+      });
+      
+      htmlButton.addEventListener('blur', () => {
+        if (hasElevated && htmlButton.style) {
+          htmlButton.style.transform = 'translate(-12px, -12px)';
+          htmlButton.style.transition = 'transform 150ms ease-out';
+        }
+      });
       
       // Handle press animation when elevated
       htmlButton.addEventListener('mousedown', () => {
@@ -450,7 +441,7 @@ const shadowClasses = cn(
       
       htmlButton.addEventListener('mouseup', () => {
         if (hasElevated && htmlButton.style) {
-          const targetTransform = isFilled && htmlButton.matches(':hover') ? 'translate(-8.4px, -8.4px)' : 'translate(-12px, -12px)';
+          const targetTransform = htmlButton.matches(':hover') ? 'translate(-8.4px, -8.4px)' : 'translate(-12px, -12px)';
           htmlButton.style.transform = targetTransform;
           htmlButton.style.transition = 'none';
         }
@@ -458,5 +449,3 @@ const shadowClasses = cn(
     });
   });
 </script>
-
-

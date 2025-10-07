@@ -2,7 +2,7 @@
 import Layout from '@/layouts/Layout.astro';
 import ContentPage from '@/components/ContentPage.astro';
 import AccessibilityStatement from '@/components/pages/AccessibilityStatement.astro';
-import TableOfContents from '@/components/TableOfContents.astro';
+import TocClerkAuto from '@/components/TocClerkAuto';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 
@@ -24,9 +24,8 @@ const t = getTranslations(lang);
       <AccessibilityStatement lang={lang} />
     </main>
     
-    <TableOfContents 
-      contentId="main-content" 
-      lang={lang}
-    />
+    <aside class="sticky top-24 hidden lg:block w-64 h-fit px-4 py-8">
+      <TocClerkAuto contentId="main-content" client:load />
+    </aside>
   </div>
 </Layout>

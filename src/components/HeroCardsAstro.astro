@@ -70,8 +70,10 @@ const cardData = [
       class="card-swap-card absolute top-1/2 left-1/2 border-2 border-main bg-secondary [transform-style:preserve-3d] [will-change:transform] [backface-visibility:hidden]" 
       style={`width: ${typeof width === 'number' ? width + 'px' : width}; height: ${typeof height === 'number' ? height + 'px' : height};`}
       data-card-index={index}
-      key={index}> 
-      <div class="window-header w-full h-8 bg-secondary text-main flex items-center" data-force-os={forceOS}> 
+      key={index}>
+      <!-- Browser window header -->
+      <div class="window-header w-full h-8 bg-secondary text-main flex items-center" data-force-os={forceOS}>
+        <!-- macOS style - traffic lights on left (will be toggled by script) -->
         <div class="macos-controls flex gap-2 pl-2 hidden">
           <div class="w-3 h-3 bg-main rounded-full flex items-center justify-center">
             <!-- X icon -->
@@ -79,36 +81,39 @@ const cardData = [
               <path d="M18 6L6 18M6 6l12 12"></path>
             </svg>
           </div>
-          <div class="w-3 h-3 bg-main rounded-full flex items-center justify-center"> 
+          <div class="w-3 h-3 bg-main rounded-full flex items-center justify-center">
+            <!-- Minus icon -->
             <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" class="text-secondary">
               <path d="M5 12h14"></path>
             </svg>
           </div>
-          <div class="w-3 h-3 bg-main rounded-full flex items-center justify-center"> 
+          <div class="w-3 h-3 bg-main rounded-full flex items-center justify-center">
+            <!-- Maximize icon -->
             <svg width="6" height="6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" class="text-secondary">
               <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
               <rect x="9" y="9" width="6" height="6"></rect>
             </svg>
           </div>
         </div>
-         
+        
+        <!-- Windows style - controls on right (will be toggled by script) -->
         <div class="windows-controls flex w-full">
           <div class="flex-1"></div>
           <div class="flex">
             <div class="w-8 h-8 bg-secondary border-l border-main flex items-center justify-center">
-             
+              <!-- Minus icon -->
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" class="text-main">
                 <path d="M5 12h14"></path>
               </svg>
             </div>
             <div class="w-8 h-8 bg-secondary border-l border-main flex items-center justify-center">
-              
+              <!-- Square icon -->
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" class="text-main">
                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
               </svg>
             </div>
             <div class="w-8 h-8 bg-secondary border-l border-main flex items-center justify-center">
-              
+              <!-- X icon -->
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" class="text-main">
                 <path d="M18 6L6 18M6 6l12 12"></path>
               </svg>
@@ -116,7 +121,8 @@ const cardData = [
           </div>
         </div>
       </div>
- 
+
+      <!-- Window content -->
       <div class="p-4 h-[calc(100%-2rem)] flex flex-col border-t-2 border-main">
         <div class="text-center mb-4">
           <h3 class="text-sm font-bold mb-2 font-mono uppercase tracking-wide">{card.title}</h3>
@@ -177,6 +183,8 @@ const cardData = [
 </CardSwapAstro>
 
 <script>
+  import { debugLogger } from '@/utils/debug-logger';
+
   // OS Detection and Window Style Management
   class WindowStyleManager {
     private detectOS(): 'macos' | 'windows' {
@@ -258,40 +266,45 @@ const cardData = [
   // Handle Astro page transitions
   document.addEventListener('astro:page-load', initWindowStyles);
 
-  // Import debugLogger
-  import { debugLogger } from '@/utils/debug-logger';
-
   // Card reveal functionality specifically for HeroCards
-  function revealHeroCards() { 
-    const heroCards = document.querySelectorAll('.card-swap-card[data-card-index]'); 
+  function revealHeroCards() {
+    const { log, warn } = debugLogger;
+    log('🔍 Searching for hero cards...');
+    const heroCards = document.querySelectorAll('.card-swap-card[data-card-index]');
+    log('📋 Found hero cards:', heroCards.length, heroCards);
 
     if (heroCards.length === 0) {
-      debugLogger.warn('⚠️ No hero cards found with data-card-index attribute');
+      warn('⚠️ No hero cards found with data-card-index attribute');
       return;
     }
 
-    setTimeout(() => { 
+    setTimeout(() => {
+      log('✨ Adding card-revealed class to cards...');
       heroCards.forEach((card, index) => {
-     
+        log(`🎯 Revealing card ${index}:`, card);
         card.classList.add('card-revealed');
       });
     }, 100);
   }
 
   // Initialize card reveal
-  function initHeroCardReveal() { 
+  function initHeroCardReveal() {
+    debugLogger.log('🚀 Initializing hero card reveal...');
     revealHeroCards();
   }
 
   // Initialize reveal when DOM is ready
-  if (document.readyState === 'loading') { 
+  if (document.readyState === 'loading') {
+    debugLogger.log('⏳ DOM loading, waiting for DOMContentLoaded...');
     document.addEventListener('DOMContentLoaded', initHeroCardReveal);
-  } else { 
+  } else {
+    debugLogger.log('✅ DOM ready, initializing immediately...');
     initHeroCardReveal();
   }
 
   // Handle Astro page transitions for card reveal
-  document.addEventListener('astro:page-load', () => { 
+  document.addEventListener('astro:page-load', () => {
+    debugLogger.log('🔄 Astro page load event triggered');
     initHeroCardReveal();
   });
 </script>

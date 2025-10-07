@@ -1,5 +1,6 @@
 @import './tailwind.config.css';
 @import './print.css';
+@import './typography.css';
 
 /* * {
     border: 0.5px solid rgba(255, 0, 0, 0.3);
@@ -8,9 +9,19 @@
 @layer base {
     :root {
         --main-hue: 0;
-        --selection-color: hsl(200, 35%, 50%); /* Fallback before JS loads */
+        --selection-color: hsl(200, 35%, 50%);
         --max-w-size: 1280px;
         --paragraph-max-width: 80ch;
+        /* Typography scale (responsive) */
+        --fs-h1: clamp(2.25rem, 3vw + 1rem, 4.5rem); /* ≈ text-4xl → 7xl */
+        --fs-h2: clamp(1.75rem, 1.6vw + 1rem, 3rem); /* ≈ text-2xl → 5xl */
+        --fs-h3: clamp(1.5rem, 1.1vw + 0.9rem, 2rem); /* ≈ text-xl → 3xl */
+        --fs-h4: clamp(1.25rem, 0.6vw + 0.9rem, 1.5rem); /* ≈ text-lg → 2xl */
+        --fs-body: 1.125rem; /* 18px */
+        --fs-body-sm: 1rem; /* 16px (mínimo) */
+        --lh-tight: 1.15;
+        --lh-snug: 1.25;
+        --lh-normal: 1.5;
     }
 
     /* Smooth selection color animation - controlled by JavaScript */
@@ -74,44 +85,6 @@
         white-space: nowrap;
         border: 0;
     }
-
-    body {
-        font-family: var(--font-sans);
-        font-weight: 400;
-        font-variant-numeric: tabular-nums;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        font-family: var(--font-display);
-        font-weight: 600;
-        letter-spacing: -0.025em;
-    }
-
-    code,
-    pre,
-    .mono {
-        font-family: var(--font-mono);
-        font-weight: 400;
-        font-variant-ligatures: none;
-    }
-
-    ::selection {
-        background: var(--selection-color, hsl(200, 35%, 50%));
-        color: var(--color-secondary);
-        font-weight: 700 !important;
-    }
-
-    a::selection {
-        background: var(--selection-color, hsl(200, 35%, 50%));
-        color: var(--color-secondary);
-    }
-
-    /* Selection color is now fully controlled by JavaScript animator */
 
     /* No transitions needed - color updates every frame */
     *:focus {
@@ -190,61 +163,6 @@
             animation-duration: 0.01s;
         }
     }
-
-    /* Enhanced CRT Effect - Pure Overlay */
-    .crt-effect::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-        z-index: 9999;
-        overflow: hidden;
-
-        /* Scanlines suaves y estables */
-        background: repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.12) 0px, rgba(0, 0, 0, 0.12) 1px, transparent 1px, transparent 3px);
-        animation: crt-scanlines 1.2s linear infinite;
-    }
-
-    /* Phosphor glow effect sutil */
-    .crt-effect {
-        filter: contrast(1.1) saturate(1.3);
-    }
-
-    .crt-effect * {
-        text-shadow:
-            0 0 1px currentColor,
-            0 0 2px rgba(255, 255, 255, 0.1);
-    }
-
-    /* Sin flicker effect para menos distracción */
-    /* .crt-effect {
-        animation: none;
-    } */
-
-    /* Animaciones suaves para CRT */
-    @keyframes crt-scanlines {
-        0% {
-            transform: translateY(0);
-        }
-        100% {
-            transform: translateY(3px);
-        }
-    }
-}
-.wavy {
-    background-color: var(--color-main);
-    --mask:
-        radial-gradient(4.13px at 50% calc(100% + 0.9px), #0000 calc(99% - 2px), var(--color-main) calc(101% - 2px) 99%, #0000 101%) calc(50% - 6px)
-            calc(50% - 2.5px + 0.5px) / 12px 5px repeat-x,
-        radial-gradient(4.13px at 50% -0.9px, #0000 calc(99% - 2px), var(--color-main) calc(101% - 2px) 99%, #0000 101%) 50% calc(50% + 2.5px) / 12px 5px
-            repeat-x;
-    -webkit-mask: var(--mask);
-    mask: var(--mask);
 }
 
 /* Corner crosses utility */
@@ -294,66 +212,10 @@
     background-repeat: repeat;
 }
 
-/* Prose content styling for project pages */
-.prose {
-    & h1 {
-        font-size: 2.5rem !important;
-        line-height: 1.2 !important;
-        margin-top: 2rem !important;
-        margin-bottom: 1.5rem !important;
-    }
-
-    & h2 {
-        font-size: 2rem !important;
-        line-height: 1.3 !important;
-        margin-top: 2rem !important;
-        margin-bottom: 1rem !important;
-    }
-
-    & h3 {
-        font-size: 1.5rem !important;
-        line-height: 1.4 !important;
-        margin-top: 1.5rem !important;
-        margin-bottom: 1rem !important;
-    }
-
-    & h4 {
-        font-size: 1.25rem !important;
-        line-height: 1.4 !important;
-        margin-top: 1.5rem !important;
-        margin-bottom: 0.75rem !important;
-    }
-
-    & p {
-        margin-top: 1.5rem !important;
-        margin-bottom: 1.5rem !important;
-    }
-
-    & ul,
-    & ol {
-        margin-top: 1.5rem !important;
-        margin-bottom: 1.5rem !important;
-    }
-
-    & li {
-        margin-top: 0.5rem !important;
-        margin-bottom: 0.5rem !important;
-    }
-
-    & blockquote {
-        margin-top: 2rem !important;
-        margin-bottom: 2rem !important;
-    }
-
-    & pre,
-    & img {
-        margin-top: 2rem !important;
-        margin-bottom: 2rem !important;
-    }
-}
-
 p {
     max-width: 80ch;
 
     text-wrap: pretty;
 }
+
+/* Typography utilities moved to typography.css */
