@@ -102,8 +102,8 @@ const slug = 'theme-' + theme.name
         const title = document.getElementById(slug);
         if (!card || !title) return;
         card.addEventListener('click', (e) => {
-            const target = e.target as HTMLElement | null;
-            if (target && target.closest && target.closest('.apply-theme-btn')) return;
+            const target = e.target;
+            if (target instanceof HTMLElement && target.closest('.apply-theme-btn')) return;
             try { history.replaceState(null, '', `#${slug}`); } catch {}
             title.scrollIntoView({ behavior: 'smooth', block: 'start' });
             title.focus?.();

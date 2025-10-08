@@ -2,44 +2,57 @@
 import { Image } from 'astro:assets';
 
 export interface Props {
-    src: string | ImageMetadata;
-    alt: string;
-    width?: number;
-    height?: number;
-    class?: string;
-    loading?: 'lazy' | 'eager';
-    sizes?: string;
-    decoding?: 'async' | 'sync' | 'auto';
+  src: string | ImageMetadata;
+  alt: string;
+  width?: number;
+  height?: number;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  sizes?: string;
+  decoding?: 'async' | 'sync' | 'auto';
 }
 
-const { 
-    src, 
-    alt, 
-    width, 
-    height, 
-    class: className, 
-    loading = 'lazy',
-    sizes,
-    decoding = 'async',
-    ...props 
-} = Astro.props;
+const {
+  src,
+  alt,
+  width,
+  height,
+  class: className,
+  loading = 'lazy',
+  sizes,
+  decoding = 'async'
+} = Astro.props as Props;
 
-// Define responsive sizes for better loading
 const defaultSizes = sizes || '(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw';
+const isImageMetadata = typeof src === 'object' && src !== null && 'src' in src;
+const resolvedWidth = width ?? (isImageMetadata ? src.width : undefined);
+const resolvedHeight = height ?? (isImageMetadata ? src.height : undefined);
+const aspectRatio = resolvedWidth && resolvedHeight ? `${resolvedWidth} / ${resolvedHeight}` : undefined;
+const inlineStyle = aspectRatio ? `aspect-ratio: ${aspectRatio};` : undefined;
 ---
 
-<Image
+{isImageMetadata ? (
+  <Image
     src={src}
     alt={alt}
-    width={width}
-    height={height}
+    width={resolvedWidth ?? src.width}
+    height={resolvedHeight ?? src.height}
     class={className}
     loading={loading}
     sizes={defaultSizes}
     decoding={decoding}
-    style={{
-        // Prevent layout shift with explicit dimensions
-        aspectRatio: width && height ? `${width} / ${height}` : undefined,
-    }}
-    {...props}
-/>
+    style={inlineStyle}
+  />
+) : (
+  <img
+    src={src as string}
+    alt={alt}
+    width={resolvedWidth}
+    height={resolvedHeight}
+    class={className}
+    loading={loading}
+    sizes={defaultSizes}
+    decoding={decoding}
+    style={inlineStyle}
+  />
+)}

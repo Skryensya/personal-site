@@ -62,8 +62,6 @@ const {
     private interval: number | null = null;
     private config: any;
     private isAnimating: boolean = false;
-    private animationStartTime: number = 0;
-
     constructor(container: HTMLElement) {
  
       this.container = container;
@@ -114,12 +112,6 @@ const {
         z: -i * 20, // Closer Z distance
         zIndex: total - i
       };
-    }
-
-    private calculateResponsiveScale(): number {
-      // Since cards are now 80% of container width with CSS,
-      // we just need a base scale that works well
-      return 1.0; // Let CSS handle the sizing
     }
 
     private placeNow(el: HTMLElement, slot: Slot, skew: number) {
@@ -299,7 +291,7 @@ const {
     const containers = document.querySelectorAll('.card-swap-container');
 
 
-    containers.forEach((container, index) => {
+    containers.forEach((container) => {
       const htmlContainer = container as HTMLElement;
 
       // Skip if already initialized (check by data attribute)
@@ -316,23 +308,6 @@ const {
   // Initialize positioning immediately to prevent CLS
   function immediateInit() {
     initCardSwapPositioning();
-  }
-
-  // Wait for GSAP to be available for animations (if loaded via CDN)
-  function waitForGSAP(callback: () => void, maxWait = 5000) {
-    if (window.gsap) {
-      callback();
-      return;
-    }
-
-    let waited = 0;
-    const interval = setInterval(() => {
-      waited += 100;
-      if (window.gsap || waited >= maxWait) {
-        clearInterval(interval);
-        callback();
-      }
-    }, 100);
   }
 
   // Initialize positioning immediately, then animations when GSAP loads

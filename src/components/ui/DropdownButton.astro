@@ -88,7 +88,7 @@ const mainButtonId = `main-button-${id}`;
 
 <script>
   // Global dropdown management
-  let globalOpenDropdown = null;
+  let globalOpenDropdown: { container: HTMLElement; trigger: HTMLElement; menu: HTMLElement } | null = null;
   
   // Global function to close all dropdowns
   function closeAllDropdowns() {
@@ -300,8 +300,8 @@ const mainButtonId = `main-button-${id}`;
         // Set this as the globally open dropdown
         globalOpenDropdown = {
           container: container as HTMLElement,
-          menu: dropdownMenu,
-          close: closeDropdown
+          trigger: dropdownButton,
+          menu: dropdownMenu
         };
         
         // Position the dropdown

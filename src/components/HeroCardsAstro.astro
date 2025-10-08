@@ -69,8 +69,7 @@ const cardData = [
     <div 
       class="card-swap-card absolute top-1/2 left-1/2 border-2 border-main bg-secondary [transform-style:preserve-3d] [will-change:transform] [backface-visibility:hidden]" 
       style={`width: ${typeof width === 'number' ? width + 'px' : width}; height: ${typeof height === 'number' ? height + 'px' : height};`}
-      data-card-index={index}
-      key={index}>
+      data-card-index={index}>
       <!-- Browser window header -->
       <div class="window-header w-full h-8 bg-secondary text-main flex items-center" data-force-os={forceOS}>
         <!-- macOS style - traffic lights on left (will be toggled by script) -->

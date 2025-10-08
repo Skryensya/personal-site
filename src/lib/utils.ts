@@ -80,11 +80,22 @@ export function useCssVar(
     });
 
     // 3) prefers-color-scheme
+    let detachMediaListener: (() => void) | undefined;
     try {
       mqlRef.current = window.matchMedia("(prefers-color-scheme: dark)");
       const handler = () => update();
-      mqlRef.current.addEventListener?.("change", handler);
-      mqlRef.current.addListener?.(handler); // Safari antiguo
+
+      if (typeof mqlRef.current.addEventListener === "function") {
+        mqlRef.current.addEventListener("change", handler);
+        detachMediaListener = () => mqlRef.current?.removeEventListener?.("change", handler);
+      } else {
+        const legacyMql = mqlRef.current as unknown as {
+          addListener?: (listener: (event: MediaQueryListEvent) => void) => void;
+          removeListener?: (listener: (event: MediaQueryListEvent) => void) => void;
+        };
+        legacyMql.addListener?.(handler);
+        detachMediaListener = () => legacyMql.removeListener?.(handler);
+      }
     } catch {}
 
     // 4) Polling suave + pausa al ocultarse
@@ -113,10 +124,7 @@ export function useCssVar(
       moRootRef.current?.disconnect();
       moHeadRef.current?.disconnect();
       document.removeEventListener("visibilitychange", visibilityHandler);
-      if (mqlRef.current) {
-        try { mqlRef.current.removeEventListener?.("change", () => {}); } catch {}
-        try { mqlRef.current.removeListener?.(() => {}); } catch {}
-      }
+      detachMediaListener?.();
     };
   }, [name, root, throttleMs, enableRafSample]);
 

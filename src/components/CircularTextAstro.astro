@@ -60,7 +60,7 @@ const componentId = `circular-text-${Math.random().toString(36).substring(2, 9)}
   }
 </style>
 
-<script define:vars={{ componentId, spinDuration, onHover }}>
+<script is:inline define:vars={{ componentId, spinDuration, onHover }}>
   document.addEventListener('astro:page-load', () => {
     const container = document.getElementById(componentId);
     if (!container) return;

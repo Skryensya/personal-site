@@ -241,7 +241,6 @@ const navigationLinks: NavigationLink[] = [
         }
 
         const contrastRatio = getContrastRatio(mainColor, secondaryColor);
-        const wcagLevel = getWCAGLevel(contrastRatio);
 
         const wcagLevelsElement = document.getElementById('footer-wcag-levels');
         const ratio = contrastRatio.toFixed(1);
@@ -250,8 +249,8 @@ const navigationLinks: NavigationLink[] = [
         
         if (wcagLevelsElement) {
           // Get language from document
-          const currentLang = document.documentElement.getAttribute('lang') || 'es';
-          
+          const lang = document.documentElement.getAttribute('lang') || 'es';
+
           // Clear previous content
           wcagLevelsElement.innerHTML = '';
           
@@ -266,8 +265,6 @@ const navigationLinks: NavigationLink[] = [
             const levelBox = document.createElement('div');
             levelBox.className = `bg-secondary text-main px-2 py-1 text-xs font-mono font-bold flex items-center gap-1 border border-main ${level.passed ? 'opacity-100' : 'opacity-30'} cursor-help relative`;
             
-            // Get current language for translations
-            const lang = document.documentElement.getAttribute('lang') || 'es';
             const titleKey = `footer.wcag.${level.name.toLowerCase()}.title`;
             const descKey = `footer.wcag.${level.name.toLowerCase()}.desc`;
             
@@ -275,7 +272,7 @@ const navigationLinks: NavigationLink[] = [
             let tooltipTitle = '';
             let tooltipDesc = '';
             if (lang === 'en') {
-              const enTranslations = {
+              const enTranslations: Record<string, string> = {
                 'footer.wcag.a.title': 'WCAG A - Minimum',
                 'footer.wcag.a.desc': '3:1 contrast for graphics, icons and UI components',
                 'footer.wcag.aa.title': 'WCAG AA - Standard',
@@ -286,7 +283,7 @@ const navigationLinks: NavigationLink[] = [
               tooltipTitle = enTranslations[titleKey] || '';
               tooltipDesc = enTranslations[descKey] || '';
             } else if (lang === 'no') {
-              const noTranslations = {
+              const noTranslations: Record<string, string> = {
                 'footer.wcag.a.title': 'WCAG A - Minimum',
                 'footer.wcag.a.desc': '3:1 kontrast for grafikk, ikoner og UI-komponenter',
                 'footer.wcag.aa.title': 'WCAG AA - Standard',
@@ -297,7 +294,7 @@ const navigationLinks: NavigationLink[] = [
               tooltipTitle = noTranslations[titleKey] || '';
               tooltipDesc = noTranslations[descKey] || '';
             } else {
-              const esTranslations = {
+              const esTranslations: Record<string, string> = {
                 'footer.wcag.a.title': 'WCAG A - Mínimo',
                 'footer.wcag.a.desc': 'Contraste 3:1 para elementos gráficos, iconos y componentes de interfaz',
                 'footer.wcag.aa.title': 'WCAG AA - Estándar',

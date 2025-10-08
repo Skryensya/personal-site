@@ -125,13 +125,13 @@ function TocClerkItem({ item, upper = item.depth, lower = item.depth }: { item: 
       )}
       onClick={(e) => {
         if (slug === 'inicio') {
-          e.preventDefault();
+          // e.preventDefault();
           window.scrollTo({ top: 0, behavior: 'smooth' });
           return;
         }
         const el = document.getElementById(slug);
         if (el) {
-          e.preventDefault();
+          // e.preventDefault();
           const top = el.getBoundingClientRect().top + window.scrollY - (useTocCtx().topOffset);
           window.history.pushState(null, '', `#${slug}`);
           window.scrollTo({ top, behavior: 'smooth' });
@@ -158,7 +158,7 @@ function TocClerkItem({ item, upper = item.depth, lower = item.depth }: { item: 
 }
 
 function TocThumb({ containerRef, className }: { containerRef: RefObject<HTMLDivElement | null>; className?: string }) {
-  const { toc, active } = useTocCtx();
+  const { active } = useTocCtx();
   const ref = useRef<HTMLDivElement>(null);
 
   const update = useCallback(() => {

@@ -1,6 +1,5 @@
 ---
 import BigSectionContainer from '../BigSectionContainer.astro';
-import MarqueeSection from '../MarqueeSection';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 
@@ -10,6 +9,7 @@ interface Props {
 
 const { lang = defaultLang } = Astro.props;
 const t = getTranslations(lang);
+const sectionTitle: string = t('home.technologies');
 
 const technologies = [
     { href: 'https://react.dev/', text: 'React' },
@@ -45,9 +45,47 @@ const technologies = [
 ];
 ---
 
-<BigSectionContainer title={t('home.technologies')} id="tecnologia" style="view-transition-name: technologies-section;">
-    <MarqueeSection
-        client:visible
-        links={technologies}
-    />
+<BigSectionContainer title={sectionTitle} id="tecnologia" style="view-transition-name: technologies-section;">
+    <div class="relative overflow-hidden border border-main bg-secondary" data-marquee>
+        <div class="marquee-track" aria-hidden="true">
+            {([...technologies, ...technologies]).map((item, index) => (
+                <a
+                    href={item.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="marquee-item font-mono text-xs uppercase tracking-[0.3em] px-6 py-3 border-r border-main whitespace-nowrap hover:bg-main hover:text-secondary transition-colors"
+                    data-index={index}
+                >
+                    {item.text}
+                </a>
+            ))}
+        </div>
+    </div>
 </BigSectionContainer>
+
+<style is:inline>
+    [data-marquee] {
+        mask-image: linear-gradient(90deg, transparent 0%, black 10%, black 90%, transparent 100%);
+    }
+
+    .marquee-track {
+        display: flex;
+        gap: 0;
+        width: max-content;
+        animation: marquee-scroll 45s linear infinite;
+    }
+
+    .marquee-item {
+        display: inline-flex;
+        align-items: center;
+    }
+
+    @keyframes marquee-scroll {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-50%);
+        }
+    }
+</style>

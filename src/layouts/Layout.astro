@@ -1,5 +1,4 @@
 ---
-import { ViewTransitions } from 'astro:transitions';
 import { AstroFont } from 'astro-font';
 import BaseHead, { type Props as HeadProps } from '../components/BaseHead.astro';
 import Navbar from '../components/Navbar.astro';
@@ -29,8 +28,7 @@ const {
 } = Astro.props;
 
 // Generate theme data for the client script
-// Only include non-hidden themes as valid themes (hidden themes need to be unlocked first)
-const validThemes = themes.filter(t => !t.hidden).map(t => t.id);
+const validThemes = themes.map(t => t.id);
 const themeColors = themes.reduce((acc, theme) => {
     acc[theme.id] = {
         colorful: theme.colorful, // Using backwards compatibility getters
@@ -39,8 +37,7 @@ const themeColors = themes.reduce((acc, theme) => {
     return acc;
 }, {} as Record<string, { colorful: string; contrasty: string }>);
 
-// Get the default theme (first non-hidden theme)
-const defaultTheme = themes.find(t => !t.hidden) || themes[0];
+const defaultTheme = themes[0];
 const defaultColorful = defaultTheme.colorful;
 const defaultContrasty = defaultTheme.contrasty;
 const defaultThemeId = defaultTheme.id;
@@ -50,7 +47,8 @@ const t = getTranslations(lang);
 const themeMessages = {
     unlocked: t('theme.toast.unlocked'),
     locked: t('theme.toast.locked'),
-    company: t('theme.toast.company')
+    company: t('theme.toast.company'),
+    companyHidden: t('theme.toast.companyHidden')
 };
 
 
@@ -72,14 +70,14 @@ declare global {
                     name: 'Atkinson Hyperlegible',
                     src: [
                         {
-                            weight: '400',
+                            weight: '100 900',
                             style: 'normal',
-                            path: 'https://cdn.jsdelivr.net/fontsource/fonts/atkinson-hyperlegible@latest/latin-400-normal.woff2'
+                            path: '/fonts/Atkinson_Hyperlegible_Next/AtkinsonHyperlegibleNext-VariableFont_wght.ttf'
                         },
                         {
-                            weight: '700',
-                            style: 'normal',
-                            path: 'https://cdn.jsdelivr.net/fontsource/fonts/atkinson-hyperlegible@latest/latin-700-normal.woff2'
+                            weight: '100 900',
+                            style: 'italic',
+                            path: '/fonts/Atkinson_Hyperlegible_Next/AtkinsonHyperlegibleNext-Italic-VariableFont_wght.ttf'
                         }
                     ],
                     preload: true,
@@ -91,14 +89,9 @@ declare global {
                     name: 'Space Grotesk',
                     src: [
                         {
-                            weight: '400',
+                            weight: '300 700',
                             style: 'normal',
-                            path: 'https://cdn.jsdelivr.net/fontsource/fonts/space-grotesk@latest/latin-400-normal.woff2'
-                        },
-                        {
-                            weight: '600',
-                            style: 'normal',
-                            path: 'https://cdn.jsdelivr.net/fontsource/fonts/space-grotesk@latest/latin-600-normal.woff2'
+                            path: '/fonts/Space_Grotesk/SpaceGrotesk-VariableFont_wght.ttf'
                         }
                     ],
                     preload: true,
@@ -110,14 +103,14 @@ declare global {
                     name: 'Atkinson Hyperlegible Mono',
                     src: [
                         {
-                            weight: '400',
+                            weight: '100 700',
                             style: 'normal',
-                            path: 'https://cdn.jsdelivr.net/fontsource/fonts/atkinson-hyperlegible-mono@latest/latin-400-normal.woff2'
+                            path: '/fonts/Atkinson_Hyperlegible_Mono/AtkinsonHyperlegibleMono-VariableFont_wght.ttf'
                         },
                         {
-                            weight: '700',
-                            style: 'normal',
-                            path: 'https://cdn.jsdelivr.net/fontsource/fonts/atkinson-hyperlegible-mono@latest/latin-700-normal.woff2'
+                            weight: '100 700',
+                            style: 'italic',
+                            path: '/fonts/Atkinson_Hyperlegible_Mono/AtkinsonHyperlegibleMono-Italic-VariableFont_wght.ttf'
                         }
                     ],
                     preload: true,
@@ -210,10 +203,9 @@ declare global {
  
         
         <BaseHead {...head} lang={lang} />
-        <ViewTransitions />
         
         <!-- Selection color animator - defer to reduce blocking -->
-        <script type="module">
+        <script is:inline type="module">
             // Use dynamic import and idle callback for non-critical animation
             function initSelectionAnimation() {
                 import('/src/utils/globalSelectionAnimator.ts').then(({ startGlobalSelectionAnimation }) => {
@@ -235,14 +227,14 @@ declare global {
         <!-- Additional theme persistence for View Transitions -->
         <script is:inline>
             // Ensure theme persists during View Transitions
-            document.addEventListener('astro:before-preparation', function(e) {
+            document.addEventListener('astro:before-preparation', function() {
                 // Apply theme immediately when preparing for transition
                 if (window.__APPLY_THEME_INSTANTLY__) {
                     window.__APPLY_THEME_INSTANTLY__();
                 }
             });
 
-            document.addEventListener('astro:after-preparation', function(e) {
+            document.addEventListener('astro:after-preparation', function() {
                 // Apply theme immediately after transition preparation
                 if (window.__APPLY_THEME_INSTANTLY__) {
                     window.__APPLY_THEME_INSTANTLY__();
@@ -257,7 +249,7 @@ declare global {
             window.__THEME_MESSAGES__ = themeMessages;
         </script>
 
-        <script type="module">
+        <script is:inline type="module">
             // Clean Konami code initialization with global singleton check
             let konamiInitialized = false;
             
@@ -297,16 +289,18 @@ declare global {
                             debugLogger.log('Starting Konami code activation sequence');
                             
                             // Load themes module
-                            const { toggleAllHiddenThemes, getSessionCompany, getDefaultTheme, applyTheme } = await import('/src/data/themes.js');
+                            const { toggleAllHiddenThemes } = await import('/src/data/themes.js');
                             debugLogger.log('✅ Themes module loaded successfully');
 
                             // Toggle themes first to know if we should show confetti
                             debugLogger.log('🎨 About to toggle hidden themes');
-                            const result = toggleAllHiddenThemes();
+                            const result = toggleAllHiddenThemes() || { action: 'locked', themes: [], companyCleared: false };
                             debugLogger.log('🎨 Toggle result:', result);
-                            
+
                             const themeMessages = window.__THEME_MESSAGES__;
                             const unlocked = result.action === 'unlocked';
+                            const companyCleared = Boolean(result.companyCleared);
+                            debugLogger.log('🏢 Company cleared during toggle:', companyCleared, '| Prev company:', result.previouslyActiveCompany, '| Fallback theme:', result.fallbackThemeId);
                             debugLogger.log('🎨 Unlocked status:', unlocked);
                             debugLogger.log('🎨 Theme messages:', themeMessages);
 
@@ -384,7 +378,11 @@ declare global {
                                 const themeCount = result.themes ? result.themes.length : 0;
                                 notification.textContent = themeMessages.unlocked.replace('{count}', themeCount);
                             } else {
-                                notification.textContent = themeMessages.locked;
+                                const messages = [themeMessages.locked];
+                                if (companyCleared && themeMessages.companyHidden) {
+                                    messages.push(themeMessages.companyHidden);
+                                }
+                                notification.textContent = messages.join(' ');
                             }
                             
                             notification.style.cssText = `
@@ -448,7 +446,7 @@ declare global {
         </script>
 
         <!-- Company Theme Query Param Detection - only run if params exist -->
-        <script type="module">
+        <script is:inline type="module">
             // Quick check if any params exist before loading heavy modules
             const hasQueryParams = window.location.search.length > 0;
             if (hasQueryParams) {

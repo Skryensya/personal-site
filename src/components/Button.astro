@@ -54,15 +54,6 @@ const buttonClasses = cn(
   className
 );
 
-// A sizer that matches the label container (content box) sizing
-const sizerClasses = cn(
-  'whitespace-nowrap font-bold uppercase tracking-wide flex items-center justify-center invisible select-none',
-  {
-    'px-6 text-sm h-12': size === 'normal',
-    'px-2 h-8 font-grotesk font-bold': size === 'sm',
-  }
-);
-
 // Shadow fills the exact label container area via inset-0
 const shadowClasses = cn(
   'absolute inset-0 border-2 pointer-events-none font-bold uppercase tracking-wide flex items-center justify-center diagonal-stripe',
@@ -135,9 +126,9 @@ const shadowClasses = cn(
 
     // Handle outline elevated animation
     const outlineElevatedButtons = document.querySelectorAll('.outline-elevated-button');
-  
 
-    outlineElevatedButtons.forEach((buttonWrapper, index) => {
+
+    outlineElevatedButtons.forEach((buttonWrapper) => {
       const actualButton = buttonWrapper.querySelector('button, a');
     
       
@@ -274,7 +265,7 @@ const shadowClasses = cn(
         
 
         // Function to handle animation trigger (both hover and focus)
-        const triggerAnimation = (eventType: string) => {
+        const triggerAnimation = () => {
         
           
           // Clear any existing hover timeout
@@ -391,7 +382,6 @@ const shadowClasses = cn(
     elevatedButtons.forEach((button) => {
       const htmlButton = button as HTMLElement;
       let hasElevated = false;
-      const isFilled = htmlButton.classList.contains('bg-main');
       
       // Elevate after 1 second on page load
       setTimeout(() => {

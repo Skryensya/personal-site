@@ -10,8 +10,6 @@ type TextGenerateProps = {
 /**
  * Componente que emula el tecleo de texto en una terminal, carácter por carácter.
  * Modificado para reservar el espacio final del texto y prevenir CLS.
- * @param {TextGenerateProps} props - Las props del componente.
- * @returns {React.ReactElement}
  */
 const TextGenerate: React.FC<TextGenerateProps> = ({ words, speed = 20, cursorCharacter = '_', onAnimationComplete }) => {
     const [displayedText, setDisplayedText] = React.useState<string>('');

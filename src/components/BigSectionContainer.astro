@@ -11,11 +11,12 @@ const {
   id, 
   class: className,
   style,
-} = Astro.props;
+} = Astro.props as Props;
 ---
 
 <section
   id={id}
+  class={className}
   style={style}
 >
   <div class="border-b border-double mb-1">

@@ -1,45 +1,60 @@
 import React from 'react';
 import { TocClerkProvider, TocClerkItems, type TOCItemType } from '@/components/TocClerk';
 import { getClientTranslationsForComponents } from '@/i18n/utils';
-
-function slugify(text: string) {
-  return text
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9\s-]/g, '')
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-');
-}
+import { applyHeadingSlugs } from '@/utils/heading-slugs';
 
 export default function TocClerkAuto({ contentId }: { contentId: string }) {
   const [toc, setToc] = React.useState<TOCItemType[]>([]);
   const t = getClientTranslationsForComponents();
+  const startTitle: string = t('nav.home');
 
   React.useEffect(() => {
-    const root = document.getElementById(contentId);
-    if (!root) return;
-    const heads = Array.from(root.querySelectorAll('h2, h3, h4')) as HTMLElement[];
-    const seen = new Set<string>();
-    const items: TOCItemType[] = heads
-      .filter(h => !h.closest('header'))
-      .map((h, i) => {
-        const level = Number(h.tagName.substring(1));
-        let id = h.id || slugify(h.textContent || '');
-        const base = id; let n = 1;
-        while (seen.has(id) || (id && document.getElementById(id) && h.id !== id)) id = `${base}-${n++}`;
-        if (!h.id) h.id = id;
-        seen.add(id);
-        return { url: `#${id}`, title: h.textContent || '', depth: level };
+    const buildToc = () => {
+      const root = document.getElementById(contentId);
+      if (!root) {
+        setToc([]);
+        return;
+      }
+
+      const slugResults = applyHeadingSlugs(root, {
+        selector: 'h2, h3, h4',
+        filter: (heading) => !heading.closest('header'),
       });
-    // Add start anchor as the first item
-    const withStart: TOCItemType[] = [
-      { url: '#inicio', title: t('nav.home'), depth: 1 },
-      ...items,
-    ];
-    setToc(withStart);
-  }, [contentId]);
+
+      const items: TOCItemType[] = slugResults.map(({ id, text, level }) => ({
+        url: `#${id}`,
+        title: text,
+        depth: level,
+      }));
+
+      if (items.length === 0) {
+        setToc([]);
+        return;
+      }
+
+      const withStart: TOCItemType[] = [
+        { url: '#inicio', title: startTitle, depth: 1 },
+        ...items,
+      ];
+
+      setToc(withStart);
+    };
+
+    const scheduleBuild = () => {
+      if (typeof window.requestAnimationFrame === 'function') {
+        window.requestAnimationFrame(buildToc);
+      } else {
+        window.setTimeout(buildToc, 0);
+      }
+    };
+
+    scheduleBuild();
+    document.addEventListener('astro:page-load', scheduleBuild);
+
+    return () => {
+      document.removeEventListener('astro:page-load', scheduleBuild);
+    };
+  }, [contentId, startTitle]);
 
   return (
     <nav>

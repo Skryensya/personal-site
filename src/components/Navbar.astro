@@ -254,7 +254,7 @@ const navItems = [
 
  
 
-<script define:vars={{ themeNames, themeColors }}>
+<script is:inline define:vars={{ themeNames, themeColors }}>
 
   // Skip to main content functionality
   function skipToMainContent() {
@@ -395,11 +395,6 @@ const navItems = [
         }
       });
     }
-
-    // Mobile menu elements
-    const mobileMenuTrigger = document.getElementById('mobile-menu-trigger');
-
-
 
     // Handle responsive accessibility for mobile menu button
     function handleMobileMenuAccessibility() {

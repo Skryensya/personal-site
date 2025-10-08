@@ -1,5 +1,12 @@
 import { ui, defaultLang, supportedLanguages, type Language, type UIKeys } from './ui';
 
+type UIValue = (typeof ui)[typeof defaultLang][UIKeys];
+
+export function getTranslationValue(lang: Language, key: UIKeys): UIValue {
+    const value = ui[lang]?.[key] ?? ui[defaultLang][key] ?? key;
+    return value as UIValue;
+}
+
 /**
  * Get language from URL pathname
  * @param url - Current URL object
@@ -73,7 +80,11 @@ export function getAlternateUrls(pathname: string) {
  */
 export function getTranslations(lang: Language = defaultLang) {
     return function t(key: UIKeys): string {
-        return ui[lang]?.[key] || ui[defaultLang][key] || key;
+        const value = getTranslationValue(lang, key);
+        if (Array.isArray(value)) {
+            return value.join(' ');
+        }
+        return value as string;
     };
 }
 

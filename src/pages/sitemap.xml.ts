@@ -4,12 +4,6 @@ import { getCollection } from "astro:content";
 type Lang = "es" | "en" | "no";
 
 const LANGS: Lang[] = ["es", "en", "no"];
-const LANG_PREFIX: Record<Lang, string> = {
-  es: "",
-  en: "en/",
-  no: "no/",
-};
-
 const STATIC_PAGES: Record<Lang, string[]> = {
   es: ["", "proyectos/", "curriculum/", "declaracion-de-accesibilidad/", "arbol-de-contenido/"],
   en: ["en/", "en/projects/", "en/resume/", "en/accessibility-statement/", "en/content-tree/"],

@@ -1,36 +1,16 @@
 ---
-import { type CollectionEntry } from 'astro:content';
 import Layout from '@/layouts/Layout.astro';
-import { getSlugFromId } from '@/utils/content-utils';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import { ProyectStack } from '@/components/ProyectStack.tsx';
 
 interface Props {
     lang?: Language;
-    projects: CollectionEntry<'projects'>[];
 }
 
-const {
-    lang = defaultLang,
-    projects
-} = Astro.props;
+const { lang = defaultLang } = Astro.props as Props;
 
 const t = getTranslations(lang);
-
-// Get the correct projects path for each language
-const getProjectsPath = (language: Language) => {
-    switch (language) {
-        case 'en':
-            return '/en/projects';
-        case 'no':
-            return '/no/prosjekter';
-        default:
-            return '/proyectos';
-    }
-};
-
-const projectsPath = getProjectsPath(lang);
 ---
 
 <Layout

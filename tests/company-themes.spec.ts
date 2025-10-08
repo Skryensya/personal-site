@@ -1,5 +1,11 @@
 import { test, expect } from '@playwright/test';
 
+declare global {
+  interface Window {
+    debugThemes?: () => void;
+  }
+}
+
 test.describe('Company Theme System', () => {
   test.beforeEach(async ({ page }) => {
     // Navigate to the homepage

@@ -1,14 +1,12 @@
 ---
 import { getSitemapForLanguage, type SitemapNode } from '@/data/sitemap-data';
 import { defaultLang, type Language } from '@/i18n/ui';
-import { getTranslations } from '@/i18n/utils';
 
 interface Props {
   lang?: Language;
 }
 
 const { lang = defaultLang } = Astro.props;
-const t = getTranslations(lang);
 const sitemapData = getSitemapForLanguage(lang);
 
 // Function to render sitemap nodes recursively

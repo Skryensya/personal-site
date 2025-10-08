@@ -18,7 +18,7 @@ const { class: className = '' } = Astro.props;
     dropdownContents.forEach(content => {
       const items = content.querySelectorAll('button, a');
       
-      items.forEach((item, index) => {
+      items.forEach((item) => {
         // Only enhance items that don't already have proper dropdown styling
         const hasDropdownStyling = item.classList.contains('w-full') && 
                                   item.classList.contains('hover:bg-main') && 
