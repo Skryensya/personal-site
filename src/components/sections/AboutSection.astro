@@ -1,8 +1,7 @@
 ---
-import { getTranslations } from '@/i18n/utils';
+import { getTranslationValue, getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import Button from '../Button.astro';
-import ThemedImage from '../ThemedImage.astro';
 import { MapPin, CheckCircle, ExternalLink } from 'lucide-react';
 
 interface Props {
@@ -34,15 +33,15 @@ const t = getTranslations(lang);
       <!-- Expanded content -->
       <div class="space-y-4 mt-10 text-main !max-w-[850ch]">
         {(() => {
-          const expanded = t('about.expanded');
-          if (Array.isArray(expanded)) {
-            return expanded.map((paragraph: string) => (
-              <p class="text-lg leading-relaxed font-normal">
-                {paragraph}
-              </p>
-            ));
-          }
-          return null;
+          const expandedRaw = getTranslationValue(lang, 'about.expanded');
+          const paragraphs: string[] = Array.isArray(expandedRaw)
+            ? [...expandedRaw]
+            : [String(expandedRaw)];
+          return paragraphs.map((paragraph: string) => (
+            <p class="text-lg leading-relaxed font-normal">
+              {paragraph}
+            </p>
+          ));
         })()}
       </div>
 
@@ -61,8 +60,21 @@ const t = getTranslations(lang);
 
     <!-- Photo and Contact Info -->
     <div class="space-y-6">
-      <figure class="relative aspect-square w-48 lg:w-full overflow-hidden ring-1 ring-main/20 bg-secondary/10" style="view-transition-name: photo-block;">
-        <ThemedImage src="/img/me.png" alt="Allison Peña" class="size-full object-cover" />
+      <figure class="relative aspect-square w-48 lg:w-full overflow-hidden ring-1 ring-main/20 bg-secondary/10 group" style="view-transition-name: photo-block;">
+        <img
+          src="/img/me.png"
+          alt={t('cv.photo.alt.pixelated')}
+          class="absolute inset-0 size-full object-cover transition-opacity duration-300 ease-out group-hover:opacity-0"
+          loading="lazy"
+          decoding="async"
+        />
+        <img
+          src="/img/true_me.png"
+          alt={t('cv.photo.alt.original')}
+          class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
+          loading="lazy"
+          decoding="async"
+        />
       </figure>
 
       <!-- Contact Info -->

@@ -71,7 +71,7 @@ function formatCanonicalURL(url: string | URL) {
     href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
     rel="stylesheet"
     media="print"
-    onload="this.media='all'"
+    onload="this.removeAttribute('media')"
 />
 <noscript>
     <link
@@ -123,7 +123,7 @@ function formatCanonicalURL(url: string | URL) {
 <Fragment set:html={twitterImageAltMeta} />
 
 <!-- Structured Data (JSON-LD) -->
-<script type="application/ld+json">
+<script type="application/ld+json" is:inline>
 {
   "@context": "https://schema.org",
   "@type": "WebSite",

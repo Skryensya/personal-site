@@ -18,8 +18,8 @@ const {
     containerClassName = '',
     contentClassName = '',
     lang = defaultLang,
-    useClerkTOC = false,
-} = Astro.props;
+    useClerkTOC = true,
+} = Astro.props as Props;
 ---
 
 <!-- Scroll Progress (global component) -->
@@ -28,7 +28,11 @@ const {
 <!-- Full height layout with content and sidebar -->
 <div class={`flex ${containerClassName}`} id={`${contentId}-container`}>
     <!-- Main content area -->
-    <main class={`mx-auto min-w-0 w-fit max-w-[850px] ${contentClassName}`} id={contentId}>
+    <main
+        class={`mx-auto min-w-0 w-fit max-w-[850px] ${contentClassName}`}
+        id={contentId}
+        data-heading-slug-root
+    >
         <slot />
     </main>
 
@@ -40,3 +44,9 @@ const {
         useClerkTOC={useClerkTOC}
     />
 </div>
+
+<script is:inline type="module" define:vars={{ contentId }}>
+    import { initializeHeadingSlugs } from '@/utils/heading-slugs.ts';
+
+    initializeHeadingSlugs(contentId);
+</script>

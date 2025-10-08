@@ -3,20 +3,27 @@ import TocClerkAuto from '@/components/TocClerkAuto.tsx';
 import { defaultLang, type Language } from '@/i18n/ui';
 
 interface Props {
-    contentId?: string;
-    className?: string;
-    lang?: Language;
-    useClerkTOC?: boolean; // deprecated
+  contentId?: string;
+  className?: string;
+  lang?: Language;
+  useClerkTOC?: boolean;
 }
 
 const {
-    contentId = 'main-content',
-    className = '',
-    lang = defaultLang,
-    useClerkTOC = false,
-} = Astro.props;
+  contentId = 'main-content',
+  className = '',
+  lang = defaultLang,
+  useClerkTOC = true
+} = Astro.props as Props;
 ---
 
-<aside class={`sticky top-20 w-[250px] min-w-[250px] max-h-[90dvh] flex-shrink-0 hidden lg:block overflow-y-auto py-8 px-4 ${className}`} id="content-sidebar">
+<aside
+  class={`sticky top-20 w-[250px] min-w-[250px] max-h-[90dvh] flex-shrink-0 hidden lg:block overflow-y-auto py-8 px-4 ${className}`}
+  id="content-sidebar"
+  data-lang={lang}
+  data-use-clerk={useClerkTOC}
+>
+  {useClerkTOC ? (
     <TocClerkAuto client:idle contentId={contentId} />
+  ) : null}
 </aside>

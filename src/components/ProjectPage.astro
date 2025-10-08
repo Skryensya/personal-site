@@ -1,8 +1,6 @@
 ---
 import { type CollectionEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';   
-import ThemedImage from './ThemedImage.astro';
-import Button from './Button.astro';
 import ContentPage from './ContentPage.astro';
 
 interface Props {
@@ -11,7 +9,7 @@ interface Props {
     currentLocale: "es" | "en" | "no";
 }
 
-const { projectsByLang, slug, currentLocale } = Astro.props;
+const { projectsByLang, currentLocale } = Astro.props as Props;
 
 // Get the project for the current language, fallback to Spanish if not available
 const project = projectsByLang[currentLocale] || projectsByLang['es'] || Object.values(projectsByLang)[0];

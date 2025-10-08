@@ -2,7 +2,6 @@
 import Layout from '@/layouts/Layout.astro';
 import ContentPage from '@/components/ContentPage.astro';
 import AccessibilityStatement from '@/components/pages/AccessibilityStatement.astro';
-import TocClerkAuto from '@/components/TocClerkAuto';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 
@@ -10,7 +9,7 @@ interface Props {
   lang?: Language;
 }
 
-const { lang = defaultLang } = Astro.props;
+const { lang = defaultLang } = Astro.props as Props;
 const t = getTranslations(lang);
 ---
 
@@ -19,13 +18,7 @@ const t = getTranslations(lang);
   description={t('accessibility.description')}
   lang={lang}
 >
-  <div class="flex">
-    <main id="main-content" class="flex-1 mx-auto min-w-0 w-fit max-w-[850px] px-4 py-8">
-      <AccessibilityStatement lang={lang} />
-    </main>
-    
-    <aside class="sticky top-24 hidden lg:block w-64 h-fit px-4 py-8">
-      <TocClerkAuto contentId="main-content" client:load />
-    </aside>
-  </div>
+  <ContentPage contentId="main-content" lang={lang}>
+    <AccessibilityStatement lang={lang} />
+  </ContentPage>
 </Layout>

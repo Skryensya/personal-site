@@ -81,12 +81,6 @@ const getVisibilityState = () => {
     }
 };
 
-// Get active company theme (only one at a time)
-function getActiveCompanyTheme() {
-    if (typeof window === 'undefined') return null;
-    return getVisibilityState().activeCompany;
-}
-
 // Deactivate current company theme (for internal use)
 export function deactivateCompanyTheme() {
     const previousTheme = getVisibilityState().activeCompany;
@@ -128,32 +122,6 @@ export function getDebugVisibilityState() {
         return state;
     }
     return null;
-}
-
-// Get special themes visibility status
-function areSpecialThemesVisible() {
-    if (typeof window === 'undefined') return false;
-    return getVisibilityState().specialVisible;
-}
-
-// Check if a theme is unlocked/visible
-function isThemeUnlocked(themeId) {
-    const visibility = getVisibilityState();
-    
-    // Default themes are always unlocked
-    if (themesData.default.find(t => t.id === themeId)) return true;
-
-    // Check company themes (only the active one is visible)
-    if (themesData.company.find(t => t.id === themeId)) {
-        return visibility.activeCompany === themeId;
-    }
-
-    // Check special themes (visible when konami code is active)
-    if (themesData.special.find(t => t.id === themeId)) {
-        return visibility.specialVisible;
-    }
-
-    return false;
 }
 
 // Activate a company theme (session only, mutually exclusive, auto-applies)
@@ -311,26 +279,99 @@ export function toggleAllHiddenThemes() {
 
     // Get current state and log it
     const currentState = getVisibilityState();
+    const activeCompany = currentState.activeCompany;
     debugLogger.group('🔄 toggleAllHiddenThemes');
     debugLogger.log('Current visibility state:', currentState);
     debugLogger.log('specialVisible:', currentState.specialVisible);
-    debugLogger.log('localStorage value:', localStorage.getItem('special-themes-visible'));
+
+    let storageValue = null;
+    try {
+        storageValue = localStorage.getItem('special-themes-visible');
+    } catch (error) {
+        debugLogger.warn('Unable to read special-themes-visible from localStorage:', error);
+    }
+    debugLogger.log('localStorage value:', storageValue);
 
     // Toggle visibility based on current state from localStorage
     if (currentState.specialVisible) {
         // Hide special themes
         debugLogger.log('➡️ Currently visible, will LOCK (hide)');
         lockSpecialThemes();
-        debugLogger.log('✅ Locked, new value:', localStorage.getItem('special-themes-visible'));
+
+        let companyCleared = false;
+        let fallbackThemeId = null;
+
+        if (activeCompany) {
+            debugLogger.log('🏢 Active company theme detected, deactivating:', activeCompany);
+            deactivateCompanyTheme();
+            companyCleared = true;
+
+            if (typeof window !== 'undefined') {
+                const defaultTheme = getDefaultTheme();
+                if (defaultTheme) {
+                    let savedMode = 'system';
+                    try {
+                        savedMode = localStorage.getItem('theme-mode') || 'system';
+                    } catch (error) {
+                        debugLogger.warn('Unable to read theme-mode from localStorage:', error);
+                    }
+
+                    let isDark = false;
+                    try {
+                        if (savedMode === 'system') {
+                            isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                        } else {
+                            isDark = savedMode === 'dark';
+                        }
+                    } catch (error) {
+                        debugLogger.warn('Unable to determine preferred color scheme during company theme reset:', error);
+                    }
+
+                    applyTheme(defaultTheme.id, isDark);
+                    fallbackThemeId = defaultTheme.id;
+
+                    try {
+                        localStorage.setItem('theme-id', defaultTheme.id);
+                    } catch (error) {
+                        debugLogger.warn('Failed to persist default theme after locking special themes:', error);
+                    }
+
+                    window.__THEME_ID__ = defaultTheme.id;
+                    const resolvedMode = savedMode === 'system' ? (isDark ? 'dark' : 'light') : savedMode;
+                    window.__THEME_MODE__ = resolvedMode;
+                    window.__THEME_READY__ = true;
+
+                    const themeChangedEvent = new CustomEvent('theme-changed', {
+                        detail: { themeId: defaultTheme.id, category: 'default', reason: 'konami-lock' }
+                    });
+                    window.dispatchEvent(themeChangedEvent);
+                }
+            }
+        }
+
+        try {
+            storageValue = localStorage.getItem('special-themes-visible');
+        } catch (error) {
+            debugLogger.warn('Unable to read updated special-themes-visible value:', error);
+        }
+
+        debugLogger.log('✅ Locked, new value:', storageValue);
         debugLogger.groupEnd();
-        return { action: 'locked', themes: specialThemeIds };
+        return { action: 'locked', themes: specialThemeIds, companyCleared, fallbackThemeId, previouslyActiveCompany: activeCompany };
     } else {
         // Show special themes
         debugLogger.log('➡️ Currently hidden, will UNLOCK (show)');
         unlockSpecialThemes();
-        debugLogger.log('✅ Unlocked, new value:', localStorage.getItem('special-themes-visible'));
+
+        try {
+            storageValue = localStorage.getItem('special-themes-visible');
+        } catch (error) {
+            debugLogger.warn('Unable to read updated special-themes-visible value:', error);
+        }
+
+        debugLogger.log('✅ Unlocked, new value:', storageValue);
         debugLogger.groupEnd();
-        return { action: 'unlocked', themes: specialThemeIds };
+        return { action: 'unlocked', themes: specialThemeIds, companyCleared: false, fallbackThemeId: null, previouslyActiveCompany: activeCompany };
     }
 }
 

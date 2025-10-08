@@ -102,6 +102,7 @@ export const ui = {
         'theme.toast.unlocked': '¡Has desbloqueado {count} temas adicionales!',
         'theme.toast.locked': 'Has ocultado los temas adicionales',
         'theme.toast.company': 'Hola equipo de {company}. He activado su tema para que se sientan como en casa.',
+        'theme.toast.companyHidden': 'También oculté el tema de empresa hasta que lo vuelvas a activar.',
         
         // Theme names (forced Spanish for all languages)
         'theme.gameboy': 'GAME BOY',
@@ -157,7 +158,9 @@ export const ui = {
         'cv.fullName': 'ALLISON JOSUÉ PEÑA BARRIOS',
         'cv.jobTitle': 'Desarrollador Full-Stack',
         'cv.email.value': 'Allison.jpb+cv@gmail.com',
-        'cv.phone.value': '+56 9 9812 0052',
+        'cv.phone.masked': '+56 9 9812 XXXX',
+        'cv.photo.alt.pixelated': 'Versión pixelada del retrato de Allison, donde los rasgos están intencionalmente difuminados para proteger la identidad.',
+        'cv.photo.alt.original': 'Retrato de Allison, usando audífonos grandes y gafas redondas, sonriendo levemente frente a un fondo blanco.',
         'cv.location.value': 'Santiago, Chile',
         'cv.linkedin.value': '/in/skryensya',
         'cv.website.title': 'Sitio Web',
@@ -500,6 +503,7 @@ export const ui = {
         'theme.toast.unlocked': 'You\'ve unlocked {count} additional themes!',
         'theme.toast.locked': 'You\'ve locked the additional themes until next time!',
         'theme.toast.company': 'Hello {company} team! I\'ve activated your theme to make you feel right at home.',
+        'theme.toast.companyHidden': 'I also hid the company theme until you activate it again.',
         
         // Theme names (forced Spanish for all languages)
         'theme.gameboy': 'GAME BOY',
@@ -555,7 +559,9 @@ export const ui = {
         'cv.fullName': 'Allison Josué Peña Barrios',
         'cv.jobTitle': 'Full-stack developer',
         'cv.email.value': 'Allison.jpb+cv@gmail.com',
-        'cv.phone.value': '+56 9 9812 0052',
+        'cv.phone.masked': '+56 9 9812 XXXX',
+        'cv.photo.alt.pixelated': 'Pixelated portrait of Allison, where the features are intentionally blurred to protect her identity.',
+        'cv.photo.alt.original': 'Portrait of Allison, wearing large headphones and round glasses, smiling gently against a white background.',
         'cv.location.value': 'Santiago, Chile',
         'cv.linkedin.value': '/in/skryensya',
         'cv.website.title': 'Website',
@@ -898,6 +904,7 @@ export const ui = {
         'theme.toast.unlocked': 'Du har låst opp {count} ekstra temaer!',
         'theme.toast.locked': 'Du har låst de ekstra temaene til neste gang!',
         'theme.toast.company': 'Hei {company}-teamet! Jeg har aktivert temaet deres for at dere skal føle dere hjemme.',
+        'theme.toast.companyHidden': 'Jeg skjulte også firmatemaet til du aktiverer det på nytt.',
         
         // Theme names (forced Spanish for all languages)
         'theme.gameboy': 'GAME BOY',
@@ -953,7 +960,9 @@ export const ui = {
         'cv.fullName': 'Allison Josué Peña Barrios',
         'cv.jobTitle': 'Full-stack utvikler',
         'cv.email.value': 'Allison.jpb+cv@gmail.com',
-        'cv.phone.value': '+56 9 9812 0052',
+        'cv.phone.masked': '+56 9 9812 XXXX',
+        'cv.photo.alt.pixelated': 'Pixelert portrett av Allison der ansiktstrekkene er bevisst uskarpe for å beskytte identiteten.',
+        'cv.photo.alt.original': 'Portrett av Allison, med store hodetelefoner og runde briller, som smiler svakt foran en hvit bakgrunn.',
         'cv.location.value': 'Santiago, Chile',
         'cv.linkedin.value': '/in/skryensya',
         'cv.website.title': 'Nettsted',

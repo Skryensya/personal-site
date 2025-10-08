@@ -197,9 +197,6 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
             </div>
 
             <script>
-                // These labels are injected from the server-side for use in the script
-                const colorfulLabel = "{t('designSystem.colors.themes.colorful')}";
-                const contrastyLabel = "{t('designSystem.colors.themes.contrasty')}";
                 document.addEventListener('astro:page-load', () => {
                     function getMode() {
                         const savedMode = localStorage.getItem('theme-mode') || 'system';

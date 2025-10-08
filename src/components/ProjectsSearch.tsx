@@ -22,7 +22,6 @@ type SearchFilters = {
 
 type ProjectsSearchProps = {
   readonly projects: readonly ProjectData[];
-  readonly language: string;
   readonly onFilteredProjectsChange: (projects: readonly ProjectData[]) => void;
 };
 
@@ -47,7 +46,11 @@ const filterProjectsByTags = (projects: readonly ProjectData[], selectedTags: re
   );
 };
 
-const sortProjects = (projects: readonly ProjectData[], sortBy: string, sortOrder: string): readonly ProjectData[] => {
+const sortProjects = (
+  projects: readonly ProjectData[],
+  sortBy: SearchFilters['sortBy'],
+  sortOrder: SearchFilters['sortOrder']
+): readonly ProjectData[] => {
   return [...projects].sort((a, b) => {
     let comparison = 0;
     
@@ -176,9 +179,9 @@ const TagFilter: React.FC<{
 });
 
 const SortControls: React.FC<{
-  readonly sortBy: string;
-  readonly sortOrder: string;
-  readonly onSortChange: (sortBy: string, sortOrder: string) => void;
+  readonly sortBy: SearchFilters['sortBy'];
+  readonly sortOrder: SearchFilters['sortOrder'];
+  readonly onSortChange: (sortBy: SearchFilters['sortBy'], sortOrder: SearchFilters['sortOrder']) => void;
 }> = React.memo(({ sortBy, sortOrder, onSortChange }) => (
   <div className="flex items-center gap-2">
     <span className="font-mono text-sm text-main opacity-70 whitespace-nowrap">
@@ -201,7 +204,7 @@ const SortControls: React.FC<{
   </div>
 ));
 
-export default function ProjectsSearch({ projects, language, onFilteredProjectsChange }: ProjectsSearchProps) {
+export default function ProjectsSearch({ projects, onFilteredProjectsChange }: ProjectsSearchProps) {
   const [filters, setFilters] = useState<SearchFilters>({
     query: '',
     selectedTags: [],
@@ -244,7 +247,7 @@ export default function ProjectsSearch({ projects, language, onFilteredProjectsC
     updateFilters({ selectedTags: newSelectedTags });
   }, [filters.selectedTags, updateFilters]);
   
-  const handleSortChange = useCallback((sortBy: string, sortOrder: string) => {
+  const handleSortChange = useCallback((sortBy: SearchFilters['sortBy'], sortOrder: SearchFilters['sortOrder']) => {
     updateFilters({ sortBy, sortOrder });
   }, [updateFilters]);
   

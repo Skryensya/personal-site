@@ -2,10 +2,7 @@
 import Layout from '@/layouts/Layout.astro';
 import SitemapTree from '@/components/SitemapTree.astro';
 import Sidebar from '@/components/Sidebar.astro';
-import { getTranslations } from '@/i18n/utils';
-
 const lang = 'no';
-const t = getTranslations(lang);
 ---
 
 <Layout
@@ -43,9 +40,6 @@ const t = getTranslations(lang);
       </div>
     </main>
 
-    <Sidebar
-      contentId="main-content"
-      lang={lang}
-    />
+    <Sidebar contentId="main-content" />
   </div>
 </Layout>

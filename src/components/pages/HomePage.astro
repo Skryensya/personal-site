@@ -5,15 +5,13 @@ import Hero from '@/components/sections/Hero.astro';
 import AboutSection from '@/components/sections/AboutSection.astro';
 import ProjectsSection from '@/components/sections/ProjectsSection.astro';
 import TechLogos from '@/components/TechLogos.astro'; 
-import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 
 interface Props {
     lang?: Language;
 }
 
-const { lang = defaultLang } = Astro.props;
-const t = getTranslations(lang);
+const { lang = defaultLang } = Astro.props as Props;
 ---
 
 <Layout description={siteConfig.description} image={siteConfig.image} lang={lang}>

@@ -1,7 +1,7 @@
 ---
 import Layout from '@/layouts/Layout.astro';
 import ContentPage from '@/components/ContentPage.astro';
-import AccessibilityStatement from '@/components/pages/AccessibilityStatement.astro';
+import AccessibilityStatementPage from '@/components/pages/AccessibilityStatement.astro';
 import { getTranslations } from '@/i18n/utils';
 
 const lang = 'en';
@@ -14,6 +14,6 @@ const t = getTranslations(lang);
   lang={lang}
 >
   <ContentPage>
-    <AccessibilityStatement lang={lang} />
+    <AccessibilityStatementPage lang={lang} />
   </ContentPage>
 </Layout>

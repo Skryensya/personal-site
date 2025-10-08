@@ -139,7 +139,7 @@ const t = getTranslations(currentLocale);
       if (!(window as any).__THEME_READY__) {
         const availableThemes = getAvailableThemes();
         const randomIndex = Math.floor(Math.random() * availableThemes.length);
-        const randomTheme = availableThemes[randomIndex] || themes.find((t) => !t.hidden) || themes[0];
+        const randomTheme = availableThemes[randomIndex] || themes[0];
 
         // Save the random theme immediately
         localStorage.setItem('theme-id', randomTheme.id);
