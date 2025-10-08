@@ -158,7 +158,12 @@ const navigationLinks: NavigationLink[] = [
 </footer>
 
 <script>
-  document.addEventListener('astro:page-load', () => {
+  import { debugLogger } from '@/utils/debug-logger';
+
+  // Function to initialize footer functionality
+  function initFooter() {
+    debugLogger.log('🦶 Footer script initialized');
+
     let footerAnimated = false;
 
     // Contrast ratio calculation functions
@@ -217,12 +222,17 @@ const navigationLinks: NavigationLink[] = [
 
     function calculateAndDisplayFooterContrast(): void {
       const contrastDisplay = document.getElementById('footer-contrast-display');
-      if (!contrastDisplay) return;
+      if (!contrastDisplay) {
+        debugLogger.warn('Footer contrast display element not found');
+        return;
+      }
 
       try {
         const rootStyles = getComputedStyle(document.documentElement);
         const colorMain = rootStyles.getPropertyValue('--color-main').trim();
         const colorSecondary = rootStyles.getPropertyValue('--color-secondary').trim();
+
+        debugLogger.log('Footer contrast calculation:', { colorMain, colorSecondary });
 
         let mainColor = colorMain;
         let secondaryColor = colorSecondary;
@@ -392,9 +402,7 @@ const navigationLinks: NavigationLink[] = [
         }
 
       } catch (error) {
-        import('@/utils/debug-logger').then(({ debugLogger }) => {
-          debugLogger.warn('Failed to calculate contrast ratio:', error);
-        });
+        debugLogger.warn('Failed to calculate contrast ratio:', error);
         contrastDisplay.textContent = '--:--';
       }
     }
@@ -402,17 +410,27 @@ const navigationLinks: NavigationLink[] = [
     // Motion preference management
     function updateMotionPreference(): void {
       const motionStatus = document.getElementById('motion-status');
-      if (!motionStatus) return;
+      if (!motionStatus) {
+        debugLogger.warn('Motion status element not found');
+        return;
+      }
 
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const lang = document.documentElement.getAttribute('lang') || 'es';
-      
+
       // Get translations from the global translations object
       const translations = (window as any).__ASTRO_I18N__;
       let statusText = '';
-      
+
+      debugLogger.log('Motion preference check:', {
+        prefersReducedMotion,
+        lang,
+        translations,
+        hasTranslations: !!translations?.[lang]
+      });
+
       if (translations && translations[lang]) {
-        statusText = prefersReducedMotion ? 
+        statusText = prefersReducedMotion ?
           translations[lang]['footer.motion.activated'] || 'Motion: reduced' :
           translations[lang]['footer.motion.deactivated'] || 'Motion: enabled';
       } else {
@@ -426,6 +444,8 @@ const navigationLinks: NavigationLink[] = [
       }
 
       motionStatus.textContent = statusText;
+
+      debugLogger.log('Motion status updated:', statusText);
     }
 
     // Scramble a single text node (span.scramble-part)
@@ -474,9 +494,11 @@ const navigationLinks: NavigationLink[] = [
       }
     }
 
-    // Initialize footer functionality
-    calculateAndDisplayFooterContrast();
-    updateMotionPreference();
+    // Initialize footer functionality with a small delay to ensure CSS variables are loaded
+    setTimeout(() => {
+      calculateAndDisplayFooterContrast();
+      updateMotionPreference();
+    }, 100);
 
     // Listen for theme changes
     const observer = new MutationObserver((mutations) => {
@@ -494,7 +516,8 @@ const navigationLinks: NavigationLink[] = [
     });
 
     // Listen for motion preference changes
-    window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', updateMotionPreference);
+    const motionMediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    motionMediaQuery.addEventListener('change', updateMotionPreference);
 
     // Intersection Observer: run once when footer enters viewport
     const scrambleObserver = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
@@ -512,7 +535,17 @@ const navigationLinks: NavigationLink[] = [
 
     const footer = document.querySelector('footer');
     if (footer) scrambleObserver.observe(footer);
-  });
+  }
+
+  // Initialize on first load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFooter);
+  } else {
+    initFooter();
+  }
+
+  // Re-initialize on page transitions
+  document.addEventListener('astro:page-load', initFooter);
 </script>
 
 <style>
