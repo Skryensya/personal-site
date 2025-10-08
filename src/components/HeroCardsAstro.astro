@@ -267,20 +267,19 @@ const cardData = [
 
   // Card reveal functionality specifically for HeroCards
   function revealHeroCards() {
-    const { log, warn } = debugLogger;
-    log('🔍 Searching for hero cards...');
+    debugLogger.log('🔍 Searching for hero cards...');
     const heroCards = document.querySelectorAll('.card-swap-card[data-card-index]');
-    log('📋 Found hero cards:', heroCards.length, heroCards);
+    debugLogger.log('📋 Found hero cards:', heroCards.length, heroCards);
 
     if (heroCards.length === 0) {
-      warn('⚠️ No hero cards found with data-card-index attribute');
+      debugLogger.warn('⚠️ No hero cards found with data-card-index attribute');
       return;
     }
 
     setTimeout(() => {
-      log('✨ Adding card-revealed class to cards...');
+      debugLogger.log('✨ Adding card-revealed class to cards...');
       heroCards.forEach((card, index) => {
-        log(`🎯 Revealing card ${index}:`, card);
+        debugLogger.log(`🎯 Revealing card ${index}:`, card);
         card.classList.add('card-revealed');
       });
     }, 100);
