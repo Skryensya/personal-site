@@ -64,6 +64,15 @@
                 "colorful": "#FFFBF5",
                 "contrasty": "#E5350A"
             }
+        },
+        {
+            "id": "lokal",
+            "name": "Lokal",
+            "description": "Green local charm",
+            "colors": {
+                "colorful": "#BCC9C5",
+                "contrasty": "#013D34"
+            }
         }
     ],
     "special": [
