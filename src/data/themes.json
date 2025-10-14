@@ -73,6 +73,15 @@
                 "colorful": "#BCC9C5",
                 "contrasty": "#013D34"
             }
+        },
+        {
+            "id": "indies",
+            "name": "Indies",
+            "description": "Independent and cool",
+            "colors": {
+                "colorful": "#E26812",
+                "contrasty": "#000000"
+            }
         }
     ],
     "special": [
