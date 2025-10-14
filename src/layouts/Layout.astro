@@ -41,8 +41,7 @@ const defaultTheme = themes[0];
 const defaultColorful = defaultTheme.colorful;
 const defaultContrasty = defaultTheme.contrasty;
 const defaultThemeId = defaultTheme.id;
-
-const turnstileSiteKey = import.meta.env.PUBLIC_TURNSTILE_SITE_KEY?.trim();
+ 
 
 // Get translations for theme toasts
 const t = getTranslations(lang);
@@ -339,11 +338,6 @@ declare global {
             }
 
         </style>
-        <script
-            src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-            async
-            defer
-        ></script>
     </head>
     <body class="relative bg-main" id="app-body">
         <div class="text-main bg-secondary">
@@ -366,161 +360,7 @@ declare global {
            </div>
 
 
-        {turnstileSiteKey && (
-            <div
-                id="turnstile-proxy-widget"
-                class="cf-turnstile"
-                data-sitekey={turnstileSiteKey}
-                data-size="invisible"
-                hidden
-            ></div>
-        )}
-        {turnstileSiteKey && (
-            <script type="module" define:vars={{ turnstileSiteKey }}>
-                const siteKey = turnstileSiteKey;
-                const endpoint = '/api/worker';
-                const state = window.__workerVisitState || (window.__workerVisitState = {
-                    visitorId: crypto.randomUUID(),
-                    widgetId: null,
-                    sessionClosed: false,
-                    eventsBound: false,
-                });
-                const log = (...args) => {
-                    if (window.debugLogger?.log) {
-                        window.debugLogger.log(...args);
-                    }
-                };
-                const warn = (...args) => {
-                    if (window.debugLogger?.warn) {
-                        window.debugLogger.warn(...args);
-                    } else {
-                        console.warn(...args);
-                    }
-                };
-                const waitForTurnstile = () => new Promise((resolve, reject) => {
-                    const started = Date.now();
-                    const check = () => {
-                        const instance = window.turnstile;
-                        if (instance?.ready) {
-                            instance.ready(() => resolve(window.turnstile));
-                            return;
-                        }
-                        if (instance) {
-                            resolve(instance);
-                            return;
-                        }
-                        if (Date.now() - started > 10000) {
-                            reject(new Error('Turnstile no cargó a tiempo'));
-                            return;
-                        }
-                        setTimeout(check, 200);
-                    };
-                    check();
-                });
-                const detectOS = () => {
-                    const ua = navigator.userAgent || '';
-                    if (/windows/i.test(ua)) return 'Windows';
-                    if (/mac os/i.test(ua)) return 'macOS';
-                    if (/android/i.test(ua)) return 'Android';
-                    if (/iphone|ipad|ipod/i.test(ua)) return 'iOS';
-                    if (/linux/i.test(ua)) return 'Linux';
-                    return 'Unknown';
-                };
-                const buildPayload = (eventType) => {
-                    const theme = document.documentElement.getAttribute('data-theme') ?? document.documentElement.dataset.theme ?? 'default';
-                    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    const duration = Math.round(performance.now() / 1000);
-                    const resolution = `${window.screen.width}x${window.screen.height}`;
-                    return {
-                        sessionEvent: eventType,
-                        visitorId: state.visitorId,
-                        sessionDuration: duration,
-                        theme,
-                        os: detectOS(),
-                        resolution,
-                        colorSchema: prefersDark ? 'dark' : 'light',
-                        language: navigator.language,
-                        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                        url: window.location.href,
-                        referrer: document.referrer,
-                        timestamp: new Date().toISOString(),
-                    };
-                };
-                const ensureWidget = async () => {
-                    const turnstile = await waitForTurnstile();
-                    if (!state.widgetId) {
-                        let container = document.getElementById('turnstile-proxy-widget');
-                        if (!container) {
-                            container = document.createElement('div');
-                            container.id = 'turnstile-proxy-widget';
-                            container.style.display = 'none';
-                            document.body.appendChild(container);
-                        }
-                        state.widgetId = turnstile.render(container, {
-                            sitekey: siteKey,
-                            size: 'invisible',
-                            action: 'session_event',
-                        });
-                    }
-                    return turnstile;
-                };
-                const sendEvent = async (eventType, options = {}) => {
-                    try {
-                        const turnstile = await ensureWidget();
-                        const token = await turnstile.execute(state.widgetId, { action: eventType });
-                        log('🛰️ Turnstile token', token.slice(0, 8) + '…');
-                        const payload = buildPayload(eventType);
-                        log('🛰️ Payload', payload);
-                        const response = await fetch(endpoint, {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'CF-Turnstile-Token': token,
-                            },
-                            body: JSON.stringify(payload),
-                            cache: 'no-store',
-                            credentials: 'omit',
-                            keepalive: options.keepalive === true,
-                        });
-                        log('🛰️ Worker respuesta', { status: response.status, ok: response.ok });
-                        if (!response.ok) {
-                            const errorText = await response.clone().text();
-                            warn('🛰️ Worker error', response.status, errorText);
-                        }
-                    } catch (error) {
-                        warn('🛰️ Error enviando evento', eventType, error);
-                    }
-                };
-                const closeSession = () => {
-                    if (state.sessionClosed) {
-                        return;
-                    }
-                    state.sessionClosed = true;
-                    sendEvent('session_end', { keepalive: true });
-                };
-                const bootstrap = () => {
-                    state.sessionClosed = false;
-                    sendEvent('session_start');
-                    if (!state.eventsBound) {
-                        const handleVisibility = () => {
-                            if (document.visibilityState === 'hidden') {
-                                closeSession();
-                            }
-                        };
-                        document.addEventListener('visibilitychange', handleVisibility);
-                        ['pagehide', 'beforeunload', 'freeze', 'unload'].forEach((eventName) => {
-                            window.addEventListener(eventName, closeSession);
-                        });
-                        state.eventsBound = true;
-                    }
-                };
-                if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', bootstrap, { once: true });
-                } else {
-                    bootstrap();
-                }
-            </script>
-        )}
+ 
         <!-- Lazy loading script to change body background from secondary to main after everything loads -->
         <script is:inline>
             // Function to apply main background color to body

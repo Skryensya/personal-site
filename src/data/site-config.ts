@@ -44,7 +44,7 @@ export type SiteConfig = {
 const siteConfig: SiteConfig = {
     title: 'Allison Peña',
     subtitle: 'Full-stack web developer',
-    description: 'Astro.js and Tailwind CSS theme for blog and portfolio by justgoodui.com',
+    description: '',
     image: {
         src: '/dante-preview.jpg',
         alt: 'Dante - Astro.js and Tailwind CSS theme'
