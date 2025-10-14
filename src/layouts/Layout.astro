@@ -379,10 +379,11 @@ declare global {
             <script type="module" define:vars={{ turnstileSiteKey }}>
                 const siteKey = turnstileSiteKey;
                 const endpoint = '/api/worker';
-                const state = (window.__workerVisitState = window.__workerVisitState ?? {
+                const state = window.__workerVisitState || (window.__workerVisitState = {
                     visitorId: crypto.randomUUID(),
                     widgetId: null,
                     sessionClosed: false,
+                    eventsBound: false,
                 });
                 const log = (...args) => {
                     if (window.debugLogger?.log) {
@@ -397,24 +398,24 @@ declare global {
                     }
                 };
                 const waitForTurnstile = () => new Promise((resolve, reject) => {
-                    if (window.turnstile) {
-                        resolve(window.turnstile);
-                        return;
-                    }
                     const started = Date.now();
-                    const poll = () => {
-                        if (window.turnstile) {
-                            log('🛰️ Turnstile listo en', Date.now() - started, 'ms');
-                            resolve(window.turnstile);
+                    const check = () => {
+                        const instance = window.turnstile;
+                        if (instance?.ready) {
+                            instance.ready(() => resolve(window.turnstile));
+                            return;
+                        }
+                        if (instance) {
+                            resolve(instance);
                             return;
                         }
                         if (Date.now() - started > 10000) {
                             reject(new Error('Turnstile no cargó a tiempo'));
                             return;
                         }
-                        setTimeout(poll, 200);
+                        setTimeout(check, 200);
                     };
-                    poll();
+                    check();
                 });
                 const detectOS = () => {
                     const ua = navigator.userAgent || '';
@@ -426,10 +427,10 @@ declare global {
                     return 'Unknown';
                 };
                 const buildPayload = (eventType) => {
-                    const theme = document.documentElement.getAttribute('data-theme') ?? 'light';
+                    const theme = document.documentElement.getAttribute('data-theme') ?? document.documentElement.dataset.theme ?? 'default';
                     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
                     const duration = Math.round(performance.now() / 1000);
-                    const resolution = window.screen.width + 'x' + window.screen.height;
+                    const resolution = `${window.screen.width}x${window.screen.height}`;
                     return {
                         sessionEvent: eventType,
                         visitorId: state.visitorId,
@@ -498,18 +499,25 @@ declare global {
                     sendEvent('session_end', { keepalive: true });
                 };
                 const bootstrap = () => {
+                    state.sessionClosed = false;
                     sendEvent('session_start');
-                    document.addEventListener('visibilitychange', () => {
-                        if (document.visibilityState === 'hidden') {
-                            closeSession();
-                        }
-                    });
-                    window.addEventListener('pagehide', closeSession, { once: true });
+                    if (!state.eventsBound) {
+                        const handleVisibility = () => {
+                            if (document.visibilityState === 'hidden') {
+                                closeSession();
+                            }
+                        };
+                        document.addEventListener('visibilitychange', handleVisibility);
+                        ['pagehide', 'beforeunload', 'freeze', 'unload'].forEach((eventName) => {
+                            window.addEventListener(eventName, closeSession);
+                        });
+                        state.eventsBound = true;
+                    }
                 };
-                if (document.readyState === 'complete') {
-                    bootstrap();
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', bootstrap, { once: true });
                 } else {
-                    window.addEventListener('load', bootstrap, { once: true });
+                    bootstrap();
                 }
             </script>
         )}
