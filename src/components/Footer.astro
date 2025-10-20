@@ -15,11 +15,22 @@ interface NavigationLink {
   href: string;
   textKey: string;
   text: string;
+  isExternal?: boolean;
 }
 
 const { lang = defaultLang } = Astro.props;
 const t = getTranslations(lang);
 const currentYear = new Date().getFullYear();
+
+// Get CV page path based on language (redirects to PDF)
+const getCVPath = (locale: Language) => {
+  // Spanish goes to curriculum page (redirects to PDF)
+  if (locale === 'es') return '/curriculum';
+  // English goes to resume page (redirects to PDF)
+  if (locale === 'en') return '/en/resume';
+  // Norwegian goes to cv page (redirects to PDF)
+  return '/no/cv';
+};
 
 // Navigation links configuration
 const navigationLinks: NavigationLink[] = [
@@ -34,7 +45,7 @@ const navigationLinks: NavigationLink[] = [
     text: t('footer.projects')
   },
   {
-    href: getLocalizedUrl(lang, 'resume'),
+    href: getCVPath(lang),
     textKey: 'footer.resume',
     text: t('footer.resume')
   },
@@ -44,7 +55,7 @@ const navigationLinks: NavigationLink[] = [
     text: lang === 'es' ? 'Sistema de Diseño' : lang === 'en' ? 'Design System' : 'Designsystem'
   },
   {
-    href: lang === 'es' ? '/arbol-de-contenido/' : lang === 'en' ? '/en/content-tree/' : '/no/innholdstre/',
+    href: lang === 'es' ? '/arbol-de-contenido' : lang === 'en' ? '/en/content-tree' : '/no/innholdstre',
     textKey: '',
     text: lang === 'es' ? 'Árbol de contenido' : lang === 'en' ? 'Content Tree' : 'Innholdstre'
   },
@@ -74,9 +85,15 @@ const navigationLinks: NavigationLink[] = [
                 href={link.href}
                 class="font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-4 py-2.5 md:py-1.5 border-l-2 border-secondary scramble-text flex items-center justify-between group"
                 data-text={link.text}
+                target={link.isExternal ? '_blank' : undefined}
+                rel={link.isExternal ? 'noopener noreferrer' : undefined}
               >
                 <span class="scramble-part">{link.text}</span>
-                <ChevronRight size={14} className="text-secondary group-hover:text-main" client:idle />
+                {link.isExternal ? (
+                  <ExternalLink size={14} className="text-secondary group-hover:text-main" client:idle />
+                ) : (
+                  <ChevronRight size={14} className="text-secondary group-hover:text-main" client:idle />
+                )}
               </a>
             ))}
           </nav>

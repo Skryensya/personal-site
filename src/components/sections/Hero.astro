@@ -12,6 +12,16 @@ import { getLocalizedUrl } from '@/utils/localized-routes';
 interface Props { lang?: Language; }
 const { lang = defaultLang } = Astro.props;
 const t = getTranslations(lang);
+
+// Get CV page path based on language (redirects to PDF)
+const getCVPath = (locale: Language) => {
+  // Spanish goes to curriculum page (redirects to PDF)
+  if (locale === 'es') return '/curriculum';
+  // English goes to resume page (redirects to PDF)
+  if (locale === 'en') return '/en/resume';
+  // Norwegian goes to cv page (redirects to PDF)
+  return '/no/cv';
+};
  
 ---
 
@@ -33,7 +43,7 @@ const t = getTranslations(lang);
           <Button href={getLocalizedUrl(lang, 'projects')}  id="projects-button">
             {t('home.heroProjectsButton')}
           </Button>
-          <Button href={getLocalizedUrl(lang, 'resume')} filled elevated >
+          <Button href={getCVPath(lang)} filled elevated>
             {t('home.cvButton')}
           </Button>
         </div>
