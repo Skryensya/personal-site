@@ -6,14 +6,12 @@ import Button from './Button.astro';
 import { getLangFromUrl } from '@/i18n/utils';
 import { getTranslations } from '@/i18n/utils';
 import { themes } from '../data/themes.js';
-import { getLocalizedUrl, getHomeUrl } from '@/utils/localized-routes';
+import { getHomeUrl } from '@/utils/localized-routes';
 
 const currentLocale = getLangFromUrl(Astro.url);
 const currentPath = Astro.url.pathname;
 const t = getTranslations(currentLocale);
 
-// Check if current page is CV to make header non-sticky
-const isCVPage = currentPath.includes('/cv');
 
 // Check if current page is home page
 // Spanish default: '/' is home
@@ -38,16 +36,26 @@ const themeColors = themes.reduce((acc, theme) => {
 
 const projectsAnchor = currentLocale === 'es' ? 'proyectos' : (currentLocale === 'no' ? 'prosjekter' : 'projects');
 
+// Get CV page path based on language (redirects to PDF)
+const getCVPath = (locale: string) => {
+  // Spanish goes to curriculum page (redirects to PDF)
+  if (locale === 'es') return '/curriculum';
+  // English goes to resume page (redirects to PDF)
+  if (locale === 'en') return '/en/resume';
+  // Norwegian goes to cv page (redirects to PDF)
+  return '/no/cv';
+};
+
 const navItems = [
   { label: 'Allison Peña', href: getHomeUrl(currentLocale) },
   { label: t('nav.projects'), href: `${getHomeUrl(currentLocale)}#${projectsAnchor}` },
-  { label: t('nav.cv'), href: getLocalizedUrl(currentLocale, 'resume') },
+  { label: t('nav.cv'), href: getCVPath(currentLocale) },
 ];
 
 ---
 
 
-<nav class={`${isCVPage ? '!relative' : '!fixed !top-0 !left-0 !right-0'} z-[400] flex justify-center mx-auto max-w-[var(--max-w-size)]`} style="--navbar-height: 96px; view-transition-name: navbar;">
+<nav class="!fixed !top-0 !left-0 !right-0 z-[400] flex justify-center mx-auto max-w-[var(--max-w-size)]" style="--navbar-height: 96px; view-transition-name: navbar;">
   <div class={`max-w-[1280px] w-full px-4 pt-2`}>
     <div class="flex items-start justify-between gap-2 p-2 lg:pl-0 diagonal-stripe overflow-hidden" >
       <!-- Desktop Navigation -->
@@ -60,7 +68,7 @@ const navItems = [
           {t('nav.skipToContentShort')}
         </button>
         {navItems.map((item) => {
-          const isCurrentPage = item.label === 'Allison Peña' ? isHomePage : (currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href + '/')) || (item.href !== '/' && currentPath.startsWith(item.href) && currentPath.length > item.href.length));
+          const isCurrentPage = item.label === 'Allison Peña' ? isHomePage : !item.isExternal && (currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href + '/')) || (item.href !== '/' && currentPath.startsWith(item.href) && currentPath.length > item.href.length));
           return (
             <Button
               href={item.href}
@@ -69,6 +77,8 @@ const navItems = [
               data-nav-link
               aria-current={isCurrentPage ? 'page' : undefined}
               aria-label={item.label}
+              target={item.isExternal ? '_blank' : undefined}
+              rel={item.isExternal ? 'noopener noreferrer' : undefined}
             >
               <span class="font-semibold select-none">{item.label}</span>
             </Button>
@@ -146,7 +156,9 @@ const navItems = [
               href={item.href}  
               class="!w-full !flex !items-center !justify-center font-grotesk text-sm uppercase select-none"
               data-nav-link
-              aria-current={currentPath.startsWith(item.href) ? 'page' : undefined}
+              aria-current={!item.isExternal && currentPath.startsWith(item.href) ? 'page' : undefined}
+              target={item.isExternal ? '_blank' : undefined}
+              rel={item.isExternal ? 'noopener noreferrer' : undefined}
             >
               {item.label}
             </Button>
