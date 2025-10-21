@@ -29,7 +29,7 @@ export const es = {
         'home.seeMore': 'VER MÁS SOBRE MÍ →',
         'home.heroProjectsButton': 'Explorar mis proyectos',
         'home.aboutButton': 'Conoce más sobre mí',
-        'home.cvButton': 'Descargar currículum',
+        'home.cvButton': 'Ver currículum',
 
         // Stats
         'home.stats.experience': 'Experiencia',
@@ -65,13 +65,12 @@ export const es = {
         'about.title': 'Sobre mí',
         'about.tldr': 'Diseño interfaces que funcionan bien y se sienten bien. Creo en la claridad sobre la complejidad, en los detalles que marcan diferencia, y en que la accesibilidad no es opcional. Este sitio está diseñado para mostrar cómo pienso y trabajo—explora con calma, hay sorpresas escondidas.',
         'about.expanded': [
-            'Durante los últimos tres años he trabajado en proyectos a gran escala como el <a href="/projects/kit-digital-uc">Kit Digital UC</a>, el sistema de diseño que usan más de 100 sitios de la Universidad Católica. Ese trabajo me enseñó que el mejor código es el que desaparece: interfaces que simplemente funcionan, componentes que se entienden de inmediato, y sistemas que escalan sin volverse caóticos.',
-            'Este sitio es un meta proyecto: cada sección muestra algo sobre cómo trabajo. El sistema de diseño brutalista no es solo estética—es restricción intencional que fuerza consistencia y claridad. Los cambios de tema instantáneos no son por performance—son para que la interfaz responda sin distracciones. Las navegaciones con teclado, los contrastes verificados, la semántica cuidada: todo es parte de un compromiso genuino con la accesibilidad, no una checklist para cumplir estándares.',
-            'Me importan los detalles que la mayoría no nota: la jerarquía de headings, los estados de foco, el spacing consistente, los mensajes de error útiles. También me importan las pequeñas alegrías: temas ocultos, interacciones que sorprenden, y easter eggs para quienes prestan atención (si conoces cierto código clásico de videojuegos, tal vez encuentres algo especial). Fuera del código, colaboro con <a href="https://indies.cl" target="_blank" rel="noopener noreferrer">indies.cl</a>, aprendo noruego, juego ajedrez y escucho música que me ayuda a pensar.'
+            'Durante los últimos tres años he trabajado en una consultora, desarrollando proyectos a gran escala como el <a href="/projects/kit-digital-uc">Kit Digital UC</a>, el sistema de diseño que usan más de 100 sitios de la Universidad Católica. Ese trabajo fortaleció mis habilidades frontend y mi visión de producto. Ahora busco mayor responsabilidad: no solo programar, sino tener voz en las decisiones y formar parte de un equipo que construya con propósito.',
+            'Me interesa crear productos bien pensados, donde la claridad, la accesibilidad y la comunicación abierta sean prioridad. Sigo de cerca el movimiento local-first y el crecimiento de la web como plataforma para experiencias rápidas, resistentes y centradas en el usuario. Fuera del trabajo, colaboro con <a href="https://indies.cl" target="_blank" rel="noopener noreferrer">indies.cl</a>, donde soy miembro activo y voluntario en la comunidad. También aprendo noruego, juego ajedrez y exploro música; me gusta conectar con personas curiosas y con ganas de construir.'
         ],
         'about.cta.message': 'Si algo de esto resuena contigo, escríbeme. Me encantaría charlar.',
         'about.cta.button': 'Conversemos',
-        'about.cta.or': 'o manda el correo acá',
+        'about.cta.or': 'o escríbeme a',
         'about.specialties.title': 'ESPECIALIDADES',
         'about.stack.title': 'STACK PRINCIPAL',
         'about.collaboration.title': '¿INTERESADO EN COLABORAR?',
@@ -117,6 +116,9 @@ export const es = {
         // Keyboard shortcuts
         'ui.shortcuts.themePrev': '[ - Tema anterior',
         'ui.shortcuts.themeNext': '] - Tema siguiente',
+        'ui.shortcuts.navigate': 'Navegar',
+        'ui.shortcuts.select': 'Seleccionar',
+        'ui.shortcuts.close': 'Cerrar',
         
         // 404 page
         '404.title': 'Página No Encontrada - Error 404',

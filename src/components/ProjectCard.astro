@@ -26,7 +26,7 @@ const {
 >
     <div class="relative w-full h-full [transform-style:preserve-3d] [transform-origin:right_center] [transform:rotateY(-8deg)_translateZ(15px)_translateY(-5px)]">
         <!-- Arrow icon -->
-        <div class="absolute top-2 right-2 z-40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] flex items-center justify-center" aria-hidden="true">
+        <div class="absolute top-2 right-2 z-40 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] flex items-center justify-center" aria-hidden="true">
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" class="text-main">
                 <path
                     d="M7 17L17 7M17 7H7M17 7V17"
@@ -40,7 +40,7 @@ const {
 
         <a
             href={href}
-            class="relative block w-full h-full cursor-pointer z-10 focus:outline-none focus-within:opacity-100"
+            class="relative block w-full h-full cursor-pointer z-10 outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-main focus-visible:outline-offset-4 focus-within:opacity-100"
             data-project-index={dataIndex}
             aria-label={`Ver detalles del proyecto ${name}`}
         >
@@ -64,7 +64,7 @@ const {
                     class="absolute inset-0.5 top-12 bg-secondary border-2 border-main [clip-path:polygon(0_0,calc(100%_-_51px)_0,100%_51px,100%_100%,0_100%)]"
                 >
                     <!-- Content with CSS exclusions -->
-                    <div class="px-3 py-2 h-full flex flex-col bg-main/[3%] hover:bg-main/[6%] transition-colors duration-300 ease-out">
+                    <div class="px-3 py-2 h-full flex flex-col bg-main/[3%] group-hover:bg-main/10 group-focus-within:bg-main/10 transition-colors duration-300 ease-out">
                         {hook && (
                             <p class="text-lg text-main leading-relaxed line-clamp-10 text-pretty flex-1 mr-0 before:content-[''] before:float-right before:w-[21px] before:h-[21px] before:[shape-outside:polygon(0%_0%,100%_0%,100%_100%)] before:[clip-path:polygon(0%_0%,100%_0%,100%_100%)]">
                                 {hook}
@@ -76,7 +76,7 @@ const {
                             <span class="text-main font-mono text-4xl font-bold" aria-label={`Proyecto número ${dataIndex}`}>
                                 #{String(dataIndex || 0).padStart(2, '0')}
                             </span>
-                            <span class="text-main text-sm opacity-0 group-hover:opacity-100 transition-opacity duration-200" aria-hidden="true">
+                            <span class="text-main text-sm opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200" aria-hidden="true">
                                 Ver más
                             </span>
                         </footer>

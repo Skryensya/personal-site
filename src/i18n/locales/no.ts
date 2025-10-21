@@ -71,7 +71,7 @@ export const no = {
     ],
     'about.cta.message': 'Hvis noe av dette resonerer, ta kontakt — jeg vil gjerne prate.',
     'about.cta.button': 'La oss snakkes',
-    'about.cta.or': 'eller send en e-post her',
+    'about.cta.or': 'eller skriv til meg på',
     'about.specialties.title': 'SPESIALITETER',
     'about.stack.title': 'HOVEDTEKNOLOGIER',
     'about.collaboration.title': 'INTERESSERT I SAMARBEID?',
@@ -117,6 +117,9 @@ export const no = {
     // Keyboard shortcuts
     'ui.shortcuts.themePrev': '[ - Forrige tema',
     'ui.shortcuts.themeNext': '] - Neste tema',
+    'ui.shortcuts.navigate': 'Naviger',
+    'ui.shortcuts.select': 'Velg',
+    'ui.shortcuts.close': 'Lukk',
 
     // 404 page
     '404.title': 'Siden ikke funnet - Feil 404',

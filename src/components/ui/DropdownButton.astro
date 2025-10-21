@@ -1,4 +1,9 @@
 ---
+import { getTranslations } from '@/i18n/utils';
+import { defaultLang, type Language } from '@/i18n/ui';
+import Kbd from '@/components/ui/Kbd.astro';
+import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
+
 export interface Props {
   // Contenido del botón principal (lado izquierdo)
   children?: any;
@@ -15,6 +20,8 @@ export interface Props {
   ariaLabel?: string;
   // ID único para el dropdown
   id?: string;
+  // Language for translations
+  lang?: Language;
 }
 
 const {
@@ -24,8 +31,11 @@ const {
   disabled = false,
   initialSelectedIndex = 0,
   ariaLabel,
-  id = crypto.randomUUID()
+  id = crypto.randomUUID(),
+  lang = defaultLang
 } = Astro.props;
+
+const t = getTranslations(lang);
 
 // Generate unique IDs
 const buttonId = `dropdown-button-${id}`;
@@ -83,6 +93,18 @@ const mainButtonId = `main-button-${id}`;
 >
   <div class="dropdown-content-wrapper" role="none">
     <slot name="dropdown-content" />
+  </div>
+  <div
+    class="dropdown-keyboard-hint border-t-2 border-main px-3 py-2 text-sm bg-secondary text-main font-bold"
+    style="display: none;"
+  >
+    <div class="flex items-center gap-2">
+      <div class="flex gap-1">
+        <Kbd class="aspect-square"><ArrowUp size={12} /></Kbd>
+        <Kbd class="aspect-square"><ArrowDown size={12} /></Kbd>
+      </div>
+      <span>{t('ui.shortcuts.navigate')}</span>
+    </div>
   </div>
 </div>
 
@@ -161,10 +183,12 @@ const mainButtonId = `main-button-${id}`;
       const arrow = container.querySelector('.dropdown-arrow') as HTMLElement;
       
       if (!dropdownButton || !dropdownMenu) return;
-      
+
       let isOpen = false;
       let activeIndex = -1;
+      let isKeyboardNavigation = false;
       const initialSelectedIndex = parseInt(dropdownButton.dataset.initialSelectedIndex || '0');
+      const keyboardHint = dropdownMenu.querySelector('.dropdown-keyboard-hint') as HTMLElement;
       
       // Main button functionality
       if (mainButton) {
@@ -256,14 +280,31 @@ const mainButtonId = `main-button-${id}`;
         const items = getDropdownItems();
         items.forEach((item, i) => {
           const isActive = i === index;
+          const isSelected = item.getAttribute('data-selected') === 'true';
           item.setAttribute('data-active', isActive ? 'true' : 'false');
 
           // Apply visual feedback for keyboard navigation
+          // Always show outline to prevent layout shift
           if (isActive) {
-            item.style.border = '2px solid var(--color-main)';
+            item.style.outline = '2px solid var(--color-main)';
+            item.style.outlineOffset = '-2px';
+            // Only apply semi-transparent background if not selected
+            // Selected items keep their full bg-main from DropdownContent
+            if (!isSelected) {
+              item.style.backgroundColor = 'color-mix(in srgb, var(--color-main) 10%, transparent)';
+              item.style.color = 'var(--color-main)';
+            } else {
+              // Ensure selected items don't get inline background override
+              item.style.backgroundColor = '';
+            }
             item.scrollIntoView({ block: 'nearest', behavior: 'instant' });
           } else {
-            item.style.border = '';
+            item.style.outline = '2px solid var(--color-secondary)';
+            item.style.outlineOffset = '-2px';
+            // Clear inline background and color for non-active items
+            // Let DropdownContent handle selected state styling
+            item.style.backgroundColor = '';
+            item.style.color = '';
           }
         });
       };
@@ -275,12 +316,18 @@ const mainButtonId = `main-button-${id}`;
         dropdownMenu.style.display = 'none';
         dropdownButton.setAttribute('aria-expanded', 'false');
         updateArrow(false);
-        
+
+        // Hide keyboard hint
+        if (keyboardHint) {
+          keyboardHint.style.display = 'none';
+        }
+        isKeyboardNavigation = false;
+
         const interactiveElements = dropdownMenu.querySelectorAll('[role="menuitem"]');
         interactiveElements.forEach(el => {
           (el as HTMLElement).removeAttribute('tabindex');
         });
-        
+
         // Clear global reference if this was the open dropdown
         if (globalOpenDropdown && globalOpenDropdown.container === container) {
           globalOpenDropdown = null;
@@ -291,39 +338,40 @@ const mainButtonId = `main-button-${id}`;
       const openDropdown = () => {
         // Close all other dropdowns first
         closeAllDropdowns();
-        
+
         isOpen = true;
         dropdownMenu.style.display = 'block';
         dropdownButton.setAttribute('aria-expanded', 'true');
         updateArrow(true);
-        
+
         // Set this as the globally open dropdown
         globalOpenDropdown = {
           container: container as HTMLElement,
           trigger: dropdownButton,
           menu: dropdownMenu
         };
-        
+
         // Position the dropdown
         requestAnimationFrame(() => {
           positionDropdown();
-          
-          // Items don't need tabindex - navigation is via keyboard on dropdown container
-          
+
           // Find the actually selected item based on data-selected attribute
           const items = getDropdownItems();
           let selectedIndex = -1;
-          
+
           items.forEach((item, i) => {
+            // Set tabindex to -1 to prevent direct focus
+            item.setAttribute('tabindex', '-1');
+
             if (item.getAttribute('data-selected') === 'true') {
               selectedIndex = i;
             }
           });
-          
+
           // If no selected item found, use initialSelectedIndex or fallback to 0
           activeIndex = selectedIndex >= 0 ? selectedIndex : Math.max(0, initialSelectedIndex || 0);
           updateActiveState(activeIndex);
-          
+
           setTimeout(() => {
             dropdownMenu.focus();
           }, 0);
@@ -337,6 +385,11 @@ const mainButtonId = `main-button-${id}`;
           if (isOpen) {
             closeDropdown();
           } else {
+            // Mark as mouse interaction
+            isKeyboardNavigation = false;
+            if (keyboardHint) {
+              keyboardHint.style.display = 'none';
+            }
             openDropdown();
           }
         }
@@ -351,6 +404,11 @@ const mainButtonId = `main-button-${id}`;
           case 'ArrowUp':
             event.preventDefault();
             if (!isOpen) {
+              // Mark as keyboard interaction
+              isKeyboardNavigation = true;
+              if (keyboardHint) {
+                keyboardHint.style.display = 'block';
+              }
               openDropdown();
             }
             break;
@@ -358,6 +416,11 @@ const mainButtonId = `main-button-${id}`;
           case ' ':
             if (!isOpen) {
               event.preventDefault();
+              // Mark as keyboard interaction
+              isKeyboardNavigation = true;
+              if (keyboardHint) {
+                keyboardHint.style.display = 'block';
+              }
               openDropdown();
             }
             break;
@@ -372,6 +435,26 @@ const mainButtonId = `main-button-${id}`;
       let typeaheadTimeout: number;
       let typeaheadBuffer = '';
 
+      const navigateList = (direction: 'up' | 'down' | 'left' | 'right') => {
+        const items = getDropdownItems();
+
+        switch (direction) {
+          case 'up':
+          case 'left':
+            // Move backward in the list
+            activeIndex = activeIndex > 0 ? activeIndex - 1 : items.length - 1;
+            break;
+
+          case 'down':
+          case 'right':
+            // Move forward in the list
+            activeIndex = activeIndex < items.length - 1 ? activeIndex + 1 : 0;
+            break;
+        }
+
+        updateActiveState(activeIndex);
+      };
+
       // Handle dropdown keyboard navigation
       dropdownMenu.addEventListener('keydown', (event) => {
         if (!isOpen || dropdownButton.hasAttribute('disabled')) return;
@@ -379,18 +462,37 @@ const mainButtonId = `main-button-${id}`;
         const items = getDropdownItems();
 
         switch (event.key) {
+          case 'Tab':
+            // Close dropdown on Shift+Tab (backwards navigation)
+            if (event.shiftKey) {
+              event.preventDefault();
+              closeDropdown();
+              dropdownButton.focus();
+            }
+            break;
+
           case 'ArrowDown':
             event.preventDefault();
             event.stopPropagation();
-            activeIndex = activeIndex < items.length - 1 ? activeIndex + 1 : 0;
-            updateActiveState(activeIndex);
+            navigateList('down');
             break;
 
           case 'ArrowUp':
             event.preventDefault();
             event.stopPropagation();
-            activeIndex = activeIndex > 0 ? activeIndex - 1 : items.length - 1;
-            updateActiveState(activeIndex);
+            navigateList('up');
+            break;
+
+          case 'ArrowLeft':
+            event.preventDefault();
+            event.stopPropagation();
+            navigateList('left');
+            break;
+
+          case 'ArrowRight':
+            event.preventDefault();
+            event.stopPropagation();
+            navigateList('right');
             break;
 
           case 'Home':
@@ -495,9 +597,30 @@ const mainButtonId = `main-button-${id}`;
           positionDropdown();
         }
       };
-      
+
       window.addEventListener('resize', handleReposition);
       window.addEventListener('scroll', handleReposition);
+
+      // Handle focus outside dropdown - close if focus moves outside
+      const handleFocusOut = (event: FocusEvent) => {
+        if (!isOpen) return;
+
+        // Get the element that received focus
+        const focusedElement = event.relatedTarget as HTMLElement;
+
+        // Check if focus moved outside the dropdown system
+        const isInsideContainer = container.contains(focusedElement);
+        const isInsideMenu = dropdownMenu.contains(focusedElement);
+
+        // If focus is outside both container and menu, close dropdown
+        if (!isInsideContainer && !isInsideMenu) {
+          closeDropdown();
+        }
+      };
+
+      // Add focusout listeners to both the menu and container
+      dropdownMenu.addEventListener('focusout', handleFocusOut);
+      container.addEventListener('focusout', handleFocusOut);
     });
   }
 

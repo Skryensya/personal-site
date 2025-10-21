@@ -28,7 +28,7 @@ const nonFeaturedProjects = allProjects
 <section id={lang === 'es' ? 'proyectos' : (lang === 'no' ? 'prosjekter' : 'projects')} class="py-20 bg-secondary">
   <div class="w-full">
     <h2 class="h2 mb-8">{t('home.featuredProjects')}</h2>
-    <ProjectCarousel projectCount={featuredProjects.length} class="overflow-hidden  py-2    lg:px-0">
+    <ProjectCarousel projectCount={featuredProjects.length} class="overflow-hidden py-6 lg:px-0">
       {featuredProjects.map((project, index) => (
         <ProjectCard
           name={project.data.name}

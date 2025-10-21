@@ -70,7 +70,7 @@ export const en = {
         ],
         'about.cta.message': 'If something here resonates, reach out — I\'d love to chat.',
         'about.cta.button': 'Let\'s talk',
-        'about.cta.or': 'or send an email here',
+        'about.cta.or': 'or write to me at',
         'about.specialties.title': 'SPECIALTIES',
         'about.stack.title': 'MAIN STACK',
         'about.collaboration.title': 'INTERESTED IN COLLABORATING?',
@@ -116,6 +116,9 @@ export const en = {
         // Keyboard shortcuts
         'ui.shortcuts.themePrev': '[ - Previous theme',
         'ui.shortcuts.themeNext': '] - Next theme',
+        'ui.shortcuts.navigate': 'Navigate',
+        'ui.shortcuts.select': 'Select',
+        'ui.shortcuts.close': 'Close',
         
         // 404 page
         '404.title': 'Page Not Found - Error 404',
