@@ -373,7 +373,20 @@ const navItems = [
   }
 
   // Mobile menu functionality
-  document.addEventListener('astro:page-load', () => {
+  // Debug helper - only logs when debug mode is enabled
+  const isDebug = () => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('debug') === 'true' || localStorage.getItem('debug') === 'true';
+    }
+    return false;
+  };
+  const log = (...args) => isDebug() && console.log(...args);
+  const warn = (...args) => isDebug() && console.warn(...args);
+
+  function initNavbar() {
+    log('🚀 Initializing Navbar...');
+
     // Setup skip to content buttons
     const skipButtonDesktop = document.getElementById('skip-to-content-desktop');
     const skipButtonMobile = document.getElementById('skip-to-content-mobile');
@@ -427,18 +440,21 @@ const navItems = [
 
     // Create the simplest possible mobile menu toggle
     function setupMobileMenu() {
+      log('🔧 Setting up mobile menu...');
       const button = document.getElementById('mobile-menu-trigger');
       const dropdown = document.getElementById('mobile-dropdown');
       const backdrop = document.getElementById('mobile-backdrop');
       const hamburgerIcon = document.getElementById('hamburger-icon');
       const closeIcon = document.getElementById('close-icon');
-      
+
+      log('📱 Mobile menu elements:', { button, dropdown, backdrop, hamburgerIcon, closeIcon });
 
       if (!button || !dropdown || !backdrop) {
-        console.warn('Mobile menu elements not found!', { button, dropdown, backdrop });
+        warn('⚠️ Mobile menu elements not found!', { button, dropdown, backdrop });
         return;
       }
 
+      log('✅ Mobile menu elements found!');
       let isOpen = false;
       
       // Initialize all interactive elements with tabindex=-1 since dropdown starts closed
@@ -448,6 +464,7 @@ const navItems = [
       });
 
       function closeMenu() {
+        log('🔒 Closing mobile menu...');
         isOpen = false;
         dropdown.style.opacity = '0';
         dropdown.style.pointerEvents = 'none';
@@ -464,19 +481,20 @@ const navItems = [
       }
 
       function openMenu() {
+        log('🔓 Opening mobile menu...');
         isOpen = true;
         dropdown.style.opacity = '1';
         dropdown.style.pointerEvents = 'auto';
         hamburgerIcon?.classList.add('hidden');
         closeIcon?.classList.remove('hidden');
         button.classList.add('menu-open');
-        
+
         // Remove tabindex=-1 from interactive elements when open
         const interactiveElements = dropdown.querySelectorAll('button, a, [tabindex="-1"]');
         interactiveElements.forEach(el => {
           el.removeAttribute('tabindex');
         });
-        
+
       }
 
       function handleToggle(e) {
@@ -853,7 +871,18 @@ const navItems = [
       });
     });
 
-  });
+    log('✅ Navbar initialization complete');
+  }
+
+  // Run on initial load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initNavbar);
+  } else {
+    initNavbar();
+  }
+
+  // Run on Astro page transitions
+  document.addEventListener('astro:page-load', initNavbar);
 </script>
 
 <style>

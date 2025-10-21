@@ -1,5 +1,6 @@
 ---
 import { cn } from '@/lib/utils';
+import { debugLogger } from '@/utils/debug-logger';
 
 export interface Props {
   href?: string;
@@ -112,10 +113,21 @@ const shadowClasses = cn(
 )}
 
 <script>
-  console.log('🚀 Button script loaded');
+  // Debug helper - only logs when debug mode is enabled
+  const isDebug = () => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('debug') === 'true' || localStorage.getItem('debug') === 'true';
+    }
+    return false;
+  };
+  const log = (...args) => isDebug() && console.log(...args);
+  const warn = (...args) => isDebug() && console.warn(...args);
+
+  log('🚀 Button script loaded');
 
   function initializeButtons() {
-    console.log('🔧 Initializing buttons...');
+    log('🔧 Initializing buttons...');
 
     // Create audio element for button click sound
     const clickAudio = new Audio('/buttonPress.wav');
@@ -136,7 +148,7 @@ const shadowClasses = cn(
 
     // Add click sound to all buttons
     const buttons = document.querySelectorAll('.button-with-sound');
-    console.log('🔊 Buttons with sound found:', buttons.length);
+    log('🔊 Buttons with sound found:', buttons.length);
     buttons.forEach(button => {
       button.addEventListener('click', () => {
         playClickSound();
@@ -145,15 +157,15 @@ const shadowClasses = cn(
 
     // Handle outline elevated animation
     const outlineElevatedButtons = document.querySelectorAll('.outline-elevated-button');
-    console.log('🔍 Outline elevated buttons found:', outlineElevatedButtons.length);
+    log('🔍 Outline elevated buttons found:', outlineElevatedButtons.length);
 
     if (outlineElevatedButtons.length === 0) {
-      console.warn('⚠️ No outline elevated buttons found in DOM');
+      warn('⚠️ No outline elevated buttons found in DOM');
     }
 
     outlineElevatedButtons.forEach((buttonWrapper) => {
       const actualButton = buttonWrapper.querySelector('button, a');
-      console.log('🎯 Setting up outline elevated button:', actualButton);
+      log('🎯 Setting up outline elevated button:', actualButton);
     
       
       let showTimeouts: number[] = [];
@@ -402,7 +414,7 @@ const shadowClasses = cn(
 
     // Handle normal elevated button - same as outline elevated
     const normalElevatedButtonWrappers = document.querySelectorAll('.elevated-normal-button-wrapper');
-    console.log('🔍 Normal elevated button wrappers found:', normalElevatedButtonWrappers.length);
+    log('🔍 Normal elevated button wrappers found:', normalElevatedButtonWrappers.length);
 
     normalElevatedButtonWrappers.forEach((buttonWrapper) => {
       const htmlButtonWrapper = buttonWrapper as HTMLElement;
@@ -466,7 +478,7 @@ const shadowClasses = cn(
       }
     });
 
-    console.log('✅ Button initialization complete');
+    log('✅ Button initialization complete');
   }
 
   // Run on initial load
