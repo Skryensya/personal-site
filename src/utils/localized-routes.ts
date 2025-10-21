@@ -247,6 +247,26 @@ export const pagesDictionary = {
     en: '/en/projects/03-barrancas',
     no: '/no/prosjekter/03-barrancas'
   },
+  '/projects/skryensya-dev': {
+    es: '/proyectos/skryensya-dev',
+    en: '/en/projects/skryensya-dev',
+    no: '/no/prosjekter/skryensya-dev'
+  },
+  '/proyectos/skryensya-dev': {
+    es: '/proyectos/skryensya-dev',
+    en: '/en/projects/skryensya-dev',
+    no: '/no/prosjekter/skryensya-dev'
+  },
+  '/en/projects/skryensya-dev': {
+    es: '/proyectos/skryensya-dev',
+    en: '/en/projects/skryensya-dev',
+    no: '/no/prosjekter/skryensya-dev'
+  },
+  '/no/prosjekter/skryensya-dev': {
+    es: '/proyectos/skryensya-dev',
+    en: '/en/projects/skryensya-dev',
+    no: '/no/prosjekter/skryensya-dev'
+  },
   // Content Tree pages
   '/arbol-de-contenido': {
     es: '/arbol-de-contenido',

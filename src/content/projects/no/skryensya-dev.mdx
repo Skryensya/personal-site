@@ -1,0 +1,44 @@
+---
+name: 'Skryensya.dev'
+hook: 'Min personlige nettside: en brutalt designet portefølje med skjulte påskeegg, avansert temasystem og tekniske detaljer som viser presisjon og frontend-ekspertise.'
+cvDescription: 'Personlig portefølje med brutalt designsystem, innebygd tilgjengelighet, interaktive påskeegg og en teknisk arkitektur som fremhever detaljfokuset.'
+publishDate: '2020-01-01'
+isFeatured: false
+---
+
+import Kbd from '@/components/ui/Kbd.astro';
+
+## Utgangspunkt
+
+Jeg ville at porteføljen min skulle fungere som et levende prosjekt, ikke bare en liste over arbeid. Den starter med en selvpålagt begrensning: Hva skjer hvis jeg designer med bare to farger og uten dekorative animasjoner? Resultatet er et nettsted hvor hver blokk må støtte seg på struktur, typografi og innhold for å kommunisere. Begrensningen gjør beslutningene skarpere og lar prosessen min være synlig.
+
+## Brutalistisk designsystem
+
+Designsystemet bak nettstedet er dokumentert på siden [Designsystem](/no/designsystem). Der beskriver jeg reglene som styrer det: en streng tofarget palett, typografiske tettheter som er kalibrert for ulike blokker, og diagonaler som deler seksjoner uten skygger eller gradienter. Hvert mønster bygges som et modulært element med mellomroms-, typografi- og rytmetokens som lever i koden og deles mellom komponenter. Det brutalistiske uttrykket er ikke en effekt; struktur og hierarki kommer direkte fra disse reglene, og enhver side bygget med dem beholder samme visuelle spenning.
+
+## Tilgjengelighet fra start
+
+Tilgjengelighet var på plass fra første stund fordi jeg vil at nettstedet skal fungere for alle, uansett enhet eller preferanser. Jeg passet på kontraster, tastaturnavigasjon og semantikk for skjermlesere, og nettstedet tilpasser seg bevegelses- og fargevalg uten å tvinge noe. Selv uten stilark er innholdet fortsatt tydelig og brukbart. Flere detaljer finnes i [Tilgjengelighetserklæringen](/no/tilgjengelighetserklaering).
+
+## Internasjonalisering
+
+Nettstedet leveres på spansk, engelsk og norsk. Hvert språk har egne ruter, metadata og tilpasset tekst i stedet for direkte oversettelser. Astros arkitektur lar meg servere riktig versjon fra serveren og beholde tilstand mellom språk, så språkbytte ødelegger verken navigasjonen eller temavalget. Målet er at alle som kommer hit skal føle seg hjemme uten å måtte stole på maskinoversettelser.
+
+## Temasystem og påskeegg
+
+Temavelgeren ligger i navigasjonen og styres av to CSS-variabler som veksler mellom lys og mørk. Derfra kan du bla gjennom fem offentlige temaer, og det finnes spesialtemaer også (prøv [Indies.cl-temaet](/no/?theme=indies)). Tastatursnarveier lar deg endre tema umiddelbart uten å bruke mus. Hvis du skriver inn Konami-koden låses seks skjulte temaer opp, konfetti utløses, og valget lagres til neste besøk. Det er et lekent nikk i et ellers stramt nettsted.
+
+I tillegg kan du bruke disse snarveiene:
+
+<div class="space-y-4">
+  <p>
+    <Kbd>Cmd</Kbd> + <Kbd>←</Kbd> for forrige tema
+  </p>
+  <p>
+    <Kbd>Cmd</Kbd> + <Kbd>→</Kbd> for neste tema
+  </p>
+</div>
+
+## Teknisk arkitektur
+
+Nettstedet er bygget med Astro for å levere raske statiske sider, med React-komponenter som hydreres bare når interaksjon faktisk trengs. Tailwind og et lite sett med egne verktøy holder stilene på linje med tokensene i designsystemet. Jeg lagrer temainnstillingen i `localStorage`, bruker `sessionStorage` for spesialtemaer som aktiveres via URL, og sender egendefinerte events slik at komponenter kan reagere uten tett kobling. Arkitekturen er enkel, men under streng kontroll.

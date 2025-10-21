@@ -31,30 +31,31 @@ const t = getTranslations(lang);
  
 
       <!-- Expanded content -->
-      <div class="space-y-4 mt-10 text-main !max-w-[850ch]">
+      <div class="space-y-4 mt-10 text-main !max-w-[850ch] about-content">
         {(() => {
           const expandedRaw = getTranslationValue(lang, 'about.expanded');
           const paragraphs: string[] = Array.isArray(expandedRaw)
             ? [...expandedRaw]
             : [String(expandedRaw)];
           return paragraphs.map((paragraph: string) => (
-            <p class="text-lg leading-relaxed font-normal">
-              {paragraph}
-            </p>
+            <p class="text-lg leading-relaxed font-normal" set:html={paragraph} />
           ));
         })()}
       </div>
 
       <!-- Contact CTA -->
-      <section class="pt-6 mt-6 border-t border-dashed border-main/20">
+      <section class="pt-4">
         <div class=" leading-relaxed text-main !flex items-center gap-4 w-full">
-          <span>  Si algo de esto resuena contigo, </span>
+          <span>{t('about.cta.message')}</span>
           <span>
-            <Button variant="outline" elevated >
+            <Button variant="outline" elevated href="mailto:allison.jpb@gmail.com">
               {t('about.cta.button')}
             </Button>
           </span>
         </div>
+        <p class="text-sm text-main/70 mt-2">
+          ({t('about.cta.or')} <a href="mailto:allison.jpb@gmail.com" class="underline hover:bg-main hover:text-secondary">allison.jpb@gmail.com</a>)
+        </p>
       </section>
     </div>
 
@@ -144,3 +145,15 @@ const t = getTranslations(lang);
   </div>
 
 </section>
+
+<style>
+  .about-content :global(a) {
+    text-decoration: underline;
+    color: var(--color-main);
+  }
+
+  .about-content :global(a:hover) {
+    background-color: var(--color-main);
+    color: var(--color-secondary);
+  }
+</style>

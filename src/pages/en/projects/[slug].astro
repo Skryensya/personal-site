@@ -10,6 +10,16 @@ export async function getStaticPaths() {
         props: {
             projectsByLang: Record<string, CollectionEntry<'projects'>>;
             slug: string;
+            navigation: {
+                previous: {
+                    slug: string;
+                    projectsByLang: Record<string, CollectionEntry<'projects'>>;
+                };
+                next: {
+                    slug: string;
+                    projectsByLang: Record<string, CollectionEntry<'projects'>>;
+                };
+            };
         };
     }> = [];
 
@@ -29,19 +39,48 @@ export async function getStaticPaths() {
         }
     });
 
-    // Generate paths for English projects
-    for (const [slug, projectsByLang] of projectsBySlug) {
-        // Only generate if English version exists
-        if (projectsByLang['en']) {
-            paths.push({
-                params: { slug },
-                props: {
-                    projectsByLang,
-                    slug
-                }
-            });
+    const orderedSlugs = Array.from(projectsBySlug.entries())
+        .sort(([, a], [, b]) => {
+            const refA = a['es'] ?? Object.values(a)[0];
+            const refB = b['es'] ?? Object.values(b)[0];
+            const dateA = new Date(refA?.data.publishDate ?? '1970-01-01').getTime();
+            const dateB = new Date(refB?.data.publishDate ?? '1970-01-01').getTime();
+            return dateB - dateA;
+        })
+        .map(([slug]) => slug);
+
+    const englishSlugs = orderedSlugs.filter((slug) => {
+        const entries = projectsBySlug.get(slug);
+        return entries && entries['en'];
+    });
+
+    englishSlugs.forEach((slug, index) => {
+        const projectsByLang = projectsBySlug.get(slug);
+        if (!projectsByLang) {
+            return;
         }
-    }
+
+        const previousSlug = englishSlugs[(index - 1 + englishSlugs.length) % englishSlugs.length];
+        const nextSlug = englishSlugs[(index + 1) % englishSlugs.length];
+
+        paths.push({
+            params: { slug },
+            props: {
+                projectsByLang,
+                slug,
+                navigation: {
+                    previous: {
+                        slug: previousSlug,
+                        projectsByLang: projectsBySlug.get(previousSlug)!
+                    },
+                    next: {
+                        slug: nextSlug,
+                        projectsByLang: projectsBySlug.get(nextSlug)!
+                    }
+                }
+            }
+        });
+    });
 
     return paths;
 }
@@ -49,13 +88,24 @@ export async function getStaticPaths() {
 type Props = {
     projectsByLang: Record<string, CollectionEntry<'projects'>>;
     slug: string;
+    navigation: {
+        previous: {
+            slug: string;
+            projectsByLang: Record<string, CollectionEntry<'projects'>>;
+        };
+        next: {
+            slug: string;
+            projectsByLang: Record<string, CollectionEntry<'projects'>>;
+        };
+    };
 };
 
-const { projectsByLang, slug } = Astro.props;
+const { projectsByLang, slug, navigation } = Astro.props;
 ---
 
 <ProjectSinglePage
     projectsByLang={projectsByLang}
     slug={slug}
     lang="en"
+    navigation={navigation}
 />

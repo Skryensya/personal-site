@@ -7,13 +7,24 @@ interface Props {
     projectsByLang: Record<string, CollectionEntry<'projects'>>;
     slug: string;
     lang?: Language;
+    navigation: {
+        previous: {
+            slug: string;
+            projectsByLang: Record<string, CollectionEntry<'projects'>>;
+        };
+        next: {
+            slug: string;
+            projectsByLang: Record<string, CollectionEntry<'projects'>>;
+        };
+    };
 }
 
-const { projectsByLang, slug, lang = defaultLang } = Astro.props;
+const { projectsByLang, slug, lang = defaultLang, navigation } = Astro.props as Props;
 ---
 
 <ProjectPage
     projectsByLang={projectsByLang}
     slug={slug}
     currentLocale={lang}
+    navigation={navigation}
 />

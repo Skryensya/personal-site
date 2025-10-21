@@ -2,14 +2,25 @@
 import { type CollectionEntry } from 'astro:content';
 import Layout from '../layouts/Layout.astro';   
 import ContentPage from './ContentPage.astro';
+import { getLocalizedUrl } from '@/utils/localized-routes';
 
 interface Props {
     projectsByLang: Record<string, CollectionEntry<'projects'>>;
     slug: string;
     currentLocale: "es" | "en" | "no";
+    navigation: {
+        previous: {
+            slug: string;
+            projectsByLang: Record<string, CollectionEntry<'projects'>>;
+        };
+        next: {
+            slug: string;
+            projectsByLang: Record<string, CollectionEntry<'projects'>>;
+        };
+    };
 }
 
-const { projectsByLang, currentLocale } = Astro.props as Props;
+const { projectsByLang, currentLocale, navigation } = Astro.props as Props;
 
 // Get the project for the current language, fallback to Spanish if not available
 const project = projectsByLang[currentLocale] || projectsByLang['es'] || Object.values(projectsByLang)[0];
@@ -20,6 +31,41 @@ if (!project) {
 
 const { name, hook, seo, clientLogo } = project.data;
 const { Content } = await project.render();
+
+const getProjectForLocale = (entryMap?: Record<string, CollectionEntry<'projects'>>) => {
+    if (!entryMap) return undefined;
+    return entryMap[currentLocale] || entryMap['es'] || Object.values(entryMap)[0];
+};
+
+const previousProjectEntry = getProjectForLocale(navigation?.previous?.projectsByLang);
+const nextProjectEntry = getProjectForLocale(navigation?.next?.projectsByLang);
+
+const navigationLabels = {
+    es: { previous: 'Proyecto anterior', next: 'Proyecto siguiente' },
+    en: { previous: 'Previous project', next: 'Next project' },
+    no: { previous: 'Forrige prosjekt', next: 'Neste prosjekt' }
+} as const;
+
+const navigationSummaryLabel = {
+    es: 'Seguir leyendo',
+    en: 'Keep reading',
+    no: 'Les videre'
+} as const;
+
+const navigationItems = [
+    {
+        entry: previousProjectEntry,
+        slug: navigation?.previous?.slug,
+        label: navigationLabels[currentLocale].previous,
+        variant: 'previous'
+    },
+    {
+        entry: nextProjectEntry,
+        slug: navigation?.next?.slug,
+        label: navigationLabels[currentLocale].next,
+        variant: 'next'
+    }
+].filter(item => item.entry && item.slug);
 ---
 
 <Layout title={seo?.title ?? name} description={seo?.description ?? hook} image={seo?.image} pageType="article" showHeader={true} lang={currentLocale}>
@@ -27,12 +73,12 @@ const { Content } = await project.render();
         <ContentPage 
             contentId="project-content"
             sidebarClassName="w-48"
-            contentClassName="md:mb-64"
+            contentClassName="md:mb-8"
         >
                 <!-- Content with project header -->
                 <div class="py-8 px-2 lg:px-4 lg:py-4 flex flex-col items-center">
                     <!-- Project Title and Hook - Part of Content -->
-                    <header class="pb-8 border-b border-dotted border-main/30 w-full" style={`max-width: var(--paragraph-max-width); view-transition-name: folder-body-${project.slug}`}>
+                    <header class="pb-8 border-b border-dotted border-main/20 w-full" style={`max-width: var(--paragraph-max-width); view-transition-name: folder-body-${project.slug}`}>
                         <!-- Project Name and Reading Time -->
                         <div class="flex justify-between items-center mb-8">
                             <div class=" font-mono font-medium text-main opacity-60 uppercase tracking-wider" style={`view-transition-name: folder-tab-${project.slug}`}>
@@ -56,6 +102,43 @@ const { Content } = await project.render();
                     <div class="prose w-full [&>p]: [&>p]:lg:text-lg [&>p]:leading-relaxed [&>p]:mb-6 [&>h1]:text-4xl [&>h1]:font-bold [&>h1]:mt-12 [&>h1]:mb-6 [&>h1]:scroll-mt-12 [&>h2]:text-3xl [&>h2]:font-bold [&>h2]:mt-10 [&>h2]:mb-4 [&>h2]:scroll-mt-12 [&>h3]:text-2xl [&>h3]:font-semibold [&>h3]:mt-8 [&>h3]:mb-3 [&>h3]:scroll-mt-12 [&>h4]:text-xl [&>h4]:font-semibold [&>h4]:mt-6 [&>h4]:mb-2 [&>h4]:scroll-mt-12 [&>h5]:scroll-mt-12 [&>h6]:scroll-mt-12" style="max-width: var(--paragraph-max-width)">
                         <Content />
                     </div>
+
+                    {navigationItems.length === 2 && (
+                        <div class="w-full mt-16 border-t border-dotted border-main/30 pt-10" style="max-width: var(--paragraph-max-width)">
+                            <span class="block font-mono text-[11px] uppercase tracking-[0.35em] text-main/70 mb-4">
+                                {navigationSummaryLabel[currentLocale]}
+                            </span>
+                            <nav class="flex flex-col sm:flex-row sm:items-stretch gap-3 sm:gap-4" aria-label="Project pagination">
+                                {navigationItems.map(({ entry, slug, label, variant }) => {
+                                    const isNext = variant === 'next';
+                                    return (
+                                    <a
+                                        href={getLocalizedUrl(currentLocale, 'projects', slug!)}
+                                        class:list={[
+                                            'group flex-1 px-4 py-4 sm:px-5 sm:py-5 no-underline transition-transform duration-150 hover:-translate-y-1 focus-visible:-translate-y-1 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-main border  ',
+                                            isNext ? 'bg-main text-secondary' : 'bg-main/10 text-main'
+                                        ]}
+                                    >
+                                 
+                                        <span class:list={[
+                                            'block text-sm sm:text-base mb-2 text-pretty font-semibold',
+                                            isNext ? 'text-secondary' : 'text-main'
+                                        ]}>
+                                            {entry?.data.name}
+                                        </span>
+                                        {entry?.data.hook && (
+                                            <p class:list={[
+                                                'text-xs sm:text-sm leading-relaxed',
+                                                isNext ? 'text-secondary/80' : 'text-main/70'
+                                            ]}>
+                                                {entry.data.hook}
+                                            </p>
+                                        )}
+                                    </a>
+                                )})}
+                            </nav>
+                        </div>
+                    )}
                 </div>
         </ContentPage>
 
