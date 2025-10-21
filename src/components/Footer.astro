@@ -22,14 +22,12 @@ const { lang = defaultLang } = Astro.props;
 const t = getTranslations(lang);
 const currentYear = new Date().getFullYear();
 
-// Get CV page path based on language (redirects to PDF)
+// Get CV PDF path based on language
 const getCVPath = (locale: Language) => {
-  // Spanish goes to curriculum page (redirects to PDF)
-  if (locale === 'es') return '/curriculum';
-  // English goes to resume page (redirects to PDF)
-  if (locale === 'en') return '/en/resume';
-  // Norwegian goes to cv page (redirects to PDF)
-  return '/no/cv';
+  // Spanish uses curriculum.pdf
+  if (locale === 'es') return '/curriculum.pdf';
+  // English and Norwegian use resume.pdf
+  return '/resume.pdf';
 };
 
 // Navigation links configuration
@@ -47,7 +45,8 @@ const navigationLinks: NavigationLink[] = [
   {
     href: getCVPath(lang),
     textKey: 'footer.resume',
-    text: t('footer.resume')
+    text: t('footer.resume'),
+    isExternal: true
   },
   {
     href: lang === 'es' ? '/sistema-de-diseno' : lang === 'en' ? '/en/design-system' : '/no/designsystem',

@@ -16,12 +16,12 @@ export function getLangFromUrl(url: URL): Language {
     const [, firstSegment] = url.pathname.split('/');
     
     // Check if first segment is a supported language code (en, no)
-    // Spanish (es) has no prefix, so paths like /, /proyectos, /curriculum are Spanish
+    // Spanish (es) has no prefix, so paths like /, /proyectos are Spanish
     if (firstSegment && supportedLanguages.includes(firstSegment as Language) && firstSegment !== 'es') {
         return firstSegment as Language;
     }
     
-    // Default to Spanish for all other paths (/, /proyectos, /curriculum, etc.)
+    // Default to Spanish for all other paths (/, /proyectos, etc.)
     return defaultLang; // 'es'
 }
 

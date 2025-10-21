@@ -36,20 +36,18 @@ const themeColors = themes.reduce((acc, theme) => {
 
 const projectsAnchor = currentLocale === 'es' ? 'proyectos' : (currentLocale === 'no' ? 'prosjekter' : 'projects');
 
-// Get CV page path based on language (redirects to PDF)
+// Get CV PDF path based on language
 const getCVPath = (locale: string) => {
-  // Spanish goes to curriculum page (redirects to PDF)
-  if (locale === 'es') return '/curriculum';
-  // English goes to resume page (redirects to PDF)
-  if (locale === 'en') return '/en/resume';
-  // Norwegian goes to cv page (redirects to PDF)
-  return '/no/cv';
+  // Spanish uses curriculum.pdf
+  if (locale === 'es') return '/curriculum.pdf';
+  // English and Norwegian use resume.pdf
+  return '/resume.pdf';
 };
 
 const navItems = [
   { label: 'Allison Peña', href: getHomeUrl(currentLocale) },
   { label: t('nav.projects'), href: `${getHomeUrl(currentLocale)}#${projectsAnchor}` },
-  { label: t('nav.cv'), href: getCVPath(currentLocale) },
+  { label: t('nav.cv'), href: getCVPath(currentLocale), isExternal: true },
 ];
 
 ---
