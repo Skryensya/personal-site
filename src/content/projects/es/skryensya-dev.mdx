@@ -1,0 +1,44 @@
+---
+name: 'Skryensya.dev'
+hook: 'Mi sitio personal: un portafolio brutalista con easter eggs ocultos, sistema de temas avanzado y detalles técnicos que demuestran atención al detalle y experiencia frontend.'
+cvDescription: 'Portafolio personal con sistema de diseño brutalista, accesibilidad integrada, easter eggs interactivos y arquitectura técnica que demuestra atención al detalle.'
+publishDate: '2020-01-01'
+isFeatured: false
+---
+
+import Kbd from '@/components/ui/Kbd.astro';
+
+## Punto de partida
+
+Quise que mi portafolio funcionara como un proyecto vivo, no solo como un listado de trabajos. Arranca desde una restricción autoimpuesta: ¿qué pasa si diseño con solo dos colores y sin animaciones decorativas? La respuesta es un sitio donde cada bloque depende de la estructura, la tipografía y el contenido para comunicar. Esa limitación me obliga a tomar decisiones más claras y deja a la vista mi proceso.
+
+## Sistema de diseño brutalista
+
+El sistema de diseño que sostiene el sitio está documentado completo en la página del [Sistema de diseño](/sistema-de-diseno). Ahí describo las restricciones que lo gobiernan: una paleta estricta de dos colores, densidades tipográficas calibradas para distintos bloques y diagonales que separan secciones sin apoyarse en sombras ni degradados. Cada patrón se construye como un módulo reutilizable con tokens de espaciado, tipografía y ritmo que viven en el código y se comparten entre componentes. El lenguaje brutalista no es un efecto: la estructura y la jerarquía nacen de esas reglas y cualquier página que arme con ellas mantiene la misma tensión visual.
+
+## Accesibilidad integrada
+
+La accesibilidad estuvo desde el principio porque quiero que el sitio funcione para cualquier persona, sin importar dispositivo o preferencias. Cuidé los contrastes, la navegación por teclado y la semántica para lectores de pantalla, y el sitio se adapta a las preferencias de movimiento y color sin imponer nada. Incluso sin estilos, el contenido se mantiene claro y utilizable. Más detalles están recopilados en la [Declaración de accesibilidad](/accesibilidad).
+
+## Internacionalización
+
+Está disponible en español, inglés y noruego. Cada idioma tiene rutas propias, metadatos ajustados y contenido adaptado en lugar de traducciones literales. La arquitectura de Astro me permite servir la versión correcta desde el servidor y conservar estado entre idiomas, por lo que cambiar la lengua no rompe la navegación ni la selección de tema. Me importa que cualquier persona llegue y se sienta en casa, sin depender de traducciones automáticas.
+
+## Sistema de temas y easter eggs
+
+El selector de temas vive en la navegación y trabaja con dos variables CSS que se invierten entre modo claro y oscuro. Desde ahí se pueden recorrer cinco temas públicos, y también hay temas especiales (prueba el tema de [Indies.cl](/?theme=indies)). Con atajos de teclado podés cambiar de tema al vuelo sin tocar el mouse. Si ingresas el código Konami se desbloquean seis temas especiales, aparece confeti y guardo la preferencia para que reaparezcan en la siguiente visita. Es un guiño lúdico en un sitio que, por lo demás, es bastante austero.
+
+Adicionalmente, cambiar los temas con estos atajos:
+
+<div class="space-y-4">
+  <p>
+    <Kbd>Cmd</Kbd> + <Kbd>←</Kbd> para tema anterior
+  </p>
+  <p>
+    <Kbd>Cmd</Kbd> + <Kbd>→</Kbd> para tema siguiente
+  </p>
+</div>
+
+## Arquitectura técnica
+
+El sitio está construido con Astro para generar páginas estáticas rápidas, con componentes de React hidratados solo cuando hay interacción real. Tailwind y un set reducido de utilidades personalizadas me ayudan a mantener los estilos consistentes con los tokens del sistema de diseño. Persisto la configuración de tema en `localStorage`, uso `sessionStorage` para los temas especiales activados por URL y despacho eventos personalizados para que los componentes escuchen cambios sin acoplarse. Es una arquitectura simple, pero muy controlada.

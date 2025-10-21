@@ -219,3 +219,36 @@ p {
 }
 
 /* Typography utilities moved to typography.css */
+
+/* Keyboard shortcut styling */
+.kbd {
+    background: var(--color-secondary);
+    color: var(--color-main);
+    border: 2px solid var(--color-main);
+    padding: 2px 6px;
+    font-family: monospace;
+    font-weight: bold;
+    font-size: 14px;
+    border-radius: 3px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 2px 2px 0px var(--color-main);
+    white-space: nowrap;
+}
+
+/* Prose content link styling */
+.prose a {
+    color: var(--color-main);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+}
+
+.prose a:hover,
+.prose a:focus {
+    background: var(--color-main);
+    color: var(--color-secondary);
+    text-decoration: none;
+    outline: none;
+}

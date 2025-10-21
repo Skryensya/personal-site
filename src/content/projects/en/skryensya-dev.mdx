@@ -1,0 +1,44 @@
+---
+name: 'Skryensya.dev'
+hook: 'My personal website: a brutally designed portfolio with hidden easter eggs, advanced theme system, and technical details that demonstrate attention to detail and frontend expertise.'
+cvDescription: 'Personal portfolio with a brutalist design system, built-in accessibility, interactive easter eggs, and a technical architecture that highlights attention to detail.'
+publishDate: '2020-01-01'
+isFeatured: false
+---
+
+import Kbd from '@/components/ui/Kbd.astro';
+
+## Starting point
+
+I wanted my portfolio to behave like a living project, not just a list of work. It starts from a self-imposed constraint: what happens if I design with only two colors and no decorative animations? The result is a site where every block relies on structure, typography, and content to communicate. That limitation forces sharper decisions and keeps my process in plain sight.
+
+## Brutalist design system
+
+The design system behind the site is fully documented on the [Design System page](/en/design-system). There I outline the rules that govern it: a strict two-color palette, typographic densities tuned for each block, and diagonals that split sections without relying on shadows or gradients. Each pattern is built as a reusable module with spacing, typography, and rhythm tokens that live in code and are shared across components. The brutalist language isn’t an effect; the structure and hierarchy come straight from those rules, so any page assembled with them maintains the same visual tension.
+
+## Accessibility built in
+
+Accessibility was there from the beginning because I want the site to work for anyone, regardless of device or preferences. I focused on contrast, keyboard navigation, and meaningful semantics for screen readers, and the site adapts to motion and color preferences without forcing anything. Even with styles disabled, the content stays clear and usable. More details live in the [Accessibility Statement](/en/accessibility-statement).
+
+## Internationalization
+
+The site ships in Spanish, English, and Norwegian. Each language has its own routes, tuned metadata, and adapted copy instead of literal translations. Astro’s architecture lets me serve the right version from the server and preserve state between languages, so switching tongues doesn’t break navigation or theme selection. I want anyone landing here to feel at home without depending on automatic translators.
+
+## Theme system and easter eggs
+
+The theme picker sits in the navigation and works with two CSS variables that flip between light and dark. From there you can cycle through five public themes, and there are special themes too (try the [Indies.cl theme](/en/?theme=indies)). Keyboard shortcuts let you change themes on the fly without touching the mouse. Enter the Konami code to unlock six hidden themes, trigger confetti, and store the preference so they return on the next visit. It’s a playful nod inside an otherwise austere site.
+
+Additionally, switch themes with these shortcuts:
+
+<div class="space-y-4">
+  <p>
+    <Kbd>Cmd</Kbd> + <Kbd>←</Kbd> for the previous theme
+  </p>
+  <p>
+    <Kbd>Cmd</Kbd> + <Kbd>→</Kbd> for the next theme
+  </p>
+</div>
+
+## Technical architecture
+
+The site is built with Astro to ship fast static pages, with React components hydrated only when real interaction is needed. Tailwind and a small set of custom utilities keep styles aligned with the design system tokens. I persist the theme configuration in `localStorage`, use `sessionStorage` for the special themes activated via URL, and dispatch custom events so components can react to changes without tight coupling. It’s a simple but carefully controlled architecture.
