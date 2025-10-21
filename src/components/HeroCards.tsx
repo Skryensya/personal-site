@@ -79,13 +79,37 @@ const HeroCards: React.FC<HeroCardsProps> = ({
             title: frontendTitle,
             description: frontendDescription,
             pageContent: (
-                <div className="space-y-2 w-full">
-                    <div className="h-4 bg-main/20 w-3/4"></div>
-                    <div className="h-3 bg-main/10 w-full"></div>
-                    <div className="h-3 bg-main/10 w-5/6"></div>
-                    <div className="flex gap-2 mt-3">
-                        <div className="h-6 w-16 bg-main/30 border border-main/40"></div>
-                        <div className="h-6 w-12 bg-main/20 border border-main/40"></div>
+                <div className="w-full space-y-3">
+                    {/* Terminal/code showcase */}
+                    <div className="bg-main/10 border border-main/30">
+                        <div className="bg-main/20 px-2 py-1 border-b border-main/30">
+                            <div className="flex gap-1">
+                                <div className="w-2 h-2 bg-main/60 border border-main/40"></div>
+                                <div className="w-2 h-2 bg-main/60 border border-main/40"></div>
+                                <div className="w-2 h-2 bg-main/60 border border-main/40"></div>
+                            </div>
+                        </div>
+                        <div className="p-2 text-xs font-mono space-y-1">
+                            <div className="text-main/50">$ npm run lighthouse</div>
+                            <div className="text-main">✓ Accessibility: 100/100</div>
+                            <div className="text-main">✓ Performance: 98/100</div>
+                            <div className="text-main">✓ Best Practices: 100/100</div>
+                        </div>
+                    </div>
+                    
+                    {/* Real project impact */}
+                    <div className="bg-main/5 border border-main/20 p-2">
+                        <div className="text-xs font-mono text-main/60 mb-1">KIT DIGITAL UC</div>
+                        <div className="font-bold text-xs text-main">100+ sitios activos</div>
+                        <div className="text-xs text-main/70">Sistema de diseño en producción</div>
+                    </div>
+                    
+                    {/* Accessibility badge */}
+                    <div className="flex items-center gap-2 bg-main/5 border border-main/20 p-2">
+                        <div className="w-3 h-3 bg-main border border-main flex items-center justify-center">
+                            <div className="w-1 h-1 bg-secondary"></div>
+                        </div>
+                        <div className="text-xs font-mono text-main">WCAG AAA compliant</div>
                     </div>
                 </div>
             )
@@ -94,22 +118,42 @@ const HeroCards: React.FC<HeroCardsProps> = ({
             title: backendTitle,
             description: backendDescription,
             pageContent: (
-                <div className="space-y-3 w-full">
-                    <div className="h-3 bg-main/30 w-2/3"></div>
-                    <div className="space-y-2">
-                        <div className="h-2 bg-main/20 w-full"></div>
-                        <div className="h-2 bg-main/20 w-4/5"></div>
-                        <div className="h-2 bg-main/20 w-3/4"></div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-2 mt-4">
-                        <div className="h-8 bg-main/10 border border-main/30 flex items-center justify-center">
-                            <div className="w-4 h-1 bg-main/40"></div>
+                <div className="w-full space-y-3">
+                    {/* Server monitoring dashboard */}
+                    <div className="bg-main/10 border border-main/30 p-2">
+                        <div className="text-xs font-mono text-main/60 mb-2">PRODUCTION STATUS</div>
+                        <div className="space-y-1">
+                            <div className="flex justify-between text-xs">
+                                <span className="font-mono text-main/70">api.universidad.cl</span>
+                                <span className="font-mono text-main font-bold">ONLINE</span>
+                            </div>
+                            <div className="flex justify-between text-xs">
+                                <span className="font-mono text-main/70">Response time</span>
+                                <span className="font-mono text-main">23ms</span>
+                            </div>
+                            <div className="flex justify-between text-xs">
+                                <span className="font-mono text-main/70">Requests/min</span>
+                                <span className="font-mono text-main">2,847</span>
+                            </div>
                         </div>
-                        <div className="h-8 bg-main/10 border border-main/30 flex items-center justify-center">
-                            <div className="w-4 h-1 bg-main/40"></div>
+                    </div>
+                    
+                    {/* Database optimization */}
+                    <div className="bg-main/5 border border-main/20 p-2">
+                        <div className="text-xs font-mono text-main/60 mb-1">OPTIMIZACIÓN BD</div>
+                        <div className="text-xs text-main/70">Consultas 85% más rápidas</div>
+                        <div className="mt-1 space-y-1">
+                            <div className="h-1 bg-main w-full"></div>
+                            <div className="h-1 bg-main/60 w-3/4"></div>
+                            <div className="h-1 bg-main/30 w-1/2"></div>
                         </div>
                     </div>
-                    <div className="h-1 bg-main/50 w-1/2 mt-3"></div>
+                    
+                    {/* Error monitoring */}
+                    <div className="flex items-center justify-between bg-main/5 border border-main/20 p-2">
+                        <div className="text-xs font-mono text-main">Error rate: 0.02%</div>
+                        <div className="w-2 h-2 bg-main border border-main"></div>
+                    </div>
                 </div>
             )
         },
@@ -117,17 +161,43 @@ const HeroCards: React.FC<HeroCardsProps> = ({
             title: designTitle,
             description: designDescription,
             pageContent: (
-                <div className="space-y-2 w-full">
-                    <div className="grid grid-cols-3 gap-1">
-                        <div className="h-8 bg-main/20 border border-main/30"></div>
-                        <div className="h-8 bg-main/30 border border-main/30"></div>
-                        <div className="h-8 bg-main/20 border border-main/30"></div>
+                <div className="w-full space-y-3">
+                    {/* Design system showcase */}
+                    <div className="bg-main/10 border border-main/30 p-2">
+                        <div className="text-xs font-mono text-main/60 mb-2">DESIGN TOKENS</div>
+                        <div className="grid grid-cols-4 gap-1 mb-2">
+                            <div className="h-4 bg-main border border-main"></div>
+                            <div className="h-4 bg-secondary border border-main"></div>
+                            <div className="h-4 bg-main/50 border border-main"></div>
+                            <div className="h-4 bg-main/20 border border-main"></div>
+                        </div>
+                        <div className="text-xs font-mono text-main/70">Paleta completa: 4 valores</div>
                     </div>
-                    <div className="h-2 bg-main/10 w-full mt-2"></div>
-                    <div className="h-2 bg-main/10 w-4/5"></div>
-                    <div className="flex justify-between mt-3">
-                        <div className="w-8 h-8 bg-main/20 border border-main/30"></div>
-                        <div className="w-8 h-8 bg-main/30 border border-main/30"></div>
+                    
+                    {/* This site as example */}
+                    <div className="bg-main/5 border border-main/20 p-2">
+                        <div className="text-xs font-mono text-main/60 mb-1">ESTE SITIO</div>
+                        <div className="text-xs text-main font-bold">100% brutal design</div>
+                        <div className="text-xs text-main/70">Zero bibliotecas UI externas</div>
+                    </div>
+                    
+                    {/* Constraints as strength */}
+                    <div className="space-y-1">
+                        <div className="text-xs font-mono text-main/60">RESTRICCIONES ACTIVAS:</div>
+                        <div className="space-y-1 text-xs">
+                            <div className="flex items-center gap-2">
+                                <div className="w-1 h-1 bg-main"></div>
+                                <span className="font-mono text-main/70">Solo 2 colores por tema</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-1 h-1 bg-main"></div>
+                                <span className="font-mono text-main/70">Cero border-radius</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <div className="w-1 h-1 bg-main"></div>
+                                <span className="font-mono text-main/70">Cambios instantáneos</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )
@@ -182,12 +252,12 @@ const HeroCards: React.FC<HeroCardsProps> = ({
                     </div>
 
                     {/* Window content */}
-                    <div className="p-4 h-[calc(100%-2rem)] flex flex-col border-t-2 border-main">
-                        <div className="text-center mb-4">
-                            <h3 className="text-sm font-bold mb-2 font-mono uppercase tracking-wide">{card.title}</h3>
-                            <p className="text-xs text-main/70 font-mono leading-relaxed">{card.description}</p>
+                    <div className="p-3 h-[calc(100%-2rem)] flex flex-col border-t-2 border-main">
+                        <div className="mb-3">
+                            <h3 className="text-sm font-bold mb-1 font-mono uppercase tracking-wide">{card.title}</h3>
+                            <p className="text-xs text-main/70 leading-tight">{card.description}</p>
                         </div>
-                        <div className="flex-1 flex items-center justify-center">{card.pageContent}</div>
+                        <div className="flex-1">{card.pageContent}</div>
                     </div>
                 </Card>
             ))}

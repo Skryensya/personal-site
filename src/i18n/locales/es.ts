@@ -48,12 +48,12 @@ export const es = {
         // Hero section
         'hero.heading': 'Hola, soy Allison. Bienvenido a mi sitio',
         'hero.description': 'Construyo experiencias web que priorizan la usabilidad, la accesibilidad y los detalles que importan. Este sitio es en sí mismo un proyecto: cada decisión de diseño y código está pensada para mostrar cómo trabajo.',
-        'hero.cards.frontend.title': 'Interfaces',
-        'hero.cards.frontend.description': 'Código limpio, componentes accesibles, atención al detalle',
-        'hero.cards.backend.title': 'Sistemas',
-        'hero.cards.backend.description': 'Arquitectura sólida, APIs bien diseñadas',
-        'hero.cards.design.title': 'Diseño',
-        'hero.cards.design.description': 'Brutalismo funcional, sistema coherente',
+        'hero.cards.frontend.title': 'Accesibilidad Real',
+        'hero.cards.frontend.description': 'No es una checklist. Kit Digital UC: 100+ sitios, Lighthouse 100/100, usuarios reales que navegan por teclado.',
+        'hero.cards.backend.title': 'Sistemas en Producción',
+        'hero.cards.backend.description': 'APIs universitarias: 2,847 requests/min, 23ms response time, 0.02% error rate. Optimizaciones que importan.',
+        'hero.cards.design.title': 'Brutalismo Funcional',
+        'hero.cards.design.description': 'Este sitio es la prueba: cero bibliotecas UI, restricciones estrictas, máximo impacto visual.',
 
         // About section redesign
         'about.subtitle': 'Desarrollador que cree en el diseño como restricción creativa y en la accesibilidad como compromiso',

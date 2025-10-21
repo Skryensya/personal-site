@@ -8,7 +8,8 @@ import React, {
     type RefObject,
     useEffect,
     useMemo,
-    useRef
+    useRef,
+    useState
 } from 'react';
 import gsap from 'gsap';
 
@@ -105,10 +106,29 @@ const CardSwap: React.FC<CardSwapProps> = ({
     const tlRef = useRef<gsap.core.Timeline | null>(null);
     const intervalRef = useRef<number>();
     const container = useRef<HTMLDivElement>(null);
+    const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
+
+    // Check for prefers-reduced-motion
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+        setPrefersReducedMotion(mediaQuery.matches);
+        
+        const handleChange = (e: MediaQueryListEvent) => {
+            setPrefersReducedMotion(e.matches);
+        };
+        
+        mediaQuery.addEventListener('change', handleChange);
+        return () => mediaQuery.removeEventListener('change', handleChange);
+    }, []);
 
     useEffect(() => {
         const total = refs.length;
-        refs.forEach((r, i) => placeNow(r.current!, makeSlot(i, cardDistance, verticalDistance, total), skewAmount));
+        refs.forEach((r, i) => placeNow(r.current!, makeSlot(i, cardDistance, verticalDistance, total), prefersReducedMotion ? 0 : skewAmount));
+
+        // If reduced motion is preferred, don't start animations
+        if (prefersReducedMotion) {
+            return;
+        }
 
         const swap = () => {
             if (order.current.length < 2) return;
@@ -190,7 +210,7 @@ const CardSwap: React.FC<CardSwapProps> = ({
             };
         }
         return () => clearInterval(intervalRef.current);
-    }, [cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing]);
+    }, [cardDistance, verticalDistance, delay, pauseOnHover, skewAmount, easing, prefersReducedMotion]);
 
     const rendered = childArr.map((child, i) =>
         isValidElement<CardProps>(child)

@@ -48,12 +48,12 @@ export const en = {
         // Hero section
         'hero.heading': "Hello, I'm Allison Welcome to my site",
         'hero.description': 'I love creating websites that work well and are easy to use. I work primarily with React and TypeScript.',
-        'hero.cards.frontend.title': 'Frontend',
-        'hero.cards.frontend.description': 'React, TypeScript, Astro',
-        'hero.cards.backend.title': 'Backend',
-        'hero.cards.backend.description': 'Node.js, Python, APIs',
-        'hero.cards.design.title': 'Design',
-        'hero.cards.design.description': 'UI/UX, Figma, Prototyping',
+        'hero.cards.frontend.title': 'Accessible Interfaces',
+        'hero.cards.frontend.description': 'Components used by thousands daily. Proper semantics, keyboard navigation, verified contrast.',
+        'hero.cards.backend.title': 'Scalable Architecture',
+        'hero.cards.backend.description': 'APIs handling 10,000+ users. Optimized databases, systems that don’t fail.',
+        'hero.cards.design.title': 'Design Systems',
+        'hero.cards.design.description': 'Constraints that create consistency. Like this site: two colors, maximum impact.',
 
         // About section redesign
         'about.subtitle': 'Full-stack developer with experience creating accessible and functional digital products',

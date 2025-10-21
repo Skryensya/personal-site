@@ -48,12 +48,12 @@ export const no = {
     // Hero section
     'hero.heading': 'Hei, jeg er Allison. Velkommen til nettsiden min',
     'hero.description': 'Jeg elsker å lage nettsteder som fungerer godt og er enkle å bruke. Jeg jobber hovedsakelig med React og TypeScript.',
-    'hero.cards.frontend.title': 'Frontend',
-    'hero.cards.frontend.description': 'React, TypeScript, Astro',
-    'hero.cards.backend.title': 'Backend',
-    'hero.cards.backend.description': 'Node.js, Python, APIer',
-    'hero.cards.design.title': 'Design',
-    'hero.cards.design.description': 'UI/UX, Figma, Prototyping',
+    'hero.cards.frontend.title': 'Tilgjengelige Grensesnitt',
+    'hero.cards.frontend.description': 'Komponenter brukt av tusenvis daglig. Korrekt semantikk, tastaturnavigasjon, verifisert kontrast.',
+    'hero.cards.backend.title': 'Skalerbar Arkitektur',
+    'hero.cards.backend.description': 'APIer som håndterer 10 000+ brukere. Optimaliserte databaser, systemer som ikke feiler.',
+    'hero.cards.design.title': 'Designsystemer',
+    'hero.cards.design.description': 'Begrensninger som skaper konsistens. Som dette nettstedet: to farger, maksimal effekt.',
 
     // About section redesign
     'about.subtitle': 'Fullstack-utvikler med erfaring i å lage tilgjengelige og funksjonelle digitale produkter',
