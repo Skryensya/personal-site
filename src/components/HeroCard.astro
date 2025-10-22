@@ -1,0 +1,42 @@
+---
+import WindowCard from './WindowCard.astro';
+import HeroCardContent from './HeroCardContent.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  type: 'vision' | 'detail' | 'simplicity';
+  width?: number;
+  height?: number;
+  forceOS?: 'macos' | 'windows' | null;
+  class?: string;
+}
+
+const {
+  title,
+  description,
+  type,
+  width = 400,
+  height = 342,
+  forceOS = null,
+  class: className = ''
+} = Astro.props;
+---
+
+<WindowCard 
+  width={width} 
+  height={height} 
+  forceOS={forceOS} 
+  class={className}
+>
+  <div class="p-4 h-full flex flex-co bg-red-500">
+    <div class="text-center mb-4">
+      <h3 class="text-sm font-bold mb-2 mt-0 font-mono uppercase tracking-wide">{title}</h3>
+      <p class="text-xs text-main/70 font-mono leading-relaxed">{description}</p>
+    </div>
+    <div class="flex-1 flex items-center justify-center">
+      <HeroCardContent type={type} />
+    </div>
+  </div>
+</WindowCard>
+

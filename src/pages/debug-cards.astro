@@ -1,0 +1,55 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeroCard from '../components/HeroCard.astro';
+---
+
+<Layout 
+    title="Debug Hero Cards" 
+    description="Debug page for hero cards" 
+    showHeader={false}
+>
+    <main class="min-h-screen bg-secondary p-8">
+        <div class="max-w-6xl mx-auto">
+            <h1 class="text-2xl font-bold mb-8 text-center text-main font-mono">
+                Debug Hero Cards - Sin Perspectiva
+            </h1>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-20 items-start justify-items-center">
+                <HeroCard 
+                    title="Accesibilidad Real"
+                    description="No es una checklist. Kit Digital UC: 100+ sitios, Lighthouse 100/100, usuarios reales que navegan por teclado."
+                    type="vision"
+                    width={400}
+                    height={300}
+                />
+                
+                <HeroCard 
+                    title="Sistemas en Producción"
+                    description="APIs universitarias: 2,847 requests/min, 23ms response time, 0.02% error rate. Optimizaciones que importan."
+                    type="detail"
+                    width={400}
+                    height={300}
+                />
+                
+                <HeroCard 
+                    title="Brutalismo Funcional"
+                    description="Este sitio es la prueba: cero bibliotecas UI, restricciones estrictas, máximo impacto visual."
+                    type="simplicity"
+                    width={400}
+                    height={300}
+                />
+            </div>
+
+            <div class="mt-8 p-4 bg-main/10 border border-main/30">
+                <div class="font-bold mb-2 text-main font-mono">Debug Info:</div>
+                <ul class="text-sm space-y-1 text-main/70 font-mono">
+                    <li>• Usando componentes HeroCard individuales</li>
+                    <li>• Card size: 400px × 300px</li>
+                    <li>• Sin perspectiva ni transformaciones</li>
+                    <li>• Layout horizontal en desktop, vertical en móvil</li>
+                    <li>• Mismo contenido que el hero real</li>
+                </ul>
+            </div>
+        </div>
+    </main>
+</Layout>
