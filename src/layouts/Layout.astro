@@ -6,6 +6,7 @@ import Footer from "../components/Footer.astro"
 import WaveDivider from '../components/WaveDivider.astro';
 import NorwegianDisclaimer from '../components/NorwegianDisclaimer.astro';
 import FaviconManager from '../components/FaviconManager.tsx';
+import PostHogAnalytics from '../components/PostHogAnalytics.astro';
 import { type Language } from '../i18n/ui';
 import { getTranslations } from '../i18n/utils';
 import { themes } from '../data/themes.js';
@@ -310,7 +311,10 @@ declare global {
                 }
             });
         </script>
-        
+
+        <!-- PostHog Analytics -->
+        <PostHogAnalytics />
+
         <style is:inline>
             /* View Transitions - instant to prevent flash */
             ::view-transition-old(root),
