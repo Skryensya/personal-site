@@ -40,12 +40,20 @@
 			}),
 			(e.__SV = 1))
 	})(document, window.posthog || [])
+	// Inicializar PostHog con capture_pageview desactivado para control manual
 	posthog.init('phc_9o3UdEXlvVHUFAUF3gvDhyK4qbLs2W1krEJcjVr8b3N', {
 		api_host: '/ph',
 		ui_host: 'https://us.posthog.com',
-		defaults: '2025-05-24',
-		capture_pageview: true,
+		capture_pageview: false,  // Control manual para View Transitions
 		capture_pageleave: true,
 		autocapture: true
+	})
+
+	// Capturar pageview inicial
+	posthog.capture('$pageview')
+
+	// Capturar pageview en cada navegación de View Transitions
+	document.addEventListener('astro:page-load', function() {
+		posthog.capture('$pageview')
 	})
 </script>
