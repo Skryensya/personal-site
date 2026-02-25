@@ -25,7 +25,7 @@ const nonFeaturedProjects = allProjects
   .sort((a, b) => new Date(b.data.publishDate).getTime() - new Date(a.data.publishDate).getTime());
 ---
 
-<section id={lang === 'es' ? 'proyectos' : (lang === 'no' ? 'prosjekter' : 'projects')} class="py-20 bg-secondary">
+<section id={lang === 'es' ? 'proyectos' : (lang === 'no' ? 'prosjekter' : 'projects')} class="pt-10 pb-20 bg-secondary">
   <div class="w-full">
     <h2 class="h2 mb-8">{t('home.featuredProjects')}</h2>
     <ProjectCarousel projectCount={featuredProjects.length} class="overflow-hidden py-6 lg:px-0">

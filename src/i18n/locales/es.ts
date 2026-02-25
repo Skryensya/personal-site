@@ -63,10 +63,10 @@ export const es = {
         'about.keyFeature2': 'Accesibilidad integrada, no añadida después',
         'about.keyFeature3': 'Código que comunica intención',
         'about.title': 'Sobre mí',
-        'about.tldr': 'Diseño interfaces que funcionan bien y se sienten bien. Creo en la claridad sobre la complejidad, en los detalles que marcan diferencia, y en que la accesibilidad no es opcional. Este sitio está diseñado para mostrar cómo pienso y trabajo—explora con calma, hay sorpresas escondidas.',
+        'about.tldr': 'Creo experiencias web claras y accesibles, cuidando los detalles y pensando siempre en quienes las usan.',
         'about.expanded': [
-            'Durante los últimos tres años he trabajado en una consultora, desarrollando proyectos a gran escala como el <a href="/projects/kit-digital-uc">Kit Digital UC</a>, el sistema de diseño que usan más de 100 sitios de la Universidad Católica. Ese trabajo fortaleció mis habilidades frontend y mi visión de producto. Ahora busco mayor responsabilidad: no solo programar, sino tener voz en las decisiones y formar parte de un equipo que construya con propósito.',
-            'Me interesa crear productos bien pensados, donde la claridad, la accesibilidad y la comunicación abierta sean prioridad. Sigo de cerca el movimiento local-first y el crecimiento de la web como plataforma para experiencias rápidas, resistentes y centradas en el usuario. Fuera del trabajo, colaboro con <a href="https://indies.cl" target="_blank" rel="noopener noreferrer">indies.cl</a>, donde soy miembro activo y voluntario en la comunidad. También aprendo noruego, juego ajedrez y exploro música; me gusta conectar con personas curiosas y con ganas de construir.'
+            'Durante los últimos cuatro años he trabajado en consultoría, participando en proyectos de gran escala como el <a href="/projects/kit-digital-uc">Kit Digital UC</a>, sistema de diseño que hoy utilizan más de 100 sitios de la Universidad Católica. Esa experiencia fortaleció mi base frontend y mi forma de pensar producto: decisiones claras, consistencia entre equipos y soluciones que se sostengan en el tiempo.',
+            'Me motiva construir productos bien pensados, donde la accesibilidad, la claridad y la comunicación abierta estén integradas desde el inicio. Fuera del trabajo, dedico gran parte de mi tiempo a aprender noruego, jugar ajedrez, explorar música y crear proyectos personales para satisfacer mi necesidad de construir cosas interesantes. Este sitio es una prueba de ello.'
         ],
         'about.cta.message': 'Si algo de esto resuena contigo, escríbeme. Me encantaría charlar.',
         'about.cta.button': 'Conversemos',

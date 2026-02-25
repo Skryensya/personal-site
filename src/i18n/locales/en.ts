@@ -63,10 +63,10 @@ export const en = {
         'about.keyFeature2': 'Accessible experiences for everyone',
         'about.keyFeature3': 'Optimized performance',
         'about.title': 'About Me',
-        'about.tldr': 'I\'m Allison, a frontend developer focused on detail, usability, and accessibility. I build hand-crafted experiences with TypeScript, React, and Tailwind, and I aim to deliver products that feel polished, usable, and cared for.',
+        'about.tldr': 'I create clear, accessible web experiences, paying attention to details and always thinking about the people who use them.',
         'about.expanded': [
-            'For the past three years I\'ve worked at a consulting company, developing large-scale projects like <a href="/en/projects/kit-digital-uc">Kit Digital UC</a>, the design system used by 100+ sites at Universidad Católica. That work strengthened my frontend skills and product vision. Now I\'m looking for more ownership: not just coding, but having a voice in decisions and being part of a team that builds with purpose.',
-            'I\'m interested in creating well-thought-out products where clarity, accessibility, and open communication are priorities. I closely follow the local-first movement and the growth of the web as a platform for fast, resilient, user-centered experiences. Outside of work, I collaborate with <a href="https://indies.cl" target="_blank" rel="noopener noreferrer">indies.cl</a>, where I\'m an active member and volunteer in the community. I also learn Norwegian, play chess, and explore music; I enjoy connecting with curious people who want to build.'
+            'For the past four years, I\'ve worked in consulting, contributing to large-scale projects like <a href="/en/projects/kit-digital-uc">Kit Digital UC</a>, the design system now used by more than 100 Universidad Católica websites. That experience strengthened my frontend foundation and how I think about product: clear decisions, team-wide consistency, and solutions that hold up over time.',
+            'I\'m motivated by building thoughtful products where accessibility, clarity, and open communication are part of the process from the start. Outside of work, I spend much of my time learning Norwegian, playing chess, exploring music, and creating personal projects to satisfy my need to build interesting things. This site is proof of that.'
         ],
         'about.cta.message': 'If something here resonates, reach out — I\'d love to chat.',
         'about.cta.button': 'Let\'s talk',

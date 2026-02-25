@@ -64,10 +64,10 @@ export const no = {
     'about.keyFeature3': 'Optimalisert ytelse',
     'about.title': 'Om Meg',
     'about.tldr':
-        'Jeg er Allison, en frontend-utvikler fokusert på detaljer, brukervennlighet og tilgjengelighet. Jeg bygger håndlagde opplevelser med TypeScript, React og Tailwind, og sikter på å levere produkter som føles polerte, brukbare og omsorgsfulle.',
+        'Jeg lager tydelige og tilgjengelige nettopplevelser, med oppmerksomhet på detaljer og alltid med menneskene som bruker dem i tankene.',
     'about.expanded': [
-        'De siste tre årene har jeg jobbet i et konsulentselskap og utviklet store prosjekter som <a href="/no/projects/kit-digital-uc">Kit Digital UC</a>, designsystemet som brukes av 100+ nettsteder ved Universidad Católica. Det arbeidet styrket mine frontend-ferdigheter og produktvisjon. Nå søker jeg mer ansvar: ikke bare koding, men å ha en stemme i beslutninger og være del av et team som bygger med formål.',
-        'Jeg er interessert i å lage gjennomtenkte produkter hvor klarhet, tilgjengelighet og åpen kommunikasjon er prioritert. Jeg følger nøye med på local-first-bevegelsen og webbens vekst som plattform for raske, motstandsdyktige, brukerfokuserte opplevelser. Utenom jobb samarbeider jeg med <a href="https://indies.cl" target="_blank" rel="noopener noreferrer">indies.cl</a>, hvor jeg er et aktivt medlem og frivillig i fellesskapet. Jeg lærer også norsk, spiller sjakk og utforsker musikk; jeg liker å knytte kontakt med nysgjerrige mennesker som vil bygge.'
+        'De siste fire årene har jeg jobbet i konsulentbransjen og bidratt i store prosjekter som <a href="/no/prosjekter/kit-digital-uc">Kit Digital UC</a>, designsystemet som nå brukes av mer enn 100 nettsider ved Universidad Católica. Den erfaringen styrket frontend-grunnlaget mitt og måten jeg tenker produkt på: tydelige beslutninger, konsistens på tvers av team og løsninger som holder over tid.',
+        'Jeg motiveres av å bygge gjennomtenkte produkter der tilgjengelighet, klarhet og åpen kommunikasjon er en del av prosessen fra start. Utenom jobb bruker jeg mye tid på å lære norsk, spille sjakk, utforske musikk og lage personlige prosjekter for å tilfredsstille behovet mitt for å skape interessante ting. Dette nettstedet er et godt eksempel på det.'
     ],
     'about.cta.message': 'Hvis noe av dette resonerer, ta kontakt — jeg vil gjerne prate.',
     'about.cta.button': 'La oss snakkes',

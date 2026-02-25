@@ -2,6 +2,7 @@
 import { getTranslationValue, getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import Button from '../Button.astro';
+import CornersWithCrosses from '../CornersWithCrosses.astro';
 import { MapPin, CheckCircle, ExternalLink } from 'lucide-react';
 
 interface Props {
@@ -30,33 +31,34 @@ const t = getTranslations(lang);
       </section>
  
 
-      <!-- Expanded content -->
-      <div class="space-y-4 mt-10 text-main !max-w-[850ch] about-content">
-        {(() => {
-          const expandedRaw = getTranslationValue(lang, 'about.expanded');
-          const paragraphs: string[] = Array.isArray(expandedRaw)
-            ? [...expandedRaw]
-            : [String(expandedRaw)];
-          return paragraphs.map((paragraph: string) => (
-            <p class="text-lg leading-relaxed font-normal" set:html={paragraph} />
-          ));
-        })()}
-      </div>
-
-      <!-- Contact CTA -->
-      <section class="pt-4">
-        <div class=" leading-relaxed text-main !flex items-center gap-4 w-full">
-          <span>{t('about.cta.message')}</span>
-          <span>
-            <Button variant="outline" elevated href="mailto:allison.jpb@gmail.com">
-              {t('about.cta.button')}
-            </Button>
-          </span>
+      <!-- Expanded content + Contact CTA -->
+      <CornersWithCrosses showLeft={true} showBottom={true} showTopRight={true} showBottomRight={false} class="mt-10 text-main w-full p-5 border-t border-l border-main/20 overflow-visible">
+        <div class="about-content space-y-4 max-w-[75ch]">
+          {(() => {
+            const expandedRaw = getTranslationValue(lang, 'about.expanded');
+            const paragraphs: string[] = Array.isArray(expandedRaw)
+              ? [...expandedRaw]
+              : [String(expandedRaw)];
+            return paragraphs.map((paragraph: string) => (
+              <p class="text-lg leading-relaxed font-normal" set:html={paragraph} />
+            ));
+          })()}
         </div>
-        <p class="text-sm text-main/70 mt-2">
-          ({t('about.cta.or')} <a href="mailto:allison.jpb@gmail.com" class="underline hover:bg-main hover:text-secondary">allison.jpb@gmail.com</a>)
-        </p>
-      </section>
+
+        <section>
+          <div class="leading-relaxed text-main !flex items-center gap-4 w-full">
+            <span>{t('about.cta.message')}</span>
+            <span>
+              <Button variant="outline" elevated href="mailto:allison.jpb@gmail.com">
+                {t('about.cta.button')}
+              </Button>
+            </span>
+          </div>
+          <p class="text-sm text-main/70 mt-2">
+            ({t('about.cta.or')} <a href="mailto:allison.jpb@gmail.com" class="underline hover:bg-main hover:text-secondary">allison.jpb@gmail.com</a>)
+          </p>
+        </section>
+      </CornersWithCrosses>
     </div>
 
     <!-- Photo and Contact Info -->
