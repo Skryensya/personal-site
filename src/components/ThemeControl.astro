@@ -133,6 +133,15 @@ const t = getTranslations(currentLocale);
           this.currentTheme = savedTheme;
           return;
         }
+
+        // Saved theme no longer exists: fallback to first available and persist it
+        const availableThemes = getAvailableThemes();
+        const fallbackTheme = availableThemes[0] || themes[0];
+        localStorage.setItem('theme-id', fallbackTheme.id);
+        (window as any).__THEME_ID__ = fallbackTheme.id;
+        (window as any).__THEME_READY__ = true;
+        this.currentTheme = fallbackTheme;
+        return;
       }
       
       // Only set random theme if no theme was previously saved
@@ -272,8 +281,8 @@ const t = getTranslations(currentLocale);
       
       const totalThemes = this.availableThemes.length;
       
-      // Check if only basic themes are available (5 or fewer themes = basic only)
-      const hasOnlyBasicThemes = totalThemes <= 5;
+      // Check if only basic themes are available (6 or fewer themes = basic only)
+      const hasOnlyBasicThemes = totalThemes <= 6;
       
       // Update dropdown width based on current theme count
       this.updateDropdownWidth();

@@ -2,47 +2,56 @@
     "default": [
         {
             "id": "dos",
-            "name": "MS-DOS",
-            "description": "Command line interface",
+            "name": "Obsidian",
+            "description": "Dark terminal base with crisp off-white text",
             "colors": {
-                "colorful": "#e5e5e6",
-                "contrasty": "#000000"
+                "colorful": "#f9fafb",
+                "contrasty": "#111827"
             }
         },
         {
-            "id": "banana",
-            "name": "Banana",
-            "description": "Potassium-powered meme energy",
+            "id": "frost-indigo",
+            "name": "Polar",
+            "description": "Cold indigo depth with near-white contrast",
             "colors": {
-                "colorful": "#D4B340",
-                "contrasty": "#020123"
+                "colorful": "#fafff8",
+                "contrasty": "#03185d"
             }
         },
         {
-            "id": "gameboy",
-            "name": "GameBoy",
-            "description": "Monochrome LCD legend",
+            "id": "sand-ink",
+            "name": "Umber",
+            "description": "Warm paper tones with dark archival ink",
             "colors": {
-                "colorful": "#A4D110",
-                "contrasty": "#044F27"
+                "colorful": "#ddcc9c",
+                "contrasty": "#0b1b1e"
             }
         },
         {
-            "id": "commodore64",
-            "name": "Commodore",
-            "description": "Blue screen computing legend",
+            "id": "amber-moss",
+            "name": "Ember",
+            "description": "Earthy moss shadow with amber highlights",
             "colors": {
-                "colorful": "#BFDDF5",
-                "contrasty": "#0A0A1C"
+                "colorful": "#f7ce59",
+                "contrasty": "#23311b"
             }
         },
         {
-            "id": "kurumi",
-            "name": "Kurumi",
-            "description": "Flow Kuromi",
+            "id": "indigo-lime",
+            "name": "Pulse",
+            "description": "Deep indigo body with lime pulse accents",
             "colors": {
-                "colorful": "#FA7FB5",
-                "contrasty": "#0A0A0A"
+                "colorful": "#e3fcbd",
+                "contrasty": "#1f178a"
+            }
+        },
+        {
+            "id": "blue-lime",
+            "name": "Vector",
+            "description": "Cobalt blue foundation with bright lime contrast",
+            "colors": {
+                "colorful": "#d0ff4b",
+                "contrasty": "#160b84"
             }
         }
     ],
@@ -86,57 +95,96 @@
     ],
     "special": [
         {
-            "id": "matrix",
-            "name": "Matrix",
-            "description": "Digital rain code reality",
+            "id": "oklab-emerald-sun",
+            "name": "Verdant",
+            "description": "Emerald core with high-visibility yellow signal",
             "colors": {
-                "colorful": "#00FF00",
-                "contrasty": "#000000"
+                "colorful": "#fff100",
+                "contrasty": "#00372e",
+                "colorfulOklab": "oklab(95.18% -0.10017 0.37408)",
+                "contrastyOklab": "oklab(22.34% -0.34557 -0.02417)"
             }
         },
         {
-            "id": "vaporwave",
-            "name": "Vaporwave",
-            "description": "Aesthetic retrowave vibes",
+            "id": "p3-plum-cream",
+            "name": "Velvet",
+            "description": "Dark plum backdrop with warm neon cream",
             "colors": {
-                "colorful": "#FF00FF",
-                "contrasty": "#200040"
+                "colorful": "#fbf58c",
+                "contrasty": "#640038",
+                "colorfulP3": "color(display-p3 0.981 0.962 0.604)",
+                "contrastyP3": "color(display-p3 0.357 0.035 0.216)"
             }
         },
         {
-            "id": "cyberpunk",
-            "name": "Cyberpunk",
-            "description": "Neon dystopian future",
+            "id": "lime-forest",
+            "name": "Grove",
+            "description": "Forest green base with acid-lime highlights",
             "colors": {
-                "colorful": "#FFD700",
-                "contrasty": "#1A0033"
+                "colorful": "#eafb66",
+                "contrasty": "#163712"
             }
         },
         {
-            "id": "ocean",
-            "name": "Ocean",
-            "description": "Deep sea tranquility",
+            "id": "p3-ocean-lime",
+            "name": "Tide",
+            "description": "Abyssal blue with bioluminescent lime glow",
             "colors": {
-                "colorful": "#4DD0E1",
-                "contrasty": "#001F3F"
+                "colorful": "#b4fca2",
+                "contrasty": "#022a45",
+                "colorfulP3": "color(display-p3 0.765 0.98 0.67)",
+                "contrastyP3": "color(display-p3 0.058 0.163 0.264)"
+            }
+        },
+        {
+            "id": "p3-mint-night",
+            "name": "Neon",
+            "description": "Noir night palette with electric mint glow",
+            "colors": {
+                "colorful": "#94f9e5",
+                "contrasty": "#0a0422",
+                "colorfulP3": "color(display-p3 0.674 0.966 0.901)",
+                "contrastyP3": "color(display-p3 0.034 0.015 0.127)"
             }
         },
         {
             "id": "sage",
-            "name": "Sage",
-            "description": "Muted green wisdom",
+            "name": "Willow",
+            "description": "Soft sage green with calm, grounded contrast",
             "colors": {
-                "colorful": "#9CAF88",
-                "contrasty": "#1A2E0A"
+                "colorful": "#B6D39A",
+                "contrasty": "#10250A"
             }
         },
         {
             "id": "rose",
-            "name": "Rose",
-            "description": "Elegant dusty pink",
+            "name": "Blush",
+            "description": "Muted rose tones with deep wine contrast",
             "colors": {
-                "colorful": "#E6B3BA",
-                "contrasty": "#2E0A1A"
+                "colorful": "#F0C4CF",
+                "contrasty": "#250612"
+            }
+        },
+        {
+            "id": "oklab-crimson-night",
+            "name": "Inferno",
+            "description": "Deep shadow green with intense crimson highlight",
+            "colors": {
+                "colorful": "#ff0000",
+                "contrasty": "#001300",
+                "colorfulOklab": "oklab(89.821% 0.36116 0.17965)",
+                "contrastyOklab": "oklab(11.545% -0.27731 0.16132)"
+            }
+        },
+        {
+            "id": "oklab-cyan-scarlet",
+            "name": "Prism",
+            "description": "Electric cyan against a scarlet core",
+            "colors": {
+                "colorful": "#00ffff",
+                "contrasty": "#d80000",
+                "colorfulOklab": "oklab(92.272% -0.30473 -0.0268)",
+                "contrastyOklab": "oklab(53.509% 0.12977 0.28553)"
             }
         }
     ]

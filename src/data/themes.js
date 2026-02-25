@@ -447,32 +447,58 @@ export const themes = allThemes.map((theme) => ({
 
 export const themeKeys = themes.map((theme) => theme.id);
 
+// Resolve color with optional wide-gamut variants and hex fallback
+function resolveThemeColor(theme, colorKey) {
+    const fallback = theme?.colors?.[colorKey] || theme[colorKey];
+
+    if (typeof window === 'undefined' || !window.CSS || typeof window.CSS.supports !== 'function') {
+        return fallback;
+    }
+
+    const candidateKeys = [`${colorKey}P3`, `${colorKey}Oklab`];
+
+    for (const key of candidateKeys) {
+        const value = theme?.colors?.[key];
+        if (value && window.CSS.supports('color', value)) {
+            return value;
+        }
+    }
+
+    return fallback;
+}
+
 // Simple theme management with localStorage optimization and View Transitions API
 export function applyTheme(themeId, isDark = false) {
     const root = document.documentElement;
     
-    // Get theme using backwards compatibility getters
-    const theme = themes.find((t) => t.id === themeId) || themes[0];
+    // Get full theme object (with optional P3 values)
+    const rawTheme = allThemes.find((t) => t.id === themeId) || allThemes[0];
+    const resolvedThemeId = rawTheme?.id || themes[0]?.id || 'dos';
+    if (themeId !== resolvedThemeId) {
+        debugLogger.warn(`Theme "${themeId}" not found. Falling back to "${resolvedThemeId}".`);
+    }
+    const resolvedColorful = resolveThemeColor(rawTheme, 'colorful');
+    const resolvedContrasty = resolveThemeColor(rawTheme, 'contrasty');
 
     // Function to actually apply the theme changes
     const updateTheme = () => {
         // Set theme data attribute
-        root.setAttribute('data-theme', themeId);
+        root.setAttribute('data-theme', resolvedThemeId);
 
         // Apply dark class
         root.classList.toggle('dark', isDark);
 
-        // Set CSS custom properties using backwards compatibility getters
-        root.style.setProperty('--theme-colorful', theme.colorful);
-        root.style.setProperty('--theme-contrasty', theme.contrasty);
+        // Set CSS custom properties using resolved values (P3 when supported, hex fallback otherwise)
+        root.style.setProperty('--theme-colorful', resolvedColorful);
+        root.style.setProperty('--theme-contrasty', resolvedContrasty);
         
         // Set the main color variables that the CSS actually uses
-        root.style.setProperty('--color-main', isDark ? theme.colorful : theme.contrasty);
-        root.style.setProperty('--color-secondary', isDark ? theme.contrasty : theme.colorful);
+        root.style.setProperty('--color-main', isDark ? resolvedColorful : resolvedContrasty);
+        root.style.setProperty('--color-secondary', isDark ? resolvedContrasty : resolvedColorful);
 
         // Persist to localStorage with error handling
         try {
-            localStorage.setItem('theme-id', themeId);
+            localStorage.setItem('theme-id', resolvedThemeId);
             localStorage.setItem('theme-mode', isDark ? 'dark' : 'light');
         } catch (e) {
             debugLogger.warn('Failed to save theme to localStorage:', e);
@@ -482,7 +508,7 @@ export function applyTheme(themeId, isDark = false) {
         try {
             const expires = new Date();
             expires.setFullYear(expires.getFullYear() + 1);
-            document.cookie = `theme-id=${themeId}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
+            document.cookie = `theme-id=${resolvedThemeId}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
             document.cookie = `theme-mode=${isDark ? 'dark' : 'light'}; expires=${expires.toUTCString()}; path=/; SameSite=Lax`;
         } catch (e) {
             debugLogger.warn('Failed to save theme to cookie:', e);
@@ -532,7 +558,18 @@ export function loadThemeFromStorage() {
             
             // Validate saved theme exists in available theme list (respects exclusivity)
             const availableThemes = getAvailableThemes();
-            const theme = availableThemes.find((t) => t.id === savedThemeId) ? savedThemeId : availableThemes[0]?.id || 'dos';
+            const fallbackThemeId = availableThemes[0]?.id || 'dos';
+            const hasSavedTheme = availableThemes.some((t) => t.id === savedThemeId);
+            const theme = hasSavedTheme ? savedThemeId : fallbackThemeId;
+
+            if (!hasSavedTheme) {
+                debugLogger.warn(`Saved theme "${savedThemeId}" is no longer available. Falling back to "${theme}".`);
+                try {
+                    localStorage.setItem('theme-id', theme);
+                } catch (error) {
+                    debugLogger.warn('Failed to persist fallback theme-id in localStorage:', error);
+                }
+            }
             
             const isDark = savedMode === 'dark';
             const mode = isDark ? 'dark' : 'light';
