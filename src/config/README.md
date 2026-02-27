@@ -85,7 +85,7 @@ import { THEME_CONFIG, getThemeById } from '@/config/themes';
 const allThemes = THEME_CONFIG;
 
 // Get specific theme
-const dosTheme = getThemeById('dos');
+const dosTheme = getThemeById('obsidian');
 
 // Get themes by criteria
 const highContrastThemes = THEME_CONFIG.filter(t => t.contrastRatio >= 10);

@@ -21,7 +21,7 @@ const t = getTranslations(lang);
     <!-- Content -->
     <div class=" ">
       <!-- TL;DR Block -->
-      <section class="border-2 border-main bg-main p-4 w-full !max-w-[850ch]">
+      <section class="border-2 border-main bg-main p-4 w-full !max-w-[850ch] selection-opposite">
         <h3 class="text-body-mono !my-0 text-secondary">
           TL;DR
         </h3>
@@ -85,14 +85,14 @@ const t = getTranslations(lang);
         <!-- Basic Info -->
         <div class="space-y-3">
           <div class="flex items-start gap-3 text-sm">
-            <MapPin size={16} className="text-main mt-0.5 flex-shrink-0" client:idle />
+            <MapPin size={16} className="text-main mt-0.5 flex-shrink-0" />
             <div class="flex-1">
               <div class="font-mono text-xs text-main/70 uppercase tracking-wide">Ubicación</div>
               <div class="font-medium text-main">Santiago, Chile</div>
             </div>
           </div>
           <div class="flex items-start gap-3 text-sm">
-            <CheckCircle size={16} className="text-main mt-0.5 flex-shrink-0" client:idle />
+            <CheckCircle size={16} className="text-main mt-0.5 flex-shrink-0" />
             <div class="flex-1">
               <div class="font-mono text-xs text-main/70 uppercase tracking-wide">Estado</div>
               <div class="font-medium text-main">Disponible para proyectos</div>
@@ -111,7 +111,7 @@ const t = getTranslations(lang);
               class="group font-mono text-sm text-main hover:bg-main hover:text-secondary px-4 py-2.5 md:py-1.5 border-l-2 border-main flex items-center justify-between"
             >
               <span>Email</span>
-              <ExternalLink size={14} className="text-main group-hover:text-secondary" client:idle />
+              <ExternalLink size={14} className="text-main group-hover:text-secondary" />
             </a>
             <a
               href="https://github.com/Skryensya"
@@ -120,7 +120,7 @@ const t = getTranslations(lang);
               class="group font-mono text-sm text-main hover:bg-main hover:text-secondary px-4 py-2.5 md:py-1.5 border-l-2 border-main flex items-center justify-between"
             >
               <span>GitHub</span>
-              <ExternalLink size={14} className="text-main group-hover:text-secondary" client:idle />
+              <ExternalLink size={14} className="text-main group-hover:text-secondary" />
             </a>
             <a
               href="https://linkedin.com/in/skryensya"
@@ -129,7 +129,7 @@ const t = getTranslations(lang);
               class="group font-mono text-sm text-main hover:bg-main hover:text-secondary px-4 py-2.5 md:py-1.5 border-l-2 border-main flex items-center justify-between"
             >
               <span>LinkedIn</span>
-              <ExternalLink size={14} className="text-main group-hover:text-secondary" client:idle />
+              <ExternalLink size={14} className="text-main group-hover:text-secondary" />
             </a>
             <a
               href="https://lichess.org/@/Skryensya"
@@ -138,7 +138,7 @@ const t = getTranslations(lang);
               class="group font-mono text-sm text-main hover:bg-main hover:text-secondary px-4 py-2.5 md:py-1.5 border-l-2 border-main flex items-center justify-between"
             >
               <span>Lichess</span>
-              <ExternalLink size={14} className="text-main group-hover:text-secondary" client:idle />
+              <ExternalLink size={14} className="text-main group-hover:text-secondary" />
             </a>
           </nav>
         </div>

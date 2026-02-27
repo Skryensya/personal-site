@@ -125,7 +125,7 @@ const modes = [
       
       // Apply theme manually
       import('../data/themes.js').then(({ applyTheme }) => {
-        const savedThemeId = localStorage.getItem('theme-id') || 'gameboy';
+        const savedThemeId = localStorage.getItem('theme-id') || 'obsidian';
         let resolvedMode = nextMode;
         if (nextMode === 'system') {
           resolvedMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';

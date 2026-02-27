@@ -24,7 +24,29 @@
         --lh-normal: 1.5;
     }
 
-    /* Smooth selection color animation - controlled by JavaScript */
+    /* Text selection styles */
+    ::selection {
+        background: var(--color-main);
+        color: var(--color-secondary);
+        text-shadow: none;
+    }
+
+    ::-moz-selection {
+        background: var(--color-main);
+        color: var(--color-secondary);
+        text-shadow: none;
+    }
+
+    /* Variant for inverse color zones (e.g. footer) */
+    .selection-opposite ::selection {
+        background: var(--color-secondary);
+        color: var(--color-main);
+    }
+
+    .selection-opposite ::-moz-selection {
+        background: var(--color-secondary);
+        color: var(--color-main);
+    }
 
     /* Prevent any horizontal overflow */
     *,

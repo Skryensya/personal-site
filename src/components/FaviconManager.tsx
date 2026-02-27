@@ -5,7 +5,7 @@ import { useFavicon } from '@/hooks/useFavicon';
 const DEFAULT_THEMES_WITH_FAVICON = {
   banana: 'favicon-banana',
   gameboy: 'favicon-gameboy',
-  dos: 'favicon-dos',
+  obsidian: 'favicon-dos',
   commodore64: 'favicon-commodore64',
   kurumi: 'favicon-kuromi' // Note: kurumi theme uses kuromi favicon
 } as const;
@@ -58,7 +58,7 @@ export function FaviconManager() {
         }
       }
 
-      const themeId = localStorage.getItem('theme-id') || 'dos';
+      const themeId = localStorage.getItem('theme-id') || 'obsidian';
       const themeMode = localStorage.getItem('theme-mode') || 'system';
 
       let isDark = false;
@@ -73,7 +73,7 @@ export function FaviconManager() {
 
       return { themeId, isDark };
     } catch (error) {
-      return { themeId: 'dos', isDark: false };
+      return { themeId: 'obsidian', isDark: false };
     }
   };
 

@@ -3,9 +3,24 @@ import DropdownButton from './ui/DropdownButton.astro';
 import DropdownContent from './ui/DropdownContent.astro';
 import { getTranslations } from '@/i18n/utils';
 import { getLangFromUrl } from '@/i18n/utils';
+import themesData from '@/data/themes.json';
 
 const currentLocale = getLangFromUrl(Astro.url);
 const t = getTranslations(currentLocale);
+
+const allThemeIds = [
+  ...themesData.default,
+  ...themesData.company,
+  ...themesData.special,
+].map((theme) => theme.id);
+
+const localizedThemeNames = Object.fromEntries(
+  allThemeIds.map((id) => {
+    const key = `theme.${id}` as any;
+    const localized = t(key);
+    return [id, (typeof localized === 'string' && localized !== key) ? localized : id];
+  })
+);
 ---
 
 <DropdownButton
@@ -40,6 +55,10 @@ const t = getTranslations(currentLocale);
   </DropdownContent>
 </DropdownButton>
 
+<script is:inline define:vars={{ localizedThemeNames }}>
+  window.__THEME_NAMES__ = localizedThemeNames;
+</script>
+
 <script>
   import { applyTheme, themes, getAvailableThemes } from '../data/themes.js';
 
@@ -48,6 +67,7 @@ const t = getTranslations(currentLocale);
     interface Window {
       themeControl: any;
       nextTheme: () => void;
+      __THEME_NAMES__?: Record<string, string>;
     }
   }
 
@@ -94,6 +114,7 @@ const t = getTranslations(currentLocale);
   window.themeControl = {
     currentTheme: null,
     availableThemes: [],
+    localizedThemeNames: (window as any).__THEME_NAMES__ || {},
     
     // Initialize theme control
     init() {
@@ -245,7 +266,7 @@ const t = getTranslations(currentLocale);
     updateDisplay() {
       const themeNameDisplay = document.querySelector('.theme-name-display');
       if (themeNameDisplay && this.currentTheme) {
-        themeNameDisplay.textContent = this.currentTheme.name;
+        themeNameDisplay.textContent = this.getThemeLabel(this.currentTheme);
       }
       
       // Update selected states in dropdown
@@ -351,9 +372,16 @@ const t = getTranslations(currentLocale);
       this.addThemeButtonListeners();
     },
     
+    // Resolve localized theme label
+    getThemeLabel(theme: any) {
+      const runtimeNames = (window as any).__THEME_NAMES__ || this.localizedThemeNames;
+      return runtimeNames?.[theme.id] || theme.name;
+    },
+
     // Create theme button HTML
     createThemeButton(theme: any) {
       const isSelected = theme.id === this.currentTheme?.id;
+      const themeLabel = this.getThemeLabel(theme);
       const baseClasses = "w-full px-3 py-1 text-left block cursor-pointer relative focus-visible:z-[9999] ring-inset";
       const stateClasses = isSelected 
         ? "bg-main text-secondary hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary" 
@@ -375,7 +403,7 @@ const t = getTranslations(currentLocale);
               class="w-6 h-6 aspect-square flex-shrink-0 pointer-events-none"
               style="background: linear-gradient(135deg, ${theme.colorful || theme.colors?.colorful || '#FF0000'} 50%, ${theme.contrasty || theme.colors?.contrasty || '#000000'} 50%); border: 2px solid ${theme.colorful || theme.colors?.colorful || '#FF0000'};"
             ></div>
-            <span class="flex-1 px-1 py-1 font-grotesk text-sm font-semibold pointer-events-none select-none uppercase whitespace-nowrap">${theme.name}</span>
+            <span class="flex-1 px-1 py-1 font-grotesk text-sm font-semibold pointer-events-none select-none uppercase whitespace-nowrap">${themeLabel}</span>
             <div class="w-4 h-4 flex items-center justify-center pointer-events-none">
               <svg
                 class="w-4 h-4 pointer-events-none theme-checkmark"

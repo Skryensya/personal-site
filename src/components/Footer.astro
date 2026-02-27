@@ -65,7 +65,7 @@ const navigationLinks: NavigationLink[] = [
 ];
 ---
 
-<footer class="bg-main border-t-double border-t-2 border-secondary">
+<footer id="site-footer" class="bg-main border-t-double border-t-2 border-secondary selection-opposite">
   <WaveDivider inverted />
   <div class="mx-auto max-w-[var(--max-w-size)] px-4 pb-4">
     <!-- Main content flex - Mobile: stacked, Desktop: 83.33% content + 16.67% circle -->
@@ -88,9 +88,9 @@ const navigationLinks: NavigationLink[] = [
               >
                 <span class="scramble-part">{link.text}</span>
                 {link.isExternal ? (
-                  <ExternalLink size={14} className="text-secondary group-hover:text-main" client:idle />
+                  <ExternalLink size={14} className="text-secondary group-hover:text-main" />
                 ) : (
-                  <ChevronRight size={14} className="text-secondary group-hover:text-main" client:idle />
+                  <ChevronRight size={14} className="text-secondary group-hover:text-main" />
                 )}
               </a>
             ))}
@@ -113,7 +113,7 @@ const navigationLinks: NavigationLink[] = [
                 data-has-external="true"
               >
                 <span class="scramble-part">{link.text}</span>
-                <ExternalLink size={14} className="text-secondary group-hover:text-main" client:idle />
+                <ExternalLink size={14} className="text-secondary group-hover:text-main" />
               </a>
             ))}
           </nav>
@@ -136,7 +136,9 @@ const navigationLinks: NavigationLink[] = [
                 <div class="md:hidden absolute right-0 -top-[42px] scale-[1.1] origin-top-right" style="view-transition-name: none;">
                   <CircularTextAstro text="ALLISON PEÑA * SKRYENSYA * " onHover="speedUp" spinDuration={20}/>
                 </div>
-                <div class="font-mono uppercase tracking-wider text-sm font-bold !mb-2 !mt-1 text-secondary scramble-text">{t('footer.aspectRatio.title')}</div>
+                <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-2 !mt-1 text-secondary scramble-text" data-text={t('footer.aspectRatio.title')}>
+                  {t('footer.aspectRatio.title')}
+                </h3>
                 <div class="flex gap-4 items-center ">
                   <div id="footer-contrast-display" class="text-sm leading-tight  border text-secondary py-1 px-2 font-bold border-main scramble-text">--:--</div>
                   <div id="footer-wcag-levels" class="flex gap-1"></div>
@@ -145,7 +147,9 @@ const navigationLinks: NavigationLink[] = [
             </div>
             <div class="block font-mono text-sm py-2">
               <div class="text-secondary font-mono text-sm">
-                <div class="font-mono uppercase tracking-wider text-sm font-bold !mb-2 !mt-1 text-secondary scramble-text">{t('footer.motion.label')}</div>
+                <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-2 !mt-1 text-secondary scramble-text" data-text={t('footer.motion.label')}>
+                  {t('footer.motion.label')}
+                </h3>
                 <div class=""><span id="motion-status" class="scramble-text inline-flex items-center px-2 py-1 text-xs font-mono font-bold border border-secondary bg-main text-secondary ml-2">{t('footer.motion.detecting')}</span></div>
               </div>
             </div>
@@ -165,7 +169,7 @@ const navigationLinks: NavigationLink[] = [
     <div class="w-full border-t border-secondary/50 pt-4 flex justify-center">
       <p class="font-mono text-sm text-secondary scramble-text flex items-center justify-center gap-2 text-center" data-text="Hecho con por Allison Peña" data-has-heart="true">
         <span class="scramble-part">Hecho con</span>
-        <Heart size={14} className="text-secondary" fill="currentColor" client:idle />
+        <Heart size={14} className="text-secondary" fill="currentColor" />
         <span class="scramble-part">por Allison Peña</span>
       </p>
     </div>
@@ -175,11 +179,20 @@ const navigationLinks: NavigationLink[] = [
 <script>
   import { debugLogger } from '@/utils/debug-logger';
 
+  let footerCleanup: (() => void) | null = null;
+
   // Function to initialize footer functionality
   function initFooter() {
+    // Clean previous listeners/observers to avoid stacking on Astro transitions
+    if (footerCleanup) {
+      footerCleanup();
+      footerCleanup = null;
+    }
+
     debugLogger.log('🦶 Footer script initialized');
 
     let footerAnimated = false;
+    const cleanupFns: Array<() => void> = [];
 
     // Contrast ratio calculation functions
     function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
@@ -481,10 +494,10 @@ const navigationLinks: NavigationLink[] = [
     }
 
     // Scramble a single text node (span.scramble-part)
-    function scrambleText(element: HTMLElement, originalText: string, duration: number = 800): void {
+    function scrambleText(element: HTMLElement, originalText: string, duration: number = 700): void {
       const chars = 'abcdefghijkstuvwxyzABCDEFGHWXYZ01234!@#$%&*:.?';
       let i = 0;
-      const stepMs = 30;
+      const stepMs = 35;
       const maxSteps = Math.ceil(duration / stepMs);
 
       const timer = setInterval(() => {
@@ -511,7 +524,7 @@ const navigationLinks: NavigationLink[] = [
         parts.forEach((part: Element, idx: number) => {
           const el = part as HTMLElement;
           const txt = el.textContent || '';
-          const delay = idx * 200;
+          const delay = idx * 120;
           if (!txt.trim()) return;
           setTimeout(() => scrambleText(el, txt), delay);
         });
@@ -526,58 +539,144 @@ const navigationLinks: NavigationLink[] = [
       }
     }
 
-    // Initialize footer functionality with a small delay to ensure CSS variables are loaded
-    setTimeout(() => {
-      calculateAndDisplayFooterContrast();
-      updateMotionPreference();
-    }, 100);
+    // Initial paint updates (no artificial delay)
+    calculateAndDisplayFooterContrast();
+    updateMotionPreference();
 
-    // Listen for theme changes
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes' &&
-            (mutation.attributeName === 'data-theme' || mutation.attributeName === 'class')) {
-          setTimeout(calculateAndDisplayFooterContrast, 100);
-        }
+    // Debounced contrast updates on theme/class changes
+    let contrastRaf: number | null = null;
+    const scheduleContrastUpdate = () => {
+      if (contrastRaf !== null) {
+        cancelAnimationFrame(contrastRaf);
+      }
+      contrastRaf = requestAnimationFrame(() => {
+        contrastRaf = null;
+        calculateAndDisplayFooterContrast();
       });
+    };
+
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        if (
+          mutation.type === 'attributes' &&
+          (mutation.attributeName === 'data-theme' || mutation.attributeName === 'class')
+        ) {
+          scheduleContrastUpdate();
+          break;
+        }
+      }
     });
 
     observer.observe(document.documentElement, {
       attributes: true,
       attributeFilter: ['data-theme', 'class']
     });
+    cleanupFns.push(() => observer.disconnect());
 
     // Listen for motion preference changes
     const motionMediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     motionMediaQuery.addEventListener('change', updateMotionPreference);
+    cleanupFns.push(() => motionMediaQuery.removeEventListener('change', updateMotionPreference));
 
     // Intersection Observer: run once when footer enters viewport
-    const scrambleObserver = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
-      entries.forEach((entry: IntersectionObserverEntry) => {
-        if (entry.isIntersecting && !footerAnimated) {
-          footerAnimated = true;
-          const elements = document.querySelectorAll('.scramble-text');
-          elements.forEach((el: Element, idx: number) => {
-            setTimeout(() => scrambleContainer(el as HTMLElement), idx * 50);
-          });
-          scrambleObserver.disconnect();
-        }
-      });
-    }, { threshold: 0.1, rootMargin: '50px' });
+    let lastInteractiveScrambleAt = 0;
+    const runFooterScramble = (footerEl: Element, force: boolean = false) => {
+      if (footerAnimated && !force) return;
+      if (!force) footerAnimated = true;
 
-    const footer = document.querySelector('footer');
-    if (footer) scrambleObserver.observe(footer);
+      const elements = footerEl.querySelectorAll('.scramble-text');
+      elements.forEach((el: Element, idx: number) => {
+        setTimeout(() => scrambleContainer(el as HTMLElement), idx * 35);
+      });
+    };
+
+    const scrambleObserver = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          // Small delay so user can actually see start of effect when footer enters view
+          setTimeout(() => runFooterScramble(entry.target), 80);
+          scrambleObserver.disconnect();
+          break;
+        }
+      }
+    }, { threshold: 0.05, rootMargin: '100px 0px' });
+
+    const footer = document.getElementById('site-footer');
+    if (footer) {
+      // Observe for normal cases
+      scrambleObserver.observe(footer);
+
+      // User-interaction fallback/replay: ensure scramble is visible to user
+      const onFooterInteract = () => {
+        const now = Date.now();
+        if (now - lastInteractiveScrambleAt < 1200) return;
+        lastInteractiveScrambleAt = now;
+        runFooterScramble(footer, true);
+      };
+      footer.addEventListener('mouseenter', onFooterInteract);
+      footer.addEventListener('touchstart', onFooterInteract, { passive: true });
+      cleanupFns.push(() => {
+        footer.removeEventListener('mouseenter', onFooterInteract);
+        footer.removeEventListener('touchstart', onFooterInteract);
+      });
+
+      // Fallback: if already visible at init, run immediately
+      const rect = footer.getBoundingClientRect();
+      const viewportH = window.innerHeight || document.documentElement.clientHeight;
+      if (rect.top < viewportH && rect.bottom > 0) {
+        setTimeout(() => runFooterScramble(footer), 80);
+        scrambleObserver.disconnect();
+      }
+
+      // Extra fallback for long pages (e.g. home): lightweight scroll check
+      let scrollRaf: number | null = null;
+      const checkFooterVisibility = () => {
+        const r = footer.getBoundingClientRect();
+        const vh = window.innerHeight || document.documentElement.clientHeight;
+        if (r.top < vh && r.bottom > 0) {
+          runFooterScramble(footer);
+          window.removeEventListener('scroll', onScroll);
+          window.removeEventListener('resize', onScroll);
+        }
+      };
+      const onScroll = () => {
+        if (scrollRaf !== null) return;
+        scrollRaf = requestAnimationFrame(() => {
+          scrollRaf = null;
+          checkFooterVisibility();
+        });
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+      cleanupFns.push(() => {
+        window.removeEventListener('scroll', onScroll);
+        window.removeEventListener('resize', onScroll);
+        if (scrollRaf !== null) cancelAnimationFrame(scrollRaf);
+      });
+    }
+    cleanupFns.push(() => {
+      scrambleObserver.disconnect();
+      if (contrastRaf !== null) cancelAnimationFrame(contrastRaf);
+    });
+
+    footerCleanup = () => {
+      cleanupFns.forEach((fn) => fn());
+    };
   }
 
   // Initialize on first load
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initFooter);
+    document.addEventListener('DOMContentLoaded', initFooter, { once: true });
   } else {
     initFooter();
   }
 
-  // Re-initialize on page transitions
-  document.addEventListener('astro:page-load', initFooter);
+  // Re-initialize on page transitions (bind once)
+  const footerWindow = window as Window & { __footerPageLoadBound?: boolean };
+  if (!footerWindow.__footerPageLoadBound) {
+    document.addEventListener('astro:page-load', initFooter);
+    footerWindow.__footerPageLoadBound = true;
+  }
 </script>
 
 <style>

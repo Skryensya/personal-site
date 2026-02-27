@@ -16,38 +16,137 @@ export function TocClerkProvider({ toc, topOffset = 112, children }: { toc: TOCI
   const [active, setActive] = useState<string | null>(null);
 
   const ids = useMemo(() => toc.map(i => (i.url.startsWith('#') ? i.url.slice(1) : i.url)), [toc]);
+  const hasInicio = useMemo(() => ids.includes('inicio'), [ids]);
 
-  const recompute = useCallback(() => {
+  const recomputeFromDOM = useCallback(() => {
     const sy = window.scrollY || window.pageYOffset;
+
+    // Allow selecting the virtual top entry ("inicio") when near page start.
+    if (hasInicio && sy <= Math.max(12, topOffset * 0.4)) {
+      setActive((prev) => (prev === 'inicio' ? prev : 'inicio'));
+      return;
+    }
+
     const line = sy + topOffset;
     let winner: { id: string; top: number } | null = null;
+
     for (const id of ids) {
       const el = document.getElementById(id);
       if (!el) continue;
       const top = el.getBoundingClientRect().top + sy;
       if (top <= line && (!winner || top > winner.top)) winner = { id, top };
     }
+
     if (!winner) {
       // pick first existing heading
       for (const id of ids) {
-        if (document.getElementById(id)) { setActive(id); return; }
+        if (document.getElementById(id)) {
+          setActive((prev) => (prev === id ? prev : id));
+          return;
+        }
       }
+      setActive((prev) => (prev === null ? prev : null));
+      return;
+    }
+
+    setActive((prev) => (prev === winner.id ? prev : winner.id));
+  }, [ids, topOffset, hasInicio]);
+
+  useEffect(() => {
+    if (!ids.length) {
       setActive(null);
       return;
     }
-    setActive(winner.id);
-  }, [ids, topOffset]);
 
-  useEffect(() => {
-    recompute();
-    const onScroll = () => recompute();
-    window.addEventListener('scroll', onScroll, { passive: true } as any);
-    window.addEventListener('resize', onScroll, { passive: true } as any);
-    return () => {
-      window.removeEventListener('scroll', onScroll as any);
-      window.removeEventListener('resize', onScroll as any);
+    recomputeFromDOM();
+
+    let raf = 0;
+    const scheduleRecompute = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(() => {
+        raf = 0;
+        recomputeFromDOM();
+      });
     };
-  }, [recompute]);
+
+    const cleanupFns: Array<() => void> = [];
+
+    // Use IntersectionObserver for faster/cleaner active-section updates.
+    if ('IntersectionObserver' in window) {
+      const visible = new Map<string, IntersectionObserverEntry>();
+
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            const id = (entry.target as HTMLElement).id;
+            if (entry.isIntersecting) visible.set(id, entry);
+            else visible.delete(id);
+          }
+
+          const sy = window.scrollY || window.pageYOffset;
+          if (hasInicio && sy <= Math.max(12, topOffset * 0.4)) {
+            setActive((prev) => (prev === 'inicio' ? prev : 'inicio'));
+            return;
+          }
+
+          if (!visible.size) {
+            scheduleRecompute();
+            return;
+          }
+
+          const candidates = ids
+            .map((id) => {
+              const entry = visible.get(id);
+              if (!entry) return null;
+              return { id, top: entry.boundingClientRect.top };
+            })
+            .filter(Boolean) as Array<{ id: string; top: number }>;
+
+          if (!candidates.length) {
+            scheduleRecompute();
+            return;
+          }
+
+          // Prefer headings that already passed the sticky offset line,
+          // otherwise pick the nearest one below it.
+          const offsetLine = topOffset + 2;
+          const passed = candidates.filter((c) => c.top <= offsetLine);
+
+          let nextId: string;
+          if (passed.length) {
+            nextId = passed[passed.length - 1].id;
+          } else {
+            nextId = candidates[0].id;
+          }
+
+          setActive((prev) => (prev === nextId ? prev : nextId));
+        },
+        {
+          root: null,
+          rootMargin: `-${topOffset}px 0px -55% 0px`,
+          threshold: [0, 0.01, 0.25, 0.5, 1],
+        }
+      );
+
+      for (const id of ids) {
+        const el = document.getElementById(id);
+        if (el) io.observe(el);
+      }
+
+      cleanupFns.push(() => io.disconnect());
+    }
+
+    // Keep fallback recompute cheap and throttled
+    window.addEventListener('scroll', scheduleRecompute, { passive: true } as any);
+    window.addEventListener('resize', scheduleRecompute, { passive: true } as any);
+    cleanupFns.push(() => window.removeEventListener('scroll', scheduleRecompute as any));
+    cleanupFns.push(() => window.removeEventListener('resize', scheduleRecompute as any));
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      cleanupFns.forEach((fn) => fn());
+    };
+  }, [ids, topOffset, hasInicio, recomputeFromDOM]);
 
   const value = useMemo<Ctx>(() => ({ toc, active, topOffset }), [toc, active, topOffset]);
   return <TocCtx.Provider value={value}>{children}</TocCtx.Provider>;
@@ -95,7 +194,7 @@ export function TocClerkItems({ className, ...props }: ComponentProps<'div'>) {
           className="absolute left-0 top-0"
           style={{ width: svg.width, height: svg.height, maskImage: `url("data:image/svg+xml,${encodeURIComponent(`<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 ${svg.width} ${svg.height}\"><path d=\"${svg.path}\" stroke=\"black\" stroke-width=\"2\" fill=\"none\" /></svg>`)}")` }}
         >
-          <TocThumb containerRef={containerRef} className="mt-[var(--fd-top)] h-[var(--fd-height)] bg-main transition-all" />
+          <TocThumb containerRef={containerRef} className="mt-[var(--fd-top)] h-[var(--fd-height)] bg-main transition-[margin,height] duration-300 ease-out" />
         </div>
       ) : null}
       {toc.map((item, i) => (
@@ -106,7 +205,7 @@ export function TocClerkItems({ className, ...props }: ComponentProps<'div'>) {
 }
 
 function TocClerkItem({ item, upper = item.depth, lower = item.depth }: { item: TOCItemType; upper?: number; lower?: number }) {
-  const { active } = useTocCtx();
+  const { active, topOffset } = useTocCtx();
   const slug = item.url.startsWith('#') ? item.url.slice(1) : item.url;
   const padding = item.depth <= 2 ? 'ps-3' : item.depth === 3 ? 'ps-6' : 'ps-8';
   const isActive = active === slug;
@@ -125,14 +224,15 @@ function TocClerkItem({ item, upper = item.depth, lower = item.depth }: { item: 
       )}
       onClick={(e) => {
         if (slug === 'inicio') {
-          // e.preventDefault();
+          e.preventDefault();
+          window.history.pushState(null, '', '#inicio');
           window.scrollTo({ top: 0, behavior: 'smooth' });
           return;
         }
         const el = document.getElementById(slug);
         if (el) {
-          // e.preventDefault();
-          const top = el.getBoundingClientRect().top + window.scrollY - (useTocCtx().topOffset);
+          e.preventDefault();
+          const top = el.getBoundingClientRect().top + window.scrollY - topOffset;
           window.history.pushState(null, '', `#${slug}`);
           window.scrollTo({ top, behavior: 'smooth' });
         }

@@ -109,47 +109,96 @@ export function resetKonami() {
  * Create simple confetti effect without React
  */
 function createSimpleConfetti() {
-    debugLogger.log('🎊 Creating simple confetti effect');
-    const confettiContainer = document.createElement('div');
-    confettiContainer.style.cssText = `
-        position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-        pointer-events: none; z-index: 9999; overflow: hidden;
-    `;
-    document.body.appendChild(confettiContainer);
-
-    const computedStyle = getComputedStyle(document.documentElement);
-    const mainColor = computedStyle.getPropertyValue('--color-main').trim() || '#000000';
-
-    // Create simple falling squares as confetti
-    for (let i = 0; i < 50; i++) {
-        const particle = document.createElement('div');
-        particle.style.cssText = `
-            position: absolute;
-            width: 8px; height: 8px;
-            background: ${mainColor};
-            left: ${Math.random() * 100}vw;
-            top: -10px;
-            animation: confetti-fall ${2 + Math.random() * 3}s linear forwards;
-            transform: rotate(${Math.random() * 360}deg);
-        `;
-        confettiContainer.appendChild(particle);
+    // Respect reduced-motion users: skip heavy visual effects
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        debugLogger.log('🎊 Confetti skipped (prefers-reduced-motion)');
+        return;
     }
 
-    // Add animation keyframes if not exist
+    // Remove previous instance if it exists (avoid stacking / memory churn)
+    const previous = document.getElementById('konami-confetti');
+    if (previous) previous.remove();
+
+    debugLogger.log('🎊 Creating optimized confetti effect');
+
+    // Add animation styles once
     if (!document.getElementById('confetti-style')) {
         const style = document.createElement('style');
         style.id = 'confetti-style';
         style.textContent = `
-            @keyframes confetti-fall {
-                to { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+            .konami-confetti {
+                position: fixed;
+                inset: 0;
+                pointer-events: none;
+                z-index: 9999;
+                overflow: hidden;
+                contain: strict;
+            }
+
+            .konami-confetti-piece {
+                position: absolute;
+                left: var(--x);
+                top: -24px;
+                width: var(--size);
+                height: calc(var(--size) * 1.4);
+                background: var(--c);
+                will-change: transform;
+                transform: translate3d(0, -16px, 0) rotate(var(--r));
+                animation:
+                    konami-confetti-fall var(--dur) linear forwards,
+                    konami-confetti-spin calc(var(--dur) * 0.55) linear infinite;
+                animation-delay: var(--delay), var(--delay);
+            }
+
+            @keyframes konami-confetti-fall {
+                0% {
+                    transform: translate3d(0, -16px, 0) rotate(var(--r));
+                }
+                100% {
+                    transform: translate3d(var(--drift), 130vh, 0) rotate(calc(var(--r) + 1turn));
+                }
+            }
+
+            @keyframes konami-confetti-spin {
+                to { filter: brightness(0.96); }
             }
         `;
         document.head.appendChild(style);
     }
 
-    setTimeout(() => {
-        if (confettiContainer.parentNode) confettiContainer.remove();
-    }, 6000);
+    const confettiContainer = document.createElement('div');
+    confettiContainer.id = 'konami-confetti';
+    confettiContainer.className = 'konami-confetti';
+
+    const computedStyle = getComputedStyle(document.documentElement);
+    const colorMain = computedStyle.getPropertyValue('--color-main').trim() || '#111827';
+    const colorSecondary = computedStyle.getPropertyValue('--color-secondary').trim() || '#f9fafb';
+    const palette = [colorMain, colorSecondary];
+
+    // Performance-aware particle count (higher density, still adaptive)
+    const lowEndDevice = ((navigator as any).deviceMemory && (navigator as any).deviceMemory <= 4) || window.innerWidth < 768;
+    const particleCount = lowEndDevice ? 56 : 110;
+
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < particleCount; i++) {
+        const piece = document.createElement('div');
+        piece.className = 'konami-confetti-piece';
+        piece.style.setProperty('--x', `${Math.random() * 100}%`);
+        piece.style.setProperty('--drift', `${(Math.random() - 0.5) * 34}vw`);
+        piece.style.setProperty('--dur', `${1.8 + Math.random() * 4.8}s`);
+        piece.style.setProperty('--delay', `${Math.random() * 0.8}s`);
+        piece.style.setProperty('--size', `${4 + Math.random() * 6}px`);
+        piece.style.setProperty('--r', `${Math.random() * 360}deg`);
+        piece.style.setProperty('--c', palette[i % palette.length]);
+        frag.appendChild(piece);
+    }
+
+    confettiContainer.appendChild(frag);
+    document.body.appendChild(confettiContainer);
+
+    // Remove after max animation time + buffer
+    const ttl = lowEndDevice ? 7000 : 7800;
+    window.setTimeout(() => confettiContainer.remove(), ttl);
 }
 
 /**

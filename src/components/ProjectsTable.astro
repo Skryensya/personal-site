@@ -22,16 +22,16 @@ const t = getTranslations(lang);
     </h2>
 
     <!-- Header - Desktop only -->
-    <div class="hidden md:flex gap-4 border-b border-main/30  py-2 px-6 bg-main items-center ">
+    <div class="hidden md:flex gap-4 border-b border-main/30  py-2 px-6 bg-main items-center selection-opposite">
       <div class="flex-[0_0_30%] flex gap-6 items-center">
-        <div class="font-mono text-xs font-bold uppercase tracking-widest text-secondary w-[50px]">#</div>
-        <div class="font-mono text-xs font-bold uppercase tracking-widest text-secondary flex-1">{t('projects.table.name')}</div>
+        <div class="font-mono text-sm font-bold uppercase tracking-wider text-secondary w-[50px]">#</div>
+        <div class="font-mono text-sm font-bold uppercase tracking-wider text-secondary flex-1">{t('projects.table.name')}</div>
       </div>
       <div class="flex-1">
-        <div class="font-mono text-xs font-bold uppercase tracking-widest text-secondary">{t('projects.table.description')}</div>
+        <div class="font-mono text-sm font-bold uppercase tracking-wider text-secondary">{t('projects.table.description')}</div>
       </div>
       <div class="flex-[0_0_48px]">
-        <div class="font-mono text-xs font-bold uppercase tracking-widest text-secondary sr-only">Link</div>
+        <div class="font-mono text-sm font-bold uppercase tracking-wider text-secondary sr-only">Link</div>
       </div>
     </div>
 
@@ -43,13 +43,13 @@ const t = getTranslations(lang);
       >
         <!-- Mobile: Number above title -->
         <div class="md:hidden">
-          <span class="text-main font-mono text-sm font-bold opacity-50 group-hover:opacity-100 transition-opacity duration-400 project-number">#{String(startIndex + index + 1).padStart(2, '0')}</span>
+          <span class="text-main font-mono text-sm font-bold opacity-100 transition-opacity duration-400 project-number">#{String(startIndex + index + 1).padStart(2, '0')}</span>
         </div>
 
         <!-- Number + Name (Desktop) / Just Name (Mobile) -->
         <div class="flex-[0_0_100%] md:flex-[0_0_30%] self-start flex gap-6 items-center">
           <!-- Desktop Number -->
-          <span class="hidden md:inline text-main font-mono text-xl md:text-lg font-bold opacity-50 group-hover:opacity-100 transition-opacity duration-400 project-number w-[50px]">#{String(startIndex + index + 1).padStart(2, '0')}</span>
+          <span class="hidden md:inline text-main font-mono text-xl md:text-lg font-bold opacity-100 transition-opacity duration-400 project-number w-[50px]">#{String(startIndex + index + 1).padStart(2, '0')}</span>
 
           <div class="flex-1">
             <h3 class="h3 !my-0">

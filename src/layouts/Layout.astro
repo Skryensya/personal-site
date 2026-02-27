@@ -355,7 +355,7 @@ declare global {
         <FaviconManager client:idle />
         <NorwegianDisclaimer lang={lang} />
         <div class="pt-24 mt-8 mx-auto max-w-[var(--max-w-size)] "> 
-            <main class="text-left px-4" id="main-content">
+            <main class="text-left px-4" id="main-content" data-skip-target>
                 <slot />
             </main>
         </div> 
@@ -442,8 +442,36 @@ declare global {
                 }
             }
 
+            // Keep body background in sync with --color-main after theme changes
+            function setupThemeBackgroundSync() {
+                let syncTimer;
+                const sync = () => {
+                    clearTimeout(syncTimer);
+                    syncTimer = setTimeout(() => applyBodyMainBackground(), 0);
+                };
+
+                // 1) Listen to explicit theme events
+                window.addEventListener('theme-changed', sync);
+                window.addEventListener('company-theme-activated', sync);
+                window.addEventListener('company-theme-deactivated', sync);
+
+                // 2) Observe root attribute/style changes (data-theme, class, CSS vars)
+                const rootObserver = new MutationObserver((mutations) => {
+                    const changedThemeProps = mutations.some((m) =>
+                        m.type === 'attributes' && ['data-theme', 'class', 'style'].includes(m.attributeName)
+                    );
+                    if (changedThemeProps) sync();
+                });
+
+                rootObserver.observe(document.documentElement, {
+                    attributes: true,
+                    attributeFilter: ['data-theme', 'class', 'style']
+                });
+            }
+
             // Initialize immediately when this script runs
             setupLazyBackground();
+            setupThemeBackgroundSync();
 
             // Re-apply after page transitions
             document.addEventListener('astro:page-load', () => {

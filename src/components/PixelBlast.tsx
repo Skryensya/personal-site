@@ -367,6 +367,7 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
     if (!container) return
 
     speedRef.current = speed
+    let disposed = false
 
     const needsReinitKeys = ['antialias', 'liquid', 'noiseAmount'] as const
     const cfg = { antialias, liquid, noiseAmount }
@@ -406,7 +407,8 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
       el.style.background = 'transparent' // 🔑 avoids white box
       el.style.opacity = '0'              // 🔑 fade-in after first frame
 
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
+      // Cap DPR for better performance on high-density displays
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5))
 
       // Honor transparency immediately
       if (transparent) {
@@ -534,19 +536,15 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
       el.addEventListener('pointerdown', onPointerDown, { passive: true })
       el.addEventListener('pointermove', onPointerMove, { passive: true })
 
-      // Pause when offscreen (saves battery/CPU)
-      const io = new IntersectionObserver((entries) => {
-        visibilityRef.current.visible = entries[0]?.isIntersecting ?? true
-      }, { root: null, threshold: 0 })
-      io.observe(container)
-
-      // Animation loop with first-frame fade-in
+      // Animation loop (throttled + pausado fuera de viewport)
       let raf = 0
       let firstFrameDone = false
+      let loopRunning = false
+      let lastFrameTime = 0
+      const targetFps = 45
+      const frameInterval = 1000 / targetFps
 
-      const animate = () => {
-        if (autoPauseOffscreen && !visibilityRef.current.visible) { raf = requestAnimationFrame(animate); return }
-
+      const renderFrame = () => {
         uniforms.uTime.value = timeOffset + clock.getElapsedTime() * speedRef.current
         if (liquidEffect) (liquidEffect as any).uniforms.get('uTime').value = uniforms.uTime.value
 
@@ -563,10 +561,49 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
           el.style.transition = 'opacity 140ms ease-out'
           el.style.opacity = '1'
         }
+      }
 
+      const animate = (ts: number) => {
+        if (disposed) return
+
+        if (autoPauseOffscreen && !visibilityRef.current.visible) {
+          loopRunning = false
+          raf = 0
+          return
+        }
+
+        if (ts - lastFrameTime < frameInterval) {
+          raf = requestAnimationFrame(animate)
+          return
+        }
+
+        lastFrameTime = ts
+        renderFrame()
         raf = requestAnimationFrame(animate)
       }
-      raf = requestAnimationFrame(animate)
+
+      const startLoop = () => {
+        if (disposed || loopRunning) return
+        loopRunning = true
+        lastFrameTime = performance.now()
+        raf = requestAnimationFrame(animate)
+      }
+
+      // Pause when offscreen (saves battery/CPU)
+      const io = new IntersectionObserver((entries) => {
+        visibilityRef.current.visible = entries[0]?.isIntersecting ?? true
+
+        if (visibilityRef.current.visible) {
+          startLoop()
+        } else if (autoPauseOffscreen && raf) {
+          cancelAnimationFrame(raf)
+          raf = 0
+          loopRunning = false
+        }
+      }, { root: null, threshold: 0 })
+      io.observe(container)
+
+      startLoop()
 
       threeRef.current = {
         renderer,
@@ -623,6 +660,7 @@ const PixelBlast: React.FC<PixelBlastProps> = ({
     return () => {
       if (threeRef.current && mustReinit) return
       if (!threeRef.current) return
+      disposed = true
       const t = threeRef.current
       t.resizeObserver?.disconnect()
       t.io?.disconnect()

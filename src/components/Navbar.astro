@@ -20,9 +20,11 @@ const isHomePage = currentLocale === 'es'
   ? currentPath === '/' 
   : (currentPath === `/${currentLocale}/` || currentPath === `/${currentLocale}`);
 
-// Prepare theme data for client-side JavaScript
+// Prepare localized theme data for client-side JavaScript
 const themeNames = themes.reduce((acc, theme) => {
-  acc[theme.id] = theme.name;
+  const key = `theme.${theme.id}`;
+  const localized = (t as any)(key);
+  acc[theme.id] = (typeof localized === 'string' && localized !== key) ? localized : theme.name;
   return acc;
 }, {} as Record<string, string>);
 
@@ -266,74 +268,38 @@ const navItems = [
 
 <script is:inline define:vars={{ themeNames, themeColors }}>
 
+  // Expose localized theme names globally for ThemeControl and mobile label
+  window.__THEME_NAMES__ = themeNames;
+
   // Skip to main content functionality
   function skipToMainContent() {
-    // Skip to main content activated
-    
-    // Focus directly on the projects button in Hero section (most reliable)
-    const projectsButton = document.getElementById('projects-button');
-    if (projectsButton) {
-      // Projects button found, focusing
-      
-      // Ensure the element is focusable and give it time to be ready
-      setTimeout(() => {
-        if (projectsButton.focus) {
-          projectsButton.focus();
-          
-          // Also scroll to it smoothly
-          projectsButton.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center',
-            inline: 'nearest'
-          });
-          
-          // Focus set on projects button
-        }
-      }, 50);
-      return;
+    const skipTargets = Array.from(document.querySelectorAll('[data-skip-target]')) as HTMLElement[];
+
+    // Prefer the deepest target (useful when ContentPage has an inner <main>)
+    const mainElement = skipTargets.length > 0
+      ? skipTargets[skipTargets.length - 1]
+      : (document.getElementById('main-content') || document.querySelector('main')) as HTMLElement | null;
+
+    if (!mainElement) return;
+
+    // Ensure target can receive focus for keyboard/screen-reader users
+    if (!mainElement.hasAttribute('tabindex')) {
+      mainElement.setAttribute('tabindex', '-1');
     }
 
-    // Fallback: Try main content target
-    const mainContent = document.getElementById('main-content');
-    if (mainContent) {
-      mainContent.focus();
-      mainContent.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start',
-        inline: 'nearest'
-      });
-      return;
+    // Move focus after scroll so focus ring is visible in final position
+    const navbarOffset = 120;
+    const top = mainElement.getBoundingClientRect().top + window.scrollY - navbarOffset;
+    window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+
+    requestAnimationFrame(() => {
+      mainElement.focus({ preventScroll: true });
+      setTimeout(() => mainElement.focus({ preventScroll: true }), 250);
+    });
+
+    if (mainElement.id && window.location.hash !== `#${mainElement.id}`) {
+      history.replaceState(null, '', `#${mainElement.id}`);
     }
-
-    
-    // Final fallback: find first focusable element in main content area
-    const mainElement = document.querySelector('main');
-    if (mainElement) {
-      const focusableSelectors = [
-        'a[href]:not([tabindex="-1"])',
-        'button:not([disabled]):not([tabindex="-1"])',
-        'input:not([disabled]):not([tabindex="-1"])',
-        'textarea:not([disabled]):not([tabindex="-1"])',
-        'select:not([disabled]):not([tabindex="-1"])',
-        '[tabindex]:not([tabindex="-1"])',
-        'details',
-        'summary'
-      ].join(',');
-
-      const focusableInMain = mainElement.querySelectorAll(focusableSelectors);
-      
-      if (focusableInMain.length > 0) {
-        const firstFocusable = focusableInMain[0];
-        firstFocusable.focus();
-        firstFocusable.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'center',
-          inline: 'nearest'
-        });
-        return;
-      }
-    }
-
   }
 
   // Initialize global theme state from localStorage immediately and update placeholder
@@ -391,31 +357,19 @@ const navItems = [
     const skipButtonDesktop = document.getElementById('skip-to-content-desktop');
     const skipButtonMobile = document.getElementById('skip-to-content-mobile');
     
-    if (skipButtonDesktop) {
+    if (skipButtonDesktop && !skipButtonDesktop.dataset.boundSkipHandler) {
+      skipButtonDesktop.dataset.boundSkipHandler = 'true';
       skipButtonDesktop.addEventListener('click', (e) => {
         e.preventDefault();
         skipToMainContent();
       });
-
-      skipButtonDesktop.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          skipToMainContent();
-        }
-      });
     }
 
-    if (skipButtonMobile) {
+    if (skipButtonMobile && !skipButtonMobile.dataset.boundSkipHandler) {
+      skipButtonMobile.dataset.boundSkipHandler = 'true';
       skipButtonMobile.addEventListener('click', (e) => {
         e.preventDefault();
         skipToMainContent();
-      });
-
-      skipButtonMobile.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          skipToMainContent();
-        }
       });
     }
 
@@ -717,7 +671,8 @@ const navItems = [
         // Get current theme from localStorage
         const currentThemeId = localStorage.getItem('theme-id');
         if (currentThemeId) {
-          themeLabel.textContent = themeNames[currentThemeId] || currentThemeId.charAt(0).toUpperCase() + currentThemeId.slice(1);
+          const localizedThemeNames = (window as any).__THEME_NAMES__ || themeNames;
+          themeLabel.textContent = localizedThemeNames[currentThemeId] || currentThemeId.charAt(0).toUpperCase() + currentThemeId.slice(1);
           
           // Update mobile theme preview with theme's own colorful color border
           const themePreviewContainer = document.querySelector('.mobile-theme-preview-container');

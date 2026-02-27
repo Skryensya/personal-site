@@ -1,9 +1,9 @@
 ---
-// imports normales
+// COPY of Hero.astro with only PixelBlast swapped
 import Button from '../Button.astro';
 import TextGenerate from '../TextGenerate.tsx'; 
 import CornersWithCrosses from '../CornersWithCrosses.astro';
-import PixelBlastWithCssVar from '../PixelBlastWithCssVar.tsx';
+import SimplePixelBlastWithCssVar from '../SimplePixelBlastWithCssVar.tsx';
 import HeroCardsAstro from '../HeroCardsAstro.astro';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
@@ -13,14 +13,10 @@ interface Props { lang?: Language; }
 const { lang = defaultLang } = Astro.props;
 const t = getTranslations(lang);
 
-// Get CV PDF path based on language
 const getCVPath = (locale: Language) => {
-  // Spanish uses curriculum.pdf
   if (locale === 'es') return '/curriculum.pdf';
-  // English and Norwegian use resume.pdf
   return '/resume.pdf';
 };
- 
 ---
 
 <section class="hero-section pt-2 mb-12 relative">
@@ -51,20 +47,16 @@ const getCVPath = (locale: Language) => {
     <!-- Cards Section -->
     <CornersWithCrosses class="flex items-center justify-center h-[28rem] " showLeft={false}>
       <div class="overflow-hidden w-full h-full relative border-b border-r border-main/20">
-        <!-- PixelBlast Background -->
-        <PixelBlastWithCssVar
+        <!-- PixelBlast Background (simple version) -->
+        <SimplePixelBlastWithCssVar
           className="absolute inset-0 w-full h-full"
-          variant="diamond"
-          pixelSize={2}
-          patternScale={0.75}
-          patternDensity={1.5}
-          edgeFade={0.2}
-          speed={1.5}
-          transparent={true}
-          antialias={false}
-          enableRipples={true}
           cssVar="--color-main"
           fallbackColor="#B19EEF"
+          pixelSize={9}
+          density={0.12}
+          speed={0.08}
+          decay={0.9}
+          maxCells={5500}
           client:media="(min-width: 1280px)"
         />
 
@@ -90,9 +82,4 @@ const getCVPath = (locale: Language) => {
       </div>
     </CornersWithCrosses>
   </div>
-  
-  <!-- OS Debug Toggle -->
-  <!-- <div class="mt-8">
-    <SimpleOSDebug client:load />
-  </div> -->
 </section>

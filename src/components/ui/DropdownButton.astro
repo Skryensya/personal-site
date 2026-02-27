@@ -177,12 +177,22 @@ const mainButtonId = `main-button-${id}`;
     document.addEventListener('keydown', handleGlobalEscape);
     
     dropdownContainers.forEach((container) => {
+      const containerElement = container as HTMLElement;
+
+      // Prevent duplicate listeners when initializeDropdowns runs multiple times
+      if (containerElement.dataset.dropdownInitialized === 'true') {
+        return;
+      }
+      containerElement.dataset.dropdownInitialized = 'true';
+
       const mainButton = container.querySelector('[data-main-action]') as HTMLElement;
       const dropdownButton = container.querySelector('[aria-haspopup="menu"]') as HTMLElement;
+      if (!dropdownButton) return;
+
       const dropdownMenu = document.getElementById(dropdownButton.getAttribute('aria-controls') || '') as HTMLElement;
       const arrow = container.querySelector('.dropdown-arrow') as HTMLElement;
       
-      if (!dropdownButton || !dropdownMenu) return;
+      if (!dropdownMenu) return;
 
       let isOpen = false;
       let activeIndex = -1;
@@ -378,21 +388,43 @@ const mainButtonId = `main-button-${id}`;
         });
       };
       
-      // Handle dropdown toggle
+      const toggleDropdownFromPointer = () => {
+        if (dropdownButton.hasAttribute('disabled')) return;
+
+        if (isOpen) {
+          closeDropdown();
+        } else {
+          // Mark as mouse/pointer interaction
+          isKeyboardNavigation = false;
+          if (keyboardHint) {
+            keyboardHint.style.display = 'none';
+          }
+          openDropdown();
+        }
+      };
+
+      // Open/close on pointerdown so the first click always works
+      // (avoids focus/click timing races in some browsers)
+      let ignoreNextClick = false;
+      dropdownButton.addEventListener('pointerdown', (event) => {
+        if (event.button !== 0) return; // only primary button
+        event.preventDefault();
+        event.stopPropagation();
+        ignoreNextClick = true;
+        toggleDropdownFromPointer();
+      });
+
+      // Keep click handler for keyboard-triggered click events
       dropdownButton.addEventListener('click', (event) => {
         event.stopPropagation();
-        if (!dropdownButton.hasAttribute('disabled')) {
-          if (isOpen) {
-            closeDropdown();
-          } else {
-            // Mark as mouse interaction
-            isKeyboardNavigation = false;
-            if (keyboardHint) {
-              keyboardHint.style.display = 'none';
-            }
-            openDropdown();
-          }
+
+        // If pointerdown already handled this interaction, skip click toggle
+        if (ignoreNextClick) {
+          ignoreNextClick = false;
+          return;
         }
+
+        toggleDropdownFromPointer();
       });
       
       // Handle button keyboard events
@@ -602,20 +634,22 @@ const mainButtonId = `main-button-${id}`;
       window.addEventListener('scroll', handleReposition);
 
       // Handle focus outside dropdown - close if focus moves outside
-      const handleFocusOut = (event: FocusEvent) => {
+      // Use document.activeElement in the next frame to avoid relatedTarget=null races
+      const handleFocusOut = () => {
         if (!isOpen) return;
 
-        // Get the element that received focus
-        const focusedElement = event.relatedTarget as HTMLElement;
+        requestAnimationFrame(() => {
+          if (!isOpen) return;
 
-        // Check if focus moved outside the dropdown system
-        const isInsideContainer = container.contains(focusedElement);
-        const isInsideMenu = dropdownMenu.contains(focusedElement);
+          const activeElement = document.activeElement as HTMLElement | null;
+          const isInsideContainer = !!activeElement && container.contains(activeElement);
+          const isInsideMenu = !!activeElement && dropdownMenu.contains(activeElement);
 
-        // If focus is outside both container and menu, close dropdown
-        if (!isInsideContainer && !isInsideMenu) {
-          closeDropdown();
-        }
+          // If focus is outside both container and menu, close dropdown
+          if (!isInsideContainer && !isInsideMenu) {
+            closeDropdown();
+          }
+        });
       };
 
       // Add focusout listeners to both the menu and container
