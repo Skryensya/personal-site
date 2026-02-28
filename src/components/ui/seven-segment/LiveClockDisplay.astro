@@ -1,0 +1,85 @@
+---
+import SevenSegmentDisplay from './SevenSegmentDisplay.astro';
+
+interface Props {
+  id?: string;
+  className?: string;
+  inverted?: boolean;
+}
+
+const { id = 'ss-local-clock', className = '', inverted = true } = Astro.props as Props;
+---
+
+<SevenSegmentDisplay id={id} value="00:00" className={className} inverted={inverted} />
+
+<script is:inline define:vars={{ id }}>
+  const display = document.getElementById(id);
+
+  if (display && display.dataset.boundClockDisplay !== 'true') {
+    display.dataset.boundClockDisplay = 'true';
+
+    const digitSegments = {
+      '0': ['a', 'b', 'c', 'd', 'e', 'f'],
+      '1': ['b', 'c'],
+      '2': ['a', 'b', 'd', 'e', 'g'],
+      '3': ['a', 'b', 'c', 'd', 'g'],
+      '4': ['b', 'c', 'f', 'g'],
+      '5': ['a', 'c', 'd', 'f', 'g'],
+      '6': ['a', 'c', 'd', 'e', 'f', 'g'],
+      '7': ['a', 'b', 'c'],
+      '8': ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+      '9': ['a', 'b', 'c', 'd', 'f', 'g'],
+      '-': ['g']
+    };
+
+    const renderChar = (char, colonOn = true) => {
+      if (char === ':') {
+        return `<span class="ss-digit ss-colon ${colonOn ? '' : 'is-off'}" aria-hidden="true"><span class="ss-dot ss-dot-top"></span><span class="ss-dot ss-dot-bottom"></span></span>`;
+      }
+
+      const segments = digitSegments[char];
+      if (!segments) {
+        return `<span class="ss-digit ss-fallback" aria-hidden="true">${char}</span>`;
+      }
+
+      const has = (seg) => (segments.includes(seg) ? 'is-on' : '');
+      return `<span class="ss-digit" aria-hidden="true">
+        <span class="ss-seg ss-a ${has('a')}"></span>
+        <span class="ss-seg ss-b ${has('b')}"></span>
+        <span class="ss-seg ss-c ${has('c')}"></span>
+        <span class="ss-seg ss-d ${has('d')}"></span>
+        <span class="ss-seg ss-e ${has('e')}"></span>
+        <span class="ss-seg ss-f ${has('f')}"></span>
+        <span class="ss-seg ss-g ${has('g')}"></span>
+      </span>`;
+    };
+
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const formatLocalTime = (date) => {
+      return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    };
+
+    const setDisplayValue = (value, colonOn = true) => {
+      display.dataset.value = value;
+      display.setAttribute('aria-label', `Local time ${value}`);
+      display.innerHTML = value.split('').map((char) => renderChar(char, colonOn)).join('');
+    };
+
+    const tick = () => {
+      const now = new Date();
+      const colonOn = now.getSeconds() % 2 === 0;
+      setDisplayValue(formatLocalTime(now), colonOn);
+    };
+
+    tick();
+    const timer = setInterval(tick, 1000);
+
+    const cleanup = () => {
+      clearInterval(timer);
+      display.dataset.boundClockDisplay = 'false';
+    };
+
+    window.addEventListener('astro:before-preparation', cleanup, { once: true });
+  }
+</script>

@@ -3,7 +3,8 @@ import { getTranslationValue, getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import Button from '../Button.astro';
 import CornersWithCrosses from '../CornersWithCrosses.astro';
-import { MapPin, CheckCircle, ExternalLink } from 'lucide-react';
+import FooterNavigationList from '../FooterNavigationList.astro';
+import { MapPin, CheckCircle } from 'lucide-react';
 
 interface Props {
   className?: string;
@@ -12,6 +13,29 @@ interface Props {
 
 const { className = '', lang = defaultLang } = Astro.props;
 const t = getTranslations(lang);
+
+const aboutConnectLinks = [
+  {
+    href: 'mailto:allison.jpb@gmail.com',
+    text: 'Email',
+    isExternal: true,
+  },
+  {
+    href: 'https://github.com/Skryensya',
+    text: 'GitHub',
+    isExternal: true,
+  },
+  {
+    href: 'https://linkedin.com/in/skryensya',
+    text: 'LinkedIn',
+    isExternal: true,
+  },
+  {
+    href: 'https://lichess.org/@/Skryensya',
+    text: 'Lichess',
+    isExternal: true,
+  },
+];
 ---
 
 <section id="about" aria-labelledby="about-heading" class={`relative ${className}`} style="view-transition-name: about-section;">
@@ -64,20 +88,37 @@ const t = getTranslations(lang);
     <!-- Photo and Contact Info -->
     <div class="space-y-6">
       <figure class="relative aspect-square w-48 lg:w-full overflow-hidden ring-1 ring-main/20 bg-secondary/10 group" style="view-transition-name: photo-block;">
-        <img
-          src="/img/me.png"
-          alt={t('cv.photo.alt.pixelated')}
-          class="absolute inset-0 size-full object-cover transition-opacity duration-300 ease-out group-hover:opacity-0"
-          loading="lazy"
-          decoding="async"
-        />
-        <img
-          src="/img/true_me.png"
-          alt={t('cv.photo.alt.original')}
-          class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100"
-          loading="lazy"
-          decoding="async"
-        />
+        <picture class="absolute inset-0 size-full transition-opacity duration-300 ease-out group-hover:opacity-0">
+          <source srcset="/img/me.webp" type="image/webp" />
+          <img
+            src="/img/me.png"
+            alt={t('cv.photo.alt.pixelated')}
+            class="absolute inset-0 size-full object-cover"
+            loading="lazy"
+            decoding="async"
+            fetchpriority="low"
+            width="1200"
+            height="1600"
+          />
+        </picture>
+        <picture class="absolute inset-0 size-full opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100">
+          <source srcset="/img/true_me.webp" type="image/webp" />
+          <img
+            src="/img/true_me.png"
+            alt={t('cv.photo.alt.original')}
+            class="absolute inset-0 size-full object-cover"
+            loading="lazy"
+            decoding="async"
+            fetchpriority="low"
+            width="1148"
+            height="1425"
+          />
+        </picture>
+        <div
+          class="absolute inset-0 pointer-events-none z-10"
+          style="background: var(--theme-colorful); mix-blend-mode: color; opacity: 0.28;"
+          aria-hidden="true"
+        ></div>
       </figure>
 
       <!-- Contact Info -->
@@ -102,45 +143,8 @@ const t = getTranslations(lang);
 
         <!-- Social Links -->
         <div class="border-t border-main/20 pt-4">
-          <div class="font-mono text-sm font-bold text-main uppercase mb-4">Conectar</div>
-          <nav class="space-y-1">
-            <a
-              href="mailto:allison.jpb@gmail.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group font-mono text-sm text-main hover:bg-main hover:text-secondary px-4 py-2.5 md:py-1.5 border-l-2 border-main flex items-center justify-between"
-            >
-              <span>Email</span>
-              <ExternalLink size={14} className="text-main group-hover:text-secondary" />
-            </a>
-            <a
-              href="https://github.com/Skryensya"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group font-mono text-sm text-main hover:bg-main hover:text-secondary px-4 py-2.5 md:py-1.5 border-l-2 border-main flex items-center justify-between"
-            >
-              <span>GitHub</span>
-              <ExternalLink size={14} className="text-main group-hover:text-secondary" />
-            </a>
-            <a
-              href="https://linkedin.com/in/skryensya"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group font-mono text-sm text-main hover:bg-main hover:text-secondary px-4 py-2.5 md:py-1.5 border-l-2 border-main flex items-center justify-between"
-            >
-              <span>LinkedIn</span>
-              <ExternalLink size={14} className="text-main group-hover:text-secondary" />
-            </a>
-            <a
-              href="https://lichess.org/@/Skryensya"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group font-mono text-sm text-main hover:bg-main hover:text-secondary px-4 py-2.5 md:py-1.5 border-l-2 border-main flex items-center justify-between"
-            >
-              <span>Lichess</span>
-              <ExternalLink size={14} className="text-main group-hover:text-secondary" />
-            </a>
-          </nav>
+          <div class="font-mono text-sm font-bold text-main uppercase mb-4">{t('footer.connect')}</div>
+          <FooterNavigationList links={aboutConnectLinks} inverted />
         </div>
       </div>
     </div>

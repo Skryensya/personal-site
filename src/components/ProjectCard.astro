@@ -1,4 +1,6 @@
 ---
+import SevenSegmentDisplay from '@/components/ui/seven-segment/SevenSegmentDisplay.astro';
+
 interface Props {
     name: string;
     hook?: string;
@@ -73,9 +75,11 @@ const {
 
                         <!-- Footer: Project number and CTA -->
                         <footer class="mt-auto pt-4 flex justify-between items-end">
-                            <span class="text-main font-mono text-4xl font-bold" aria-label={`Proyecto número ${dataIndex}`}>
-                                #{String(dataIndex || 0).padStart(2, '0')}
-                            </span>
+                            <SevenSegmentDisplay
+                                value={String(dataIndex || 0).padStart(2, '0')}
+                                inverted={true}
+                                className="!min-h-[2.05rem] !min-w-[3rem] !px-1 !py-0.5 !gap-[1px] origin-left [transform:scaleX(0.9)_scaleY(1.08)]"
+                            />
                             <span class="text-main text-sm opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity duration-200" aria-hidden="true">
                                 Ver más
                             </span>

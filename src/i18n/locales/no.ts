@@ -82,7 +82,7 @@ export const no = {
     // Site metadata
     'site.title': 'Allison Peña',
     'site.subtitle': 'Fullstack webutvikler',
-    'site.description': 'Personlig portefølje til Allison Peña, fullstack-utvikler spesialisert på React, TypeScript og tilgjengelige webopplevelser.',
+    'site.description': 'Allison Peña er fullstack webutvikler.',
 
     // UI text
     'ui.loading': 'Laster...',
@@ -110,7 +110,7 @@ export const no = {
     'theme.oklab-crimson-night': 'Karmosinnatt',
     'theme.oklab-cyan-scarlet': 'Cyan Skarlagen',
     'theme.citron': 'Sitron',
-    'theme.ruby': 'Rubin',
+    'theme.ruby': 'Mynte Rubin',
     'theme.crimson': 'Karmosin',
     'theme.teal': 'Turkis',
     'theme.neon': 'Neon',
@@ -118,6 +118,7 @@ export const no = {
     'theme.skyward-ai': 'Skyward AI',
     'theme.lokal': 'Lokal',
     'theme.indies': 'Indies',
+    'theme.prism-flow': 'Prisme',
 
     // Mode names in Norwegian
     'mode.light': 'Lys',
@@ -171,7 +172,7 @@ export const no = {
     'cv.location.value': 'Santiago, Chile',
     'cv.linkedin.value': '/in/skryensya',
     'cv.website.title': 'Nettsted',
-    'cv.website.value': 'Skryensya.dev',
+    'cv.website.value': 'allison.sh',
     'cv.languages.title': 'Språk',
     'cv.languages.spanish': 'Spansk',
     'cv.languages.spanish.level': 'Morsmål',
@@ -298,6 +299,14 @@ export const no = {
     'designSystem.colors.themes.colorful': 'colorful',
     'designSystem.colors.themes.contrasty': 'contrasty',
     'designSystem.colors.themes.contrast': 'Kontrast',
+    'designSystem.colors.visualizer.title': 'Temavisualisering',
+    'designSystem.colors.visualizer.intro': 'Øverste linje: råfargene i aktivt tema (colorful og contrasty). Nederste linje: hvordan de samme fargene fordeles mellom main og secondary i lys eller mørk modus.',
+    'designSystem.colors.visualizer.currentTheme': 'Aktivt tema',
+    'designSystem.colors.visualizer.sourceLine': 'Temalinje',
+    'designSystem.colors.visualizer.roleLine': 'Rollelinje',
+    'designSystem.colors.visualizer.main': 'main',
+    'designSystem.colors.visualizer.secondary': 'secondary',
+    'designSystem.colors.visualizer.listTitle': 'Alle temaer (2 farger)',
     'designSystem.colors.main.name': 'Hovedfarge',
     'designSystem.colors.main.description': 'Tekst, kanter, primære elementer',
     'designSystem.colors.secondary.name': 'Sekundærfarge',
@@ -374,8 +383,8 @@ export const no = {
     'designSystem.buttons.outlineElevated.helper': 'Kombinerer kontur og heving for å skille seg ut uten fyll.',
     'designSystem.buttons.labels.default': 'Standard',
     'designSystem.buttons.labels.filled': 'Fylt',
-    'designSystem.buttons.labels.small': 'Kompakt',
-    'designSystem.buttons.labels.smallFilled': 'Kompakt Fylt',
+    'designSystem.buttons.labels.small': 'Liten',
+    'designSystem.buttons.labels.smallFilled': 'Liten Fylt',
     'designSystem.cards.heading': 'Prosjektkort',
     'designSystem.cards.singleTitle': 'Prosjektkort',
     'designSystem.cards.intro': 'Prosjektkortene gjenbruker samme rutenett, typografi og kontrastregler for å holde systemet konsistent.',
@@ -413,6 +422,7 @@ export const no = {
     'theme.desc.ocean': 'Dyphavets ro',
     'theme.desc.sage': 'Dempet grønn visdom',
     'theme.desc.rose': 'Elegant støvete rosa',
+    'theme.desc.prism-flow': 'Myk prismatåke med refraktert lys og stabil kontrast',
     // Visual elements
     'designSystem.visual.heading': 'Visuelle elementer',
     'designSystem.visual.diagonalStripe.title': 'Diagonal stripe',

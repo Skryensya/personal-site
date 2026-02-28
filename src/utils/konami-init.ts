@@ -5,6 +5,7 @@
 import { debugLogger } from '@/utils/debug-logger';
 import konami from '@/utils/konami.js';
 import { toggleAllHiddenThemes } from '@/data/themes.js';
+import { showToast } from '@/utils/toast';
 
 let konamiInitialized = false;
 
@@ -210,31 +211,22 @@ function showKonamiNotification(
     result: any,
     companyCleared: boolean
 ) {
-    const notification = document.createElement('div');
+    let message = '';
     if (unlocked) {
         const themeCount = result.themes ? result.themes.length : 0;
-        notification.textContent = themeMessages.unlocked.replace('{count}', themeCount);
+        message = themeMessages.unlocked.replace('{count}', themeCount);
     } else {
         const messages = [themeMessages.locked];
         if (companyCleared && themeMessages.companyHidden) {
             messages.push(themeMessages.companyHidden);
         }
-        notification.textContent = messages.join(' ');
+        message = messages.join(' ');
     }
 
-    notification.style.cssText = `
-        position: fixed; top: 120px; right: -400px;
-        background: var(--color-main); color: var(--color-secondary);
-        border: 2px solid var(--color-secondary); padding: 12px 16px;
-        font-family: monospace; font-weight: bold; font-size: 14px;
-        z-index: 10000; max-width: 280px; border-radius: 4px;
-        transition: right 0.4s ease-out; box-shadow: 4px 4px 0px var(--color-secondary);
-    `;
-
-    document.body.appendChild(notification);
-    setTimeout(() => { notification.style.right = '20px'; }, 50);
-    setTimeout(() => {
-        notification.style.right = '-400px';
-        setTimeout(() => notification.remove(), 400);
-    }, unlocked ? 4000 : 3000);
+    showToast({
+        id: 'konami-theme-toast',
+        message,
+        duration: unlocked ? 4200 : 3200,
+        kind: unlocked ? 'success' : 'warning'
+    });
 }

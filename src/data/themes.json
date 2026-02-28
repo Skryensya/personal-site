@@ -171,7 +171,7 @@
         },
         {
             "id": "ruby",
-            "name": "Ruby",
+            "name": "Mint Ruby",
             "description": "Dark ruby base with bright mint contrast",
             "colors": {
                 "colorful": "#93fdc7",
@@ -209,6 +209,15 @@
             "colors": {
                 "colorful": "#F0C4CF",
                 "contrasty": "#250612"
+            }
+        },
+        {
+            "id": "prism-flow",
+            "name": "Prisma",
+            "description": "Neblina prismática con refracción suave y contraste estable",
+            "colors": {
+                "colorful": "#EAF2FF",
+                "contrasty": "#1C1736"
             }
         }
     ]

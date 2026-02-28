@@ -57,7 +57,7 @@ function buildUrlEntry(
 }
 
 export const GET: APIRoute = async ({ site }) => {
-  const siteUrl = (site?.toString() ?? "https://skryensya.dev").replace(/\/+$/, "/");
+  const siteUrl = (site?.toString() ?? "https://allison.sh").replace(/\/+$/, "/");
   const now = iso(new Date());
 
   // 1) Carga colecciones por idioma

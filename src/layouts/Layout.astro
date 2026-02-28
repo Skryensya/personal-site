@@ -96,7 +96,7 @@ declare global {
                             path: '/fonts/Space_Grotesk/SpaceGrotesk-VariableFont_wght.ttf'
                         }
                     ],
-                    preload: true,
+                    preload: false,
                     display: 'swap',
                     selector: 'h1, h2, h3, h4, h5, h6',
                     fallback: 'sans-serif'
@@ -115,7 +115,7 @@ declare global {
                             path: '/fonts/Atkinson_Hyperlegible_Mono/AtkinsonHyperlegibleMono-Italic-VariableFont_wght.ttf'
                         }
                     ],
-                    preload: true,
+                    preload: false,
                     display: 'swap',
                     selector: 'code, pre, .mono',
                     fallback: 'monospace'
@@ -157,10 +157,32 @@ declare global {
                     const mode = savedMode || 'system';
 
                     // Get theme colors from embedded data
-                    const theme = themeColors[themeId] || {
+                    let theme = themeColors[themeId] || {
                         colorful: defaultColorful,
                         contrasty: defaultContrasty
                     };
+
+                    // Prism Flow: reuse last session colors to avoid first-frame flicker on navigation
+                    if (themeId === 'prism-flow') {
+                        try {
+                            const cachedColorful = sessionStorage.getItem('prism-flow-colorful');
+                            const cachedContrasty = sessionStorage.getItem('prism-flow-contrasty');
+
+                            if (cachedColorful && cachedContrasty) {
+                                theme = { colorful: cachedColorful, contrasty: cachedContrasty };
+                            } else {
+                                const cachedHue = Number(sessionStorage.getItem('prism-flow-hue'));
+                                const hue = Number.isFinite(cachedHue) ? ((cachedHue % 360) + 360) % 360 : 275;
+                                const complement = (hue + 180) % 360;
+                                theme = {
+                                    colorful: `hsl(${hue.toFixed(1)} 84% 86%)`,
+                                    contrasty: `hsl(${complement.toFixed(1)} 58% 16%)`
+                                };
+                            }
+                        } catch (e) {
+                            // Ignore sessionStorage access errors
+                        }
+                    }
 
                     // Determine dark mode immediately
                     let isDark = false;
@@ -341,6 +363,64 @@ declare global {
                 transition-duration: inherit;
             }
 
+            @keyframes click-ray-burst {
+                0% {
+                    transform: translate(-50%, -50%) rotate(var(--ray-rot, 0deg)) scale(0.56);
+                    opacity: 0;
+                }
+                22% {
+                    opacity: 1;
+                }
+                68% {
+                    transform: translate(-50%, -50%) rotate(calc(var(--ray-rot, 0deg) + 2deg)) scale(1.02);
+                    opacity: 0.9;
+                }
+                100% {
+                    transform: translate(-50%, -50%) rotate(calc(var(--ray-rot, 0deg) + 3deg)) scale(1.05);
+                    opacity: 0;
+                }
+            }
+
+            .click-ray-burst {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: var(--ray-size, 20px);
+                height: var(--ray-size, 20px);
+                border-radius: 999px;
+                pointer-events: none;
+                z-index: 9999;
+                animation: click-ray-burst 170ms cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+                will-change: transform, opacity;
+            }
+
+            .click-ray-burst::before {
+                content: '';
+                position: absolute;
+                inset: 0;
+                border-radius: inherit;
+                background: repeating-conic-gradient(
+                    from var(--ray-rot, 0deg),
+                    var(--color-main) 0deg 9deg,
+                    var(--color-secondary) 9deg 18deg,
+                    transparent 18deg 52deg
+                );
+                -webkit-mask: radial-gradient(circle, transparent 0 18%, rgba(0,0,0,0.92) 34%, rgba(0,0,0,0.92) 66%, transparent 84%);
+                mask: radial-gradient(circle, transparent 0 18%, rgba(0,0,0,0.92) 34%, rgba(0,0,0,0.92) 66%, transparent 84%);
+            }
+
+            .click-ray-burst::after {
+                content: '';
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                width: 2px;
+                height: 2px;
+                transform: translate(-50%, -50%);
+                border-radius: 999px;
+                background: linear-gradient(90deg, var(--color-main), var(--color-secondary));
+            }
+
         </style>
     </head>
     <body class="relative bg-main" id="app-body">
@@ -352,7 +432,7 @@ declare global {
             <WaveDivider />
         </div>
         <Navbar />
-        <FaviconManager client:idle />
+        <FaviconManager client:only="react" />
         <NorwegianDisclaimer lang={lang} />
         <div class="pt-24 mt-8 mx-auto max-w-[var(--max-w-size)] "> 
             <main class="text-left px-4" id="main-content" data-skip-target>
@@ -390,6 +470,66 @@ declare global {
                         }
                     }
                 }, 100);
+            }
+
+            // Tiny subtle click rays on background interactions
+            function initClickRayBurst() {
+                if (window.__clickRayBurstBound) return;
+                window.__clickRayBurstBound = true;
+
+                const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (prefersReducedMotion) return;
+
+                const EXCLUDED_SELECTOR = [
+                    'a',
+                    'button',
+                    'input',
+                    'textarea',
+                    'select',
+                    'summary',
+                    'label',
+                    '[role="button"]',
+                    '[contenteditable="true"]',
+                    '[data-no-click-burst]',
+                    // text/content elements
+                    'p,h1,h2,h3,h4,h5,h6,li,blockquote,code,pre,kbd,span,strong,em,small'
+                ].join(',');
+
+                const THROTTLE_MS = 140;
+                const MAX_ACTIVE_BURSTS = 2;
+                let lastAt = 0;
+
+                const shouldShowForTarget = (target) => {
+                    if (!(target instanceof Element)) return true;
+                    if (target.closest(EXCLUDED_SELECTOR)) return false;
+                    return true;
+                };
+
+                const spawn = (x, y) => {
+                    const ray = document.createElement('span');
+                    ray.className = 'click-ray-burst';
+                    ray.style.left = `${x}px`;
+                    ray.style.top = `${y}px`;
+                    ray.style.setProperty('--ray-rot', `${Math.floor(Math.random() * 360)}deg`);
+                    ray.style.setProperty('--ray-size', `${17 + Math.floor(Math.random() * 5)}px`);
+                    document.body.appendChild(ray);
+                    ray.addEventListener('animationend', () => ray.remove(), { once: true });
+                };
+
+                document.addEventListener('pointerdown', (e) => {
+                    if (!e.isPrimary) return;
+                    if (typeof e.button === 'number' && e.button !== 0) return;
+                    if (!shouldShowForTarget(e.target)) return;
+
+                    const now = performance.now();
+                    if (now - lastAt < THROTTLE_MS) return;
+
+                    const activeBursts = document.querySelectorAll('.click-ray-burst').length;
+                    if (activeBursts >= MAX_ACTIVE_BURSTS) return;
+
+                    lastAt = now;
+                    spawn(e.clientX, e.clientY);
+                }, { passive: true });
             }
 
             // Multiple strategies for lazy loading
@@ -455,23 +595,24 @@ declare global {
                 window.addEventListener('company-theme-activated', sync);
                 window.addEventListener('company-theme-deactivated', sync);
 
-                // 2) Observe root attribute/style changes (data-theme, class, CSS vars)
+                // 2) Observe theme identity changes only (avoid per-frame style updates)
                 const rootObserver = new MutationObserver((mutations) => {
                     const changedThemeProps = mutations.some((m) =>
-                        m.type === 'attributes' && ['data-theme', 'class', 'style'].includes(m.attributeName)
+                        m.type === 'attributes' && ['data-theme', 'class'].includes(m.attributeName)
                     );
                     if (changedThemeProps) sync();
                 });
 
                 rootObserver.observe(document.documentElement, {
                     attributes: true,
-                    attributeFilter: ['data-theme', 'class', 'style']
+                    attributeFilter: ['data-theme', 'class']
                 });
             }
 
             // Initialize immediately when this script runs
             setupLazyBackground();
             setupThemeBackgroundSync();
+            initClickRayBurst();
 
             // Re-apply after page transitions
             document.addEventListener('astro:page-load', () => {

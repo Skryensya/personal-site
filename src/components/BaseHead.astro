@@ -2,6 +2,7 @@
 import siteConfig from '../data/site-config';
 import '../styles/global.css';
 import type { Language } from '../i18n/ui';
+import { getEquivalentPage } from '@/utils/localized-routes';
 
 export type Props = {
     title?: string;
@@ -9,10 +10,14 @@ export type Props = {
     image?: { src: string; alt?: string };
     pageType?: 'website' | 'article';
     lang?: Language;
+    noindex?: boolean;
+    structuredData?: Record<string, unknown> | Array<Record<string, unknown>>;
 };
 
-const { description = '', image = siteConfig.image, pageType = 'website', lang = 'es' } = Astro.props;
+const { description = '', image = siteConfig.image, pageType = 'website', lang = 'es', noindex = false, structuredData } = Astro.props;
 const title = [Astro.props.title, siteConfig.title].filter(Boolean).join(' | ');
+const effectiveDescription = description?.trim() || siteConfig.description?.trim() || siteConfig.subtitle || 'Portfolio';
+
 const resolvedImage = image?.src
     ? {
           src: new URL(image.src, Astro.site).toString(),
@@ -20,127 +25,108 @@ const resolvedImage = image?.src
       }
     : undefined;
 
-// Pre-generate meta tags to avoid template issues
-const ogImageMeta = resolvedImage?.src ? `<meta property="og:image" content="${resolvedImage.src}" />` : '';
-const ogImageAltMeta = resolvedImage?.alt ? `<meta property="og:image:alt" content="${resolvedImage.alt}" />` : '';
-const twitterImageMeta = resolvedImage?.src ? `<meta property="twitter:image" content="${resolvedImage.src}" />` : '';
-const twitterImageAltMeta = resolvedImage?.alt ? `<meta name="twitter:image:alt" content="${resolvedImage.alt}" />` : '';
-const canonicalURL = new URL(Astro.request.url, Astro.site);
-
-// Hreflang URLs for multilingual SEO
-const currentPath = Astro.url.pathname;
-const basePath = currentPath.replace(/^\/(en|no)/, '') || '/';
-
-const alternateURLs = {
-    es: new URL(basePath === '/' ? '/' : basePath, Astro.site).toString(),
-    en: new URL('/en' + basePath, Astro.site).toString(),
-    no: new URL('/no' + basePath, Astro.site).toString()
-};
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
 /**
- * Enforce some standard canonical URL formatting across the site.
+ * Standard canonical formatting:
+ * - removes query/hash
+ * - keeps trailing slash for page routes
  */
 function formatCanonicalURL(url: string | URL) {
-    const path = url.toString();
-    const hasQueryParams = path.includes('?');
-    // If there are query params, make sure the URL has no trailing slash
-    if (hasQueryParams) {
-        path.replace(/\/?$/, '');
+    const normalized = new URL(url.toString());
+    normalized.search = '';
+    normalized.hash = '';
+
+    if (!normalized.pathname.endsWith('/') && !normalized.pathname.includes('.')) {
+        normalized.pathname = `${normalized.pathname}/`;
     }
-    // otherwise, canonical URL always has a trailing slash
-    return path.replace(/\/?$/, hasQueryParams ? '' : '/');
+
+    return normalized.toString();
 }
+
+const currentPath = Astro.url.pathname;
+const alternatePaths = {
+    es: getEquivalentPage(currentPath, 'es'),
+    en: getEquivalentPage(currentPath, 'en'),
+    no: getEquivalentPage(currentPath, 'no')
+};
+
+const alternateURLs = {
+    es: formatCanonicalURL(new URL(alternatePaths.es, Astro.site)),
+    en: formatCanonicalURL(new URL(alternatePaths.en, Astro.site)),
+    no: formatCanonicalURL(new URL(alternatePaths.no, Astro.site))
+};
+
+const ogLocale = lang === 'es' ? 'es_ES' : lang === 'en' ? 'en_US' : 'no_NO';
+const ogLocaleAlternates = ['es_ES', 'en_US', 'no_NO'].filter((locale) => locale !== ogLocale);
+
+const websiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: siteConfig.title,
+    description: effectiveDescription,
+    url: formatCanonicalURL(canonicalURL),
+    inLanguage: ['es', 'en', 'no'],
+    author: {
+        '@type': 'Person',
+        name: 'Allison Peña',
+        jobTitle: 'Full-stack web developer',
+        url: 'https://allison.sh',
+        sameAs: ['https://github.com/skryensya', 'https://linkedin.com/in/skryensya']
+    },
+    publisher: {
+        '@type': 'Organization',
+        name: siteConfig.title,
+        url: 'https://allison.sh/'
+    }
+};
+
+const additionalStructuredData = Array.isArray(structuredData)
+    ? structuredData
+    : structuredData
+      ? [structuredData]
+      : [];
 ---
 
-<!-- High Priority Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>{title}</title>
 <meta name="generator" content={Astro.generator} />
 
-<!-- Local font files are handled by AstroFont in Layout.astro -->
-
-<!-- Preload critical images -->
-<link rel="preload" href="/img/me.png" as="image" />
-
-<!-- DNS prefetch for potential external resources -->
 <link rel="dns-prefetch" href="https://api.github.com" />
 
-<!-- Low Priority Global Metadata -->
-<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-<link rel="icon" type="image/x-icon" href="/favicon.svg" />
-<link rel="sitemap" href="/sitemap-index.xml" />
+<link rel="icon" type="image/x-icon" href="/img/favicon/favicon-dos-dark.ico" />
+<link rel="shortcut icon" type="image/x-icon" href="/img/favicon/favicon-dos-dark.ico" />
+<link rel="sitemap" href="/sitemap.xml" />
 <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="RSS" />
 
-<!-- Page Metadata -->
 <link rel="canonical" href={formatCanonicalURL(canonicalURL)} />
-<meta name="description" content={description} />
-
-<!-- Language and Localization -->
-<html lang={lang} />
+<meta name="description" content={effectiveDescription} />
 <meta name="language" content={lang} />
+{noindex && <meta name="robots" content="noindex,follow" />}
 
-<!-- Hreflang tags for multilingual SEO -->
 <link rel="alternate" hreflang="es" href={alternateURLs.es} />
 <link rel="alternate" hreflang="en" href={alternateURLs.en} />
 <link rel="alternate" hreflang="no" href={alternateURLs.no} />
 <link rel="alternate" hreflang="x-default" href={alternateURLs.es} />
 
-<!-- Open Graph / Facebook -->
 <meta property="og:type" content={pageType} />
 <meta property="og:url" content={formatCanonicalURL(canonicalURL)} />
 <meta property="og:title" content={title} />
-<meta property="og:description" content={description} />
-<Fragment set:html={ogImageMeta} />
-<Fragment set:html={ogImageAltMeta} />
+<meta property="og:description" content={effectiveDescription} />
+<meta property="og:locale" content={ogLocale} />
+{ogLocaleAlternates.map((locale) => <meta property="og:locale:alternate" content={locale} />)}
+{resolvedImage?.src && <meta property="og:image" content={resolvedImage.src} />}
+{resolvedImage?.alt && <meta property="og:image:alt" content={resolvedImage.alt} />}
 
-<!-- X/Twitter -->
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content={formatCanonicalURL(canonicalURL)} />
-<meta property="twitter:title" content={title} />
-<meta property="twitter:description" content={description} />
-<Fragment set:html={twitterImageMeta} />
-<Fragment set:html={twitterImageAltMeta} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={formatCanonicalURL(canonicalURL)} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={effectiveDescription} />
+{resolvedImage?.src && <meta name="twitter:image" content={resolvedImage.src} />}
+{resolvedImage?.alt && <meta name="twitter:image:alt" content={resolvedImage.alt} />}
 
-<!-- Structured Data (JSON-LD) -->
-<script type="application/ld+json" is:inline>
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": siteConfig.title,
-  "description": description || siteConfig.description,
-  "url": formatCanonicalURL(canonicalURL),
-  "inLanguage": [
-    {
-      "@type": "Language",
-      "name": "Spanish",
-      "alternateName": "es"
-    },
-    {
-      "@type": "Language", 
-      "name": "English",
-      "alternateName": "en"
-    },
-    {
-      "@type": "Language",
-      "name": "Norwegian",
-      "alternateName": "no"
-    }
-  ],
-  "author": {
-    "@type": "Person",
-    "name": "Allison Peña",
-    "jobTitle": "Software Developer",
-    "url": "https://skryensya.dev",
-    "sameAs": [
-      "https://github.com/skryensya",
-      "https://linkedin.com/in/allisonpenaloza"
-    ]
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": siteConfig.title,
-    "url": formatCanonicalURL(canonicalURL)
-  }
-}
-</script>
+<script type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)}></script>
+{additionalStructuredData.map((entry) => (
+    <script type="application/ld+json" set:html={JSON.stringify(entry)}></script>
+))}

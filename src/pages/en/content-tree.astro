@@ -2,7 +2,28 @@
 import Layout from '@/layouts/Layout.astro';
 import SitemapTree from '@/components/SitemapTree.astro';
 import Sidebar from '@/components/Sidebar.astro';
+import { getSitemapForLanguage, sitemapData, type SitemapNode } from '@/data/sitemap-data';
+
 const lang = 'en';
+const tree = getSitemapForLanguage(lang);
+
+const countNodes = (nodes: SitemapNode[]): number =>
+  nodes.reduce((total, node) => total + 1 + countNodes(node.children || []), 0);
+
+const getMaxDepth = (nodes: SitemapNode[], depth = 1): number => {
+  if (!nodes.length) return depth;
+  return Math.max(
+    ...nodes.map((node) =>
+      node.children?.length ? getMaxDepth(node.children, depth + 1) : depth,
+    ),
+  );
+};
+
+const mainSections = tree.length;
+const totalNodes = countNodes(tree);
+const projectsCount = tree.find((n) => n.url.includes('/projects/'))?.children?.length || 0;
+const supportedLanguages = Object.keys(sitemapData).length;
+const maxDepth = getMaxDepth(tree);
 ---
 
 <Layout
@@ -11,7 +32,7 @@ const lang = 'en';
   lang={lang}
 >
   <div class="flex gap-4">
-    <main id="main-content" class="flex-1 mx-auto max-w-[850px] py-8">
+    <section id="content-tree-main" class="flex-1 mx-auto max-w-[850px] py-8" data-heading-slug-root>
       <div class="mb-8">
         <h1 id="content" class="text-3xl font-mono font-bold text-main border-b-2 border-main pb-4 mb-4">
           Content Tree
@@ -23,23 +44,55 @@ const lang = 'en';
 
       <div id="structure" class="mb-8">
         <h2 class="text-xl font-mono font-bold text-main border-b border-main pb-2 mb-4">Website structure</h2>
-        <SitemapTree lang={lang} />
+        <SitemapTree lang={lang} showHeader={false} />
       </div>
 
       <div class="mt-12 space-y-8">
         <div class="space-y-6">
-          <h2 id="info" class="text-xl font-mono font-bold text-main border-b border-main pb-2">Additional Information</h2>
-          <div id="stats" class="grid gap-2 font-mono text-sm text-main ml-4">
-            <div>Total main pages: 6</div>
-            <div>Available projects: 7</div>
-            <div>Supported languages: 3 (Spanish, English, Norwegian)</div>
-            <div>Last updated: {new Date().toLocaleDateString('en-US')}</div>
-            <div>XML Sitemap: <a href="/sitemap.xml" class="text-main underline hover:no-underline">/sitemap.xml</a></div>
+          <h2 id="info" class="text-xl font-mono font-bold text-main border-b border-main pb-2">Additional information</h2>
+
+          <h3 id="site-metrics" class="text-lg font-mono font-bold text-main">Site metrics</h3>
+          <div id="stats" class="grid gap-3 md:grid-cols-2 font-mono text-sm text-main">
+            <div class="border border-main p-3 bg-secondary text-main">
+              <p class="text-xs opacity-75">Main sections</p>
+              <p class="text-lg font-bold">{mainSections}</p>
+            </div>
+            <div class="border border-main p-3">
+              <p class="text-xs opacity-75">Routes in this tree</p>
+              <p class="text-lg font-bold">{totalNodes}</p>
+            </div>
+            <div class="border border-main p-3">
+              <p class="text-xs opacity-75">Published projects</p>
+              <p class="text-lg font-bold">{projectsCount}</p>
+            </div>
+            <div class="border border-main p-3">
+              <p class="text-xs opacity-75">Maximum depth</p>
+              <p class="text-lg font-bold">Level {maxDepth}</p>
+            </div>
+            <div class="border border-main p-3 md:col-span-2">
+              <p class="text-xs opacity-75">Supported languages</p>
+              <p class="text-lg font-bold">{supportedLanguages} (Spanish, English, Norwegian)</p>
+            </div>
+          </div>
+
+          <div class="border border-main p-3 text-sm font-mono text-main space-y-2">
+            <h3 id="useful-resources" class="text-base font-bold">Useful resources</h3>
+            <ul class="list-disc pl-5 space-y-1">
+              <li>
+                XML Sitemap:
+                <a href="/sitemap.xml" class="underline hover:no-underline">/sitemap.xml</a>
+              </li>
+              <li>Last updated: {new Date().toLocaleDateString('en-US')}</li>
+              <li>
+                Home:
+                <a href="/en/" class="underline hover:no-underline">/en/</a>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
-    </main>
+    </section>
 
-    <Sidebar contentId="main-content" />
+    <Sidebar contentId="content-tree-main" />
   </div>
 </Layout>

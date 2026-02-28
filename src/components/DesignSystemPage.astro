@@ -4,10 +4,17 @@ import Button from '@/components/Button.astro';
 import ProjectCard from '@/components/ProjectCard.astro';
 import ContentPage from '@/components/ContentPage.astro';
 import ThemeCard from '@/components/ThemeCard.astro';
+import DropdownButton from '@/components/ui/DropdownButton.astro';
+import DropdownContent from '@/components/ui/DropdownContent.astro';
+import Kbd from '@/components/ui/Kbd.astro';
 import themesData from '@/data/themes.json';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import WaveDivider from '@/components/WaveDivider.astro';
+import SevenSegmentDisplay from '@/components/ui/seven-segment/SevenSegmentDisplay.astro';
+import LiveClockDisplay from '@/components/ui/seven-segment/LiveClockDisplay.astro';
+import FooterNavigationList from '@/components/FooterNavigationList.astro';
+import { Command, Option, ArrowUpToLine, CornerDownLeft, ArrowRight } from 'lucide-react';
 
 interface Props {
     lang?: Language;
@@ -23,6 +30,78 @@ const headingPangram =
         : lang === 'no'
           ? '“Den lille reven gikk glad og lekende ned til elva mens han sang.”'
           : '“The quick little fox joyfully went down to the river singing a warm tune.”';
+
+const ssDisplayLabel =
+    lang === 'es'
+        ? 'SS DISPLAY · Space Grotesk'
+        : lang === 'no'
+          ? 'SS DISPLAY · Space Grotesk'
+          : 'SS DISPLAY · Space Grotesk';
+
+const sevenSegmentCopy =
+    lang === 'es'
+        ? {
+              heading: 'Pantalla de siete segmentos',
+              intro: 'Sistema de dígitos segmentados para lecturas numéricas. Se usa en estados y métricas para mantener legibilidad y ritmo visual.',
+              samples: 'Muestras'
+          }
+        : lang === 'no'
+          ? {
+                heading: 'Seven Segment-display',
+                intro: 'Segmentert tallsystem for numeriske avlesninger. Brukes i status og målinger for tydelig lesbarhet og visuell rytme.',
+                samples: 'Eksempler'
+            }
+          : {
+                heading: 'Seven Segment Display',
+                intro: 'Segment-based digit system for numeric readouts. Used in status and metrics to keep readability and visual rhythm.',
+                samples: 'Samples'
+            };
+
+const keyboardSectionHeading =
+    lang === 'es' ? 'Teclas de teclado' : lang === 'no' ? 'Tastaturtaster' : 'Keyboard Keys';
+
+const footerNavigationHeading =
+    lang === 'es' ? 'Navegación de footer' : lang === 'no' ? 'Footer-navigasjon' : 'Footer Navigation';
+
+const sectionIntro = {
+    structure:
+        lang === 'es'
+            ? 'Ordenado por importancia: color, temas, tipografía y luego componentes de interacción.'
+            : lang === 'no'
+              ? 'Sortert etter viktighet: farger, temaer, typografi og deretter interaktive komponenter.'
+              : 'Ordered by importance: color, themes, typography, and then interactive components.',
+    buttons:
+        lang === 'es'
+            ? 'Base de interacción primaria. Aquí se concentran estados, jerarquía visual y variantes de acción.'
+            : lang === 'no'
+              ? 'Grunnlaget for primær interaksjon. Her vises tilstander, visuelt hierarki og handlingsvarianter.'
+              : 'Core interaction building block. This section shows states, visual hierarchy, and action variants.',
+    cards:
+        lang === 'es'
+            ? 'Contenedor de contenido resumido. Prioriza lectura rápida, enlace claro y estructura consistente.'
+            : lang === 'no'
+              ? 'Kort for komprimert innhold. Prioriterer rask lesing, tydelig lenke og konsistent struktur.'
+              : 'Compact content container focused on quick scanning, clear linking, and consistent structure.',
+    footerNav:
+        lang === 'es'
+            ? 'Patrón de navegación secundaria para cierre de página y acceso a secciones clave.'
+            : lang === 'no'
+              ? 'Sekundært navigasjonsmønster for sidens avslutning og tilgang til viktige seksjoner.'
+              : 'Secondary navigation pattern used at page end for quick access to key sections.',
+    keyboard:
+        lang === 'es'
+            ? 'Representación visual de atajos y teclas del sistema para documentación y ayuda contextual.'
+            : lang === 'no'
+              ? 'Visuell representasjon av hurtigtaster for dokumentasjon og konteksthjelp.'
+              : 'Visual representation of shortcuts and system keys for documentation and contextual help.',
+    visual:
+        lang === 'es'
+            ? 'Recursos decorativos de menor prioridad que refuerzan identidad sin competir con el contenido.'
+            : lang === 'no'
+              ? 'Dekorative elementer med lavere prioritet som styrker identitet uten å forstyrre innholdet.'
+              : 'Lower-priority decorative resources that reinforce identity without competing with content.'
+};
+
 const opacities = [100, 80, 60, 40, 20, 10] as const;
 const mainBgClasses: Record<(typeof opacities)[number], string> = {
     100: 'bg-main',
@@ -45,38 +124,35 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
 <Layout title={`${t('designSystem.title')} - Showcase`} description={t('designSystem.intro.description')} lang={lang}>
     <ContentPage contentId="main-content" lang={lang} useClerkTOC={true} contentClassName="space-y-12 md:space-y-20">
         <!-- Hero Header -->
-        <header id="introduccion" class="relative space-y-6 md:space-y-8">
+        <section id="introduccion" class="relative space-y-6 md:space-y-8">
             <div class="mt-6 md:mt-8">
                 <h1 id="inicio" class="h1">{t('designSystem.intro.heading')}</h1>
             </div>
-            <div class="space-y-4 md:space-y-6 max-w-3xl text-lg leading-relaxed text-balance">
+            <div class="space-y-6 md:space-y-8 max-w-3xl leading-relaxed text-balance">
                 {lang === 'es' && (
                     <>
-                        <p>Quise algo simple pero con carácter. Soy diseñador y prefiero la coherencia a través de restricciones: dos colores que se invierten, bordes definidos y tipografía clara. Limitar el espacio de decisiones me ayuda a decidir mejor y a poner el contenido primero.</p>
-                        <p>También pienso la accesibilidad como parte del sistema: suficiente contraste, jerarquías legibles y estructura semántica clara. Cada componente está hecho para ser entendido, visible y usable sin esfuerzo.</p>
-                        <p class="">Si quieres profundizar, puedes leer la <a href="/declaracion-de-accesibilidad" class="underline font-mono">Declaración de Accesibilidad</a>.</p>
+                        <p class="text-base md:text-lg">Este sistema nace desde una restricción clara: dos colores, bordes definidos y tipografía con jerarquía estable. Al reducir decisiones visuales, el contenido toma protagonismo y cada página mantiene el mismo lenguaje.</p>
+                        <p class="text-base md:text-lg">La accesibilidad está integrada desde el diseño: contraste legible, foco visible, estructura semántica y navegación simple. Si quieres revisar criterios y alcance en detalle, puedes leer la <a href="/declaracion-de-accesibilidad" class="underline underline-offset-2 decoration-[1.5px] hover:opacity-80">Declaración de Accesibilidad</a>.</p>
                     </>
                 )}
                 {lang === 'en' && (
                     <>
-                        <p>I wanted something simple yet bold. I’m not a designer, so I chose coherence through constraints: two colors that invert, sharp borders, and clear typography. Fewer choices make every decision intentional and keep content first.</p>
-                        <p>This system uses opacity for nuance (e.g., <code class="font-mono">main/10</code> or <code class="font-mono">secondary/10</code>), preserves contrast in light/dark, and limits motion to what’s functional. Accessibility is the backbone: contrast, legibility, focus, and semantic structure.</p>
-                        <p class=""><a href={lang === 'en' ? '/en/accessibility-statement' : '#'} class="underline font-mono">Accessibility Statement</a></p>
+                        <p class="text-base md:text-lg">This system is built from a clear constraint: two colors, sharp borders, and typography with a stable hierarchy. By reducing visual choices, content takes priority and every page keeps the same language.</p>
+                        <p class="text-base md:text-lg">Accessibility is built into the design: readable contrast, visible focus, semantic structure, and straightforward navigation. If you want to review criteria and scope in detail, read the <a href="/en/accessibility-statement" class="underline underline-offset-2 decoration-[1.5px] hover:opacity-80">Accessibility Statement</a>.</p>
                     </>
                 )}
                 {lang === 'no' && (
                     <>
-                        <p>Jeg ønsket noe enkelt, men med karakter. Jeg er ikke designer, så jeg valgte sammenheng gjennom begrensninger: to farger som inverteres, skarpe kanter og tydelig typografi. Færre valg gjør hver beslutning mer bevisst og setter innholdet først.</p>
-                        <p>Systemet bruker opasitet for nyanser (f.eks. <code class="font-mono">main/10</code> eller <code class="font-mono">secondary/10</code>), bevarer kontrast i lys/mørk, og begrenser bevegelse til det funksjonelle. Tilgjengelighet er grunnmuren: kontrast, lesbarhet, fokus og semantikk.</p>
-                        <p class=""><a href={lang === 'no' ? '/no/tilgjengelighetserklaering' : '#'} class="underline font-mono">Tilgjengelighetserklæring</a></p>
+                        <p class="text-base md:text-lg">Dette systemet bygger på en tydelig begrensning: to farger, skarpe kanter og typografi med stabilt hierarki. Når de visuelle valgene reduseres, får innholdet mer plass, og alle sider følger samme språk.</p>
+                        <p class="text-base md:text-lg">Tilgjengelighet er bygget inn i designet: lesbar kontrast, synlig fokus, semantisk struktur og enkel navigasjon. Hvis du vil se kriterier og omfang i detalj, kan du lese <a href="/no/tilgjengelighetserklaering" class="underline underline-offset-2 decoration-[1.5px] hover:opacity-80">Tilgjengelighetserklæringen</a>.</p>
                     </>
                 )}
             </div>
-        </header>
+        </section>
 
         <!-- Color System -->
         <section id="colores" class="space-y-6 md:space-y-8">
-            <h2 id="colores" class="h2">
+            <h2 id="colores-heading" class="h2">
                 {t('designSystem.colors.heading')}
             </h2>
 
@@ -155,11 +231,12 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                     </div>
                 </div>
             </div>
+
         </section>
 
         <!-- Available Themes -->
         <section id="temas" class="space-y-6 md:space-y-8">
-            <h2 id="temas" class="h2">
+            <h2 id="temas-heading" class="h2">
                 {t('designSystem.colors.themes.title')}
             </h2>
 
@@ -197,7 +274,8 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
             </div>
 
             <script>
-                document.addEventListener('astro:page-load', () => {
+                const initDesignSystemThemeCards = () => {
+
                     function getMode() {
                         const savedMode = localStorage.getItem('theme-mode') || 'system';
                         if (savedMode === 'system') {
@@ -207,7 +285,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                     }
 
                     function updateActiveChecks() {
-                        const activeId = localStorage.getItem('theme-id');
+                        const activeId = localStorage.getItem('theme-id') || window.__THEME_ID__;
                         const cards = document.querySelectorAll('.theme-card');
                         cards.forEach((card) => {
                             const id = card.getAttribute('data-theme-id');
@@ -217,27 +295,26 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                             if (id === activeId) {
                                 checked.classList.remove('hidden');
                                 unchecked.classList.add('hidden');
+                                checked.classList.remove('theme-dot-pop');
+                                void checked.offsetWidth;
+                                checked.classList.add('theme-dot-pop');
                             } else {
                                 checked.classList.add('hidden');
                                 unchecked.classList.remove('hidden');
+                                checked.classList.remove('theme-dot-pop');
                             }
                         });
                     }
 
                     function applyVisibilityState() {
-                        // Company: only show the active company theme if any
                         const activeCompany = sessionStorage.getItem('active-company-theme');
                         const companyWrappers = document.querySelectorAll('.company-theme');
                         companyWrappers.forEach((el) => {
                             const id = el.getAttribute('data-theme-id');
-                            if (activeCompany && id === activeCompany) {
-                                el.classList.remove('hidden');
-                            } else {
-                                el.classList.add('hidden');
-                            }
+                            if (activeCompany && id === activeCompany) el.classList.remove('hidden');
+                            else el.classList.add('hidden');
                         });
 
-                        // Special: show all when unlocked
                         const specialUnlocked = localStorage.getItem('special-themes-visible') === 'true';
                         const specialWrappers = document.querySelectorAll('.special-theme');
                         specialWrappers.forEach((el) => {
@@ -249,6 +326,8 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                     function wireApplyButtons() {
                         const buttons = document.querySelectorAll('.apply-theme-btn');
                         buttons.forEach((btn) => {
+                            if (btn.hasAttribute('data-check-bound')) return;
+                            btn.setAttribute('data-check-bound', 'true');
                             btn.addEventListener('click', async (e) => {
                                 e.preventDefault();
                                 const themeId = btn.getAttribute('data-theme-id');
@@ -262,37 +341,43 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                         });
                     }
 
-                    // Initial state
-                    applyVisibilityState();
-                    updateActiveChecks();
-                    wireApplyButtons();
-
-                    // React to unlock/activation events
                     const handleVisibilityEvent = () => {
                         applyVisibilityState();
+                        wireApplyButtons();
                         updateActiveChecks();
                     };
+
+                    handleVisibilityEvent();
 
                     window.addEventListener('themes-unlocked', handleVisibilityEvent);
                     window.addEventListener('themes-locked', handleVisibilityEvent);
                     window.addEventListener('theme-unlocked', handleVisibilityEvent);
                     window.addEventListener('theme-changed', handleVisibilityEvent);
+                    window.addEventListener('theme-control-ready', handleVisibilityEvent);
                     window.addEventListener('company-theme-activated', handleVisibilityEvent);
                     window.addEventListener('company-theme-deactivated', handleVisibilityEvent);
 
-                    // Sync with storage changes (multi-tab or external toggles)
                     window.addEventListener('storage', (e) => {
                         if (e.key === 'special-themes-visible' || e.key === 'theme-id') {
                             handleVisibilityEvent();
                         }
                     });
-                });
+                };
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initDesignSystemThemeCards, { once: true });
+                } else {
+                    initDesignSystemThemeCards();
+                }
+
+                document.addEventListener('astro:page-load', initDesignSystemThemeCards);
             </script>
         </section>
 
+
         <!-- Typography Section -->
         <section id="tipografia" class="space-y-2 md:space-y-4">
-            <h2 id="tipografia" class="h2">
+            <h2 id="tipografia-heading" class="h2">
                 {t('designSystem.typography.heading')}
             </h2>
 
@@ -310,6 +395,10 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                     </div>
               
                         <div class="flex-1 p-6 md:p-8 space-y-3 md:space-y-4">
+                            <div>
+                                <span class="font-mono text-secondary bg-main/80 px-2">{ssDisplayLabel}</span>
+                                <p class="text-4xl md:text-5xl font-bold leading-tight !mt-0 !mb-10" style="font-family: var(--font-display);">{headingPangram}</p>
+                            </div>
                             <div>
                                 <span class="font-mono text-secondary bg-main/80 px-2">{t('designSystem.typography.labels.h1')}</span>
                                 <p class="h1 !mt-0 !mb-10">{headingPangram}</p>
@@ -377,10 +466,11 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
         </section>
 
         <!-- Buttons Section -->
-        <section id="botones" class="">
-            <h2 id="botones" class="h2">
+        <section id="botones" class="space-y-6 md:space-y-8">
+            <h2 id="botones-heading" class="h2">
                 {t('designSystem.buttons.heading')}
             </h2>
+            <p class="text-body text-main/80 max-w-3xl">{sectionIntro.buttons}</p>
 
             <!-- Mesh of components: each in its own box -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
@@ -411,6 +501,25 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                     </div>
                     <div class="flex items-center justify-center p-4 aspect-5/2">
                         <Button variant="normal" size="sm">{t('designSystem.buttons.labels.small')}</Button>
+                    </div>
+                </div>
+
+                <!-- Dropdown Button -->
+                <div class="bg-main/10 p-0 space-y-0">
+                    <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+                        {lang === 'es' ? 'Con menú' : lang === 'no' ? 'Med meny' : 'With Menu'}
+                    </div>
+                    <div class="flex items-center justify-center p-4 aspect-5/2">
+                        <DropdownButton id="ds-dropdown-default" onMainClick="nextDesignSystemOption" class="w-auto h-8" lang={lang}>
+                            <span id="ds-dropdown-default-label" class="font-grotesk text-sm font-semibold uppercase px-1">
+                                {lang === 'es' ? 'Primera' : lang === 'no' ? 'Første' : 'First'}
+                            </span>
+                            <DropdownContent slot="dropdown-content">
+                                <button type="button" data-ds-option="true" data-selected="true">{lang === 'es' ? 'Primera' : lang === 'no' ? 'Første' : 'First'}</button>
+                                <button type="button" data-ds-option="true">{lang === 'es' ? 'Segunda' : lang === 'no' ? 'Andre' : 'Second'}</button>
+                                <button type="button" data-ds-option="true">{lang === 'es' ? 'Tercera' : lang === 'no' ? 'Tredje' : 'Third'}</button>
+                            </DropdownContent>
+                        </DropdownButton>
                     </div>
                 </div>
 
@@ -469,14 +578,57 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                         </div>
                     </div>
                 </div>
+
+
             </div>
         </section>
 
+        <script>
+            const initDesignSystemDropdownDemo = () => {
+                const label = document.getElementById('ds-dropdown-default-label');
+                const optionButtons = Array.from(document.querySelectorAll('#dropdown-menu-ds-dropdown-default [data-ds-option="true"]'));
+
+                if (!label || optionButtons.length === 0) return;
+
+                const syncSelection = (index) => {
+                    optionButtons.forEach((btn, i) => {
+                        if (i === index) btn.setAttribute('data-selected', 'true');
+                        else btn.setAttribute('data-selected', 'false');
+                    });
+
+                    const selectedText = optionButtons[index]?.textContent?.trim();
+                    if (selectedText) label.textContent = selectedText;
+                };
+
+                optionButtons.forEach((btn, index) => {
+                    if (btn.hasAttribute('data-ds-option-bound')) return;
+                    btn.setAttribute('data-ds-option-bound', 'true');
+                    btn.addEventListener('click', () => syncSelection(index));
+                });
+
+                window.nextDesignSystemOption = () => {
+                    const currentIndex = optionButtons.findIndex((btn) => btn.getAttribute('data-selected') === 'true');
+                    const safeIndex = currentIndex >= 0 ? currentIndex : 0;
+                    const nextIndex = (safeIndex + 1) % optionButtons.length;
+                    syncSelection(nextIndex);
+                };
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initDesignSystemDropdownDemo, { once: true });
+            } else {
+                initDesignSystemDropdownDemo();
+            }
+
+            document.addEventListener('astro:page-load', initDesignSystemDropdownDemo);
+        </script>
+
         <!-- Cards Section -->
         <section id="tarjetas" class="space-y-8 md:space-y-10">
-            <h2 id="tarjetas" class="h2">
+            <h2 id="tarjetas-heading" class="h2">
                 {t('designSystem.cards.heading')}
             </h2>
+            <p class="text-body text-main/80 max-w-3xl">{sectionIntro.cards}</p>
 
             <div class="bg-main/10 p-0 space-y-0">
                 <!-- Tile header (full width, filled in main) -->
@@ -497,11 +649,303 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
             </div>
         </section>
 
+        <!-- Footer Navigation List -->
+        <section id="footer-navigation" class="space-y-6 md:space-y-8" data-toc-ignore>
+            <h2 id="footer-navigation-heading" class="h2">{footerNavigationHeading}</h2>
+            <p class="text-body text-main/80 max-w-3xl">{sectionIntro.footerNav}</p>
+            <div class="bg-main/10 p-0 space-y-0">
+                <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+                    {t('footer.navigation')}
+                </div>
+                <div class="p-4">
+                    <div class="max-w-md bg-secondary">
+                        <FooterNavigationList lang={lang} inverted />
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- KBD Section -->
+        <section id="kbd" class="space-y-6 md:space-y-8" data-toc-ignore>
+            <h2 id="kbd-heading" class="h2">{keyboardSectionHeading}</h2>
+            <p class="text-body text-main/80 max-w-3xl">{sectionIntro.keyboard}</p>
+            <div class="bg-main/10 p-0 space-y-0">
+                <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+                    {lang === 'es' ? 'Ejemplos de teclas' : lang === 'no' ? 'Taste-eksempler' : 'Keycap examples'}
+                </div>
+                <div class="p-4 space-y-4">
+                    <div class="flex flex-wrap items-center gap-2" id="kbd-live-demo">
+                        <Kbd class="!w-auto !min-w-[2.55rem] !px-2" data-kbd-live="true" data-kbd-key="control" data-kbd-code="controlleft">Ctrl</Kbd>
+                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><Command className="kbd-mod-icon" size={13} /></Kbd>
+                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="alt" data-kbd-code="altleft"><Option className="kbd-mod-icon" size={13} /></Kbd>
+                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="shift" data-kbd-code="shiftleft"><ArrowUpToLine className="kbd-mod-icon" size={13} /></Kbd>
+                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="enter" data-kbd-code="enter"><CornerDownLeft className="kbd-mod-icon" size={13} /></Kbd>
+                        <Kbd class="!w-auto !min-w-[2.25rem] !px-2" data-kbd-live="true" data-kbd-key="escape" data-kbd-code="escape">Esc</Kbd>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2 text-main/80">
+                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><Command className="kbd-mod-icon" size={13} /></Kbd>
+                        <span class="font-mono text-xs">+</span>
+                        <Kbd data-kbd-live="true" data-kbd-key="f" data-kbd-code="keyf">F</Kbd>
+                        <span class="font-mono text-xs">·</span>
+                        <Kbd class="!w-auto !min-w-[2.25rem] !px-2" data-kbd-live="true" data-kbd-key="escape" data-kbd-code="escape">Esc</Kbd>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2" id="kbd-konami-demo">
+                        <Kbd data-konami-step="0" data-konami-key="arrowup"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(-90deg)' }} /></Kbd>
+                        <Kbd data-konami-step="1" data-konami-key="arrowup"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(-90deg)' }} /></Kbd>
+                        <Kbd data-konami-step="2" data-konami-key="arrowdown"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(90deg)' }} /></Kbd>
+                        <Kbd data-konami-step="3" data-konami-key="arrowdown"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(90deg)' }} /></Kbd>
+                        <Kbd data-konami-step="4" data-konami-key="arrowleft"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(180deg)' }} /></Kbd>
+                        <Kbd data-konami-step="5" data-konami-key="arrowright"><ArrowRight className="kbd-arrow-icon" size={10} /></Kbd>
+                        <Kbd data-konami-step="6" data-konami-key="arrowleft"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(180deg)' }} /></Kbd>
+                        <Kbd data-konami-step="7" data-konami-key="arrowright"><ArrowRight className="kbd-arrow-icon" size={10} /></Kbd>
+                        <Kbd data-konami-step="8" data-konami-key="b">B</Kbd>
+                        <Kbd data-konami-step="9" data-konami-key="a">A</Kbd>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <script>
+            const initKonamiKbdDemo = () => {
+                const container = document.getElementById('kbd-konami-demo');
+                if (!container) return;
+
+                const steps = Array.from(container.querySelectorAll('[data-konami-step]'));
+                if (!steps.length) return;
+
+                const sequence = ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'arrowright', 'arrowleft', 'arrowright', 'b', 'a'];
+                const liveKeys = Array.from(document.querySelectorAll('#kbd [data-kbd-live]'));
+
+                window.__kbdKonamiSteps = steps;
+                window.__kbdLiveKeys = liveKeys;
+
+                const markProgress = (count) => {
+                    const currentSteps = window.__kbdKonamiSteps || [];
+                    currentSteps.forEach((el, i) => {
+                        if (i < count) el.classList.add('kbd-pressed');
+                        else el.classList.remove('kbd-pressed');
+                    });
+                };
+
+                const setKonamiPressed = (eventKey, pressed) => {
+                    const key = String(eventKey || '').toLowerCase();
+                    const currentSteps = window.__kbdKonamiSteps || [];
+                    const progress = Number(window.__kbdKonamiProgress || 0);
+
+                    if (pressed) {
+                        let target = currentSteps.find((el, i) => {
+                            if (i < progress) return false;
+                            const matchKey = String(el.getAttribute('data-konami-key') || '').toLowerCase();
+                            return matchKey && matchKey === key;
+                        });
+
+                        if (!target) {
+                            target = currentSteps.find((el) => {
+                                const matchKey = String(el.getAttribute('data-konami-key') || '').toLowerCase();
+                                return matchKey && matchKey === key;
+                            });
+                        }
+
+                        if (target) target.classList.add('kbd-pressed');
+                        return;
+                    }
+
+                    currentSteps.forEach((el, i) => {
+                        const matchKey = String(el.getAttribute('data-konami-key') || '').toLowerCase();
+                        if (!matchKey || matchKey !== key) return;
+                        if (i >= progress) el.classList.remove('kbd-pressed');
+                    });
+                };
+
+                const setLivePressed = (eventKey, eventCode, pressed) => {
+                    const key = String(eventKey || '').toLowerCase();
+                    const code = String(eventCode || '').toLowerCase();
+                    const currentLiveKeys = window.__kbdLiveKeys || [];
+
+                    currentLiveKeys.forEach((el) => {
+                        const matchKey = String(el.getAttribute('data-kbd-key') || '').toLowerCase();
+                        const matchCode = String(el.getAttribute('data-kbd-code') || '').toLowerCase();
+                        const keyCandidates = matchKey ? matchKey.split('|').map((k) => k.trim()) : [];
+                        const codeCandidates = matchCode ? matchCode.split('|').map((c) => c.trim()) : [];
+                        const matches = keyCandidates.includes(key) || codeCandidates.includes(code);
+
+                        if (!matches) return;
+                        if (pressed) el.classList.add('kbd-pressed');
+                        else el.classList.remove('kbd-pressed');
+                    });
+                };
+
+                if (window.__kbdKonamiBound) {
+                    const progress = Number(window.__kbdKonamiProgress || 0);
+                    markProgress(progress);
+                }
+
+                window.__kbdKonamiProgress = window.__kbdKonamiProgress || 0;
+                markProgress(Number(window.__kbdKonamiProgress || 0));
+
+                if (!window.__kbdKonamiBound) {
+                    window.__kbdKonamiBound = true;
+
+                    const setModifierPressedStateFromEvent = (e, pressed) => {
+                        setLivePressed('meta', 'metaleft', pressed && !!e.metaKey);
+                        setLivePressed('control', 'controlleft', pressed && !!e.ctrlKey);
+                        setLivePressed('alt', 'altleft', pressed && !!e.altKey);
+                        setLivePressed('shift', 'shiftleft', pressed && !!e.shiftKey);
+                    };
+
+                    const onKeyDown = (e) => {
+                        if (e.repeat) return;
+
+                        const key = String(e.key || '').toLowerCase();
+                        const code = String(e.code || '').toLowerCase();
+                        setLivePressed(key, code, true);
+                        setModifierPressedStateFromEvent(e, true);
+                        setKonamiPressed(key, true);
+
+                        if (window.__kbdKonamiCelebrating) return;
+
+                        let progress = Number(window.__kbdKonamiProgress || 0);
+
+                        if (progress >= sequence.length) return;
+
+                        if (key === sequence[progress]) {
+                            progress += 1;
+                            window.__kbdKonamiProgress = progress;
+                            markProgress(progress);
+
+                            if (progress === sequence.length) {
+                                // Let the global Konami handler (initKonami) own unlock + confetti logic
+                                // to avoid double-toggle and accidental lock without confetti.
+                                window.__kbdKonamiCelebrating = true;
+
+                                if (window.__kbdKonamiResetTimer) {
+                                    clearTimeout(window.__kbdKonamiResetTimer);
+                                }
+
+                                window.__kbdKonamiResetTimer = setTimeout(() => {
+                                    window.__kbdKonamiProgress = 0;
+                                    window.__kbdKonamiCelebrating = false;
+                                    markProgress(0);
+                                }, 1000);
+                            }
+
+                            return;
+                        }
+
+                        if (key === sequence[0]) {
+                            window.__kbdKonamiProgress = 1;
+                            markProgress(1);
+                        } else {
+                            window.__kbdKonamiProgress = 0;
+                            markProgress(0);
+                        }
+                    };
+
+                    const onKeyUp = (e) => {
+                        setLivePressed(e.key, e.code, false);
+                        setModifierPressedStateFromEvent(e, true);
+                        setKonamiPressed(e.key, false);
+                        markProgress(Number(window.__kbdKonamiProgress || 0));
+                    };
+
+                    const onWindowBlur = () => {
+                        const currentLiveKeys = window.__kbdLiveKeys || [];
+                        const currentSteps = window.__kbdKonamiSteps || [];
+                        currentLiveKeys.forEach((el) => el.classList.remove('kbd-pressed'));
+                        currentSteps.forEach((el) => el.classList.remove('kbd-pressed'));
+                        markProgress(Number(window.__kbdKonamiProgress || 0));
+                    };
+
+                    window.addEventListener('keydown', onKeyDown);
+                    window.addEventListener('keyup', onKeyUp);
+                    window.addEventListener('blur', onWindowBlur);
+                }
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initKonamiKbdDemo, { once: true });
+            } else {
+                initKonamiKbdDemo();
+            }
+
+            document.addEventListener('astro:page-load', initKonamiKbdDemo);
+        </script>
+
+        <!-- Seven Segment Digits -->
+        <section id="seven-segment" class="space-y-6 md:space-y-8">
+            <h2 id="seven-segment-heading" class="h2">{sevenSegmentCopy.heading}</h2>
+            <p class="md:text-lg leading-relaxed text-main max-w-3xl">
+                {sevenSegmentCopy.intro}
+            </p>
+            <div class="bg-main/10 mb-4">
+                <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
+                    {sevenSegmentCopy.samples}
+                </div>
+                <div class="p-4">
+                    <div class="p-3 md:p-4 bg-secondary/20 space-y-3">
+                        <div class="flex flex-wrap items-center gap-3 md:gap-5">
+                            <SevenSegmentDisplay id="ss-demo-na-inverted" value="--:--" />
+                            <SevenSegmentDisplay id="ss-demo-ratio-inverted" value="21.0:1" />
+                            <SevenSegmentDisplay id="ss-demo-all-inverted" value="0123456789" />
+                            <LiveClockDisplay id="ss-local-clock-inverted" />
+                            <SevenSegmentDisplay id="ss-demo-konami-inverted" value="5318008" className="!hidden" data-ss-konami-display="true" />
+                        </div>
+                        <div class="flex flex-wrap items-center gap-3 md:gap-5">
+                            <SevenSegmentDisplay id="ss-demo-na-standard" value="--:--" inverted={false} />
+                            <SevenSegmentDisplay id="ss-demo-ratio-standard" value="21.0:1" inverted={false} />
+                            <SevenSegmentDisplay id="ss-demo-all-standard" value="0123456789" inverted={false} />
+                            <LiveClockDisplay id="ss-local-clock-standard" inverted={false} />
+                            <SevenSegmentDisplay id="ss-demo-konami-standard" value="5318008" inverted={false} className="!hidden" data-ss-konami-display="true" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                const initSevenSegmentKonamiEasterEgg = () => {
+                    const updateKonamiDisplays = () => {
+                        const isKonamiActive = localStorage.getItem('special-themes-visible') === 'true';
+                        const konamiDisplays = [
+                            document.getElementById('ss-demo-konami-inverted'),
+                            document.getElementById('ss-demo-konami-standard')
+                        ].filter(Boolean);
+
+                        konamiDisplays.forEach((display) => {
+                            if (isKonamiActive) display.classList.remove('!hidden');
+                            else display.classList.add('!hidden');
+                        });
+                    };
+
+                    updateKonamiDisplays();
+
+                    if (window.__ssKonamiBound) return;
+                    window.__ssKonamiBound = true;
+
+                    window.addEventListener('themes-unlocked', updateKonamiDisplays);
+                    window.addEventListener('themes-locked', updateKonamiDisplays);
+                    window.addEventListener('storage', (e) => {
+                        if (e.key === 'special-themes-visible') updateKonamiDisplays();
+                    });
+                };
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initSevenSegmentKonamiEasterEgg, { once: true });
+                } else {
+                    initSevenSegmentKonamiEasterEgg();
+                }
+
+                document.addEventListener('astro:page-load', initSevenSegmentKonamiEasterEgg);
+            </script>
+        </section>
+
         <!-- Visual Elements -->
-        <section id="elementos-visuales" class=" ">
-            <h2 id="elementos-visuales" class="h2">
+        <section id="elementos-visuales" class="space-y-6 md:space-y-8">
+            <h2 id="elementos-visuales-heading" class="h2">
                 {t('designSystem.visual.heading')}
             </h2>
+            <p class="text-body text-main/80 max-w-3xl">{sectionIntro.visual}</p>
 
             <!-- Diagonal Stripe -->
             <div class="bg-main/10 mb-4">
@@ -541,11 +985,5 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
             </div>
         </section> 
 
-        <div class="text-center text-xs text-main/20">
-            {t('designSystem.visual.konami.prompt')}
-        </div>
-
-
-        
     </ContentPage>
 </Layout>

@@ -9,7 +9,7 @@ const lang = getLangFromUrl(Astro.url);
 const t = getTranslations(lang);
 ---
 
-<Layout title={t('404.title')} description={t('404.description')} image={siteConfig.image} showGameOfLife={true} lang={lang}>
+<Layout title={t('404.title')} description={t('404.description')} image={siteConfig.image} showGameOfLife={true} lang={lang} noindex={true}>
     
     <div class="relative z-10 flex flex-col items-center justify-start min-h-[0dvh] px-4 max-w-2xl mx-auto">
         <!-- Accessible Title -->

@@ -1,0 +1,196 @@
+---
+import { getTranslations } from '@/i18n/utils';
+import { defaultLang, type Language } from '@/i18n/ui';
+import { getLocalizedUrl } from '@/utils/localized-routes';
+import { ChevronRight, ExternalLink } from 'lucide-react';
+
+interface Props {
+  lang?: Language;
+  className?: string;
+  inverted?: boolean;
+  links?: NavigationLink[];
+}
+
+interface NavigationLink {
+  href: string;
+  text: string;
+  isExternal?: boolean;
+}
+
+const { lang = defaultLang, className = 'space-y-1', inverted = false, links } = Astro.props;
+const t = getTranslations(lang);
+
+const linkClass = `footer-nav-link scramble-text ${inverted ? 'footer-nav-link--inverted' : ''}`;
+const iconClass = 'footer-nav-link__icon';
+
+const getCVPath = (locale: Language) => {
+  if (locale === 'es') return '/curriculum.pdf';
+  return '/resume.pdf';
+};
+
+const getHomePath = (locale: Language) => {
+  if (locale === 'en') return '/en/';
+  if (locale === 'no') return '/no/';
+  return '/';
+};
+
+const navigationLinks: NavigationLink[] = [
+  {
+    href: getHomePath(lang),
+    text: t('footer.home')
+  },
+  {
+    href: getLocalizedUrl(lang, 'projects'),
+    text: t('footer.projects')
+  },
+  {
+    href: getCVPath(lang),
+    text: t('footer.resume'),
+    isExternal: true
+  },
+  {
+    href: lang === 'es' ? '/sistema-de-diseno' : lang === 'en' ? '/en/design-system' : '/no/designsystem',
+    text: lang === 'es' ? 'Sistema de Diseño' : lang === 'en' ? 'Design System' : 'Designsystem'
+  },
+  {
+    href: lang === 'es' ? '/arbol-de-contenido' : lang === 'en' ? '/en/content-tree' : '/no/innholdstre',
+    text: lang === 'es' ? 'Árbol de contenido' : lang === 'en' ? 'Content Tree' : 'Innholdstre'
+  },
+  {
+    href: getLocalizedUrl(lang, 'accessibility'),
+    text: t('footer.accessibility')
+  }
+];
+
+const resolvedLinks = (links && links.length > 0) ? links : navigationLinks;
+---
+
+<nav class={className}>
+  {resolvedLinks.map((link) => (
+    <a
+      href={link.href}
+      class={linkClass}
+      data-text={link.text}
+      target={link.isExternal ? '_blank' : undefined}
+      rel={link.isExternal ? 'noopener noreferrer' : undefined}
+    >
+      <span
+        class="scramble-part footer-nav-link__label"
+        data-link-text={link.text}
+        style={`--chars:${Math.max(link.text.length, 1)}`}
+      >
+        {link.text}
+      </span>
+      {link.isExternal ? (
+        <ExternalLink size={14} className={iconClass} />
+      ) : (
+        <ChevronRight size={14} className={iconClass} />
+      )}
+    </a>
+  ))}
+</nav>
+
+<style>
+  .footer-nav-link {
+    --link-fg: var(--color-secondary);
+    --link-bg-hover: var(--color-secondary);
+    --link-fg-hover: var(--color-main);
+    --line-duration: 420ms;
+    --line-bg-duration: 500ms;
+
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.82rem 1rem;
+    font-family: var(--font-mono), monospace;
+    font-size: 0.875rem;
+    line-height: 1.05;
+    color: var(--link-fg);
+    text-decoration: none;
+    isolation: isolate;
+  }
+
+  @media (min-width: 768px) {
+    .footer-nav-link {
+      padding-top: 0.54rem;
+      padding-bottom: 0.54rem;
+    }
+  }
+
+  .footer-nav-link::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--link-bg-hover);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--line-bg-duration) cubic-bezier(0.2, 0.9, 0.22, 1);
+    z-index: -2;
+  }
+
+  .footer-nav-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--link-fg);
+    z-index: -1;
+    transition: opacity 180ms ease;
+  }
+
+  .footer-nav-link:hover::before,
+  .footer-nav-link:focus-visible::before {
+    transform: scaleX(1);
+  }
+
+  .footer-nav-link:hover::after,
+  .footer-nav-link:focus-visible::after {
+    opacity: 0;
+  }
+
+  .footer-nav-link__label {
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .footer-nav-link__label::after {
+    content: attr(data-link-text);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 0ch;
+    overflow: hidden;
+    white-space: nowrap;
+    color: var(--link-fg-hover);
+    transition:
+      width var(--line-duration) steps(var(--chars), end),
+      color var(--line-duration) linear;
+  }
+
+  .footer-nav-link:hover .footer-nav-link__label::after,
+  .footer-nav-link:focus-visible .footer-nav-link__label::after {
+    width: calc(var(--chars) * 1ch);
+  }
+
+  .footer-nav-link__icon {
+    color: var(--link-fg);
+    transition: color var(--line-duration) linear;
+    flex-shrink: 0;
+  }
+
+  .footer-nav-link:hover .footer-nav-link__icon,
+  .footer-nav-link:focus-visible .footer-nav-link__icon {
+    color: var(--link-fg-hover);
+  }
+
+  .footer-nav-link--inverted {
+    --link-fg: var(--color-main);
+    --link-bg-hover: var(--color-main);
+    --link-fg-hover: var(--color-secondary);
+  }
+</style>

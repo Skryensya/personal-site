@@ -115,6 +115,7 @@ const localizedThemeNames = Object.fromEntries(
     currentTheme: null,
     availableThemes: [],
     localizedThemeNames: (window as any).__THEME_NAMES__ || {},
+    prismPreviewInterval: null,
     
     // Initialize theme control
     init() {
@@ -124,6 +125,7 @@ const localizedThemeNames = Object.fromEntries(
       this.updateDropdownWidth(); // Set initial width based on available themes
       this.renderThemeOptions();
       this.updateDisplay();
+      this.startPrismDropdownPreview();
       
       // Signal that theme control is ready
       setTimeout(() => {
@@ -378,6 +380,72 @@ const localizedThemeNames = Object.fromEntries(
       return runtimeNames?.[theme.id] || theme.name;
     },
 
+    startPrismDropdownPreview() {
+      if (this.prismPreviewInterval) {
+        clearInterval(this.prismPreviewInterval);
+      }
+
+      const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+
+      const tick = () => {
+        const swatches = document.querySelectorAll('[data-prism-dropdown-swatch="true"]');
+        if (!swatches.length) return;
+
+        let colorful = '';
+        let contrasty = '';
+
+        const activeTheme = localStorage.getItem('theme-id');
+        if (activeTheme === 'prism-flow') {
+          const rootStyles = getComputedStyle(document.documentElement);
+          colorful = rootStyles.getPropertyValue('--theme-colorful').trim();
+          contrasty = rootStyles.getPropertyValue('--theme-contrasty').trim();
+        }
+
+        if (!colorful || !contrasty) {
+          const w = window as Window & { __prismDropdownHue?: number; __prismDropdownStart?: number };
+          w.__prismDropdownHue = w.__prismDropdownHue ?? 275;
+          w.__prismDropdownStart = w.__prismDropdownStart ?? performance.now();
+
+          const elapsed = (performance.now() - w.__prismDropdownStart) / 1000;
+          const cycleDurationSec = 20;
+          const cycle = ((elapsed / cycleDurationSec) % 1 + 1) % 1;
+          const ease = (t) => 0.5 - 0.5 * Math.cos(Math.PI * t);
+
+          let baseHue;
+          const coolSplit = 0.36;
+          if (cycle < coolSplit) {
+            const t = ease(cycle / coolSplit);
+            baseHue = 196 + (292 - 196) * t;
+          } else {
+            const t = ease((cycle - coolSplit) / (1 - coolSplit));
+            baseHue = (344 + (46 - 344) * t + 360) % 360;
+          }
+
+          w.__prismDropdownHue = (baseHue + Math.sin(elapsed * 0.58) * 4.4 + Math.sin(elapsed * 0.21 + 1.2) * 2.1 + 360) % 360;
+
+          const h1 = w.__prismDropdownHue;
+          const h2 = (h1 + 196 + Math.sin(elapsed * 0.29 + 0.7) * 9 + 360) % 360;
+          const warmPhase = cycle >= coolSplit ? 1 : 0;
+          const colorfulSat = clamp((62 + warmPhase * 12) + Math.sin(elapsed * 0.74) * 10 + Math.sin(elapsed * 0.27 + 1.4) * 4, 50, 86);
+          const colorfulLight = clamp(88 + Math.sin(elapsed * 0.41) * 4.2, 80, 94);
+          const contrastySat = clamp((50 + warmPhase * 10) + Math.sin(elapsed * 0.59 + 2.0) * 12, 38, 78);
+          const contrastyLight = clamp(18 + Math.sin(elapsed * 0.31 + 0.55) * 4.5, 12, 27);
+
+          colorful = `hsl(${h1.toFixed(1)} ${colorfulSat.toFixed(1)}% ${colorfulLight.toFixed(1)}%)`;
+          contrasty = `hsl(${h2.toFixed(1)} ${contrastySat.toFixed(1)}% ${contrastyLight.toFixed(1)}%)`;
+        }
+
+        swatches.forEach((swatch) => {
+          const sw = swatch as HTMLElement;
+          sw.style.background = `linear-gradient(135deg, ${colorful} 50%, ${contrasty} 50%)`;
+          sw.style.border = `2px solid ${colorful}`;
+        });
+      };
+
+      tick();
+      this.prismPreviewInterval = window.setInterval(tick, 140);
+    },
+
     // Create theme button HTML
     createThemeButton(theme: any) {
       const isSelected = theme.id === this.currentTheme?.id;
@@ -401,6 +469,7 @@ const localizedThemeNames = Object.fromEntries(
           <div class="flex items-center gap-2 pointer-events-none">
             <div
               class="w-6 h-6 aspect-square flex-shrink-0 pointer-events-none"
+              ${theme.id === 'prism-flow' ? 'data-prism-dropdown-swatch="true"' : ''}
               style="background: linear-gradient(135deg, ${theme.colorful || theme.colors?.colorful || '#FF0000'} 50%, ${theme.contrasty || theme.colors?.contrasty || '#000000'} 50%); border: 2px solid ${theme.colorful || theme.colors?.colorful || '#FF0000'};"
             ></div>
             <span class="flex-1 px-1 py-1 font-grotesk text-sm font-semibold pointer-events-none select-none uppercase whitespace-nowrap">${themeLabel}</span>
@@ -492,6 +561,19 @@ const localizedThemeNames = Object.fromEntries(
       };
       
       window.addEventListener('theme-changed', handleThemeChanged);
+
+      // Listen for theme card selection from Design System cards
+      const handleThemeCardSelect = (event: any) => {
+        const themeId = event?.detail?.themeId;
+        if (!themeId) return;
+
+        const selectedTheme = this.availableThemes.find((t: any) => t.id === themeId) || themes.find((t: any) => t.id === themeId);
+        if (!selectedTheme) return;
+
+        this.selectTheme(selectedTheme);
+      };
+
+      window.addEventListener('theme-card-select', handleThemeCardSelect);
       
       // Keyboard shortcuts for theme navigation
       const handleKeyDown = (e: KeyboardEvent) => {

@@ -44,7 +44,7 @@ export type SiteConfig = {
 const siteConfig: SiteConfig = {
     title: 'Allison Peña',
     subtitle: 'Full-stack web developer',
-    description: '',
+    description: 'Allison Peña is a full-stack web developer.',
     image: {
         src: '/dante-preview.jpg',
         alt: 'Dante - Astro.js and Tailwind CSS theme'

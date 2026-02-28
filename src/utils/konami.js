@@ -37,34 +37,21 @@ class KonamiCode {
     showKeyElement(keySymbol, index) {
 
         const kbd = document.createElement('kbd');
+        kbd.className = 'kbd konami-side-key';
         kbd.textContent = keySymbol;
 
         // Calculate centered Y position
-        const totalHeight = (10 - 1) * 28; // 10 keys max, 28px spacing
+        const step = 34; // visual spacing between keycaps
+        const totalHeight = (10 - 1) * step;
         const startY = (window.innerHeight - totalHeight) / 2;
 
         kbd.style.cssText = `
             position: fixed;
-            top: ${startY + (index * 28)}px;
-            left: -40px;
-            background: var(--color-secondary);
-            color: var(--color-main);
-            border: 2px solid var(--color-main);
-            padding: 0;
-            font-family: monospace;
-            font-weight: bold;
-            font-size: 14px;
+            top: ${startY + (index * step)}px;
+            left: -64px;
             z-index: 10000;
-            border-radius: 3px;
             transition: left 0.3s ease-out, transform 0.3s ease;
             pointer-events: none;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            aspect-ratio: 1;
-            box-shadow: 2px 2px 0px var(--color-main);
         `;
 
         document.body.appendChild(kbd);
@@ -112,7 +99,7 @@ class KonamiCode {
     hideAllKeys() {
         this.keyElements.forEach(element => {
             element.classList.remove('konami-shake');
-            element.style.left = '-40px';
+            element.style.left = '-64px';
             setTimeout(() => {
                 if (element.parentNode) {
                     element.parentNode.removeChild(element);

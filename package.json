@@ -1,5 +1,5 @@
 {
-    "name": "skryensya.dev",
+    "name": "allison.sh",
     "type": "module",
     "version": "1.0.0",
     "scripts": {
@@ -33,13 +33,11 @@
         "gsap": "^3.13.0",
         "lucide-react": "^0.525.0",
         "posthog-js": "^1.336.4",
-        "postprocessing": "^6.37.8",
         "react": "^18.3.1",
         "react-dom": "^18.3.1",
         "react-rnd": "^10.5.2",
         "tailwind-merge": "^3.3.1",
-        "tailwindcss": "^4.1.11",
-        "three": "^0.180.0"
+        "tailwindcss": "^4.1.11"
     },
     "devDependencies": {
         "@astrojs/check": "^0.9.6",
@@ -47,7 +45,6 @@
         "@tailwindcss/typography": "^0.5.16",
         "@types/react": "^18.3.24",
         "@types/react-dom": "^18.3.7",
-        "@types/three": "^0.179.0",
         "install": "^0.13.0",
         "npm": "^10.9.0",
         "prettier": "^3.3.3",

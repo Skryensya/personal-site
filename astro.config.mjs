@@ -6,7 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
 export default defineConfig({
-    site: 'https://skryensya.dev',
+    site: 'https://allison.sh',
     i18n: {
         defaultLocale: 'es',
         locales: ['es', 'en', 'no'],
@@ -47,7 +47,11 @@ export default defineConfig({
         resolve: {
             alias: {
                 '@': '/src'
-            }
+            },
+            dedupe: ['react', 'react-dom']
+        },
+        optimizeDeps: {
+            include: ['react', 'react-dom']
         },
         build: {
             modulePreload: {

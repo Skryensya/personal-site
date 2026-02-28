@@ -1,5 +1,5 @@
 ---
-import TocClerkAuto from '@/components/TocClerkAuto.tsx';
+import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 
 interface Props {
@@ -15,15 +15,198 @@ const {
   lang = defaultLang,
   useClerkTOC = true
 } = Astro.props as Props;
+
+const t = getTranslations(lang);
+const tocId = `toc-list-${contentId}`;
 ---
 
 <aside
-  class={`sticky top-20 w-[250px] min-w-[250px] max-h-[90dvh] flex-shrink-0 hidden lg:block overflow-y-auto py-8 px-4 ${className}`}
+  class={`sticky top-20 w-[240px] min-w-[240px] max-h-[90dvh] flex-shrink-0 hidden md:block overflow-y-auto py-8 px-4 ${className}`}
   id="content-sidebar"
   data-lang={lang}
   data-use-clerk={useClerkTOC}
 >
   {useClerkTOC ? (
-    <TocClerkAuto client:idle contentId={contentId} />
+    <nav aria-label={t('sidebar.toc')}>
+      <div class="mb-3 text-xs font-mono font-medium text-main uppercase tracking-wide">{t('sidebar.toc')}</div>
+      <ul id={tocId} class="flex flex-col gap-0.5"></ul>
+    </nav>
   ) : null}
 </aside>
+
+<script is:inline define:vars={{ contentId, tocId }}>
+  const TOP_OFFSET = 112;
+
+  const initSidebarToc = () => {
+    const list = document.getElementById(tocId);
+    if (!list) return;
+
+    const getRoot = () => {
+      const roots = Array.from(document.querySelectorAll('[data-heading-slug-root]'));
+      const exact = roots.find((el) => el.id === contentId);
+      return exact || document.getElementById(contentId) || roots[roots.length - 1] || document.querySelector('main');
+    };
+
+    const ensureId = (el) => {
+      if (el.id) return el.id;
+      const text = (el.textContent || '').trim().toLowerCase();
+      const id = text
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9\s-]/g, '')
+        .trim()
+        .replace(/\s+/g, '-')
+        .slice(0, 80) || `toc-${Math.random().toString(36).slice(2, 8)}`;
+      el.id = id;
+      return id;
+    };
+
+    const build = () => {
+      const root = getRoot();
+      if (!root) return;
+
+      const headings = Array.from(root.querySelectorAll('h2, h3, h4')).filter(
+        (h) => !h.closest('header') && !h.closest('[data-toc-ignore]')
+      );
+
+      const frag = document.createDocumentFragment();
+      const ids = new Set();
+
+      const pushItem = (id, title, depth) => {
+        if (!id || ids.has(id)) return;
+        ids.add(id);
+
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.href = `#${id}`;
+        a.textContent = title;
+        a.dataset.tocId = id;
+        a.className = [
+          'block py-1.5 pe-2 text-sm leading-snug border-l-2 transition-colors max-w-full truncate',
+          depth <= 2 ? 'ps-2' : depth === 3 ? 'ps-5' : 'ps-7',
+          'text-main/70 hover:text-main border-transparent hover:border-main/30'
+        ].join(' ');
+
+        a.addEventListener('click', (e) => {
+          if (id === 'inicio') return;
+          const target = document.getElementById(id);
+          if (!target) return;
+          e.preventDefault();
+          const top = target.getBoundingClientRect().top + window.scrollY - TOP_OFFSET;
+          window.history.pushState(null, '', `#${id}`);
+          window.scrollTo({ top, behavior: 'smooth' });
+          updateActive(id);
+        });
+
+        li.appendChild(a);
+        frag.appendChild(li);
+      };
+
+      pushItem('inicio', 'Inicio', 1);
+
+      headings.forEach((h) => {
+        const id = ensureId(h);
+        const title = (h.textContent || id).trim();
+        const depth = Number(h.tagName.slice(1));
+        pushItem(id, title, depth);
+      });
+
+      list.innerHTML = '';
+      list.appendChild(frag);
+      updateByScroll();
+    };
+
+    const updateActive = (id) => {
+      const anchors = Array.from(list.querySelectorAll('a[data-toc-id]'));
+      anchors.forEach((a) => {
+        const active = a.dataset.tocId === id;
+        a.classList.toggle('text-main', active);
+        a.classList.toggle('font-semibold', active);
+        a.classList.toggle('bg-main/10', active);
+        a.classList.toggle('border-main', active);
+        a.classList.toggle('text-main/70', !active);
+        a.classList.toggle('border-transparent', !active);
+        if (active) a.setAttribute('aria-current', 'location');
+        else a.removeAttribute('aria-current');
+      });
+    };
+
+    const updateByScroll = () => {
+      const sy = window.scrollY || window.pageYOffset;
+      const hash = decodeURIComponent((window.location.hash || '').replace(/^#/, ''));
+      if (hash) {
+        updateActive(hash);
+        return;
+      }
+      if (sy <= 24) {
+        updateActive('inicio');
+        return;
+      }
+
+      const anchors = Array.from(list.querySelectorAll('a[data-toc-id]'));
+      const entries = anchors
+        .map((a) => a.dataset.tocId)
+        .filter((id) => id && id !== 'inicio')
+        .map((id) => {
+          const el = document.getElementById(id);
+          if (!el) return null;
+          return { id, top: el.getBoundingClientRect().top + sy };
+        })
+        .filter(Boolean);
+
+      if (!entries.length) {
+        updateActive('inicio');
+        return;
+      }
+
+      const reached = entries.filter((e) => e.top <= sy + TOP_OFFSET + 2);
+      const current = reached.length
+        ? reached.reduce((a, b) => (a.top > b.top ? a : b))
+        : entries[0];
+
+      updateActive(current.id);
+    };
+
+    build();
+
+    let raf = 0;
+    const schedule = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        updateByScroll();
+      });
+    };
+
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', build, { passive: true });
+    window.addEventListener('hashchange', schedule);
+
+    if (!window.__sidebarTocCleanup) window.__sidebarTocCleanup = [];
+    window.__sidebarTocCleanup.push(() => {
+      window.removeEventListener('scroll', schedule);
+      window.removeEventListener('resize', build);
+      window.removeEventListener('hashchange', schedule);
+    });
+  };
+
+  const cleanupSidebarToc = () => {
+    (window.__sidebarTocCleanup || []).forEach((fn) => {
+      try { fn(); } catch {}
+    });
+    window.__sidebarTocCleanup = [];
+  };
+
+  cleanupSidebarToc();
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSidebarToc, { once: true });
+  } else {
+    initSidebarToc();
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    cleanupSidebarToc();
+    initSidebarToc();
+  });
+</script>

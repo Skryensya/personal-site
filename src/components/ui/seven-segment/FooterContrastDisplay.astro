@@ -1,0 +1,165 @@
+---
+import SevenSegmentDisplay from './SevenSegmentDisplay.astro';
+
+interface Props {
+  id?: string;
+  initialValue?: string;
+  className?: string;
+  inverted?: boolean;
+}
+
+const {
+  id = 'footer-contrast-display',
+  initialValue = '00.0:0',
+  className = '',
+  inverted = false
+} = Astro.props as Props;
+---
+
+<SevenSegmentDisplay id={id} value={initialValue} className={className} inverted={inverted} />
+
+<script is:inline define:vars={{ id, initialValue }}>
+  const display = document.getElementById(id);
+
+  if (display && display.dataset.boundContrastDisplay !== 'true') {
+    display.dataset.boundContrastDisplay = 'true';
+
+    const digitSegments = {
+      '0': ['a', 'b', 'c', 'd', 'e', 'f'],
+      '1': ['b', 'c'],
+      '2': ['a', 'b', 'd', 'e', 'g'],
+      '3': ['a', 'b', 'c', 'd', 'g'],
+      '4': ['b', 'c', 'f', 'g'],
+      '5': ['a', 'c', 'd', 'f', 'g'],
+      '6': ['a', 'c', 'd', 'e', 'f', 'g'],
+      '7': ['a', 'b', 'c'],
+      '8': ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+      '9': ['a', 'b', 'c', 'd', 'f', 'g'],
+      '-': ['g']
+    };
+
+    const randomCharPool = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+
+    const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let scrambleInterval = null;
+    let settleTimeout = null;
+    let lastTargetValue = (window).__footerContrastValue || initialValue;
+
+    const renderChar = (char) => {
+      if (char === ':') {
+        return `<span class="ss-digit ss-colon" aria-hidden="true"><span class="ss-dot ss-dot-top"></span><span class="ss-dot ss-dot-bottom"></span></span>`;
+      }
+      if (char === '.') {
+        return `<span class="ss-digit ss-dot-only" aria-hidden="true"><span class="ss-dot ss-dot-bottom"></span></span>`;
+      }
+
+      const segments = digitSegments[char];
+      if (!segments) {
+        return `<span class="ss-digit ss-fallback" aria-hidden="true">${char}</span>`;
+      }
+
+      const has = (seg) => (segments.includes(seg) ? 'is-on' : '');
+      return `<span class="ss-digit" aria-hidden="true">
+        <span class="ss-seg ss-a ${has('a')}"></span>
+        <span class="ss-seg ss-b ${has('b')}"></span>
+        <span class="ss-seg ss-c ${has('c')}"></span>
+        <span class="ss-seg ss-d ${has('d')}"></span>
+        <span class="ss-seg ss-e ${has('e')}"></span>
+        <span class="ss-seg ss-f ${has('f')}"></span>
+        <span class="ss-seg ss-g ${has('g')}"></span>
+      </span>`;
+    };
+
+    const setDisplayValue = (value) => {
+      const safeValue = (typeof value === 'string' && value.trim()) ? value : initialValue;
+      display.dataset.value = safeValue;
+      display.setAttribute('aria-label', `Contrast ratio ${safeValue}`);
+      display.innerHTML = safeValue.split('').map(renderChar).join('');
+    };
+
+    const buildRandomFrame = (target) => {
+      return target
+        .split('')
+        .map((char) => {
+          if (char === ':' || char === '.') return char;
+          return randomCharPool[Math.floor(Math.random() * randomCharPool.length)];
+        })
+        .join('');
+    };
+
+    const stopScramble = () => {
+      if (scrambleInterval) {
+        clearInterval(scrambleInterval);
+        scrambleInterval = null;
+      }
+      if (settleTimeout) {
+        clearTimeout(settleTimeout);
+        settleTimeout = null;
+      }
+    };
+
+    const animateToValue = (targetValue) => {
+      const safeTarget = (typeof targetValue === 'string' && targetValue.trim()) ? targetValue : initialValue;
+      lastTargetValue = safeTarget;
+
+      if (prefersReducedMotion()) {
+        setDisplayValue(safeTarget);
+        return;
+      }
+
+      stopScramble();
+
+      const scrambleStepMs = 50;
+      const scrambleDurationMs = 450;
+
+      scrambleInterval = setInterval(() => {
+        setDisplayValue(buildRandomFrame(safeTarget));
+      }, scrambleStepMs);
+
+      settleTimeout = setTimeout(() => {
+        stopScramble();
+        setDisplayValue(lastTargetValue);
+      }, scrambleDurationMs);
+    };
+
+    // Initial sync
+    setDisplayValue(lastTargetValue);
+
+    // Event-driven updates from Footer logic
+    const onChange = (event) => {
+      const detail = event.detail || {};
+      if (detail.targetId && detail.targetId !== id) return;
+      const nextValue = detail.value || initialValue;
+      lastTargetValue = nextValue;
+      setDisplayValue(nextValue);
+    };
+
+    // Scramble is triggered alongside footer text scramble
+    const onFooterScrambleStart = () => {
+      animateToValue(lastTargetValue || initialValue);
+    };
+
+    window.addEventListener('footer-contrast-change', onChange);
+    window.addEventListener('footer-scramble-start', onFooterScrambleStart);
+
+    // Safety polling for race conditions during hydration/transitions
+    const poll = setInterval(() => {
+      const current = (window).__footerContrastValue;
+      if (typeof current === 'string' && current !== display.dataset.value) {
+        lastTargetValue = current;
+        setDisplayValue(current);
+      }
+    }, 600);
+
+    const cleanup = () => {
+      stopScramble();
+      window.removeEventListener('footer-contrast-change', onChange);
+      window.removeEventListener('footer-scramble-start', onFooterScrambleStart);
+      clearInterval(poll);
+      display.dataset.boundContrastDisplay = 'false';
+    };
+
+    window.addEventListener('astro:before-preparation', cleanup, { once: true });
+  }
+</script>

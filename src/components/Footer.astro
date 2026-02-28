@@ -1,68 +1,26 @@
 ---
 import siteConfig, { type Link } from '@/data/site-config';
 import WaveDivider from './WaveDivider.astro';
-import { Heart, ChevronRight, ExternalLink } from 'lucide-react';
+import { Heart } from 'lucide-react';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
-import { getLocalizedUrl, getHomeUrl } from '@/utils/localized-routes';
 import CircularTextAstro from '@/components/CircularTextAstro.astro';
+import FooterContrastDisplay from '@/components/ui/seven-segment/FooterContrastDisplay.astro';
+import FooterNavigationList from '@/components/FooterNavigationList.astro';
 
 interface Props { 
   lang?: Language; 
 }
 
-interface NavigationLink {
-  href: string;
-  textKey: string;
-  text: string;
-  isExternal?: boolean;
-}
-
 const { lang = defaultLang } = Astro.props;
 const t = getTranslations(lang);
 
-// Get CV PDF path based on language
-const getCVPath = (locale: Language) => {
-  // Spanish uses curriculum.pdf
-  if (locale === 'es') return '/curriculum.pdf';
-  // English and Norwegian use resume.pdf
-  return '/resume.pdf';
-};
+const connectLinks = (siteConfig.socialLinks || []).map((link: Link) => ({
+  href: link.href,
+  text: link.text,
+  isExternal: true,
+}));
 
-// Navigation links configuration
-const navigationLinks: NavigationLink[] = [
-  {
-    href: getHomeUrl(lang),
-    textKey: 'footer.home',
-    text: t('footer.home')
-  },
-  {
-    href: getLocalizedUrl(lang, 'projects'),
-    textKey: 'footer.projects',
-    text: t('footer.projects')
-  },
-  {
-    href: getCVPath(lang),
-    textKey: 'footer.resume',
-    text: t('footer.resume'),
-    isExternal: true
-  },
-  {
-    href: lang === 'es' ? '/sistema-de-diseno' : lang === 'en' ? '/en/design-system' : '/no/designsystem',
-    textKey: '',
-    text: lang === 'es' ? 'Sistema de Diseño' : lang === 'en' ? 'Design System' : 'Designsystem'
-  },
-  {
-    href: lang === 'es' ? '/arbol-de-contenido' : lang === 'en' ? '/en/content-tree' : '/no/innholdstre',
-    textKey: '',
-    text: lang === 'es' ? 'Árbol de contenido' : lang === 'en' ? 'Content Tree' : 'Innholdstre'
-  },
-  {
-    href: getLocalizedUrl(lang, 'accessibility'),
-    textKey: 'footer.accessibility',
-    text: t('footer.accessibility')
-  }
-];
 ---
 
 <footer id="site-footer" class="bg-main border-t-double border-t-2 border-secondary selection-opposite">
@@ -77,24 +35,7 @@ const navigationLinks: NavigationLink[] = [
           <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-2 !mt-1 text-secondary scramble-text" data-text={t('footer.navigation')}>
             {t('footer.navigation')}
           </h3>
-          <nav class="space-y-1">
-            {navigationLinks.map((link) => (
-              <a
-                href={link.href}
-                class="font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-4 py-2.5 md:py-1.5 border-l-2 border-secondary scramble-text flex items-center justify-between group"
-                data-text={link.text}
-                target={link.isExternal ? '_blank' : undefined}
-                rel={link.isExternal ? 'noopener noreferrer' : undefined}
-              >
-                <span class="scramble-part">{link.text}</span>
-                {link.isExternal ? (
-                  <ExternalLink size={14} className="text-secondary group-hover:text-main" />
-                ) : (
-                  <ChevronRight size={14} className="text-secondary group-hover:text-main" />
-                )}
-              </a>
-            ))}
-          </nav>
+          <FooterNavigationList lang={lang} />
         </div>
 
         <!-- Social - 33.33% of content area -->
@@ -102,21 +43,7 @@ const navigationLinks: NavigationLink[] = [
           <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-2 !mt-1 text-secondary scramble-text" data-text={t('footer.connect')}>
             {t('footer.connect')}
           </h3>
-          <nav class="space-y-1">
-            {siteConfig.socialLinks?.map((link: Link) => (
-              <a
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                class="group font-mono text-sm text-secondary hover:bg-secondary hover:text-main px-4 py-2.5 md:py-1.5 border-l-2 border-secondary scramble-text flex items-center justify-between"
-                data-text={`${link.text}`}
-                data-has-external="true"
-              >
-                <span class="scramble-part">{link.text}</span>
-                <ExternalLink size={14} className="text-secondary group-hover:text-main" />
-              </a>
-            ))}
-          </nav>
+          <FooterNavigationList lang={lang} links={connectLinks} />
         </div>
 
         <!-- Information - 33.33% of content area -->
@@ -124,14 +51,14 @@ const navigationLinks: NavigationLink[] = [
           <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-2 !mt-1 text-secondary scramble-text" data-text={t('footer.info')}>
             {t('footer.info')}
           </h3>
-          <nav class="space-y-2">
-            <div class="block font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text="Santiago, Chile">
+          <nav class="space-y-1">
+            <div class="block font-mono text-sm text-secondary px-2 py-0.5 scramble-text" data-text="Santiago, Chile">
               Santiago, Chile
             </div>
-            <div class="block font-mono text-sm text-secondary px-2 py-1 scramble-text" data-text={t('footer.availableForProjects')}>
+            <div class="block font-mono text-sm text-secondary px-2 py-0.5 scramble-text" data-text={t('footer.availableForProjects')}>
               {t('footer.availableForProjects')}
             </div>
-            <div class="block font-mono text-sm pt-4 pb-2">
+            <div class="block font-mono text-sm pt-2 pb-1">
               <div class="relative text-secondary font-mono text-sm pr-20 md:pr-0">
                 <div class="md:hidden absolute right-0 -top-[42px] scale-[1.1] origin-top-right" style="view-transition-name: none;">
                   <CircularTextAstro text="ALLISON PEÑA * SKRYENSYA * " onHover="speedUp" spinDuration={20}/>
@@ -139,9 +66,14 @@ const navigationLinks: NavigationLink[] = [
                 <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-2 !mt-1 text-secondary scramble-text" data-text={t('footer.aspectRatio.title')}>
                   {t('footer.aspectRatio.title')}
                 </h3>
-                <div class="flex gap-4 items-center ">
-                  <div id="footer-contrast-display" class="text-sm leading-tight  border text-secondary py-1 px-2 font-bold border-main scramble-text">--:--</div>
-                  <div id="footer-wcag-levels" class="flex gap-1"></div>
+                <div class="flex gap-1.5 items-center ">
+                  <FooterContrastDisplay
+                    id="footer-contrast-display"
+                    initialValue="00.0:0"
+                    className="text-main !gap-[1px] ss-display-proportion-standard"
+                    inverted={false}
+                  />
+                  <div id="footer-wcag-levels" class="flex gap-1.5"></div>
                 </div>
               </div>
             </div>
@@ -177,7 +109,12 @@ const navigationLinks: NavigationLink[] = [
 </footer>
 
 <script>
-  import { debugLogger } from '@/utils/debug-logger';
+  const debugLogger = (window as any).debugLogger ?? {
+    log: () => {},
+    warn: () => {},
+    group: () => {},
+    groupEnd: () => {}
+  };
 
   let footerCleanup: (() => void) | null = null;
 
@@ -227,11 +164,24 @@ const navigationLinks: NavigationLink[] = [
       return (brightest + 0.05) / (darkest + 0.05);
     }
 
-    function getWCAGLevel(ratio: number): string {
-      if (ratio >= 7) return 'AAA';
-      if (ratio >= 4.5) return 'AA';
-      if (ratio >= 3) return 'AA Large';
-      return 'Fail';
+    function updateWcagLevelsUI(ratio: number): void {
+      const wcagLevelsElement = document.getElementById('footer-wcag-levels');
+      if (!wcagLevelsElement) return;
+
+      const thresholds: Record<string, number> = {
+        A: 3,
+        AA: 4.5,
+        AAA: 7
+      };
+
+      const boxes = wcagLevelsElement.querySelectorAll('[data-wcag-level]');
+      boxes.forEach((box) => {
+        const level = (box as HTMLElement).dataset.wcagLevel || '';
+        const required = thresholds[level] ?? 99;
+        const passed = ratio >= required;
+        (box as HTMLElement).classList.toggle('opacity-100', passed);
+        (box as HTMLElement).classList.toggle('opacity-30', !passed);
+      });
     }
 
     function rgbToHex(rgb: string): string {
@@ -248,12 +198,20 @@ const navigationLinks: NavigationLink[] = [
       }).join('');
     }
 
+    function formatContrastDisplayValue(ratio: number): string {
+      const left = ratio.toFixed(1).padStart(4, '0'); // e.g. 04.5
+      const right = '1';
+      return `${left}:${right}`;
+    }
+
+    function setContrastDisplayValue(value: string): void {
+      (window as any).__footerContrastValue = value;
+      window.dispatchEvent(new CustomEvent('footer-contrast-change', {
+        detail: { value, targetId: 'footer-contrast-display' }
+      }));
+    }
+
     function calculateAndDisplayFooterContrast(): void {
-      const contrastDisplay = document.getElementById('footer-contrast-display');
-      if (!contrastDisplay) {
-        debugLogger.warn('Footer contrast display element not found');
-        return;
-      }
 
       try {
         const rootStyles = getComputedStyle(document.documentElement);
@@ -281,27 +239,31 @@ const navigationLinks: NavigationLink[] = [
         const contrastRatio = getContrastRatio(mainColor, secondaryColor);
 
         const wcagLevelsElement = document.getElementById('footer-wcag-levels');
-        const ratio = contrastRatio.toFixed(1);
-        
-        contrastDisplay.textContent = `${ratio}:1`;
+        setContrastDisplayValue(formatContrastDisplayValue(contrastRatio));
         
         if (wcagLevelsElement) {
           // Get language from document
           const lang = document.documentElement.getAttribute('lang') || 'es';
 
-          // Clear previous content
-          wcagLevelsElement.innerHTML = '';
-          
+          const shouldBuild =
+            wcagLevelsElement.children.length === 0 ||
+            wcagLevelsElement.getAttribute('data-lang') !== lang;
+
           // Define levels and their requirements
           const levels = [
             { name: 'A', requirement: 3, passed: contrastRatio >= 3 },
             { name: 'AA', requirement: 4.5, passed: contrastRatio >= 4.5 },
             { name: 'AAA', requirement: 7, passed: contrastRatio >= 7 }
           ];
-          
-          levels.forEach(level => {
+
+          if (shouldBuild) {
+            wcagLevelsElement.innerHTML = '';
+            wcagLevelsElement.setAttribute('data-lang', lang);
+
+            levels.forEach(level => {
             const levelBox = document.createElement('div');
-            levelBox.className = `bg-secondary text-main px-2 py-1 text-xs font-mono font-bold flex items-center gap-1 border border-main ${level.passed ? 'opacity-100' : 'opacity-30'} cursor-help relative`;
+            levelBox.dataset.wcagLevel = level.name;
+            levelBox.className = `bg-secondary text-main px-2 py-1 text-xs font-mono font-bold min-h-[28px] flex items-center gap-1.5 border border-main ${level.passed ? 'opacity-100' : 'opacity-30'} cursor-help relative`;
             
             const titleKey = `footer.wcag.${level.name.toLowerCase()}.title`;
             const descKey = `footer.wcag.${level.name.toLowerCase()}.desc`;
@@ -362,20 +324,21 @@ const navigationLinks: NavigationLink[] = [
             // Create tooltip element
             const tooltip = document.createElement('div');
             tooltip.className = 'fixed bg-secondary text-main border-2 border-main shadow-[4px_4px_0px_var(--color-main)] z-[9999] pointer-events-none';
-            tooltip.style.width = '200px';
+            tooltip.style.width = '280px';
+            tooltip.style.maxWidth = 'min(92vw, 320px)';
             tooltip.style.opacity = '0';
             tooltip.style.visibility = 'hidden';
             
             // Create tooltip content
             const tooltipContent = document.createElement('div');
-            tooltipContent.className = 'p-3 flex flex-col gap-2';
+            tooltipContent.className = 'p-4 flex flex-col gap-3';
             
             // Header with title and icon
             const header = document.createElement('div');
-            header.className = 'flex items-center justify-between';
+            header.className = 'flex items-start justify-between gap-3';
             
             const title = document.createElement('div');
-            title.className = 'text-body-mono-sm font-bold';
+            title.className = 'text-sm font-mono font-bold leading-tight';
             title.textContent = tooltipTitle;
             
             // Status icon
@@ -389,13 +352,18 @@ const navigationLinks: NavigationLink[] = [
             
             header.appendChild(title);
             header.appendChild(statusIcon);
+
+            const requirement = document.createElement('div');
+            requirement.className = 'inline-flex w-fit items-center border border-main px-2 py-1 text-[11px] font-mono font-bold leading-none';
+            requirement.textContent = `${level.requirement}:1 minimum`;
             
             // Description
             const desc = document.createElement('div');
-            desc.className = 'text-xs font-mono leading-tight text-left';
+            desc.className = 'text-xs font-mono leading-relaxed text-left';
             desc.textContent = tooltipDesc;
             
             tooltipContent.appendChild(header);
+            tooltipContent.appendChild(requirement);
             tooltipContent.appendChild(desc);
             tooltip.appendChild(tooltipContent);
             
@@ -429,9 +397,12 @@ const navigationLinks: NavigationLink[] = [
           });
         }
 
+          updateWcagLevelsUI(contrastRatio);
+        }
+
       } catch (error) {
         debugLogger.warn('Failed to calculate contrast ratio:', error);
-        contrastDisplay.textContent = '--:--';
+        setContrastDisplayValue('00.0:0');
       }
     }
 
@@ -494,13 +465,22 @@ const navigationLinks: NavigationLink[] = [
     }
 
     // Scramble a single text node (span.scramble-part)
-    function scrambleText(element: HTMLElement, originalText: string, duration: number = 700): void {
+    const scrambleTimers = new WeakMap<HTMLElement, number>();
+
+    function scrambleText(element: HTMLElement, originalText: string, duration: number = 450): void {
       const chars = 'abcdefghijkstuvwxyzABCDEFGHWXYZ01234!@#$%&*:.?';
       let i = 0;
-      const stepMs = 35;
+      const stepMs = 50;
       const maxSteps = Math.ceil(duration / stepMs);
 
-      const timer = setInterval(() => {
+      // Avoid overlapping timers that can leave text corrupted
+      const existing = scrambleTimers.get(element);
+      if (existing) {
+        clearInterval(existing);
+        scrambleTimers.delete(element);
+      }
+
+      const timer = window.setInterval(() => {
         const progress = Math.min(i / maxSteps, 1);
         const reveal = Math.floor(progress * originalText.length);
 
@@ -512,9 +492,12 @@ const navigationLinks: NavigationLink[] = [
         i++;
         if (progress >= 1) {
           clearInterval(timer);
-          element.textContent = originalText; // ensure final
+          scrambleTimers.delete(element);
+          element.textContent = originalText; // ensure final stable text
         }
       }, stepMs);
+
+      scrambleTimers.set(element, timer);
     }
 
     // Scramble only the .scramble-part children; never touch icons/components
@@ -523,14 +506,24 @@ const navigationLinks: NavigationLink[] = [
       if (parts.length) {
         parts.forEach((part: Element, idx: number) => {
           const el = part as HTMLElement;
-          const txt = el.textContent || '';
+
+          // Persist real source text once; never read from transient scrambled text
+          if (!el.dataset.originalText) {
+            el.dataset.originalText = (el.textContent || '').trim();
+          }
+
+          const txt = el.dataset.originalText || '';
           const delay = idx * 120;
           if (!txt.trim()) return;
           setTimeout(() => scrambleText(el, txt), delay);
         });
       } else {
         // fallback: if no .scramble-part, scramble the element text safely
-        const txt = container.dataset.text || container.textContent || '';
+        if (!container.dataset.originalText) {
+          container.dataset.originalText = (container.dataset.text || container.textContent || '').trim();
+        }
+
+        const txt = container.dataset.originalText || '';
         if (!txt.trim()) return;
         // Only scramble if the element has no child elements (avoid nuking icons)
         if (container.children.length === 0) {
@@ -539,13 +532,12 @@ const navigationLinks: NavigationLink[] = [
       }
     }
 
-    // Initial paint updates (no artificial delay)
-    calculateAndDisplayFooterContrast();
-    updateMotionPreference();
-
-    // Debounced contrast updates on theme/class changes
+    // Lazy-init footer utilities to avoid competing with above-the-fold rendering
     let contrastRaf: number | null = null;
+    let footerUtilitiesReady = false;
+
     const scheduleContrastUpdate = () => {
+      if (!footerUtilitiesReady) return;
       if (contrastRaf !== null) {
         cancelAnimationFrame(contrastRaf);
       }
@@ -555,38 +547,65 @@ const navigationLinks: NavigationLink[] = [
       });
     };
 
-    const observer = new MutationObserver((mutations) => {
-      for (const mutation of mutations) {
-        if (
-          mutation.type === 'attributes' &&
-          (mutation.attributeName === 'data-theme' || mutation.attributeName === 'class')
-        ) {
-          scheduleContrastUpdate();
-          break;
+    const initFooterUtilities = () => {
+      if (footerUtilitiesReady) return;
+      footerUtilitiesReady = true;
+
+      calculateAndDisplayFooterContrast();
+      updateMotionPreference();
+
+      const observer = new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+          if (
+            mutation.type === 'attributes' &&
+            (mutation.attributeName === 'data-theme' || mutation.attributeName === 'class')
+          ) {
+            scheduleContrastUpdate();
+            break;
+          }
         }
-      }
-    });
+      });
 
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-theme', 'class']
-    });
-    cleanupFns.push(() => observer.disconnect());
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme', 'class']
+      });
+      cleanupFns.push(() => observer.disconnect());
 
-    // Listen for motion preference changes
-    const motionMediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    motionMediaQuery.addEventListener('change', updateMotionPreference);
-    cleanupFns.push(() => motionMediaQuery.removeEventListener('change', updateMotionPreference));
+      const motionMediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+      motionMediaQuery.addEventListener('change', updateMotionPreference);
+      cleanupFns.push(() => motionMediaQuery.removeEventListener('change', updateMotionPreference));
+
+      // Live contrast updates for dynamic theme (throttled)
+      let lastDynamicContrastUpdate = 0;
+      const onDynamicThemeContrast = (event: Event) => {
+        const now = performance.now();
+        if (now - lastDynamicContrastUpdate < 220) return;
+        lastDynamicContrastUpdate = now;
+
+        const ratio = (event as CustomEvent).detail?.ratio;
+        if (typeof ratio !== 'number' || Number.isNaN(ratio)) return;
+
+        setContrastDisplayValue(formatContrastDisplayValue(ratio));
+
+        updateWcagLevelsUI(ratio);
+      };
+
+      window.addEventListener('dynamic-theme-contrast', onDynamicThemeContrast);
+      cleanupFns.push(() => window.removeEventListener('dynamic-theme-contrast', onDynamicThemeContrast));
+    };
 
     // Intersection Observer: run once when footer enters viewport
-    let lastInteractiveScrambleAt = 0;
-    const runFooterScramble = (footerEl: Element, force: boolean = false) => {
-      if (footerAnimated && !force) return;
-      if (!force) footerAnimated = true;
+    const runFooterScramble = (footerEl: Element) => {
+      if (footerAnimated) return;
+      footerAnimated = true;
+
+      initFooterUtilities();
+      window.dispatchEvent(new CustomEvent('footer-scramble-start'));
 
       const elements = footerEl.querySelectorAll('.scramble-text');
       elements.forEach((el: Element, idx: number) => {
-        setTimeout(() => scrambleContainer(el as HTMLElement), idx * 35);
+        setTimeout(() => scrambleContainer(el as HTMLElement), idx * 28);
       });
     };
 
@@ -603,55 +622,20 @@ const navigationLinks: NavigationLink[] = [
 
     const footer = document.getElementById('site-footer');
     if (footer) {
-      // Observe for normal cases
+      // Run scramble only once, when footer enters viewport
       scrambleObserver.observe(footer);
 
-      // User-interaction fallback/replay: ensure scramble is visible to user
-      const onFooterInteract = () => {
-        const now = Date.now();
-        if (now - lastInteractiveScrambleAt < 1200) return;
-        lastInteractiveScrambleAt = now;
-        runFooterScramble(footer, true);
-      };
-      footer.addEventListener('mouseenter', onFooterInteract);
-      footer.addEventListener('touchstart', onFooterInteract, { passive: true });
+      // Idle fallback: initialize metrics lazily even if footer is never reached
+      const idleId = 'requestIdleCallback' in window
+        ? (window as any).requestIdleCallback(() => initFooterUtilities(), { timeout: 2500 })
+        : window.setTimeout(() => initFooterUtilities(), 1800);
+
       cleanupFns.push(() => {
-        footer.removeEventListener('mouseenter', onFooterInteract);
-        footer.removeEventListener('touchstart', onFooterInteract);
-      });
-
-      // Fallback: if already visible at init, run immediately
-      const rect = footer.getBoundingClientRect();
-      const viewportH = window.innerHeight || document.documentElement.clientHeight;
-      if (rect.top < viewportH && rect.bottom > 0) {
-        setTimeout(() => runFooterScramble(footer), 80);
-        scrambleObserver.disconnect();
-      }
-
-      // Extra fallback for long pages (e.g. home): lightweight scroll check
-      let scrollRaf: number | null = null;
-      const checkFooterVisibility = () => {
-        const r = footer.getBoundingClientRect();
-        const vh = window.innerHeight || document.documentElement.clientHeight;
-        if (r.top < vh && r.bottom > 0) {
-          runFooterScramble(footer);
-          window.removeEventListener('scroll', onScroll);
-          window.removeEventListener('resize', onScroll);
+        if ('cancelIdleCallback' in window) {
+          (window as any).cancelIdleCallback?.(idleId);
+        } else {
+          clearTimeout(idleId as number);
         }
-      };
-      const onScroll = () => {
-        if (scrollRaf !== null) return;
-        scrollRaf = requestAnimationFrame(() => {
-          scrollRaf = null;
-          checkFooterVisibility();
-        });
-      };
-      window.addEventListener('scroll', onScroll, { passive: true });
-      window.addEventListener('resize', onScroll, { passive: true });
-      cleanupFns.push(() => {
-        window.removeEventListener('scroll', onScroll);
-        window.removeEventListener('resize', onScroll);
-        if (scrollRaf !== null) cancelAnimationFrame(scrollRaf);
       });
     }
     cleanupFns.push(() => {

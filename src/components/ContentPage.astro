@@ -20,34 +20,36 @@ const {
     lang = defaultLang,
     useClerkTOC = true,
 } = Astro.props as Props;
+
+const resolvedContentId = contentId === 'main-content' ? 'main-content-article' : contentId;
 ---
 
 <!-- Scroll Progress (global component) -->
 <ScrollProgress client:idle />
 
 <!-- Full height layout with content and sidebar -->
-<div class={`flex ${containerClassName}`} id={`${contentId}-container`}>
+<div class={`flex ${containerClassName}`} id={`${resolvedContentId}-container`}>
     <!-- Main content area -->
-    <main
+    <div
         class={`mx-auto min-w-0 w-fit max-w-[850px] ${contentClassName}`}
-        id={contentId}
+        id={resolvedContentId}
         data-heading-slug-root
         data-skip-target
     >
         <slot />
-    </main>
+    </div>
 
     <!-- Desktop Sidebar -->
     <Sidebar
-        contentId={contentId}
+        contentId={resolvedContentId}
         className={sidebarClassName}
         lang={lang}
         useClerkTOC={useClerkTOC}
     />
 </div>
 
-<script is:inline type="module" define:vars={{ contentId }}>
+<script is:inline type="module" define:vars={{ resolvedContentId }}>
     import { initializeHeadingSlugs } from '/src/utils/heading-slugs.ts';
 
-    initializeHeadingSlugs(contentId);
+    initializeHeadingSlugs(resolvedContentId);
 </script>

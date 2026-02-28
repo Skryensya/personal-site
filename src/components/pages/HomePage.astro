@@ -6,17 +6,38 @@ import AboutSection from '@/components/sections/AboutSection.astro';
 import ProjectsSection from '@/components/sections/ProjectsSection.astro';
 import TechLogos from '@/components/TechLogos.astro'; 
 import { defaultLang, type Language } from '@/i18n/ui';
+import { getTranslations } from '@/i18n/utils';
 
 interface Props {
     lang?: Language;
 }
 
 const { lang = defaultLang } = Astro.props as Props;
+const t = getTranslations(lang);
+
+const homeTitleByLang: Record<Language, string> = {
+    es: 'Desarrollador web full stack',
+    en: 'Full-stack web developer',
+    no: 'Fullstack webutvikler'
+};
+
+const personJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Allison Peña',
+    jobTitle: 'Full-stack web developer',
+    url: 'https://allison.sh/',
+    sameAs: [
+        'https://github.com/skryensya',
+        'https://linkedin.com/in/skryensya',
+        'https://lichess.org/@/Skryensya'
+    ]
+};
 ---
 
-<Layout description={siteConfig.description} image={siteConfig.image} lang={lang}>
+<Layout title={homeTitleByLang[lang]} description={t('site.description')} image={siteConfig.image} lang={lang} structuredData={personJsonLd}>
     <Hero lang={lang} />
-    <div class="py-12">
+    <div class="py-12 hidden" aria-hidden="true">
         <TechLogos />
     </div>
  

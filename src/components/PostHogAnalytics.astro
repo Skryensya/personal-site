@@ -42,7 +42,7 @@
 	})(document, window.posthog || [])
 	// Inicializar PostHog con capture_pageview desactivado para control manual
 	posthog.init('phc_REDACTED', {
-		api_host: '/ph',
+		api_host: 'https://us.i.posthog.com',
 		ui_host: 'https://us.posthog.com',
 		capture_pageview: false,  // Control manual para View Transitions
 		capture_pageleave: true,

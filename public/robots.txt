@@ -1,7 +1,7 @@
-# robots.txt for https://skryensya.dev
+# robots.txt for https://allison.sh
 
 User-agent: *
 Allow: /
 
 # Enlaza tu sitemap principal
-Sitemap: https://skryensya.dev/sitemap.xml
+Sitemap: https://allison.sh/sitemap.xml

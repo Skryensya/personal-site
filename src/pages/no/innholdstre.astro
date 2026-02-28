@@ -2,7 +2,28 @@
 import Layout from '@/layouts/Layout.astro';
 import SitemapTree from '@/components/SitemapTree.astro';
 import Sidebar from '@/components/Sidebar.astro';
+import { getSitemapForLanguage, sitemapData, type SitemapNode } from '@/data/sitemap-data';
+
 const lang = 'no';
+const tree = getSitemapForLanguage(lang);
+
+const countNodes = (nodes: SitemapNode[]): number =>
+  nodes.reduce((total, node) => total + 1 + countNodes(node.children || []), 0);
+
+const getMaxDepth = (nodes: SitemapNode[], depth = 1): number => {
+  if (!nodes.length) return depth;
+  return Math.max(
+    ...nodes.map((node) =>
+      node.children?.length ? getMaxDepth(node.children, depth + 1) : depth,
+    ),
+  );
+};
+
+const mainSections = tree.length;
+const totalNodes = countNodes(tree);
+const projectsCount = tree.find((n) => n.url.includes('/prosjekter/'))?.children?.length || 0;
+const supportedLanguages = Object.keys(sitemapData).length;
+const maxDepth = getMaxDepth(tree);
 ---
 
 <Layout
@@ -11,7 +32,7 @@ const lang = 'no';
   lang={lang}
 >
   <div class="flex gap-4">
-    <main id="main-content" class="flex-1 mx-auto max-w-[850px] py-8">
+    <section id="content-tree-main" class="flex-1 mx-auto max-w-[850px] py-8" data-heading-slug-root>
       <div class="mb-8">
         <h1 id="innhold" class="text-3xl font-mono font-bold text-main border-b-2 border-main pb-4 mb-4">
           Innholdstre
@@ -23,23 +44,55 @@ const lang = 'no';
 
       <div id="struktur" class="mb-8">
         <h2 class="text-xl font-mono font-bold text-main border-b border-main pb-2 mb-4">Nettstedsstruktur</h2>
-        <SitemapTree lang={lang} />
+        <SitemapTree lang={lang} showHeader={false} />
       </div>
 
       <div class="mt-12 space-y-8">
         <div class="space-y-6">
           <h2 id="info" class="text-xl font-mono font-bold text-main border-b border-main pb-2">Tilleggsinformasjon</h2>
-          <div id="stats" class="grid gap-2 font-mono text-sm text-main ml-4">
-            <div>Totalt hovedsider: 6</div>
-            <div>Tilgjengelige prosjekter: 7</div>
-            <div>Støttede språk: 3 (Spansk, Engelsk, Norsk)</div>
-            <div>Sist oppdatert: {new Date().toLocaleDateString('no-NO')}</div>
-            <div>XML Sitemap: <a href="/sitemap.xml" class="text-main underline hover:no-underline">/sitemap.xml</a></div>
+
+          <h3 id="nettstedsmetrikker" class="text-lg font-mono font-bold text-main">Nettstedsmetrikker</h3>
+          <div id="stats" class="grid gap-3 md:grid-cols-2 font-mono text-sm text-main">
+            <div class="border border-main p-3 bg-secondary text-main">
+              <p class="text-xs opacity-75">Hovedseksjoner</p>
+              <p class="text-lg font-bold">{mainSections}</p>
+            </div>
+            <div class="border border-main p-3">
+              <p class="text-xs opacity-75">Ruter i dette treet</p>
+              <p class="text-lg font-bold">{totalNodes}</p>
+            </div>
+            <div class="border border-main p-3">
+              <p class="text-xs opacity-75">Publiserte prosjekter</p>
+              <p class="text-lg font-bold">{projectsCount}</p>
+            </div>
+            <div class="border border-main p-3">
+              <p class="text-xs opacity-75">Maks dybde</p>
+              <p class="text-lg font-bold">Nivå {maxDepth}</p>
+            </div>
+            <div class="border border-main p-3 md:col-span-2">
+              <p class="text-xs opacity-75">Støttede språk</p>
+              <p class="text-lg font-bold">{supportedLanguages} (Spansk, Engelsk, Norsk)</p>
+            </div>
+          </div>
+
+          <div class="border border-main p-3 text-sm font-mono text-main space-y-2">
+            <h3 id="nyttige-ressurser" class="text-base font-bold">Nyttige ressurser</h3>
+            <ul class="list-disc pl-5 space-y-1">
+              <li>
+                XML-sitemap:
+                <a href="/sitemap.xml" class="underline hover:no-underline">/sitemap.xml</a>
+              </li>
+              <li>Sist oppdatert: {new Date().toLocaleDateString('no-NO')}</li>
+              <li>
+                Hjem:
+                <a href="/no/" class="underline hover:no-underline">/no/</a>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
-    </main>
+    </section>
 
-    <Sidebar contentId="main-content" />
+    <Sidebar contentId="content-tree-main" />
   </div>
 </Layout>

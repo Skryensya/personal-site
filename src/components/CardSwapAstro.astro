@@ -285,6 +285,19 @@ const {
   // Store controllers to prevent multiple initializations
   const controllers = new Set<CardSwapController>();
 
+  function resetAndReinitCardSwap() {
+    controllers.forEach((controller) => controller.destroy());
+    controllers.clear();
+
+    const containers = document.querySelectorAll('.card-swap-container');
+    containers.forEach((container) => {
+      const htmlContainer = container as HTMLElement;
+      delete htmlContainer.dataset.cardSwapInitialized;
+    });
+
+    initCardSwapPositioning();
+  }
+
   // Initialize all CardSwap containers immediately for positioning
   function initCardSwapPositioning() {
 
@@ -317,6 +330,9 @@ const {
     immediateInit();
   }
 
+  // Re-initialize once GSAP is available so swap cycle starts correctly
+  window.addEventListener('gsap-ready', resetAndReinitCardSwap);
+
   // Handle Astro page transitions with cleanup
   document.addEventListener('astro:page-load', () => {
     // Clean up existing controllers
@@ -335,19 +351,28 @@ const {
       controller.destroy();
     });
     controllers.clear();
+    window.removeEventListener('gsap-ready', resetAndReinitCardSwap);
   });
 </script>
 
 <!-- Load GSAP from CDN if not already available - defer loading -->
 <script is:inline>
+  function notifyGSAPReady() {
+    window.dispatchEvent(new CustomEvent('gsap-ready'));
+  }
+
   function loadGSAP() {
-    if (!window.gsap) {
-      const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js';
-      script.async = true;
-      script.defer = true;
-      document.head.appendChild(script);
+    if (window.gsap) {
+      notifyGSAPReady();
+      return;
     }
+
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js';
+    script.async = true;
+    script.defer = true;
+    script.onload = notifyGSAPReady;
+    document.head.appendChild(script);
   }
 
   // Defer GSAP loading to idle time

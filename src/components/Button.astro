@@ -129,16 +129,23 @@ const shadowClasses = cn(
   function initializeButtons() {
     log('🔧 Initializing buttons...');
 
-    // Create audio element for button click sound
-    const clickAudio = new Audio('/buttonPress.wav');
-    clickAudio.volume = 0.3;
-    clickAudio.preload = 'auto';
+    // Create audio lazily to avoid loading sound file on initial page render
+    let clickAudio: HTMLAudioElement | null = null;
+
+    function getClickAudio() {
+      if (clickAudio) return clickAudio;
+      clickAudio = new Audio('/buttonPress.wav');
+      clickAudio.volume = 0.25;
+      clickAudio.preload = 'none';
+      return clickAudio;
+    }
 
     // Play click sound
     function playClickSound() {
       try {
-        clickAudio.currentTime = 0; // Reset to start
-        clickAudio.play().catch(() => {
+        const audio = getClickAudio();
+        audio.currentTime = 0; // Reset to start
+        audio.play().catch(() => {
           // Silently handle autoplay restrictions
         });
       } catch (error) {
@@ -150,7 +157,11 @@ const shadowClasses = cn(
     const buttons = document.querySelectorAll('.button-with-sound');
     log('🔊 Buttons with sound found:', buttons.length);
     buttons.forEach(button => {
-      button.addEventListener('click', () => {
+      const buttonEl = button as HTMLElement;
+      if (buttonEl.dataset.soundBound === 'true') return;
+      buttonEl.dataset.soundBound = 'true';
+
+      buttonEl.addEventListener('click', () => {
         playClickSound();
       });
     });

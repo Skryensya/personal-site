@@ -4,6 +4,7 @@
 
 import themesData from './themes.json';
 import { debugLogger } from '../utils/debug-logger.ts';
+import { startDynamicTheme, stopDynamicTheme } from '../utils/dynamicTheme.ts';
 
 // Flatten all themes into a single array for backwards compatibility
 const allThemes = [
@@ -513,7 +514,13 @@ export function applyTheme(themeId, isDark = false) {
         } catch (e) {
             debugLogger.warn('Failed to save theme to cookie:', e);
         }
-        
+
+        // Dynamic theme lifecycle (seamless and isolated)
+        if (resolvedThemeId === 'prism-flow') {
+            startDynamicTheme(isDark);
+        } else {
+            stopDynamicTheme();
+        }
     };
 
     // Apply theme changes instantly without transitions to prevent color blending
@@ -589,7 +596,32 @@ export function loadThemeFromStorage() {
 export function initializeTheme() {
     const { themeId, isDark } = loadThemeFromStorage();
     applyTheme(themeId, isDark);
-    
-    
+
     return { themeId, isDark };
+}
+
+function syncDynamicThemeOnPageLoad() {
+    if (typeof window === 'undefined') return;
+
+    try {
+        const themeId = localStorage.getItem('theme-id');
+        const mode = localStorage.getItem('theme-mode') || 'system';
+        const isDark =
+            mode === 'system'
+                ? window.matchMedia('(prefers-color-scheme: dark)').matches
+                : mode === 'dark';
+
+        if (themeId === 'prism-flow') {
+            startDynamicTheme(isDark);
+        } else {
+            stopDynamicTheme();
+        }
+    } catch {
+        // Ignore storage/matchMedia errors
+    }
+}
+
+if (typeof window !== 'undefined') {
+    syncDynamicThemeOnPageLoad();
+    document.addEventListener('astro:page-load', syncDynamicThemeOnPageLoad);
 }

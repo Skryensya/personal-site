@@ -1,0 +1,48 @@
+---
+interface Props {
+  char?: string;
+}
+
+const { char = '-' } = Astro.props as Props;
+
+type SegmentKey = 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g';
+
+const DIGIT_SEGMENTS: Record<string, SegmentKey[]> = {
+  '0': ['a', 'b', 'c', 'd', 'e', 'f'],
+  '1': ['b', 'c'],
+  '2': ['a', 'b', 'd', 'e', 'g'],
+  '3': ['a', 'b', 'c', 'd', 'g'],
+  '4': ['b', 'c', 'f', 'g'],
+  '5': ['a', 'c', 'd', 'f', 'g'],
+  '6': ['a', 'c', 'd', 'e', 'f', 'g'],
+  '7': ['a', 'b', 'c'],
+  '8': ['a', 'b', 'c', 'd', 'e', 'f', 'g'],
+  '9': ['a', 'b', 'c', 'd', 'f', 'g'],
+  '-': ['g']
+};
+
+const active = new Set(DIGIT_SEGMENTS[char] || []);
+---
+
+{char === ':' ? (
+  <span class="ss-digit ss-colon" aria-hidden="true">
+    <span class="ss-dot ss-dot-top"></span>
+    <span class="ss-dot ss-dot-bottom"></span>
+  </span>
+) : char === '.' ? (
+  <span class="ss-digit ss-dot-only" aria-hidden="true">
+    <span class="ss-dot ss-dot-bottom"></span>
+  </span>
+) : DIGIT_SEGMENTS[char] ? (
+  <span class="ss-digit" aria-hidden="true">
+    <span class={`ss-seg ss-a ${active.has('a') ? 'is-on' : ''}`}></span>
+    <span class={`ss-seg ss-b ${active.has('b') ? 'is-on' : ''}`}></span>
+    <span class={`ss-seg ss-c ${active.has('c') ? 'is-on' : ''}`}></span>
+    <span class={`ss-seg ss-d ${active.has('d') ? 'is-on' : ''}`}></span>
+    <span class={`ss-seg ss-e ${active.has('e') ? 'is-on' : ''}`}></span>
+    <span class={`ss-seg ss-f ${active.has('f') ? 'is-on' : ''}`}></span>
+    <span class={`ss-seg ss-g ${active.has('g') ? 'is-on' : ''}`}></span>
+  </span>
+) : (
+  <span class="ss-digit ss-fallback" aria-hidden="true">{char}</span>
+)}

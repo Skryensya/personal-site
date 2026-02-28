@@ -4,9 +4,10 @@ import { defaultLang, type Language } from '@/i18n/ui';
 
 interface Props {
   lang?: Language;
+  showHeader?: boolean;
 }
 
-const { lang = defaultLang } = Astro.props;
+const { lang = defaultLang, showHeader = true } = Astro.props;
 const sitemapData = getSitemapForLanguage(lang);
 
 // Function to render sitemap nodes recursively
@@ -52,14 +53,16 @@ function renderSitemapNode(node: SitemapNode, level: number = 0): string {
 ---
 
 <div class="space-y-6">
-  <div>
-    <h2 class="text-xl font-mono font-bold text-main border-b border-main pb-2 mb-4">
-      {lang === 'es' ? 'Árbol de contenido' : lang === 'en' ? 'Content Tree' : 'Innholdstre'}
-    </h2>
-    <p class="text-sm font-mono text-main opacity-75 ml-4">
-      {lang === 'es' ? 'Navegación jerárquica de todas las páginas' : lang === 'en' ? 'Hierarchical navigation of all pages' : 'Hierarkisk navigasjon av alle sider'}
-    </p>
-  </div>
+  {showHeader && (
+    <div>
+      <h2 class="text-xl font-mono font-bold text-main border-b border-main pb-2 mb-4">
+        {lang === 'es' ? 'Árbol de contenido' : lang === 'en' ? 'Content Tree' : 'Innholdstre'}
+      </h2>
+      <p class="text-sm font-mono text-main opacity-75 ml-4">
+        {lang === 'es' ? 'Navegación jerárquica de todas las páginas' : lang === 'en' ? 'Hierarchical navigation of all pages' : 'Hierarkisk navigasjon av alle sider'}
+      </p>
+    </div>
+  )}
   
   <div class="ml-4" set:html={sitemapData.map(node => renderSitemapNode(node)).join('')}></div>
   
