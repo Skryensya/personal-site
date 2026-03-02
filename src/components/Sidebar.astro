@@ -18,10 +18,11 @@ const {
 
 const t = getTranslations(lang);
 const tocId = `toc-list-${contentId}`;
+const homeLabel = t('nav.home');
 ---
 
 <aside
-  class={`sticky top-20 w-[240px] min-w-[240px] max-h-[90dvh] flex-shrink-0 hidden md:block overflow-y-auto py-8 px-4 ${className}`}
+  class={`sticky top-20 w-[240px] min-w-[240px] max-h-[calc(100dvh-28rem)]  flex-shrink-0 hidden md:block overflow-hidden py-6 px-4 ${className}`}
   id="content-sidebar"
   data-lang={lang}
   data-use-clerk={useClerkTOC}
@@ -29,12 +30,14 @@ const tocId = `toc-list-${contentId}`;
   {useClerkTOC ? (
     <nav aria-label={t('sidebar.toc')}>
       <div class="mb-3 text-xs font-mono font-medium text-main uppercase tracking-wide">{t('sidebar.toc')}</div>
-      <ul id={tocId} class="flex flex-col gap-0.5"></ul>
+      <ul id={tocId} class="flex flex-col gap-0.5 overflow-y-auto pe-1"></ul>
     </nav>
   ) : null}
 </aside>
 
-<script is:inline define:vars={{ contentId, tocId }}>
+<script type="module" is:inline define:vars={{ contentId, tocId, homeLabel }}>
+  import { applyHeadingSlugs } from '/src/utils/heading-slugs.ts';
+
   const TOP_OFFSET = 112;
 
   const initSidebarToc = () => {
@@ -47,27 +50,14 @@ const tocId = `toc-list-${contentId}`;
       return exact || document.getElementById(contentId) || roots[roots.length - 1] || document.querySelector('main');
     };
 
-    const ensureId = (el) => {
-      if (el.id) return el.id;
-      const text = (el.textContent || '').trim().toLowerCase();
-      const id = text
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/[^a-z0-9\s-]/g, '')
-        .trim()
-        .replace(/\s+/g, '-')
-        .slice(0, 80) || `toc-${Math.random().toString(36).slice(2, 8)}`;
-      el.id = id;
-      return id;
-    };
-
     const build = () => {
       const root = getRoot();
       if (!root) return;
 
-      const headings = Array.from(root.querySelectorAll('h2, h3, h4')).filter(
-        (h) => !h.closest('header') && !h.closest('[data-toc-ignore]')
-      );
+      const slugResults = applyHeadingSlugs(root, {
+        selector: 'h2, h3, h4',
+        filter: (heading) => !heading.closest('header') && !heading.closest('[data-toc-ignore]')
+      });
 
       const frag = document.createDocumentFragment();
       const ids = new Set();
@@ -83,12 +73,19 @@ const tocId = `toc-list-${contentId}`;
         a.dataset.tocId = id;
         a.className = [
           'block py-1.5 pe-2 text-sm leading-snug border-l-2 transition-colors max-w-full truncate',
-          depth <= 2 ? 'ps-2' : depth === 3 ? 'ps-5' : 'ps-7',
+          depth <= 2 ? 'ms-0 ps-2' : depth === 3 ? 'ms-3 ps-2' : 'ms-6 ps-2',
           'text-main/70 hover:text-main border-transparent hover:border-main/30'
         ].join(' ');
 
         a.addEventListener('click', (e) => {
-          if (id === 'inicio') return;
+          if (id === 'inicio') {
+            e.preventDefault();
+            window.history.pushState(null, '', '#inicio');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            updateActive('inicio');
+            return;
+          }
+
           const target = document.getElementById(id);
           if (!target) return;
           e.preventDefault();
@@ -102,13 +99,10 @@ const tocId = `toc-list-${contentId}`;
         frag.appendChild(li);
       };
 
-      pushItem('inicio', 'Inicio', 1);
+      pushItem('inicio', homeLabel, 1);
 
-      headings.forEach((h) => {
-        const id = ensureId(h);
-        const title = (h.textContent || id).trim();
-        const depth = Number(h.tagName.slice(1));
-        pushItem(id, title, depth);
+      slugResults.forEach(({ id, text, level }) => {
+        pushItem(id, text, level);
       });
 
       list.innerHTML = '';
@@ -133,11 +127,6 @@ const tocId = `toc-list-${contentId}`;
 
     const updateByScroll = () => {
       const sy = window.scrollY || window.pageYOffset;
-      const hash = decodeURIComponent((window.location.hash || '').replace(/^#/, ''));
-      if (hash) {
-        updateActive(hash);
-        return;
-      }
       if (sy <= 24) {
         updateActive('inicio');
         return;
@@ -160,10 +149,7 @@ const tocId = `toc-list-${contentId}`;
       }
 
       const reached = entries.filter((e) => e.top <= sy + TOP_OFFSET + 2);
-      const current = reached.length
-        ? reached.reduce((a, b) => (a.top > b.top ? a : b))
-        : entries[0];
-
+      const current = reached.length ? reached.reduce((a, b) => (a.top > b.top ? a : b)) : entries[0];
       updateActive(current.id);
     };
 

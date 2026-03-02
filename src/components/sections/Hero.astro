@@ -26,7 +26,7 @@ const getCVPath = (locale: Language) => {
 <section class="hero-section pt-2 mb-10 md:mb-12 relative">
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-0">
     <!-- Text Content -->
-    <CornersWithCrosses class="flex flex-col justify-center p-4 md:p-8 md:pr-16 min-h-[20rem] md:min-h-[24rem] lg:min-h-[26rem] border-t border-l border-main/20">
+    <CornersWithCrosses class="flex flex-col justify-center p-4 md:p-8 md:pr-16 min-h-[20rem] md:min-h-[24rem] lg:min-h-[450px] border-t border-l border-main/20">
       <div class="space-y-3 md:space-y-4">
         <h1 class="h1">
           {t('hero.heading')}
@@ -46,8 +46,8 @@ const getCVPath = (locale: Language) => {
     </CornersWithCrosses>
 
     <!-- Cards Section -->
-    <CornersWithCrosses class="flex items-center justify-center min-h-[20rem] md:min-h-[24rem] lg:min-h-[26rem]" showLeft={false}>
-      <div class="overflow-hidden w-full h-full min-h-[20rem] md:min-h-[24rem] lg:min-h-[26rem] relative border-b border-r border-main/20">
+    <CornersWithCrosses class="flex items-center justify-center min-h-[20rem] md:min-h-[24rem] lg:min-h-[450px]" showLeft={false}>
+      <div class="overflow-hidden w-full h-full min-h-[20rem] md:min-h-[24rem] lg:min-h-[450px] relative border-b border-r border-main/20">
         <!-- PixelBlast Background -->
         <SimplePixelBlastWithCssVar
           className="absolute inset-0 w-full h-full"

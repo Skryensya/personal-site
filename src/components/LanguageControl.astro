@@ -5,11 +5,13 @@ import { supportedLanguages, languages, type Language } from '@/i18n/ui';
 import { getLangFromUrl } from '@/i18n/utils';
 import { getEquivalentPage } from '@/utils/localized-routes';
 
-export interface Props {
+interface Props {
+  id?: string;
   currentPath?: string;
   initialLocale?: Language;
 }
 
+const { id = 'language-control' } = Astro.props;
 const currentLocale = getLangFromUrl(Astro.url);
 const pathname = Astro.url.pathname;
 
@@ -20,20 +22,28 @@ const alternateUrls = supportedLanguages.map((lang) => ({
 }));
 ---
 
-<div data-component="language-control">
+<div data-component="language-control" data-language-control-id={id}>
   <DropdownButton
     onMainClick="nextLanguage"
     class="w-7 h-7 lg:w-auto lg:h-8"
-    id="language-control"
+    id={id}
   >
     <div class="flex items-center gap-2">
-      <span class="font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary uppercase" id="language-name-display">
+      <div class="w-3.5 h-3.5 flex-shrink-0 -ml-px translate-y-[0.5px]" aria-hidden="true">
+        <svg class="w-3.5 h-3.5 text-main group-hover:text-secondary group-focus-visible:text-secondary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="10"></circle>
+          <path d="M2 12h20"></path>
+          <path d="M12 2a15 15 0 0 1 0 20"></path>
+          <path d="M12 2a15 15 0 0 0 0 20"></path>
+        </svg>
+      </div>
+      <span class="font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary uppercase" data-language-name-display>
         {languages[currentLocale]}
       </span>
     </div>
 
     <DropdownContent slot="dropdown-content">
-      <div id="language-dropdown-content">
+      <div data-language-dropdown-content>
         {supportedLanguages.map((lang) => {
           const url = alternateUrls.find(alt => alt.lang === lang)?.url || '/';
           return (
@@ -124,9 +134,10 @@ const alternateUrls = supportedLanguages.map((lang) => ({
     // Get language name in current language
     getLanguageNameInCurrent(lang: Language) {
       const langNames: any = {
-        es: { es: 'Español', en: 'Inglés', no: 'Noruego' },
-        en: { es: 'Spanish', en: 'English', no: 'Norwegian' },
-        no: { es: 'Spansk', en: 'Engelsk', no: 'Norsk' }
+        es: { es: 'Español', en: 'Inglés', no: 'Noruego', ja: 'Japonés' },
+        en: { es: 'Spanish', en: 'English', no: 'Norwegian', ja: 'Japanese' },
+        no: { es: 'Spansk', en: 'Engelsk', no: 'Norsk', ja: 'Japansk' },
+        ja: { es: 'スペイン語', en: '英語', no: 'ノルウェー語', ja: '日本語' }
       };
       return langNames[this.currentLang][lang];
     },
@@ -153,10 +164,9 @@ const alternateUrls = supportedLanguages.map((lang) => ({
     // Update display elements
     updateDisplay() {
       // Update main display
-      const nameDisplay = document.getElementById('language-name-display');
-      if (nameDisplay) {
-        nameDisplay.textContent = this.getNativeLanguageName(this.currentLang);
-      }
+      document.querySelectorAll('[data-language-name-display]').forEach((nameDisplay) => {
+        (nameDisplay as HTMLElement).textContent = this.getNativeLanguageName(this.currentLang);
+      });
       
       // Update dropdown items
       const languageLinks = document.querySelectorAll('[data-language-link]');

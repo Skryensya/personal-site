@@ -1,13 +1,14 @@
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
 
-type Lang = "es" | "en" | "no";
+type Lang = "es" | "en" | "no" | "ja";
 
-const LANGS: Lang[] = ["es", "en", "no"];
+const LANGS: Lang[] = ["es", "en", "no", "ja"];
 const STATIC_PAGES: Record<Lang, string[]> = {
   es: ["", "proyectos/", "curriculum/", "declaracion-de-accesibilidad/", "arbol-de-contenido/"],
   en: ["en/", "en/projects/", "en/resume/", "en/accessibility-statement/", "en/content-tree/"],
   no: ["no/", "no/prosjekter/", "no/cv/", "no/tilgjengelighetserklaering/", "no/innholdstre/"],
+  ja: ["ja/", "ja/projects/", "ja/resume/", "ja/accessibility-statement/", "ja/content-tree/"],
 };
 
 /** Ensures siteUrl ends with '/' and joins paths cleanly */
@@ -61,10 +62,11 @@ export const GET: APIRoute = async ({ site }) => {
   const now = iso(new Date());
 
   // 1) Carga colecciones por idioma
-  const [projectsEs, projectsEn, projectsNo] = await Promise.all([
+  const [projectsEs, projectsEn, projectsNo, projectsJa] = await Promise.all([
     getCollection("projects", ({ id }) => id.startsWith("es/")),
     getCollection("projects", ({ id }) => id.startsWith("en/")),
     getCollection("projects", ({ id }) => id.startsWith("no/")),
+    getCollection("projects", ({ id }) => id.startsWith("ja/")),
   ]);
 
   // 2) Indexa por slug qué idiomas existen
@@ -86,6 +88,7 @@ export const GET: APIRoute = async ({ site }) => {
   projectsEs.forEach((p) => addProject("es", p.id, p.data.publishDate));
   projectsEn.forEach((p) => addProject("en", p.id, p.data.publishDate));
   projectsNo.forEach((p) => addProject("no", p.id, p.data.publishDate));
+  projectsJa.forEach((p) => addProject("ja", p.id, p.data.publishDate));
 
   // 3) Construye XML
   const entries: string[] = [];
@@ -100,12 +103,12 @@ export const GET: APIRoute = async ({ site }) => {
 
       // Alternates para la misma ruta conceptual
       function semanticKey(p: string) {
-        if (p === "" || p === "en/" || p === "no/") return "root";
-        if (/proyectos\/$|en\/projects\/$|no\/prosjekter\/$/.test(p)) return "projects";
-        if (/curriculum\/$|en\/resume\/$|no\/cv\/$/.test(p)) return "resume";
-        if (/declaracion-de-accesibilidad\/$|en\/accessibility-statement\/$|no\/tilgjengelighetserklaering\/$/.test(p))
+        if (p === "" || p === "en/" || p === "no/" || p === "ja/") return "root";
+        if (/proyectos\/$|en\/projects\/$|no\/prosjekter\/$|ja\/projects\/$/.test(p)) return "projects";
+        if (/curriculum\/$|en\/resume\/$|no\/cv\/$|ja\/resume\/$/.test(p)) return "resume";
+        if (/declaracion-de-accesibilidad\/$|en\/accessibility-statement\/$|no\/tilgjengelighetserklaering\/$|ja\/accessibility-statement\/$/.test(p))
           return "accessibility";
-        if (/arbol-de-contenido\/$|en\/content-tree\/$|no\/innholdstre\/$/.test(p)) return "content-tree";
+        if (/arbol-de-contenido\/$|en\/content-tree\/$|no\/innholdstre\/$|ja\/content-tree\/$/.test(p)) return "content-tree";
         return null;
       }
 
@@ -116,30 +119,35 @@ export const GET: APIRoute = async ({ site }) => {
           { lang: "es", href: joinUrl(siteUrl, "") },
           { lang: "en", href: joinUrl(siteUrl, "en/") },
           { lang: "no", href: joinUrl(siteUrl, "no/") },
+          { lang: "ja", href: joinUrl(siteUrl, "ja/") },
         ];
       } else if (key === "projects") {
         alternates = [
           { lang: "es", href: joinUrl(siteUrl, "proyectos/") },
           { lang: "en", href: joinUrl(siteUrl, "en/projects/") },
           { lang: "no", href: joinUrl(siteUrl, "no/prosjekter/") },
+          { lang: "ja", href: joinUrl(siteUrl, "ja/projects/") },
         ];
       } else if (key === "resume") {
         alternates = [
           { lang: "es", href: joinUrl(siteUrl, "curriculum/") },
           { lang: "en", href: joinUrl(siteUrl, "en/resume/") },
           { lang: "no", href: joinUrl(siteUrl, "no/cv/") },
+          { lang: "ja", href: joinUrl(siteUrl, "ja/resume/") },
         ];
       } else if (key === "accessibility") {
         alternates = [
           { lang: "es", href: joinUrl(siteUrl, "declaracion-de-accesibilidad/") },
           { lang: "en", href: joinUrl(siteUrl, "en/accessibility-statement/") },
           { lang: "no", href: joinUrl(siteUrl, "no/tilgjengelighetserklaering/") },
+          { lang: "ja", href: joinUrl(siteUrl, "ja/accessibility-statement/") },
         ];
       } else if (key === "content-tree") {
         alternates = [
           { lang: "es", href: joinUrl(siteUrl, "arbol-de-contenido/") },
           { lang: "en", href: joinUrl(siteUrl, "en/content-tree/") },
           { lang: "no", href: joinUrl(siteUrl, "no/innholdstre/") },
+          { lang: "ja", href: joinUrl(siteUrl, "ja/content-tree/") },
         ];
       }
 
@@ -154,14 +162,21 @@ export const GET: APIRoute = async ({ site }) => {
     const hrefs: Partial<Record<Lang, string>> = {};
     for (const lang of LANGS) {
       if (items[lang]) {
-        const segment = lang === "es" ? "proyectos/" : lang === "en" ? "en/projects/" : "no/prosjekter/";
+        const segment =
+          lang === "es"
+            ? "proyectos/"
+            : lang === "en"
+              ? "en/projects/"
+              : lang === "no"
+                ? "no/prosjekter/"
+                : "ja/projects/";
         hrefs[lang] = joinUrl(siteUrl, `${segment}${slug}/`);
       }
     }
 
-    // canonical: ES > EN > NO
+    // canonical: ES > EN > NO > JA
     const canonicalLang: Lang | undefined =
-      (items.es && "es") || (items.en && "en") || (items.no && "no") || undefined;
+      (items.es && "es") || (items.en && "en") || (items.no && "no") || (items.ja && "ja") || undefined;
 
     if (!canonicalLang) continue;
 
@@ -174,6 +189,7 @@ export const GET: APIRoute = async ({ site }) => {
       items.es?.lastmod ||
       items.en?.lastmod ||
       items.no?.lastmod ||
+      items.ja?.lastmod ||
       now;
 
     const alternates: Array<{ lang: string; href: string }> = [];

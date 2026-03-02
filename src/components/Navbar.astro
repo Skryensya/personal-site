@@ -46,8 +46,10 @@ const getCVPath = (locale: string) => {
   return '/resume.pdf';
 };
 
+const displayName = 'Allison Peña';
+
 const navItems = [
-  { label: 'Allison Peña', href: getHomeUrl(currentLocale) },
+  { label: displayName, href: getHomeUrl(currentLocale) },
   { label: t('nav.projects'), href: `${getHomeUrl(currentLocale)}#${projectsAnchor}` },
   { label: t('nav.cv'), href: getCVPath(currentLocale), isExternal: true },
 ];
@@ -68,7 +70,7 @@ const navItems = [
           {t('nav.skipToContentShort')}
         </button>
         {navItems.map((item) => {
-          const isCurrentPage = item.label === 'Allison Peña' ? isHomePage : !item.isExternal && (currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href + '/')) || (item.href !== '/' && currentPath.startsWith(item.href) && currentPath.length > item.href.length));
+          const isCurrentPage = item.label === displayName ? isHomePage : !item.isExternal && (currentPath === item.href || (item.href !== '/' && currentPath.startsWith(item.href + '/')) || (item.href !== '/' && currentPath.startsWith(item.href) && currentPath.length > item.href.length));
           return (
             <Button
               href={item.href}
@@ -103,7 +105,7 @@ const navItems = [
           data-nav-link
           aria-current={isHomePage ? 'page' : undefined}
         >
-          <span class="font-semibold select-none">Allison Peña</span>
+          <span class="font-semibold select-none">{displayName}</span>
         </Button>
         <button
           type="button"
@@ -481,6 +483,19 @@ const navItems = [
           closeMenu();
         }
       };
+
+      // Close mobile menu with Escape and return focus to trigger
+      if (!dropdown.dataset.escapeBound) {
+        dropdown.dataset.escapeBound = 'true';
+        document.addEventListener('keydown', (e) => {
+          if (!isOpen) return;
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            closeMenu();
+            button.focus({ preventScroll: true });
+          }
+        });
+      }
       
       // Handle touch events for mobile without conflicts
       button.addEventListener('touchend', function(e) {
@@ -619,7 +634,7 @@ const navItems = [
           } else {
             // Fallback: manually cycle through languages
             const currentLang = getCurrentLanguageFromURL();
-            const languages = ['es', 'en', 'no'];
+            const languages = ['es', 'en', 'no', 'ja'];
             const currentIndex = languages.indexOf(currentLang);
             const nextIndex = (currentIndex + 1) % languages.length;
             const nextLang = languages[nextIndex];
@@ -728,6 +743,7 @@ const navItems = [
       const path = window.location.pathname;
       if (path.startsWith('/en/')) return 'en';
       if (path.startsWith('/no/')) return 'no';
+      if (path.startsWith('/ja/')) return 'ja';
       return 'es'; // Default to Spanish for root paths (new default)
     }
 
@@ -741,7 +757,8 @@ const navItems = [
         const langNames = {
           'es': 'Español',
           'en': 'English', 
-          'no': 'Norsk'
+          'no': 'Norsk',
+          'ja': '日本語'
         };
         
         langLabel.textContent = langNames[currentLang] || 'Español';

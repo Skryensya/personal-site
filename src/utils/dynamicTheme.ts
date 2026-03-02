@@ -120,41 +120,43 @@ function updateDynamicThemeColors() {
   const now = performance.now();
   const elapsed = (now - state.startTime) / 1000;
 
-  // Prism drift: warm-dominant, more vivid, faster cycle
-  const cycleDurationSec = 20;
+  // Smooth prism path through curated hues (cool -> violet -> magenta -> amber)
+  const prismAnchors = [196, 228, 272, 318, 18, 52];
+  const cycleDurationSec = 36;
   const cycle = ((elapsed / cycleDurationSec) % 1 + 1) % 1;
-  const ease = (t: number) => 0.5 - 0.5 * Math.cos(Math.PI * t);
+  const scaled = cycle * prismAnchors.length;
+  const fromIndex = Math.floor(scaled) % prismAnchors.length;
+  const toIndex = (fromIndex + 1) % prismAnchors.length;
+  const localT = scaled - Math.floor(scaled);
+  const easedT = localT * localT * (3 - 2 * localT); // smoothstep
 
-  let baseHue: number;
-  const coolSplit = 0.36;
-  if (cycle < coolSplit) {
-    // Cool pass: cyan -> violet
-    const t = ease(cycle / coolSplit);
-    baseHue = 196 + (292 - 196) * t;
-  } else {
-    // Warm-dominant pass: magenta/red -> amber
-    const t = ease((cycle - coolSplit) / (1 - coolSplit));
-    baseHue = (344 + (46 - 344) * t + 360) % 360;
-  }
+  const fromHue = prismAnchors[fromIndex];
+  const toHue = prismAnchors[toIndex];
+  const shortestDelta = ((toHue - fromHue + 540) % 360) - 180;
+  const baseHue = (fromHue + shortestDelta * easedT + 360) % 360;
 
+  // Very subtle shimmer to avoid static feel while staying smooth
   state.hue = (
-    baseHue + Math.sin(elapsed * 0.58) * 4.4 + Math.sin(elapsed * 0.21 + 1.2) * 2.1 + 360
+    baseHue + Math.sin(elapsed * 0.19) * 2.6 + Math.sin(elapsed * 0.07 + 1.1) * 1.4 + 360
   ) % 360;
 
   const refractedHue =
-    (state.hue + 196 + Math.sin(elapsed * 0.29 + 0.7) * 9 + 360) % 360;
+    (state.hue + 158 + Math.sin(elapsed * 0.11 + 0.6) * 6.5 + 360) % 360;
 
-  const warmPhase = cycle >= coolSplit ? 1 : 0;
-
+  // Interesting but controlled ranges: vivid highlights + stable dark counterpart
   const colorfulSat = clamp(
-    (62 + warmPhase * 12) + Math.sin(elapsed * 0.74) * 10 + Math.sin(elapsed * 0.27 + 1.4) * 4,
-    50,
-    86
+    66 + Math.sin(elapsed * 0.23) * 7 + Math.sin(elapsed * 0.09 + 1.7) * 4,
+    56,
+    78
   );
-  const colorfulLight = clamp(88 + Math.sin(elapsed * 0.41) * 4.2, 80, 94);
+  const colorfulLight = clamp(
+    83 + Math.sin(elapsed * 0.17 + 0.4) * 3.6 + Math.sin(elapsed * 0.05) * 1.8,
+    76,
+    88
+  );
 
-  const contrastySat = clamp((50 + warmPhase * 10) + Math.sin(elapsed * 0.59 + 2.0) * 12, 38, 78);
-  const contrastyLight = clamp(18 + Math.sin(elapsed * 0.31 + 0.55) * 4.5, 12, 27);
+  const contrastySat = clamp(48 + Math.sin(elapsed * 0.21 + 2.2) * 8, 36, 62);
+  const contrastyLight = clamp(20 + Math.sin(elapsed * 0.16 + 0.9) * 3.2, 14, 26);
 
   const colorful = `hsl(${state.hue.toFixed(1)} ${colorfulSat.toFixed(1)}% ${colorfulLight.toFixed(1)}%)`;
   const contrasty = `hsl(${refractedHue.toFixed(1)} ${contrastySat.toFixed(1)}% ${contrastyLight.toFixed(1)}%)`;
@@ -188,7 +190,7 @@ function updateDynamicThemeColors() {
 
 function startInterval() {
   if (state.intervalId !== null) return;
-  state.intervalId = window.setInterval(updateDynamicThemeColors, 140);
+  state.intervalId = window.setInterval(updateDynamicThemeColors, 180);
 }
 
 function stopInterval() {

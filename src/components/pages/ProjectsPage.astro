@@ -6,6 +6,7 @@ import { ProyectStack } from '@/components/ProyectStack.tsx';
 
 interface Props {
     lang?: Language;
+    projects?: unknown;
 }
 
 const { lang = defaultLang } = Astro.props as Props;
@@ -15,7 +16,8 @@ const t = getTranslations(lang);
 const projectsDescription = {
     es: 'Listado de proyectos de Allison Peña: desarrollo web full-stack con foco en accesibilidad, performance y sistemas de diseño.',
     en: 'Project archive by Allison Peña: full-stack web development focused on accessibility, performance, and design systems.',
-    no: 'Prosjektoversikt av Allison Peña: fullstack webutvikling med fokus på tilgjengelighet, ytelse og designsystemer.'
+    no: 'Prosjektoversikt av Allison Peña: fullstack webutvikling med fokus på tilgjengelighet, ytelse og designsystemer.',
+    ja: 'Allison Peña のプロジェクト一覧。アクセシビリティ、パフォーマンス、デザインシステムに焦点を当てた開発。'
 } as const;
 ---
 

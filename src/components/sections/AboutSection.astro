@@ -17,22 +17,22 @@ const t = getTranslations(lang);
 const aboutConnectLinks = [
   {
     href: 'mailto:allison.jpb@gmail.com',
-    text: 'Email',
+    text: t('social.email'),
     isExternal: true,
   },
   {
     href: 'https://github.com/Skryensya',
-    text: 'GitHub',
+    text: t('social.github'),
     isExternal: true,
   },
   {
     href: 'https://linkedin.com/in/skryensya',
-    text: 'LinkedIn',
+    text: t('social.linkedin'),
     isExternal: true,
   },
   {
     href: 'https://lichess.org/@/Skryensya',
-    text: 'Lichess',
+    text: t('social.lichess'),
     isExternal: true,
   },
 ];
@@ -47,7 +47,7 @@ const aboutConnectLinks = [
       <!-- TL;DR Block -->
       <section class="border-2 border-main bg-main p-4 w-full !max-w-[850ch] selection-opposite">
         <h3 class="text-body-mono !my-0 text-secondary">
-          TL;DR
+          {t('about.tldrLabel')}
         </h3>
         <p class="text-2xl leading-[1.25] text-secondary font-semibold text-balance ">
           {t('about.tldr')}
@@ -128,15 +128,15 @@ const aboutConnectLinks = [
           <div class="flex items-start gap-3 text-sm">
             <MapPin size={16} className="text-main mt-0.5 flex-shrink-0" />
             <div class="flex-1">
-              <div class="font-mono text-xs text-main/70 uppercase tracking-wide">Ubicación</div>
+              <div class="font-mono text-xs text-main/70 uppercase tracking-wide">{t('home.stats.location')}</div>
               <div class="font-medium text-main">Santiago, Chile</div>
             </div>
           </div>
           <div class="flex items-start gap-3 text-sm">
             <CheckCircle size={16} className="text-main mt-0.5 flex-shrink-0" />
             <div class="flex-1">
-              <div class="font-mono text-xs text-main/70 uppercase tracking-wide">Estado</div>
-              <div class="font-medium text-main">Disponible para proyectos</div>
+              <div class="font-mono text-xs text-main/70 uppercase tracking-wide">{t('home.stats.status')}</div>
+              <div class="font-medium text-main">{t('footer.availableForProjects')}</div>
             </div>
           </div>
         </div>

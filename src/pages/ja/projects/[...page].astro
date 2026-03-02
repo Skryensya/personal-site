@@ -1,0 +1,27 @@
+---
+import { getCollection } from 'astro:content';
+import { sortItemsByDateDesc } from '../../../utils/data-utils';
+import ProjectsPage from '@/components/pages/ProjectsPage.astro';
+
+if (import.meta.env.PUBLIC_ENABLE_PROJECT_PAGES !== 'true') {
+    return Astro.redirect('/ja/#projects');
+}
+
+export async function getStaticPaths() {
+    const allProjects = await getCollection('projects');
+    const lang = 'ja';
+
+    const projectsInLang = allProjects
+        .filter(project => project.id.startsWith(`${lang}/`) || project.id.startsWith('en/'))
+        .sort(sortItemsByDateDesc);
+
+    return [{
+        params: { page: undefined },
+        props: { projects: projectsInLang }
+    }];
+}
+
+const { projects } = Astro.props;
+---
+
+<ProjectsPage lang="ja" projects={projects} />

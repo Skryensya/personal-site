@@ -42,7 +42,7 @@ const slug = 'theme-' + displayName
     data-prism-preview={theme.id === 'prism-flow' ? 'true' : 'false'}
     role="button"
     tabindex="0"
-    aria-label={`Aplicar tema ${displayName}`}
+    aria-label={`${t('theme.apply')} ${displayName}`}
 >
     <div
         class="px-4 pt-4 pb-3.5 flex-1 flex flex-col"
@@ -65,7 +65,7 @@ const slug = 'theme-' + displayName
                 type="button"
                 class="apply-theme-btn flex-shrink-0"
                 data-theme-id={theme.id}
-                aria-label={`Apply ${displayName} theme`}
+                aria-label={`${t('theme.apply')} ${displayName}`}
             >
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -246,30 +246,29 @@ const slug = 'theme-' + displayName
 
             // Otherwise, run same curve as runtime theme engine
             const elapsed = (performance.now() - (w.__prismPreviewStart || 0)) / 1000;
-            const cycleDurationSec = 20;
+            const anchors = [196, 228, 272, 318, 18, 52];
+            const cycleDurationSec = 36;
             const cycle = ((elapsed / cycleDurationSec) % 1 + 1) % 1;
-            const ease = (t) => 0.5 - 0.5 * Math.cos(Math.PI * t);
+            const scaled = cycle * anchors.length;
+            const fromIndex = Math.floor(scaled) % anchors.length;
+            const toIndex = (fromIndex + 1) % anchors.length;
+            const localT = scaled - Math.floor(scaled);
+            const easedT = localT * localT * (3 - 2 * localT);
 
-            let baseHue;
-            const coolSplit = 0.36;
-            if (cycle < coolSplit) {
-                const t = ease(cycle / coolSplit);
-                baseHue = 196 + (292 - 196) * t;
-            } else {
-                const t = ease((cycle - coolSplit) / (1 - coolSplit));
-                baseHue = (344 + (46 - 344) * t + 360) % 360;
-            }
+            const fromHue = anchors[fromIndex];
+            const toHue = anchors[toIndex];
+            const shortestDelta = ((toHue - fromHue + 540) % 360) - 180;
+            const baseHue = (fromHue + shortestDelta * easedT + 360) % 360;
 
-            w.__prismPreviewHue = (baseHue + Math.sin(elapsed * 0.58) * 4.4 + Math.sin(elapsed * 0.21 + 1.2) * 2.1 + 360) % 360;
+            w.__prismPreviewHue = (baseHue + Math.sin(elapsed * 0.19) * 2.6 + Math.sin(elapsed * 0.07 + 1.1) * 1.4 + 360) % 360;
 
             const h1 = w.__prismPreviewHue;
-            const h2 = (h1 + 196 + Math.sin(elapsed * 0.29 + 0.7) * 9 + 360) % 360;
-            const warmPhase = cycle >= coolSplit ? 1 : 0;
+            const h2 = (h1 + 158 + Math.sin(elapsed * 0.11 + 0.6) * 6.5 + 360) % 360;
 
-            const colorfulSat = clamp((62 + warmPhase * 12) + Math.sin(elapsed * 0.74) * 10 + Math.sin(elapsed * 0.27 + 1.4) * 4, 50, 86);
-            const colorfulLight = clamp(88 + Math.sin(elapsed * 0.41) * 4.2, 80, 94);
-            const contrastySat = clamp((50 + warmPhase * 10) + Math.sin(elapsed * 0.59 + 2.0) * 12, 38, 78);
-            const contrastyLight = clamp(18 + Math.sin(elapsed * 0.31 + 0.55) * 4.5, 12, 27);
+            const colorfulSat = clamp(66 + Math.sin(elapsed * 0.23) * 7 + Math.sin(elapsed * 0.09 + 1.7) * 4, 56, 78);
+            const colorfulLight = clamp(83 + Math.sin(elapsed * 0.17 + 0.4) * 3.6 + Math.sin(elapsed * 0.05) * 1.8, 76, 88);
+            const contrastySat = clamp(48 + Math.sin(elapsed * 0.21 + 2.2) * 8, 36, 62);
+            const contrastyLight = clamp(20 + Math.sin(elapsed * 0.16 + 0.9) * 3.2, 14, 26);
 
             const colorful = `hsl(${h1.toFixed(1)} ${colorfulSat.toFixed(1)}% ${colorfulLight.toFixed(1)}%)`;
             const contrasty = `hsl(${h2.toFixed(1)} ${contrastySat.toFixed(1)}% ${contrastyLight.toFixed(1)}%)`;
@@ -277,7 +276,7 @@ const slug = 'theme-' + displayName
         };
 
         tick();
-        w.__prismPreviewInterval = window.setInterval(tick, 140);
+        w.__prismPreviewInterval = window.setInterval(tick, 180);
     };
 
     if (document.readyState === 'loading') {

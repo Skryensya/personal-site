@@ -1,5 +1,4 @@
 ---
-import ScrollProgress from './ScrollProgress';
 import Sidebar from './Sidebar.astro';
 import { defaultLang, type Language } from '@/i18n/ui';
 
@@ -23,9 +22,6 @@ const {
 
 const resolvedContentId = contentId === 'main-content' ? 'main-content-article' : contentId;
 ---
-
-<!-- Scroll Progress (global component) -->
-<ScrollProgress client:idle />
 
 <!-- Full height layout with content and sidebar -->
 <div class={`flex ${containerClassName}`} id={`${resolvedContentId}-container`}>

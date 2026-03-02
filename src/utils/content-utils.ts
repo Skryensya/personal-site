@@ -4,7 +4,7 @@ import type { Language } from '@/i18n/ui';
 // Extract language from collection entry id (e.g., "es/project-slug" -> "es")
 export function getLanguageFromId(id: string): Language {
     const [lang] = id.split('/');
-    if (lang === 'es' || lang === 'en' || lang === 'no') {
+    if (lang === 'es' || lang === 'en' || lang === 'no' || lang === 'ja') {
         return lang;
     }
     return 'es'; // Default fallback
@@ -21,13 +21,25 @@ export function getSlugFromId(id: string): string {
 // Get all entries for a specific language from blog collection
 export async function getBlogByLanguage(language: Language): Promise<CollectionEntry<'blog'>[]> {
     const allEntries = await getCollection('blog');
-    return allEntries.filter((entry) => getLanguageFromId(entry.id) === language);
+    const localized = allEntries.filter((entry) => getLanguageFromId(entry.id) === language);
+
+    if (language === 'ja' && localized.length === 0) {
+        return allEntries.filter((entry) => getLanguageFromId(entry.id) === 'en');
+    }
+
+    return localized;
 }
 
 // Get all entries for a specific language from projects collection
 export async function getProjectsByLanguage(language: Language): Promise<CollectionEntry<'projects'>[]> {
     const allEntries = await getCollection('projects');
-    return allEntries.filter((entry) => getLanguageFromId(entry.id) === language);
+    const localized = allEntries.filter((entry) => getLanguageFromId(entry.id) === language);
+
+    if (language === 'ja' && localized.length === 0) {
+        return allEntries.filter((entry) => getLanguageFromId(entry.id) === 'en');
+    }
+
+    return localized;
 }
 
 // Get a specific blog entry by slug and language

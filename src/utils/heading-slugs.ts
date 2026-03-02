@@ -18,27 +18,31 @@ export interface HeadingSlugResult {
 
 function ensureUniqueSlug(baseSlug: string, heading: HTMLElement, seen: Set<string>): string {
     const ownerDocument = heading.ownerDocument || document;
-    const fallbackBase = baseSlug || slugify(heading.id) || 'heading';
-    let candidate = heading.dataset.slugBase === baseSlug && heading.id ? heading.id : baseSlug || heading.id;
 
-    if (!candidate) {
-        candidate = fallbackBase;
-    }
+    // Preserve authored/manual IDs when present.
+    const authoredId = (heading.getAttribute('id') || '').trim();
+    const fallbackBase = baseSlug || slugify(authoredId) || 'heading';
+
+    let candidate = authoredId || baseSlug || fallbackBase;
+    let uniqueBase = authoredId || fallbackBase;
 
     if (!candidate) {
         candidate = 'heading';
+        uniqueBase = 'heading';
     }
 
     // Ensure uniqueness across headings
     let suffix = 2;
-    while ((candidate && seen.has(candidate) && heading.id !== candidate) ||
-        (candidate && ownerDocument.getElementById(candidate) && ownerDocument.getElementById(candidate) !== heading)) {
-        candidate = `${fallbackBase}-${suffix++}`;
+    while (
+        (candidate && seen.has(candidate) && heading.id !== candidate) ||
+        (candidate && ownerDocument.getElementById(candidate) && ownerDocument.getElementById(candidate) !== heading)
+    ) {
+        candidate = `${uniqueBase}-${suffix++}`;
     }
 
     heading.id = candidate;
     heading.dataset.slugBase = baseSlug;
-    heading.dataset.slugGenerated = 'true';
+    heading.dataset.slugGenerated = authoredId ? 'false' : 'true';
     seen.add(candidate);
 
     return candidate;

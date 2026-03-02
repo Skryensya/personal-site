@@ -18,7 +18,7 @@ export const no = {
     'home.bio.intro':
         'Jeg er Allison, en fullstack-utvikler som brenner for å skape brutalt enkle, men funksjonelt komplekse webopplevelser. Jeg elsker å løse komplekse tekniske problemer og gjøre ideer om til digitale produkter som faktisk fungerer.',
     'home.bio.experience':
-        'Med 3 års erfaring innen webutvikling spesialiserer jeg meg på tilgjengelighet, ytelse, utvikleropplevelse og UI/UX. For tiden tilgjengelig for nye prosjekter og samarbeid fra Santiago, Chile.',
+        'Jeg har 3 års erfaring med webutvikling, med særlig fokus på tilgjengelighet, ytelse, utvikleropplevelse og UI/UX. Jeg er tilgjengelig for nye prosjekter og samarbeid fra Santiago, Chile.',
 
     // Badges
     'home.badge.problemSolver': 'PROBLEMLØSER',
@@ -64,19 +64,20 @@ export const no = {
     'about.keyFeature3': 'Optimalisert ytelse',
     'about.title': 'Om Meg',
     'about.tldr':
-        'Jeg lager tydelige og tilgjengelige nettopplevelser, med oppmerksomhet på detaljer og alltid med menneskene som bruker dem i tankene.',
+        'Jeg lager tydelige og tilgjengelige nettopplevelser, med blikk for detaljer og menneskene som faktisk skal bruke dem.',
+    'about.tldrLabel': 'Kort fortalt',
     'about.expanded': [
         'De siste fire årene har jeg jobbet i konsulentbransjen og bidratt i store prosjekter som <a href="/no/prosjekter/kit-digital-uc">Kit Digital UC</a>, designsystemet som nå brukes av mer enn 100 nettsider ved Universidad Católica. Den erfaringen styrket frontend-grunnlaget mitt og måten jeg tenker produkt på: tydelige beslutninger, konsistens på tvers av team og løsninger som holder over tid.',
         'Jeg motiveres av å bygge gjennomtenkte produkter der tilgjengelighet, klarhet og åpen kommunikasjon er en del av prosessen fra start. Utenom jobb bruker jeg mye tid på å lære norsk, spille sjakk, utforske musikk og lage personlige prosjekter for å tilfredsstille behovet mitt for å skape interessante ting. Dette nettstedet er et godt eksempel på det.'
     ],
-    'about.cta.message': 'Hvis noe av dette resonerer, ta kontakt — jeg vil gjerne prate.',
-    'about.cta.button': 'La oss snakkes',
+    'about.cta.message': 'Hvis noe her treffer deg, ta gjerne kontakt — jeg tar gjerne en prat.',
+    'about.cta.button': 'La oss ta en prat',
     'about.cta.or': 'eller skriv til meg på',
     'about.specialties.title': 'SPESIALITETER',
     'about.stack.title': 'HOVEDTEKNOLOGIER',
     'about.collaboration.title': 'INTERESSERT I SAMARBEID?',
     'about.collaboration.subtitle': 'Tilgjengelig for prosjekter og muligheter',
-    'about.viewMore.open': 'Se mer',
+    'about.viewMore.open': 'Les mer',
     'about.viewMore.close': 'Se mindre',
 
     // Site metadata
@@ -90,8 +91,9 @@ export const no = {
     // Theme toast notifications
     'theme.toast.unlocked': 'Du har låst opp {count} ekstra temaer!',
     'theme.toast.locked': 'Du har låst de ekstra temaene til neste gang!',
-    'theme.toast.company': 'Hei {company}-teamet! Jeg har aktivert temaet deres for at dere skal føle dere hjemme.',
-    'theme.toast.companyHidden': 'Jeg skjulte også firmatemaet til du aktiverer det på nytt.',
+    'theme.toast.company': 'Hei {company}-teamet! Jeg har aktivert temaet deres, så siden føles litt mer hjemme.',
+    'theme.toast.companyHidden': 'Jeg har også skjult firmatemaet til du aktiverer det igjen.',
+    'theme.apply': 'Bruk tema',
 
     // Theme names
     'theme.obsidian': 'Obsidian',
@@ -184,13 +186,13 @@ export const no = {
     'cv.references.title': 'Referanser',
     'cv.about.title': 'Om meg',
     'cv.about.content':
-        'Jeg transformerer ideer til digitale opplevelser som faktisk fungerer. Min spesialitet er å skape tilgjengelige grensesnitt som tusenvis av brukere samhandler med daglig, og anvender beste praksis for frontend-utvikling med et obsessivt fokus på brukervennlighet.',
+        'Jeg gjør ideer om til digitale opplevelser som faktisk fungerer. Jeg trives best når jeg kan bygge tilgjengelige grensesnitt som er enkle å bruke i praksis.',
     'cv.experience.title': 'Profesjonell erfaring',
     'cv.experience.company': 'Asimov Consultores',
     'cv.experience.position': 'Full-stack utvikler',
     'cv.experience.period': '2022 - nå',
     'cv.experience.description':
-        'Jeg utvikler komplette digitale løsninger, og transformerer konsepter til funksjonell kode. Jeg har vært en nøkkelsamarbeidspartner i prosjekter som forbedrer digital identitet og brukeropplevelse for våre klienter, implementerer grensesnitt og backend-systemer effektivt gjennom hele utviklingssyklusen.',
+        'Jeg utvikler komplette digitale løsninger og gjør konsepter om til funksjonell kode. I prosjektene våre jobber jeg med både grensesnitt og backend gjennom hele utviklingsløpet.',
     'cv.projects.title': 'Utvalgte prosjekter',
     'cv.references.position': 'Senior utvikler',
     'cv.references.jorge.name': 'Jorge Vega',
@@ -202,7 +204,9 @@ export const no = {
 
     // Norwegian disclaimer banner
     'disclaimer.norwegian.compact':
-        'Jeg lærer norsk som et personlig mål, men for tydeligere kommunikasjon kan du gjerne kontakte meg på engelsk eller spansk.',
+        'Jeg lærer fortsatt norsk. For tydeligere kommunikasjon kan du gjerne skrive til meg på engelsk eller spansk.',
+    'disclaimer.japanese.compact':
+        'Jeg har så vidt begynt å lære japansk. For tydelig kommunikasjon kan du gjerne skrive til meg på engelsk eller spansk.',
 
     // Sidebar content
     'sidebar.toc': 'Innhold',
@@ -221,6 +225,12 @@ export const no = {
     'projects.table.name': 'Navn',
     'projects.table.description': 'Beskrivelse',
 
+    // Social links
+    'social.email': 'E-post',
+    'social.github': 'GitHub',
+    'social.linkedin': 'LinkedIn',
+    'social.lichess': 'Lichess',
+
     // Footer
     'footer.navigation': 'Navigasjon',
     'footer.connect': 'Kontakt',
@@ -232,6 +242,7 @@ export const no = {
     'footer.copyright': 'Alle rettigheter reservert',
     'footer.builtWith': 'Bygget med',
     'footer.andCode': 'og kode',
+    'footer.byAllison': 'av Allison Peña',
     'footer.info': 'Informasjon',
     'footer.availableForProjects': 'Tilgjengelig for prosjekter',
     'footer.sitemap': 'Sitemap',
@@ -249,28 +260,62 @@ export const no = {
 
     // Accessibility Statement
     'accessibility.title': 'Tilgjengelighetserklæring',
-    'accessibility.description': 'Forpliktelse til webtilgjengelighet for alle brukere',
-    'accessibility.commitment.title': 'Forpliktelse til tilgjengelighet',
+    'accessibility.description': 'Tilgjengelighet er ikke en ekstra funksjon — det er noe man jobber med hele tiden.',
+    'accessibility.commitment.title': 'Forpliktelse',
     'accessibility.commitment.content':
-        'Jeg er forpliktet til å gjøre min personlige nettside tilgjengelig for så mange mennesker som mulig, uavhengig av teknologi eller evner. Målet mitt er å tilby en klar, funksjonell og hyggelig opplevelse for alle.',
-    'accessibility.standards.title': 'Standarder og retningslinjer',
+        'Dette nettstedet skal være mulig å bruke for alle, uavhengig av teknologi, hjelpemidler eller funksjonsevne.',
+    'accessibility.conformance.title': 'Samsvarsstatus',
+    'accessibility.conformance.content':
+        'Nettstedet følger WCAG 2.2 nivå AA som mål. Det regnes som delvis samsvarende mens kjente barrierer forbedres fortløpende.',
+    'accessibility.standards.title': 'Referansestandard',
     'accessibility.standards.content':
-        'Denne nettsiden streber etter å oppfylle retningslinjene for tilgjengelig webinnhold (WCAG) 2.2, nivå AA, som definerer hvordan man gjør digitalt innhold mer tilgjengelig for personer med funksjonshemming.',
-    'accessibility.standards.wcag.text': 'WCAG',
+        'Tilgjengelighetsvurderingen er basert på Retningslinjer for tilgjengelig webinnhold',
+    'accessibility.standards.wcag.text': 'WCAG 2.2 (nivå AA)',
     'accessibility.standards.wcag.url': 'https://www.w3.org/TR/WCAG22/',
-    'accessibility.features.title': 'Kontinuerlig forbedring',
-    'accessibility.features.items': [
-        'Tilgjengelighet er en prosess i konstant utvikling. Jeg gjennomgår og oppdaterer regelmessig design, kode og innhold på denne nettsiden for å opprettholde og øke tilgjengelighetsnivået.'
+    'accessibility.scope.title': 'Omfang',
+    'accessibility.scope.content':
+        'Denne erklæringen gjelder offentlige sider på nettstedet, inkludert navigasjon og egne interaktive komponenter.',
+    'accessibility.scope.items': [
+        'Offentlige sider på nettstedet.',
+        'Hoved- og sekundærnavigasjon.',
+        'Designsystem-komponenter brukt i produksjon.',
+        'Den dekker ikke tredjepartsinnhold eller tjenester som det lenkes til.'
     ],
-    'accessibility.feedback.title': 'Kommentarer og kontakt',
+    'accessibility.features.title': 'Implementerte tiltak',
+    'accessibility.features.items': [
+        'Semantisk struktur med konsistente overskrifter og landemerker.',
+        'Tastaturnavigasjon med synlige fokusmarkeringer.',
+        'Verifisert fargekontrast i lyse og mørke temaer.',
+        'Tydelige etiketter for kontroller og lenker.',
+        'Preferanser for redusert bevegelse respekteres der det er relevant.'
+    ],
+    'accessibility.limitations.title': 'Kjente begrensninger',
+    'accessibility.limitations.content':
+        'Noen komplekse animasjoner og interaksjoner finjusteres fortsatt. Hvis du finner en barriere som ikke er nevnt her, gi gjerne beskjed.',
+    'accessibility.evaluation.title': 'Evaluering og kontinuerlig forbedring',
+    'accessibility.evaluation.content':
+        'Før publisering kjører jeg både manuelle og automatiske sjekker for å finne og prioritere tilgjengelighetsproblemer tidlig.',
+    'accessibility.evaluation.items': [
+        'Manuell tastaturtesting i sentrale brukerflyter.',
+        'To automatiserte Playwright + axe-revisjoner: et smoke-lag (kritisk) og et deep-lag (alvorlig + kritisk) på representative sider.',
+        'Unlighthouse-gjennomganger før større lanseringer.'
+    ],
+    'accessibility.feedback.title': 'Tilbakemelding og kontakt',
     'accessibility.feedback.content':
-        'Hvis du støter på tilgjengelighetsbarrierer eller har forslag til forbedringer, setter jeg pris på tilbakemeldingen din.',
-    'accessibility.feedback.contact': 'Du kan skrive til meg på: ',
+        'Tilgjengelighet er en kontinuerlig prosess. Hvis du finner barrierer eller har forslag, setter jeg pris på tilbakemeldingen din.',
+    'accessibility.feedback.reportPrompt': 'Hvis mulig, legg ved:',
+    'accessibility.feedback.reportItems': [
+        'URL-en til siden.',
+        'Hva du forsøkte å gjøre.',
+        'Enhet, nettleser og hjelpemiddelteknologi (hvis relevant).'
+    ],
+    'accessibility.feedback.contact': 'Du kan kontakte meg på: ',
+    'accessibility.feedback.responseTime': 'Jeg prøver å svare innen 5 virkedager.',
     'accessibility.contrast.title': 'Fargekontrast',
     'accessibility.contrast.content':
-        'Dette nettstedet bruker et to-farge system som inverteres mellom lyse og mørke temaer. Kontrast beregnes dynamisk for å oppfylle WCAG-standarder.',
-    'accessibility.updates.title': 'Løpende Oppdateringer',
-    'accessibility.updates.content': 'Denne nettsiden gjennomgås regelmessig for å opprettholde og forbedre tilgjengeligheten. Sist oppdatert: Januar 2025.',
+        'To-fargesystemet gjør kontrast enklere å kontrollere. Alle temaer kontrolleres for å oppfylle minst WCAG AA-krav.',
+    'accessibility.updates.title': 'Revisjonsdato',
+    'accessibility.updates.content': 'Siste tilgjengelighetsgjennomgang: mars 2026.',
 
     // Design System Page
     'designSystem.title': 'Designsystem',

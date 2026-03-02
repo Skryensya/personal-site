@@ -161,13 +161,7 @@
      * - Dark mode: colorful text on contrasty background
      */
 
-    /* Instant theme changes - no color blending */
-    ::view-transition-old(root),
-    ::view-transition-new(root) {
-        animation: none;
-    }
-
-    /* Configure navbar to be static during View Transitions */
+    /* Keep navbar static during View Transitions */
     ::view-transition-group(navbar) {
         animation: none;
         z-index: 9999;
@@ -182,7 +176,7 @@
     @media (prefers-reduced-motion: reduce) {
         ::view-transition-old(root),
         ::view-transition-new(root) {
-            animation-duration: 0.01s;
+            animation-duration: 0.01s !important;
         }
     }
 }

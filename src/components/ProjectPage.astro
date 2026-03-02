@@ -9,7 +9,7 @@ import { getSlugFromId } from '@/utils/content-utils';
 interface Props {
     projectsByLang: Record<string, CollectionEntry<'projects'>>;
     slug: string;
-    currentLocale: "es" | "en" | "no";
+    currentLocale: "es" | "en" | "no" | "ja";
     navigation: {
         previous: {
             slug: string;
@@ -41,7 +41,7 @@ const readingSource = (project.body || '')
     .replace(/[>#*_~\-|\n\r]/g, ' ');
 const readingWords = readingSource.trim().split(/\s+/).filter((w) => w.length > 1);
 const readingMinutes = Math.max(2, Math.ceil(readingWords.length / 200));
-const readingTimeText = currentLocale === 'es' ? 'min lectura' : currentLocale === 'no' ? 'min lesing' : 'min read';
+const readingTimeText = currentLocale === 'es' ? 'min lectura' : currentLocale === 'no' ? 'min lesing' : currentLocale === 'ja' ? '分で読めます' : 'min read';
 
 const getProjectForLocale = (entryMap?: Record<string, CollectionEntry<'projects'>>) => {
     if (!entryMap) return undefined;
@@ -52,15 +52,17 @@ const previousProjectEntry = getProjectForLocale(navigation?.previous?.projectsB
 const nextProjectEntry = getProjectForLocale(navigation?.next?.projectsByLang);
 
 const navigationLabels = {
-    es: { previous: 'Proyecto anterior', next: 'Proyecto siguiente' },
-    en: { previous: 'Previous project', next: 'Next project' },
-    no: { previous: 'Forrige prosjekt', next: 'Neste prosjekt' }
+    es: { previous: 'Anterior', next: 'Siguiente' },
+    en: { previous: 'Previous', next: 'Next' },
+    no: { previous: 'Forrige', next: 'Neste' },
+    ja: { previous: '前へ', next: '次へ' }
 } as const;
 
 const navigationSummaryLabel = {
-    es: 'Seguir leyendo',
-    en: 'Keep reading',
-    no: 'Les videre'
+    es: 'Sigue leyendo',
+    en: 'Continue reading',
+    no: 'Fortsett å lese',
+    ja: '続きを読む'
 } as const;
 
 const navigationItems = [
@@ -103,7 +105,8 @@ const projectJsonLd = {
 const projectsLabelByLang = {
     es: 'Proyectos',
     en: 'Projects',
-    no: 'Prosjekter'
+    no: 'Prosjekter',
+    ja: 'プロジェクト'
 } as const;
 
 const projectsListPath = getLocalizedUrl(currentLocale, 'projects');
@@ -158,7 +161,7 @@ const breadcrumbJsonLd = {
                                     id="reading-time-display"
                                     value={String(readingMinutes).padStart(2, '0')}
                                     inverted={true}
-                                    className="!min-h-[2.05rem] !min-w-[3rem] !px-1 !py-0.5 !gap-[1px] [transform:scaleX(0.9)_scaleY(1.08)]"
+                                    className="!min-h-[1.65rem] !min-w-[2.35rem] !px-0.5 !py-0 !gap-[1px] [transform:scaleX(0.82)_scaleY(0.9)]"
                                 />
                                 <span class="text-[11px] font-mono font-medium text-main/60 uppercase tracking-[0.14em]">{readingTimeText}</span>
                             </div>
@@ -174,25 +177,25 @@ const breadcrumbJsonLd = {
                     </header>
                     
                     <!-- Article Content -->
-                    <div class="prose w-full [&>p]: [&>p]:lg:text-lg [&>p]:leading-relaxed [&>p]:mb-6 [&>h1]:text-4xl [&>h1]:font-bold [&>h1]:mt-12 [&>h1]:mb-6 [&>h1]:scroll-mt-12 [&>h2]:text-3xl [&>h2]:font-bold [&>h2]:mt-10 [&>h2]:mb-4 [&>h2]:scroll-mt-12 [&>h3]:text-2xl [&>h3]:font-semibold [&>h3]:mt-8 [&>h3]:mb-3 [&>h3]:scroll-mt-12 [&>h4]:text-xl [&>h4]:font-semibold [&>h4]:mt-6 [&>h4]:mb-2 [&>h4]:scroll-mt-12 [&>h5]:scroll-mt-12 [&>h6]:scroll-mt-12" style="max-width: var(--paragraph-max-width)">
+                    <div class="prose w-full [&_p]:max-w-[75ch] [&_a]:inline-block [&_a]:whitespace-nowrap [&>p]: [&>p]:lg:text-lg [&>p]:leading-relaxed [&>p]:mb-6 [&>h1]:text-4xl [&>h1]:font-bold [&>h1]:mt-12 [&>h1]:mb-6 [&>h1]:scroll-mt-12 [&>h2]:text-3xl [&>h2]:font-bold [&>h2]:mt-10 [&>h2]:mb-4 [&>h2]:scroll-mt-12 [&>h3]:text-2xl [&>h3]:font-semibold [&>h3]:mt-8 [&>h3]:mb-3 [&>h3]:scroll-mt-12 [&>h4]:text-xl [&>h4]:font-semibold [&>h4]:mt-6 [&>h4]:mb-2 [&>h4]:scroll-mt-12 [&>h5]:scroll-mt-12 [&>h6]:scroll-mt-12" style="max-width: var(--paragraph-max-width)">
                         <Content />
                     </div>
 
                     {navigationItems.length === 2 && (
-                        <section class="w-full mt-14 border-t border-dotted border-main/30 pt-8" style="max-width: var(--paragraph-max-width)">
-                            <h2 class="font-mono text-[11px] uppercase tracking-[0.28em] text-main/70 mb-4">
+                        <section class="w-full mt-14 border-t border-dotted border-main/30 pt-8" style="max-width: var(--paragraph-max-width)" data-toc-ignore>
+                            <h2 class="font-grotesk text-base sm:text-lg font-semibold text-main mb-4">
                                 {navigationSummaryLabel[currentLocale]}
                             </h2>
                             <nav class="grid grid-cols-1 sm:grid-cols-2 gap-2" aria-label="Project pagination">
                                 {navigationItems.map(({ entry, slug, label }) => (
                                     <a
                                         href={getLocalizedUrl(currentLocale, 'projects', slug!)}
-                                        class="group border border-main bg-main/5 px-4 py-4 no-underline transition-colors duration-150 hover:bg-main hover:text-secondary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-main"
+                                        class="project-nav-link no-underline"
                                     >
-                                        <span class="block font-mono text-[10px] uppercase tracking-[0.18em] opacity-70 mb-2">
+                                        <small class="project-nav-link__meta">
                                             {label}
-                                        </span>
-                                        <span class="block text-sm sm:text-base font-semibold leading-snug">
+                                        </small>
+                                        <span class="project-nav-link__title">
                                             {entry?.data.name}
                                         </span>
                                     </a>
@@ -202,6 +205,72 @@ const breadcrumbJsonLd = {
                     )}
                 </div>
         </ContentPage>
+
+        <style>
+            .project-nav-link {
+                display: block;
+                min-height: 3.5rem;
+                padding: 0.8rem 0.9rem;
+                border: 2px double color-mix(in srgb, var(--color-main) 52%, transparent);
+                background: color-mix(in srgb, var(--color-main) 4%, var(--color-secondary));
+                box-shadow: 2px 2px 0 color-mix(in srgb, var(--color-main) 42%, transparent);
+                transition:
+                    background-color 170ms ease,
+                    border-color 170ms ease,
+                    box-shadow 210ms ease,
+                    transform 210ms ease;
+            }
+
+            .project-nav-link__meta {
+                display: block;
+                margin-bottom: 0.35rem;
+                font-family: var(--font-mono, monospace);
+                font-size: 10px;
+                text-transform: uppercase;
+                letter-spacing: 0.16em;
+                color: color-mix(in srgb, var(--color-main) 68%, transparent);
+            }
+
+            .project-nav-link__title {
+                display: block;
+                color: var(--color-main);
+                font-size: 0.95rem;
+                line-height: 1.3;
+                font-weight: 600;
+                text-wrap: balance;
+            }
+
+            .project-nav-link:hover,
+            .project-nav-link:focus-visible {
+                transform: translate(-1px, -1px);
+                border-color: var(--color-main);
+                background: color-mix(in srgb, var(--color-main) 9%, var(--color-secondary));
+                box-shadow: 3px 3px 0 color-mix(in srgb, var(--color-main) 60%, transparent);
+            }
+
+            .project-nav-link:focus-visible {
+                outline: 2px solid var(--color-main);
+                outline-offset: 3px;
+            }
+
+            @media (min-width: 640px) {
+                .project-nav-link__title {
+                    font-size: 1rem;
+                }
+            }
+
+            @media (prefers-reduced-motion: reduce) {
+                .project-nav-link {
+                    transition: none;
+                }
+
+                .project-nav-link:hover,
+                .project-nav-link:focus-visible {
+                    transform: none;
+                    box-shadow: 2px 2px 0 color-mix(in srgb, var(--color-main) 42%, transparent);
+                }
+            }
+        </style>
 
         <script is:inline>
             // Animate statistics numbers

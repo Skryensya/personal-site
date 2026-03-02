@@ -37,6 +37,13 @@ const {
 
 const t = getTranslations(lang);
 
+const dropdownToggleAriaLabel =
+  lang === 'es'
+    ? 'Abrir opciones'
+    : lang === 'no'
+      ? 'Åpne alternativer'
+      : 'Open options';
+
 // Generate unique IDs
 const buttonId = `dropdown-button-${id}`;
 const menuId = `dropdown-menu-${id}`;
@@ -50,7 +57,7 @@ const mainButtonId = `main-button-${id}`;
     id={mainButtonId}
     data-main-action={onMainClick}
     disabled={disabled}
-    class="flex items-center justify-center px-3 h-8 bg-secondary border-double border-2 border-main border-r-0 hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)] pt-0 focus-visible:z-[9999] select-none"
+    class="flex items-center justify-center px-3 h-8 bg-secondary border-double border-2 border-main border-r-2 lg:border-r-0 hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)] pt-0 focus-visible:z-[9999] select-none"
     style="outline-width: 1px; outline-offset: 1px;"
     aria-label={ariaLabel}
   >
@@ -62,11 +69,12 @@ const mainButtonId = `main-button-${id}`;
     type="button"
     id={buttonId}
     disabled={disabled}
-    class="flex items-center justify-center min-w-8 w-8 h-8 bg-secondary border-double border-2 border-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)] focus-visible:z-[9999] select-none"
+    class="hidden lg:flex items-center justify-center w-8 h-8 bg-secondary border-double border-2 border-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary group disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap font-bold tracking-wide shadow-[inset_0_0_0_2px_var(--color-secondary)] focus-visible:z-[9999] select-none"
     style="outline-width: 1px; outline-offset: 1px;"
     aria-haspopup="menu"
     aria-expanded="false"
     aria-controls={menuId}
+    aria-label={dropdownToggleAriaLabel}
     data-initial-selected-index={initialSelectedIndex}
   >
     <!-- Icono de flecha -->
@@ -80,13 +88,13 @@ const mainButtonId = `main-button-${id}`;
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
     </svg>
   </button>
-</div>
+  </div>
 
 <!-- Dropdown content -->
 <div
   id={menuId}
   class={`fixed z-[500] bg-secondary border-double border-2 border-main rounded-none min-w-[120px] ${dropdownClassName}`}
-  style="display: none; overflow: visible;"
+  style="display: none; overflow: visible; box-shadow: 0 0 0 2px var(--color-secondary);"
   role="menu"
   aria-labelledby={buttonId}
   tabindex="0"
@@ -217,43 +225,36 @@ const mainButtonId = `main-button-${id}`;
           }
         });
       }
-      
-      // Simple positioning - align dropdown to the right edge of the button container
+
+      // Position dropdown relative to the trigger button/container
       const positionDropdown = () => {
-        const containerRect = container.getBoundingClientRect();
+        const anchorRect = dropdownButton.getBoundingClientRect();
         const viewportWidth = window.innerWidth;
         const viewportHeight = window.innerHeight;
-        
-        // Position dropdown below the container, aligned to the right edge
-        let left = containerRect.right;
-        let top = containerRect.bottom + 4;
-        
+
         // Get dropdown dimensions after it's visible
         const dropdownRect = dropdownMenu.getBoundingClientRect();
-        
-        // Align to right edge (dropdown grows to the left)
-        left = containerRect.right - dropdownRect.width;
-        
-        // Make sure dropdown doesn't go off screen
-        if (left < 8) {
-          left = 8; // Keep 8px margin from left edge
-        }
+
+        // Align dropdown to the right edge of the trigger button itself
+        let left = anchorRect.right - dropdownRect.width;
+        let top = anchorRect.bottom + 4;
+
+        // Keep inside viewport horizontally
+        if (left < 8) left = 8;
         if (left + dropdownRect.width > viewportWidth - 8) {
-          left = viewportWidth - dropdownRect.width - 8; // Keep 8px margin from right edge
+          left = Math.max(8, viewportWidth - dropdownRect.width - 8);
         }
-        
-        // Check if dropdown fits below, otherwise position above
+
+        // If it doesn't fit below, open above the trigger button
         if (top + dropdownRect.height > viewportHeight - 8) {
-          top = containerRect.top - dropdownRect.height - 4;
-          if (top < 8) {
-            top = 8; // Keep 8px margin from top
-          }
+          top = anchorRect.top - dropdownRect.height - 4;
+          if (top < 8) top = 8;
         }
-        
+
         dropdownMenu.style.left = `${left}px`;
         dropdownMenu.style.top = `${top}px`;
       };
-      
+
       // Get dropdown items - only visible and interactive ones
       const getDropdownItems = () => {
         const allItems = Array.from(dropdownMenu.querySelectorAll('[role="menuitem"]')) as HTMLElement[];
@@ -622,8 +623,8 @@ const mainButtonId = `main-button-${id}`;
           });
         }
       });
-      
-      // Handle repositioning on scroll/resize
+
+      // Reposition open dropdown on viewport changes
       const handleReposition = () => {
         if (isOpen) {
           positionDropdown();
@@ -631,7 +632,7 @@ const mainButtonId = `main-button-${id}`;
       };
 
       window.addEventListener('resize', handleReposition);
-      window.addEventListener('scroll', handleReposition);
+      window.addEventListener('scroll', handleReposition, true);
 
       // Handle focus outside dropdown - close if focus moves outside
       // Use document.activeElement in the next frame to avoid relatedTarget=null races

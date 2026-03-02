@@ -4,6 +4,11 @@ import DropdownContent from './ui/DropdownContent.astro';
 import { getTranslations } from '@/i18n/utils';
 import { getLangFromUrl } from '@/i18n/utils';
 
+interface Props {
+  id?: string;
+}
+
+const { id = 'mode-control' } = Astro.props;
 const currentLocale = getLangFromUrl(Astro.url);
 const t = getTranslations(currentLocale);
 
@@ -20,10 +25,10 @@ const modes = [
   disabled={false}
   ariaLabel={`${t('mode.current')} sistema. ${t('mode.toggle')}`}
   class="w-7 h-7 lg:w-auto lg:h-8"
-  id="mode-control"
+  id={id}
 >
   <div class="flex items-center gap-2">
-    <div class="w-3.5 h-3.5 relative flex-shrink-0 translate-y-[-1px]" id="mode-icon-container">
+    <div class="w-3.5 h-3.5 relative flex-shrink-0 translate-y-[0.5px]" data-mode-icon-container>
       <!-- System icon as default -->
       <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
         <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
@@ -31,13 +36,13 @@ const modes = [
         <line x1="12" y1="17" x2="12" y2="21"></line>
       </svg>
     </div>
-    <span class="hidden lg:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary uppercase" id="mode-name-display">
+    <span class="block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary uppercase" data-mode-name-display>
       {t('ui.loading')}
     </span>
   </div>
 
   <DropdownContent slot="dropdown-content">
-    <div id="mode-dropdown-content">
+    <div data-mode-dropdown-content>
       {modes.map((mode) => (
         <button
           type="button"
@@ -47,7 +52,7 @@ const modes = [
           style="outline-width: 1px; outline-offset: 1px; min-height: 32px;"
         >
           <div class="flex items-center gap-0 pointer-events-none">
-            <div class="w-3.5 h-3.5 relative flex-shrink-0 ml-1">
+            <div class="w-3.5 h-3.5 relative flex-shrink-0 ml-1 translate-y-[0.5px]">
               {mode.icon === 'sun' && (
                 <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="5" />
@@ -68,9 +73,9 @@ const modes = [
               )}
             </div>
             <span class="flex-1 px-1 py-1 font-grotesk text-sm font-semibold pointer-events-none select-none uppercase whitespace-nowrap mode-button-label">
-              {mode.id === 'light' ? (currentLocale === 'es' ? 'Claro' : currentLocale === 'no' ? 'Lys' : 'Light') : 
-               mode.id === 'dark' ? (currentLocale === 'es' ? 'Oscuro' : currentLocale === 'no' ? 'Mørk' : 'Dark') :
-               (currentLocale === 'es' ? 'Sistema' : currentLocale === 'no' ? 'System' : 'System')}
+              {mode.id === 'light' ? (currentLocale === 'es' ? 'Claro' : currentLocale === 'no' ? 'Lys' : currentLocale === 'ja' ? 'ライト' : 'Light') : 
+               mode.id === 'dark' ? (currentLocale === 'es' ? 'Oscuro' : currentLocale === 'no' ? 'Mørk' : currentLocale === 'ja' ? 'ダーク' : 'Dark') :
+               (currentLocale === 'es' ? 'Sistema' : currentLocale === 'no' ? 'System' : currentLocale === 'ja' ? 'システム' : 'System')}
             </span>
             <div class="w-4 h-4 flex items-center justify-center pointer-events-none">
               <svg
@@ -253,7 +258,8 @@ const modes = [
       const translations: any = {
         'es': { 'light': 'Claro', 'dark': 'Oscuro', 'system': 'Sistema' },
         'en': { 'light': 'Light', 'dark': 'Dark', 'system': 'System' },
-        'no': { 'light': 'Lys', 'dark': 'Mørk', 'system': 'System' }
+        'no': { 'light': 'Lys', 'dark': 'Mørk', 'system': 'System' },
+        'ja': { 'light': 'ライト', 'dark': 'ダーク', 'system': 'システム' }
       };
       
       const modeNames = translations[currentLang] || translations['es'];
@@ -265,6 +271,7 @@ const modes = [
       const path = window.location.pathname;
       if (path.startsWith('/en/')) return 'en';
       if (path.startsWith('/no/')) return 'no';
+      if (path.startsWith('/ja/')) return 'ja';
       return 'es';
     },
     
@@ -299,16 +306,14 @@ const modes = [
     // Update display elements
     updateDisplay() {
       // Update main icon
-      const iconContainer = document.getElementById('mode-icon-container');
-      if (iconContainer) {
-        iconContainer.innerHTML = this.getModeIcon(this.currentMode);
-      }
-      
+      document.querySelectorAll('[data-mode-icon-container]').forEach((iconContainer) => {
+        (iconContainer as HTMLElement).innerHTML = this.getModeIcon(this.currentMode);
+      });
+
       // Update main label
-      const nameDisplay = document.getElementById('mode-name-display');
-      if (nameDisplay) {
-        nameDisplay.textContent = this.getModeName(this.currentMode);
-      }
+      document.querySelectorAll('[data-mode-name-display]').forEach((nameDisplay) => {
+        (nameDisplay as HTMLElement).textContent = this.getModeName(this.currentMode);
+      });
       
       // Update dropdown buttons
       const modeButtons = document.querySelectorAll('[data-mode-button]');
@@ -342,16 +347,12 @@ const modes = [
       });
       
       // Update ARIA label
-      const dropdown = document.getElementById('mode-control');
-      if (dropdown) {
-        const mainButton = dropdown.querySelector('button[data-main-action]');
-        if (mainButton) {
-          const currentLang = this.getCurrentLanguage();
-          const currentText = currentLang === 'es' ? 'Actual' : (currentLang === 'no' ? 'Nåværende' : 'Current');
-          const toggleText = currentLang === 'es' ? 'Cambiar modo' : (currentLang === 'no' ? 'Bytt modus' : 'Toggle mode');
-          mainButton.setAttribute('aria-label', `${currentText} ${this.getModeName(this.currentMode)}. ${toggleText}`);
-        }
-      }
+      document.querySelectorAll('button[data-main-action="toggleMode"]').forEach((mainButton) => {
+        const currentLang = this.getCurrentLanguage();
+        const currentText = currentLang === 'es' ? 'Actual' : (currentLang === 'no' ? 'Nåværende' : (currentLang === 'ja' ? '現在' : 'Current'));
+        const toggleText = currentLang === 'es' ? 'Cambiar modo' : (currentLang === 'no' ? 'Bytt modus' : (currentLang === 'ja' ? 'モード切替' : 'Toggle mode'));
+        mainButton.setAttribute('aria-label', `${currentText} ${this.getModeName(this.currentMode)}. ${toggleText}`);
+      });
     },
     
     // Add event listeners to mode buttons

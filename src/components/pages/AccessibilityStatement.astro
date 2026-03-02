@@ -11,71 +11,162 @@ const t = getTranslations(lang);
 const translations = ui[lang];
 ---
 
-<article class="max-w-none">
-  <h1 id="accessibility-title" class="h1 text-main mb-16">
-    {t('accessibility.title')}
-  </h1>
+<article class="max-w-none text-main">
+  <header class="mb-10 md:mb-12 space-y-4">
+    <h1 id="accessibility-title" class="h1 text-main mb-0">
+      {t('accessibility.title')}
+    </h1>
+    <p class="text-body max-w-[75ch] text-main/85">
+      {t('accessibility.description')}
+    </p>
+  </header>
 
-  <div class="space-y-6 text-main leading-relaxed">
-    <section>
-      <h2 id="commitment" class="h2 text-main mb-3">
+  <div class="space-y-4 md:space-y-5 text-body [&_p]:max-w-[75ch] [&_a]:inline-block [&_a]:whitespace-nowrap">
+    <section class="a11y-section" aria-labelledby="commitment">
+      <h2 id="commitment" class="h2 text-main mb-2">
         {t('accessibility.commitment.title')}
       </h2>
-      <p class="mb-4">
-        {t('accessibility.commitment.content')}
-      </p>
+      <p>{t('accessibility.commitment.content')}</p>
     </section>
 
-    <section>
-      <h2 id="standards" class="h2 text-main mb-3">
+    <section class="a11y-section" aria-labelledby="conformance">
+      <h2 id="conformance" class="h2 text-main mb-2">
+        {t('accessibility.conformance.title')}
+      </h2>
+      <p>{t('accessibility.conformance.content')}</p>
+    </section>
+
+    <section class="a11y-section" aria-labelledby="standards">
+      <h2 id="standards" class="h2 text-main mb-2">
         {t('accessibility.standards.title')}
       </h2>
-      <div class="space-y-3">
-        <p>
-          {t('accessibility.standards.content').split('(WCAG)')[0]}(<a
-            href={t('accessibility.standards.wcag.url')}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="text-main underline hover:bg-main hover:text-secondary transition-colors"
-          >{t('accessibility.standards.wcag.text')}</a>){t('accessibility.standards.content').split('(WCAG)')[1] || ''}
-        </p>
-      </div>
+      <p>
+        {t('accessibility.standards.content')}{' '}
+        <a
+          href={t('accessibility.standards.wcag.url')}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="a11y-link"
+        >
+          {t('accessibility.standards.wcag.text')}
+        </a>
+        .
+      </p>
     </section>
 
-    <section>
-      <h2 id="features" class="h2 text-main mb-3">
+    <section class="a11y-section" aria-labelledby="scope">
+      <h2 id="scope" class="h2 text-main mb-2">
+        {t('accessibility.scope.title')}
+      </h2>
+      <p class="mb-2.5">{t('accessibility.scope.content')}</p>
+      <ul class="a11y-list">
+        {(translations['accessibility.scope.items'] as readonly string[]).map((item: string) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="a11y-section" aria-labelledby="measures">
+      <h2 id="measures" class="h2 text-main mb-2">
         {t('accessibility.features.title')}
       </h2>
-      <div class="space-y-3">
+      <ul class="a11y-list">
         {(translations['accessibility.features.items'] as readonly string[]).map((item: string) => (
-          <p>{item}</p>
+          <li>{item}</li>
         ))}
-      </div>
+      </ul>
     </section>
 
-    <section>
-      <h2 id="feedback" class="h2 text-main mb-3">
+    <section class="a11y-section" aria-labelledby="limitations">
+      <h2 id="limitations" class="h2 text-main mb-2">
+        {t('accessibility.limitations.title')}
+      </h2>
+      <p>{t('accessibility.limitations.content')}</p>
+    </section>
+
+    <section class="a11y-section" aria-labelledby="evaluation">
+      <h2 id="evaluation" class="h2 text-main mb-2">
+        {t('accessibility.evaluation.title')}
+      </h2>
+      <p class="mb-2.5">{t('accessibility.evaluation.content')}</p>
+      <ul class="a11y-list">
+        {(translations['accessibility.evaluation.items'] as readonly string[]).map((item: string) => (
+          <li>{item}</li>
+        ))}
+      </ul>
+    </section>
+
+    <section class="a11y-section" aria-labelledby="feedback">
+      <h2 id="feedback" class="h2 text-main mb-2">
         {t('accessibility.feedback.title')}
       </h2>
-      <p class="mb-3">
-        {t('accessibility.feedback.content')}
-      </p>
+      <p class="mb-2">{t('accessibility.feedback.content')}</p>
+      <p class="mb-2.5">{t('accessibility.feedback.reportPrompt')}</p>
+      <ul class="a11y-list mb-3">
+        {(translations['accessibility.feedback.reportItems'] as readonly string[]).map((item: string) => (
+          <li>{item}</li>
+        ))}
+      </ul>
       <p>
         {t('accessibility.feedback.contact')}
-        <a href="mailto:allison.jpb+accessibility@gmail.com"
-           class="text-main underline hover:bg-main hover:text-secondary transition-colors">
-          allison.jpb+accessibility@gmail.com
+        <a
+          href="mailto:allison.jpb+a11y@gmail.com"
+          class="a11y-link"
+        >
+          allison.jpb+a11y@gmail.com
         </a>
       </p>
     </section>
 
-    <section>
-      <h2 id="updates" class="h2 text-main mb-3">
+    <section class="a11y-section" aria-labelledby="updates">
+      <h2 id="updates" class="h2 text-main mb-2">
         {t('accessibility.updates.title')}
       </h2>
-      <p>
-        {t('accessibility.updates.content')}
-      </p>
+      <p>{t('accessibility.updates.content')}</p>
     </section>
   </div>
 </article>
+
+<style>
+  .a11y-section {
+    padding: 0.35rem 0;
+  }
+
+  .a11y-section + .a11y-section {
+    border-top: 1px dotted color-mix(in srgb, var(--color-main) 30%, transparent);
+    padding-top: 1rem;
+    margin-top: 0.4rem;
+  }
+
+  .a11y-section > :first-child {
+    margin-top: 0 !important;
+  }
+
+  .a11y-list {
+    list-style: disc;
+    padding-left: 1.3rem;
+    max-width: 75ch;
+  }
+
+  .a11y-list li + li {
+    margin-top: 0.3rem;
+  }
+
+  .a11y-link {
+    color: var(--color-main);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+
+  .a11y-link:hover,
+  .a11y-link:focus-visible {
+    background: var(--color-main);
+    color: var(--color-secondary);
+  }
+
+  .a11y-link:focus-visible {
+    outline: 2px solid var(--color-main);
+    outline-offset: 2px;
+  }
+</style>

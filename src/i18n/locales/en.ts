@@ -64,6 +64,7 @@ export const en = {
         'about.keyFeature3': 'Optimized performance',
         'about.title': 'About Me',
         'about.tldr': 'I create clear, accessible web experiences, paying attention to details and always thinking about the people who use them.',
+        'about.tldrLabel': 'TL;DR',
         'about.expanded': [
             'For the past four years, I\'ve worked in consulting, contributing to large-scale projects like <a href="/en/projects/kit-digital-uc">Kit Digital UC</a>, the design system now used by more than 100 Universidad Católica websites. That experience strengthened my frontend foundation and how I think about product: clear decisions, team-wide consistency, and solutions that hold up over time.',
             'I\'m motivated by building thoughtful products where accessibility, clarity, and open communication are part of the process from the start. Outside of work, I spend much of my time learning Norwegian, playing chess, exploring music, and creating personal projects to satisfy my need to build interesting things. This site is proof of that.'
@@ -75,7 +76,7 @@ export const en = {
         'about.stack.title': 'MAIN STACK',
         'about.collaboration.title': 'INTERESTED IN COLLABORATING?',
         'about.collaboration.subtitle': 'Available for projects and opportunities',
-        'about.viewMore.open': 'View more',
+        'about.viewMore.open': 'Read more',
         'about.viewMore.close': 'View less',
 
         // Site metadata
@@ -91,6 +92,7 @@ export const en = {
         'theme.toast.locked': 'You\'ve locked the additional themes until next time!',
         'theme.toast.company': 'Hello {company} team! I\'ve activated your theme to make you feel right at home.',
         'theme.toast.companyHidden': 'I also hid the company theme until you activate it again.',
+        'theme.apply': 'Apply theme',
         
         // Theme names
         'theme.obsidian': 'Obsidian',
@@ -198,6 +200,7 @@ export const en = {
         
         // Norwegian disclaimer banner
         'disclaimer.norwegian.compact': 'I am learning Norwegian as a personal goal, but for clearer communication, feel free to contact me in English or Spanish.',
+        'disclaimer.japanese.compact': 'I\'m just starting to learn Japanese. For clear communication, feel free to write to me in English or Spanish.',
         
         // Sidebar content
         'sidebar.toc': 'Contents',
@@ -216,6 +219,12 @@ export const en = {
         'projects.table.name': 'Name',
         'projects.table.description': 'Description',
 
+        // Social links
+        'social.email': 'Email',
+        'social.github': 'GitHub',
+        'social.linkedin': 'LinkedIn',
+        'social.lichess': 'Lichess',
+
         // Footer
         'footer.navigation': 'Navigation',
         'footer.connect': 'Connect',
@@ -227,6 +236,7 @@ export const en = {
         'footer.copyright': 'All rights reserved',
         'footer.builtWith': 'Built with',
         'footer.andCode': 'and code',
+        'footer.byAllison': 'by Allison Peña',
         'footer.info': 'Information',
         'footer.availableForProjects': 'Available for projects',
         'footer.sitemap': 'Sitemap',
@@ -244,24 +254,54 @@ export const en = {
 
         // Accessibility Statement
         'accessibility.title': 'Accessibility Statement',
-        'accessibility.description': 'Commitment to web accessibility for all users',
-        'accessibility.commitment.title': 'Accessibility Commitment',
-        'accessibility.commitment.content': 'I am committed to making my personal website accessible to as many people as possible, regardless of technology or abilities. My goal is to provide a clear, functional and enjoyable experience for everyone.',
-        'accessibility.standards.title': 'Standards and Guidelines',
-        'accessibility.standards.content': 'This site aims to comply with the Web Content Accessibility Guidelines (WCAG) 2.2, Level AA, which define how to make digital content more accessible to people with disabilities.',
-        'accessibility.standards.wcag.text': 'WCAG',
+        'accessibility.description': 'Accessibility is not a feature: it is an ongoing commitment.',
+        'accessibility.commitment.title': 'Commitment',
+        'accessibility.commitment.content': 'This personal website is committed to providing an accessible experience for all people, regardless of technology or ability.',
+        'accessibility.conformance.title': 'Conformance status',
+        'accessibility.conformance.content': 'This site targets WCAG 2.2 Level AA and is currently considered partially conformant while identified issues are continuously improved.',
+        'accessibility.standards.title': 'Reference standard',
+        'accessibility.standards.content': 'Accessibility evaluation is based on the Web Content Accessibility Guidelines',
+        'accessibility.standards.wcag.text': 'WCAG 2.2 (Level AA)',
         'accessibility.standards.wcag.url': 'https://www.w3.org/TR/WCAG22/',
-        'accessibility.features.title': 'Continuous Improvement',
-        'accessibility.features.items': [
-          'Accessibility is a constantly evolving process. I regularly review and update the design, code and content of this site to maintain and increase its accessibility level.'
+        'accessibility.scope.title': 'Scope',
+        'accessibility.scope.content': 'This statement applies to public pages on this website, including navigation and first-party interactive components.',
+        'accessibility.scope.items': [
+          'Public pages on this site.',
+          'Primary and secondary navigation.',
+          'Design system components used in production.',
+          'It does not cover third-party content or services linked from this site.'
         ],
-        'accessibility.feedback.title': 'Comments and Contact',
-        'accessibility.feedback.content': 'If you encounter any accessibility barriers or have suggestions for improvement, I would appreciate your feedback.',
-        'accessibility.feedback.contact': 'You can write to me at: ',
+        'accessibility.features.title': 'Implemented measures',
+        'accessibility.features.items': [
+          'Semantic structure with consistent headings and landmarks.',
+          'Keyboard navigation with visible focus states.',
+          'Verified color contrast in light and dark themes.',
+          'Clear labels for controls and links.',
+          'Reduced-motion preferences respected where applicable.'
+        ],
+        'accessibility.limitations.title': 'Known limitations',
+        'accessibility.limitations.content': 'Some complex animations and interactions are still being refined. If you find an accessibility barrier not listed here, please report it.',
+        'accessibility.evaluation.title': 'Evaluation and continuous improvement',
+        'accessibility.evaluation.content': 'I use a two-layer ongoing check to catch and prioritize accessibility issues before publishing changes.',
+        'accessibility.evaluation.items': [
+          'Manual keyboard testing on key user flows.',
+          'Two automated Playwright + axe audits: a smoke layer (critical) and a deep layer (serious + critical) on representative pages.',
+          'Unlighthouse reviews before major releases.'
+        ],
+        'accessibility.feedback.title': 'Feedback and contact',
+        'accessibility.feedback.content': 'Accessibility is a continuous process. If you find barriers or have suggestions, your feedback is welcome.',
+        'accessibility.feedback.reportPrompt': 'If possible, include:',
+        'accessibility.feedback.reportItems': [
+          'The page URL.',
+          'What you were trying to do.',
+          'Device, browser, and assistive technology (if applicable).'
+        ],
+        'accessibility.feedback.contact': 'You can contact me at: ',
+        'accessibility.feedback.responseTime': 'I aim to respond within 5 business days.',
         'accessibility.contrast.title': 'Color Contrast',
-        'accessibility.contrast.content': 'This site uses a two-color system that inverts between light and dark themes. Contrast is calculated dynamically to meet WCAG standards.',
-        'accessibility.updates.title': 'Ongoing Updates',
-        'accessibility.updates.content': 'This website is regularly reviewed to maintain and improve its accessibility. Last updated: January 2025.',
+        'accessibility.contrast.content': 'The two-color system helps keep contrast predictable. All themes are checked to meet at least WCAG AA contrast requirements.',
+        'accessibility.updates.title': 'Review date',
+        'accessibility.updates.content': 'Last accessibility review: March 2026.',
 
         // Design System Page
         'designSystem.title': 'Design System',

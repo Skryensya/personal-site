@@ -64,6 +64,7 @@ export const es = {
         'about.keyFeature3': 'Código que comunica intención',
         'about.title': 'Sobre mí',
         'about.tldr': 'Creo experiencias web claras y accesibles, cuidando los detalles y pensando siempre en quienes las usan.',
+        'about.tldrLabel': 'Resumen',
         'about.expanded': [
             'Durante los últimos cuatro años he trabajado en consultoría, participando en proyectos de gran escala como el <a href="/proyectos/kit-digital-uc">Kit Digital UC</a>, sistema de diseño que hoy utilizan más de 100 sitios de la Universidad Católica. Esa experiencia fortaleció mi base frontend y mi forma de pensar producto: decisiones claras, consistencia entre equipos y soluciones que se sostengan en el tiempo.',
             'Me motiva construir productos bien pensados, donde la accesibilidad, la claridad y la comunicación abierta estén integradas desde el inicio. Fuera del trabajo, dedico gran parte de mi tiempo a aprender noruego, jugar ajedrez, explorar música y crear proyectos personales para satisfacer mi necesidad de construir cosas interesantes. Este sitio es una prueba de ello.'
@@ -75,7 +76,7 @@ export const es = {
         'about.stack.title': 'STACK PRINCIPAL',
         'about.collaboration.title': '¿INTERESADO EN COLABORAR?',
         'about.collaboration.subtitle': 'Disponible para proyectos y oportunidades',
-        'about.viewMore.open': 'Ver más',
+        'about.viewMore.open': 'Leer más',
         'about.viewMore.close': 'Ver menos',
 
         // Site metadata
@@ -91,6 +92,7 @@ export const es = {
         'theme.toast.locked': 'Has ocultado los temas adicionales',
         'theme.toast.company': 'Hola equipo de {company}. He activado su tema para que se sientan como en casa.',
         'theme.toast.companyHidden': 'También oculté el tema de empresa hasta que lo vuelvas a activar.',
+        'theme.apply': 'Aplicar tema',
         
         // Theme names
         'theme.obsidian': 'Obsidiana',
@@ -198,6 +200,7 @@ export const es = {
         
         // Norwegian disclaimer banner
         'disclaimer.norwegian.compact': 'Estoy aprendiendo noruego como reto personal—todavía estoy en nivel básico. Para comunicación clara, mejor escríbeme en inglés o español.',
+        'disclaimer.japanese.compact': 'También estoy empezando a aprender japonés. Para comunicación clara, mejor escríbeme en inglés o español.',
         
         // Sidebar content
         'sidebar.toc': 'Contenido',
@@ -216,6 +219,12 @@ export const es = {
         'projects.table.name': 'Nombre',
         'projects.table.description': 'Descripción',
 
+        // Social links
+        'social.email': 'Email',
+        'social.github': 'GitHub',
+        'social.linkedin': 'LinkedIn',
+        'social.lichess': 'Lichess',
+
         // Footer
         'footer.navigation': 'Navegación',
         'footer.connect': 'Conversemos',
@@ -227,6 +236,7 @@ export const es = {
         'footer.copyright': 'Todos los derechos reservados',
         'footer.builtWith': 'Hecho con',
         'footer.andCode': 'y cuidado',
+        'footer.byAllison': 'por Allison Peña',
         'footer.info': 'Información',
         'footer.availableForProjects': 'Disponible para proyectos',
         'footer.sitemap': 'Mapa del sitio',
@@ -244,24 +254,54 @@ export const es = {
 
         // Accessibility Statement
         'accessibility.title': 'Declaración de Accesibilidad',
-        'accessibility.description': 'La accesibilidad no es una característica—es un compromiso',
-        'accessibility.commitment.title': 'Por qué esto importa',
-        'accessibility.commitment.content': 'La accesibilidad debe estar integrada desde el principio, no añadida después. Cada decisión de diseño en este sitio—desde el sistema de dos colores hasta los cambios instantáneos de estado—está pensada para que funcione bien con lectores de pantalla, navegación por teclado, y diferentes necesidades visuales. No es una checklist: es parte de cómo entiendo el desarrollo web.',
-        'accessibility.standards.title': 'Estándares que guían el trabajo',
-        'accessibility.standards.content': 'Este sitio sigue las Pautas de Accesibilidad para el Contenido Web (WCAG) 2.2 nivel AA. Eso significa contraste verificado, semántica HTML correcta, navegación por teclado completa, y estados de foco visibles. No porque sea un requisito legal—porque es lo correcto.',
-        'accessibility.standards.wcag.text': 'WCAG',
+        'accessibility.description': 'Compromiso con una experiencia web más accesible para todas las personas.',
+        'accessibility.commitment.title': 'Compromiso',
+        'accessibility.commitment.content': 'Este sitio personal está comprometido con una experiencia accesible para todas las personas, independientemente de su tecnología o capacidades.',
+        'accessibility.conformance.title': 'Estado de conformidad',
+        'accessibility.conformance.content': 'Este sitio busca cumplir con WCAG 2.2 nivel AA y se considera parcialmente conforme mientras continúo identificando y corrigiendo barreras puntuales.',
+        'accessibility.standards.title': 'Estándar de referencia',
+        'accessibility.standards.content': 'La evaluación de accesibilidad se basa en las Pautas de Accesibilidad para el Contenido Web',
+        'accessibility.standards.wcag.text': 'WCAG 2.2 (nivel AA)',
         'accessibility.standards.wcag.url': 'https://www.w3.org/TR/WCAG22/',
-        'accessibility.features.title': 'Detalles que importan',
-        'accessibility.features.items': [
-          'Navegación por teclado completa con estados de foco visibles. Contrastes verificados dinámicamente en cada tema. Semántica HTML correcta, no solo divs con clases. Sin animaciones que interfieran con usuarios sensibles al movimiento. Mensajes de error claros y útiles. Esto no es una lista exhaustiva—es una forma de pensar el desarrollo.'
+        'accessibility.scope.title': 'Alcance',
+        'accessibility.scope.content': 'Esta declaración aplica a las páginas públicas de este sitio, incluyendo navegación y componentes interactivos propios.',
+        'accessibility.scope.items': [
+          'Páginas públicas del sitio.',
+          'Navegación principal y secundaria.',
+          'Componentes del sistema de diseño usados en producción.',
+          'No aplica a contenido o servicios externos enlazados desde este sitio.'
         ],
-        'accessibility.feedback.title': 'Si encuentras algo mal',
-        'accessibility.feedback.content': 'La accesibilidad es un proceso continuo, no una meta que se alcanza una vez. Si encuentras barreras, comportamientos inesperados con tecnologías asistivas, o tienes sugerencias de mejora, quiero saberlo.',
+        'accessibility.features.title': 'Medidas implementadas',
+        'accessibility.features.items': [
+          'Estructura semántica con encabezados y landmarks consistentes.',
+          'Navegación por teclado con foco visible en elementos interactivos.',
+          'Contraste de color verificado en temas claro y oscuro.',
+          'Controles y enlaces con etiquetas comprensibles.',
+          'Respeto por preferencias de movimiento reducido cuando corresponde.'
+        ],
+        'accessibility.limitations.title': 'Limitaciones conocidas',
+        'accessibility.limitations.content': 'Sigo trabajando en ajustes finos de algunas animaciones e interacciones complejas. Si encuentras una barrera no listada aquí, por favor repórtala.',
+        'accessibility.evaluation.title': 'Evaluación y mejora continua',
+        'accessibility.evaluation.content': 'Aplico dos capas de control continuo para detectar y priorizar problemas de accesibilidad antes de publicar cambios.',
+        'accessibility.evaluation.items': [
+          'Pruebas manuales de teclado en flujos clave.',
+          'Dos auditorías automáticas con Playwright + axe: una capa smoke (críticas) y una capa deep (serias + críticas) en páginas representativas.',
+          'Revisiones de Unlighthouse antes de releases importantes.'
+        ],
+        'accessibility.feedback.title': 'Comentarios y contacto',
+        'accessibility.feedback.content': 'La accesibilidad es un proceso continuo. Si encuentras barreras o tienes sugerencias, me ayudará mucho recibir tu feedback.',
+        'accessibility.feedback.reportPrompt': 'Si puedes, incluye:',
+        'accessibility.feedback.reportItems': [
+          'URL de la página.',
+          'Qué intentabas hacer.',
+          'Dispositivo, navegador y tecnología asistiva (si aplica).'
+        ],
         'accessibility.feedback.contact': 'Escríbeme a: ',
+        'accessibility.feedback.responseTime': 'Intento responder en un plazo de 5 días hábiles.',
         'accessibility.contrast.title': 'Sistema de color y contraste',
-        'accessibility.contrast.content': 'El sistema de dos colores no es solo una restricción estética—también simplifica el manejo de contraste. Cada tema define un color vibrante y uno oscuro que se invierten entre modo claro y oscuro. El contraste se verifica automáticamente para cumplir con WCAG AA en todos los temas.',
-        'accessibility.updates.title': 'Actualizaciones',
-        'accessibility.updates.content': 'Este sitio evoluciona constantemente. Última revisión de accesibilidad: enero 2025.',
+        'accessibility.contrast.content': 'El sistema de dos colores simplifica el manejo del contraste. En todos los temas, el contraste se valida para cumplir al menos WCAG AA.',
+        'accessibility.updates.title': 'Fecha de revisión',
+        'accessibility.updates.content': 'Última revisión de accesibilidad: marzo de 2026.',
 
         // Design System Page
         'designSystem.title': 'Sistema de Diseño',

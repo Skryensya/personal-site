@@ -7,6 +7,7 @@ import WaveDivider from '../components/WaveDivider.astro';
 import NorwegianDisclaimer from '../components/NorwegianDisclaimer.astro';
 import FaviconManager from '../components/FaviconManager.tsx';
 import PostHogAnalytics from '../components/PostHogAnalytics.astro';
+import ScrollProgress from '../components/ScrollProgress';
 import { type Language } from '../i18n/ui';
 import { getTranslations } from '../i18n/utils';
 import { themes } from '../data/themes.js';
@@ -175,8 +176,8 @@ declare global {
                                 const hue = Number.isFinite(cachedHue) ? ((cachedHue % 360) + 360) % 360 : 275;
                                 const complement = (hue + 180) % 360;
                                 theme = {
-                                    colorful: `hsl(${hue.toFixed(1)} 84% 86%)`,
-                                    contrasty: `hsl(${complement.toFixed(1)} 58% 16%)`
+                                    colorful: `hsl(${hue.toFixed(1)} 72% 84%)`,
+                                    contrasty: `hsl(${complement.toFixed(1)} 46% 20%)`
                                 };
                             }
                         } catch (e) {
@@ -292,6 +293,10 @@ declare global {
                 'no': {
                     'footer.motion.activated': 'Aktivert',
                     'footer.motion.deactivated': 'Deaktivert'
+                },
+                'ja': {
+                    'footer.motion.activated': '有効',
+                    'footer.motion.deactivated': '無効'
                 }
             };
 
@@ -337,30 +342,56 @@ declare global {
         <!-- PostHog Analytics -->
         <PostHogAnalytics />
 
+        <script is:inline>
+            (() => {
+                const nav = navigator;
+                const connection = nav.connection;
+                const saveData = !!(connection && connection.saveData);
+                const verySlowNetwork = /(^|\b)(slow-2g|2g)(\b|$)/i.test((connection && connection.effectiveType) || '');
+                const lowCpu = typeof nav.hardwareConcurrency === 'number' && nav.hardwareConcurrency <= 4;
+                const lowMemory = typeof nav.deviceMemory === 'number' && nav.deviceMemory <= 4;
+
+                const shouldReduceTransitions = saveData || verySlowNetwork || (lowCpu && lowMemory);
+                if (shouldReduceTransitions) {
+                    document.documentElement.style.setProperty('--vt-multiplier', '0.01');
+                }
+            })();
+        </script>
+
         <style is:inline>
-            /* View Transitions - instant to prevent flash */
-            ::view-transition-old(root),
-            ::view-transition-new(root) {
-                animation: none;
-                animation-duration: 0s;
+            /* Cross-document View Transitions */
+            @view-transition {
+                navigation: auto;
             }
 
-            /* Disable view transition for root to prevent theme flash */
+            @keyframes vt-fade-out {
+                from { opacity: 1; transform: translateY(0); }
+                to { opacity: 0; transform: translateY(4px); }
+            }
+
+            @keyframes vt-fade-in {
+                from { opacity: 0; transform: translateY(6px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+
             :root {
-                view-transition-name: none;
+                view-transition-name: root;
+                --vt-multiplier: 1;
             }
 
-            /* Prevent navbar from participating in theme view transitions */
-            /* ::view-transition-old(navbar),
-            ::view-transition-new(navbar) {
-                animation: none;
-                animation-duration: 0s;
-            } */
+            ::view-transition-old(root) {
+                animation: vt-fade-out calc(140ms * var(--vt-multiplier)) cubic-bezier(0.22, 1, 0.36, 1) both;
+            }
 
-            /* Instant color and background changes - no transition delay */
-            html, body, * {
-                transition-property: transform, opacity, filter;
-                transition-duration: inherit;
+            ::view-transition-new(root) {
+                animation: vt-fade-in calc(180ms * var(--vt-multiplier)) cubic-bezier(0.22, 1, 0.36, 1) both;
+            }
+
+            /* Keep navbar stable during transitions */
+            ::view-transition-group(navbar),
+            ::view-transition-old(navbar),
+            ::view-transition-new(navbar) {
+                animation: none !important;
             }
 
             @keyframes click-ray-burst {
@@ -424,6 +455,7 @@ declare global {
         </style>
     </head>
     <body class="relative bg-main" id="app-body">
+        <ScrollProgress client:load />
         <div class="text-main bg-secondary">
 
       

@@ -78,7 +78,8 @@ const projectSlug = project ? getSlugFromId(project.id) : 'empty';
                 <div class="text-xs font-mono opacity-70 mt-4">
                   {new Date(project.data.publishDate).toLocaleDateString(
                     lang === 'es' ? 'es-ES' : 
-                    lang === 'no' ? 'no-NO' : 'en-US'
+                    lang === 'no' ? 'no-NO' :
+                    lang === 'ja' ? 'ja-JP' : 'en-US'
                   )}
                 </div>
               </div>
@@ -90,7 +91,8 @@ const projectSlug = project ? getSlugFromId(project.id) : 'empty';
                 </h3>
                 <p class="text-sm leading-relaxed opacity-50">
                   {lang === 'es' ? 'Carpeta de proyectos vacía' :
-                   lang === 'no' ? 'Tom prosjektmappe' : 
+                   lang === 'no' ? 'Tom prosjektmappe' :
+                   lang === 'ja' ? '空のプロジェクトフォルダ' :
                    'Empty project folder'}
                 </p>
               </div>

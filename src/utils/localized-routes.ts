@@ -5,22 +5,26 @@ export const localizedRoutes = {
   projects: {
     es: 'proyectos',
     en: 'projects',
-    no: 'prosjekter'
+    no: 'prosjekter',
+    ja: 'projects'
   },
   resume: {
     es: 'curriculum',
     en: 'resume',
-    no: 'cv'
+    no: 'cv',
+    ja: 'resume'
   },
   accessibility: {
     es: 'declaracion-de-accesibilidad',
     en: 'accessibility-statement',
-    no: 'tilgjengelighetserklaering'
+    no: 'tilgjengelighetserklaering',
+    ja: 'accessibility-statement'
   },
   designSystem: {
     es: 'sistema-de-diseno',
     en: 'design-system',
-    no: 'designsystem'
+    no: 'designsystem',
+    ja: 'design-system'
   }
 } as const;
 
@@ -41,6 +45,12 @@ export const pagesDictionary = {
     es: '/',
     en: '/en/',
     no: '/no/'
+  },
+  '/ja/': {
+    es: '/',
+    en: '/en/',
+    no: '/no/',
+    ja: '/ja/'
   },
   // CV/Resume pages
   '/curriculum': {
@@ -367,10 +377,31 @@ export function getHomeUrl(lang: Language): string {
 export function getEquivalentPage(currentPath: string, targetLang: Language): string {
   // Normalize path by removing trailing slash (except for root)
   const normalizedPath = currentPath === '/' ? '/' : currentPath.replace(/\/$/, '');
-  
-  // Check if the current path exists in our dictionary
+
+  // Direct dictionary lookup
   if (pagesDictionary[normalizedPath as keyof typeof pagesDictionary]) {
-    return pagesDictionary[normalizedPath as keyof typeof pagesDictionary][targetLang];
+    const mapping = pagesDictionary[normalizedPath as keyof typeof pagesDictionary] as Record<string, string>;
+    if (mapping[targetLang]) return mapping[targetLang];
+    if (targetLang !== 'ja') return mapping['es'] || getHomeUrl(targetLang);
+  }
+
+  // If on Japanese path and no explicit mapping exists, try English equivalent for lookup
+  if (normalizedPath === '/ja') {
+    return targetLang === 'ja' ? '/ja/' : getHomeUrl(targetLang);
+  }
+  if (normalizedPath.startsWith('/ja/')) {
+    const enEquivalent = `/en/${normalizedPath.slice(4)}`;
+    if (pagesDictionary[enEquivalent as keyof typeof pagesDictionary]) {
+      const mapping = pagesDictionary[enEquivalent as keyof typeof pagesDictionary] as Record<string, string>;
+      if (mapping[targetLang]) return mapping[targetLang];
+      if (targetLang === 'ja') {
+        if (enEquivalent.includes('/resume')) return '/ja/resume';
+        if (enEquivalent.includes('/design-system')) return '/ja/design-system';
+        if (enEquivalent.includes('/accessibility-statement')) return '/ja/accessibility-statement';
+        if (enEquivalent.includes('/content-tree')) return '/ja/content-tree';
+      }
+      return mapping['es'] || getHomeUrl(targetLang);
+    }
   }
   
   // Handle dynamic routes (projects with slugs)
@@ -410,19 +441,38 @@ export function getEquivalentPage(currentPath: string, targetLang: Language): st
   // Fallback: try to handle paths with trailing slashes
   const pathWithSlash = normalizedPath + '/';
   if (pagesDictionary[pathWithSlash as keyof typeof pagesDictionary]) {
-    return pagesDictionary[pathWithSlash as keyof typeof pagesDictionary][targetLang];
+    const mapping = pagesDictionary[pathWithSlash as keyof typeof pagesDictionary] as Record<string, string>;
+    if (mapping[targetLang]) return mapping[targetLang];
+    if (targetLang !== 'ja') return mapping['es'] || getHomeUrl(targetLang);
   }
   
   // Handle edge case: direct access to /projects/, /proyectos/, /prosjekter/ base paths
-  if (normalizedPath === '/projects' || normalizedPath === '/proyectos' || normalizedPath === '/prosjekter') {
+  if (normalizedPath === '/projects' || normalizedPath === '/proyectos' || normalizedPath === '/prosjekter' || normalizedPath === '/ja/projects') {
     return getLocalizedUrl(targetLang, 'projects');
   }
   
   // Handle content tree routes if they don't exist in dictionary
-  if (normalizedPath === '/content-tree' || normalizedPath === '/arbol-de-contenido' || normalizedPath === '/innholdstre') {
+  if (normalizedPath === '/content-tree' || normalizedPath === '/arbol-de-contenido' || normalizedPath === '/innholdstre' || normalizedPath === '/ja/content-tree') {
     if (targetLang === 'es') return '/arbol-de-contenido';
     if (targetLang === 'en') return '/en/content-tree';
     if (targetLang === 'no') return '/no/innholdstre';
+    if (targetLang === 'ja') return '/ja/content-tree';
+  }
+
+  // Japanese fallbacks for known static routes when dictionary entry has no ja key yet
+  if (targetLang === 'ja') {
+    if (normalizedPath.includes('/resume') || normalizedPath.includes('/curriculum') || normalizedPath.includes('/cv')) {
+      return '/ja/resume';
+    }
+    if (normalizedPath.includes('/design-system') || normalizedPath.includes('/sistema-de-diseno') || normalizedPath.includes('/designsystem')) {
+      return '/ja/design-system';
+    }
+    if (normalizedPath.includes('/accessibility-statement') || normalizedPath.includes('/declaracion-de-accesibilidad') || normalizedPath.includes('/tilgjengelighetserklaering')) {
+      return '/ja/accessibility-statement';
+    }
+    if (normalizedPath.includes('/projects') || normalizedPath.includes('/proyectos') || normalizedPath.includes('/prosjekter')) {
+      return '/ja/projects';
+    }
   }
   
   // If no specific mapping found, try to get the language-appropriate home page

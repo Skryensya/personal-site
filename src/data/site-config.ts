@@ -91,7 +91,7 @@ const siteConfig: SiteConfig = {
     postsPerPage: 5,
     projectsPerPage: 5,
     defaultLocale: 'es',
-    supportedLocales: ['es', 'en', 'no']
+    supportedLocales: ['es', 'en', 'no', 'ja']
 };
 
 export default siteConfig;

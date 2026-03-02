@@ -5,6 +5,11 @@ import { getTranslations } from '@/i18n/utils';
 import { getLangFromUrl } from '@/i18n/utils';
 import themesData from '@/data/themes.json';
 
+interface Props {
+  id?: string;
+}
+
+const { id = 'theme-control' } = Astro.props;
 const currentLocale = getLangFromUrl(Astro.url);
 const t = getTranslations(currentLocale);
 
@@ -28,27 +33,27 @@ const localizedThemeNames = Object.fromEntries(
   disabled={false}
   dropdownClassName="max-w-[280px] lg:w-fit lg:max-w-[600px]"
   class="w-7 h-7 lg:w-full lg:h-8"
-  id="theme-control"
+  id={id}
 >
   <div class="flex items-center gap-2 w-full">
     <div
       class="w-4 h-4 border border-main theme-preview-current flex-shrink-0"
       style="background: linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%);"
     ></div>
-    <span class="hidden lg:block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary truncate uppercase theme-name-display">
+    <span class="block font-grotesk text-sm font-semibold text-main group-hover:text-secondary group-focus-visible:text-secondary truncate uppercase theme-name-display">
       {t('ui.loading')}
     </span>
   </div>
 
   <DropdownContent slot="dropdown-content">
-    <div id="theme-dropdown-content">
+    <div data-theme-dropdown-content>
       <!-- Desktop layout - dynamic columns -->
-      <div class="hidden lg:block" id="theme-desktop-layout">
+      <div class="hidden lg:block" data-theme-desktop-layout>
         <!-- Content will be populated by JavaScript -->
       </div>
       
       <!-- Mobile/tablet layout - single column -->
-      <div class="lg:hidden" id="theme-mobile-layout">
+      <div class="lg:hidden" data-theme-mobile-layout>
         <!-- Content will be populated by JavaScript -->
       </div>
     </div>
@@ -248,28 +253,28 @@ const localizedThemeNames = Object.fromEntries(
     updateDropdownWidth() {
       const totalThemes = this.availableThemes.length;
       const hasOnlyBasicThemes = totalThemes <= 5;
-      
-      const dropdownContent = document.getElementById('theme-dropdown-content');
-      if (dropdownContent) {
+
+      document.querySelectorAll('[data-theme-dropdown-content]').forEach((dropdownContent) => {
         const parentDropdown = dropdownContent.closest('[data-dropdown-content]');
-        if (parentDropdown) {
-          // Reset width constraints
-          parentDropdown.classList.remove('lg:max-w-[200px]');
-          
-          // Only add max-width constraint when basic themes only
-          if (hasOnlyBasicThemes) {
-            parentDropdown.classList.add('lg:max-w-[200px]');
-          }
+        if (!parentDropdown) return;
+
+        // Reset width constraints
+        parentDropdown.classList.remove('lg:max-w-[200px]');
+
+        // Only add max-width constraint when basic themes only
+        if (hasOnlyBasicThemes) {
+          parentDropdown.classList.add('lg:max-w-[200px]');
         }
-      }
+      });
     },
     
     // Update display elements
     updateDisplay() {
-      const themeNameDisplay = document.querySelector('.theme-name-display');
-      if (themeNameDisplay && this.currentTheme) {
-        themeNameDisplay.textContent = this.getThemeLabel(this.currentTheme);
-      }
+      document.querySelectorAll('.theme-name-display').forEach((themeNameDisplay) => {
+        if (this.currentTheme) {
+          themeNameDisplay.textContent = this.getThemeLabel(this.currentTheme);
+        }
+      });
       
       // Update selected states in dropdown
       const themeButtons = document.querySelectorAll('[data-theme-button]');
@@ -296,26 +301,25 @@ const localizedThemeNames = Object.fromEntries(
     
     // Render theme options in dropdown
     renderThemeOptions() {
-      
-      const desktopLayout = document.getElementById('theme-desktop-layout');
-      const mobileLayout = document.getElementById('theme-mobile-layout');
-      
-      if (!desktopLayout || !mobileLayout) return;
-      
+      const desktopLayouts = document.querySelectorAll('[data-theme-desktop-layout]');
+      const mobileLayouts = document.querySelectorAll('[data-theme-mobile-layout]');
+
+      if (!desktopLayouts.length || !mobileLayouts.length) return;
+
       const totalThemes = this.availableThemes.length;
-      
+
       // Check if only basic themes are available (6 or fewer themes = basic only)
       const hasOnlyBasicThemes = totalThemes <= 6;
-      
+
       // Update dropdown width based on current theme count
       this.updateDropdownWidth();
-      
+
       // Calculate optimal number of columns (max 6 columns, 6 items per column)
       const maxItemsPerColumn = 6;
       const maxColumns = hasOnlyBasicThemes ? 1 : 6; // Force single column for basic themes only
       const idealColumns = Math.min(Math.ceil(totalThemes / maxItemsPerColumn), maxColumns);
       const itemsPerColumn = Math.ceil(totalThemes / idealColumns);
-      
+
       // Create columns
       const columns = [];
       for (let i = 0; i < idealColumns; i++) {
@@ -324,37 +328,36 @@ const localizedThemeNames = Object.fromEntries(
         const columnThemes = this.availableThemes.slice(start, end);
         columns.push(columnThemes);
       }
-      
-      // Desktop layout - dynamic columns with proper width constraints
+
+      let desktopHTML = '';
       if (hasOnlyBasicThemes) {
-        const desktopHTML = `
+        desktopHTML = `
           <div class="flex gap-0 w-full max-w-[200px]">
             <div class="w-full flex-shrink-0">
               ${this.availableThemes.map((theme: any) => this.createThemeButton(theme)).join('')}
             </div>
           </div>
         `;
-        desktopLayout.innerHTML = desktopHTML;
       } else {
         // Limit the width to prevent ugly overflow
         const maxWidth = Math.min(idealColumns * 180, 600); // Max 600px total width
         const actualColumns = Math.min(idealColumns, Math.floor(600 / 180)); // Max 3 columns to fit in 600px
-        
+
         // Redistribute themes if we had to reduce columns
         const redistributedColumns = [];
         if (actualColumns < idealColumns) {
-          const itemsPerColumn = Math.ceil(totalThemes / actualColumns);
+          const recalculatedItemsPerColumn = Math.ceil(totalThemes / actualColumns);
           for (let i = 0; i < actualColumns; i++) {
-            const start = i * itemsPerColumn;
-            const end = Math.min(start + itemsPerColumn, totalThemes);
+            const start = i * recalculatedItemsPerColumn;
+            const end = Math.min(start + recalculatedItemsPerColumn, totalThemes);
             const columnThemes = this.availableThemes.slice(start, end);
             redistributedColumns.push(columnThemes);
           }
         } else {
           redistributedColumns.push(...columns);
         }
-        
-        const complexDesktopHTML = `
+
+        desktopHTML = `
           <div class="flex gap-0" style="max-width: ${maxWidth}px;">
             ${redistributedColumns.map((columnThemes: any[], index: number) => `
               <div class="w-[180px] flex-shrink-0 ${index < redistributedColumns.length - 1 ? 'border-r-2 border-main' : ''}">
@@ -363,13 +366,16 @@ const localizedThemeNames = Object.fromEntries(
             `).join('')}
           </div>
         `;
-        desktopLayout.innerHTML = complexDesktopHTML;
       }
-      
-      // Mobile layout - single column
+
       const mobileHTML = this.availableThemes.map((theme: any) => this.createThemeButton(theme)).join('');
-      mobileLayout.innerHTML = mobileHTML;
-      
+      desktopLayouts.forEach((layout) => {
+        (layout as HTMLElement).innerHTML = desktopHTML;
+      });
+      mobileLayouts.forEach((layout) => {
+        (layout as HTMLElement).innerHTML = mobileHTML;
+      });
+
       // Add event listeners
       this.addThemeButtonListeners();
     },

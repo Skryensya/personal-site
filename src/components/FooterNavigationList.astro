@@ -31,6 +31,7 @@ const getCVPath = (locale: Language) => {
 const getHomePath = (locale: Language) => {
   if (locale === 'en') return '/en/';
   if (locale === 'no') return '/no/';
+  if (locale === 'ja') return '/ja/';
   return '/';
 };
 
@@ -49,12 +50,12 @@ const navigationLinks: NavigationLink[] = [
     isExternal: true
   },
   {
-    href: lang === 'es' ? '/sistema-de-diseno' : lang === 'en' ? '/en/design-system' : '/no/designsystem',
-    text: lang === 'es' ? 'Sistema de Diseño' : lang === 'en' ? 'Design System' : 'Designsystem'
+    href: lang === 'es' ? '/sistema-de-diseno' : lang === 'en' ? '/en/design-system' : lang === 'no' ? '/no/designsystem' : '/ja/design-system',
+    text: lang === 'es' ? 'Sistema de Diseño' : lang === 'en' ? 'Design System' : lang === 'no' ? 'Designsystem' : 'デザインシステム'
   },
   {
-    href: lang === 'es' ? '/arbol-de-contenido' : lang === 'en' ? '/en/content-tree' : '/no/innholdstre',
-    text: lang === 'es' ? 'Árbol de contenido' : lang === 'en' ? 'Content Tree' : 'Innholdstre'
+    href: lang === 'es' ? '/arbol-de-contenido' : lang === 'en' ? '/en/content-tree' : lang === 'no' ? '/no/innholdstre' : '/ja/content-tree',
+    text: lang === 'es' ? 'Árbol de contenido' : lang === 'en' ? 'Content Tree' : lang === 'no' ? 'Innholdstre' : 'コンテンツツリー'
   },
   {
     href: getLocalizedUrl(lang, 'accessibility'),

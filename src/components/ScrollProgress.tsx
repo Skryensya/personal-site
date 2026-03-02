@@ -1,42 +1,61 @@
 import * as React from 'react';
 
-const { useState, useEffect } = React;
-
 /**
- * ScrollProgress - Componente React que muestra una barra de progreso de scroll
- * Se posiciona fijo en la parte superior de la pantalla
- * Usa el elemento nativo <progress> para mejor accesibilidad
+ * ScrollProgress - fixed top reading progress line
+ * Plain DOM updates for reliability across Astro transitions.
  */
 export default function ScrollProgress() {
-    const [scrollProgress, setScrollProgress] = useState(0);
+  const fillRef = React.useRef<HTMLDivElement | null>(null);
 
-    useEffect(() => {
-        function updateScrollProgress() {
-            const scrollTop = window.scrollY;
-            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-            const scrollPercent = scrollTop / docHeight;
-            
-            setScrollProgress(Math.min(1, Math.max(0, scrollPercent)));
-        }
+  React.useEffect(() => {
+    const fill = fillRef.current;
+    if (!fill) return;
 
-        // Initial calculation
-        updateScrollProgress();
+    let raf = 0;
 
-        // Listen to scroll events
-        window.addEventListener('scroll', updateScrollProgress, { passive: true });
+    const compute = () => {
+      const doc = document.documentElement;
+      const scrollTop = window.scrollY || window.pageYOffset || 0;
+      const maxScrollable = Math.max(1, doc.scrollHeight - window.innerHeight);
+      const progress = Math.min(1, Math.max(0, scrollTop / maxScrollable));
 
-        // Cleanup
-        return () => {
-            window.removeEventListener('scroll', updateScrollProgress);
-        };
-    }, []);
+      // Keep a tiny visible cap so users can always locate the indicator.
+      const width = Math.max(progress * 100, 0.6);
+      fill.style.width = `${width.toFixed(2)}%`;
+      fill.setAttribute('aria-valuenow', String(Math.round(progress * 100)));
+    };
 
-    return (
-        <progress 
-            value={scrollProgress} 
-            max={1}
-            className="print:hidden fixed top-0 left-0 w-[100dvw] h-0.5 z-50 appearance-none [&::-webkit-progress-bar]:bg-transparent [&::-webkit-progress-value]:bg-main [&::-webkit-progress-value]:opacity-60 [&::-moz-progress-bar]:bg-main [&::-moz-progress-bar]:opacity-60"
-            aria-label="Progreso de lectura de la página"
-        />
-    );
+    const schedule = () => {
+      if (raf) return;
+      raf = window.requestAnimationFrame(() => {
+        raf = 0;
+        compute();
+      });
+    };
+
+    compute();
+
+    window.addEventListener('scroll', schedule, { passive: true } as EventListenerOptions);
+    window.addEventListener('resize', schedule, { passive: true } as EventListenerOptions);
+    document.addEventListener('astro:page-load', schedule as EventListener);
+
+    return () => {
+      if (raf) window.cancelAnimationFrame(raf);
+      window.removeEventListener('scroll', schedule as EventListener);
+      window.removeEventListener('resize', schedule as EventListener);
+      document.removeEventListener('astro:page-load', schedule as EventListener);
+    };
+  }, []);
+
+  return (
+    <div
+      className="print:hidden pointer-events-none fixed left-0 right-0 top-0 h-[2px] z-[12000]"
+      aria-hidden="true"
+    >
+      <div
+        ref={fillRef}
+        className="h-full w-[0.6%] bg-main/65 transition-[width] duration-100 ease-linear"
+      />
+    </div>
+  );
 }

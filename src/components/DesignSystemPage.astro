@@ -29,7 +29,9 @@ const headingPangram =
         ? '“El pequeño zorro bajó feliz y juguetón al río mientras cantaba.”'
         : lang === 'no'
           ? '“Den lille reven gikk glad og lekende ned til elva mens han sang.”'
-          : '“The quick little fox joyfully went down to the river singing a warm tune.”';
+          : lang === 'ja'
+            ? '「小さな狐は歌いながら、楽しそうに川へ降りていった。」'
+            : '“The quick little fox joyfully went down to the river singing a warm tune.”';
 
 const ssDisplayLabel =
     lang === 'es'
@@ -51,17 +53,23 @@ const sevenSegmentCopy =
                 intro: 'Segmentert tallsystem for numeriske avlesninger. Brukes i status og målinger for tydelig lesbarhet og visuell rytme.',
                 samples: 'Eksempler'
             }
-          : {
+          : lang === 'ja'
+            ? {
+                  heading: '7セグメント表示',
+                  intro: '数値表示のためのセグメント式ディスプレイ。状態表示やメトリクスで可読性と視覚リズムを保ちます。',
+                  samples: 'サンプル'
+              }
+            : {
                 heading: 'Seven Segment Display',
                 intro: 'Segment-based digit system for numeric readouts. Used in status and metrics to keep readability and visual rhythm.',
                 samples: 'Samples'
             };
 
 const keyboardSectionHeading =
-    lang === 'es' ? 'Teclas de teclado' : lang === 'no' ? 'Tastaturtaster' : 'Keyboard Keys';
+    lang === 'es' ? 'Teclas de teclado' : lang === 'no' ? 'Tastaturtaster' : lang === 'ja' ? 'キーボードキー' : 'Keyboard Keys';
 
 const footerNavigationHeading =
-    lang === 'es' ? 'Navegación de footer' : lang === 'no' ? 'Footer-navigasjon' : 'Footer Navigation';
+    lang === 'es' ? 'Navegación de footer' : lang === 'no' ? 'Footer-navigasjon' : lang === 'ja' ? 'フッターナビゲーション' : 'Footer Navigation';
 
 const sectionIntro = {
     structure:
@@ -69,37 +77,49 @@ const sectionIntro = {
             ? 'Ordenado por importancia: color, temas, tipografía y luego componentes de interacción.'
             : lang === 'no'
               ? 'Sortert etter viktighet: farger, temaer, typografi og deretter interaktive komponenter.'
-              : 'Ordered by importance: color, themes, typography, and then interactive components.',
+              : lang === 'ja'
+                ? '重要度順に整理しています。色、テーマ、タイポグラフィ、そしてインタラクション要素。'
+                : 'Ordered by importance: color, themes, typography, and then interactive components.',
     buttons:
         lang === 'es'
             ? 'Base de interacción primaria. Aquí se concentran estados, jerarquía visual y variantes de acción.'
             : lang === 'no'
               ? 'Grunnlaget for primær interaksjon. Her vises tilstander, visuelt hierarki og handlingsvarianter.'
-              : 'Core interaction building block. This section shows states, visual hierarchy, and action variants.',
+              : lang === 'ja'
+                ? '主要なインタラクション要素。状態、視覚的階層、アクションのバリエーションをまとめています。'
+                : 'Core interaction building block. This section shows states, visual hierarchy, and action variants.',
     cards:
         lang === 'es'
             ? 'Contenedor de contenido resumido. Prioriza lectura rápida, enlace claro y estructura consistente.'
             : lang === 'no'
               ? 'Kort for komprimert innhold. Prioriterer rask lesing, tydelig lenke og konsistent struktur.'
-              : 'Compact content container focused on quick scanning, clear linking, and consistent structure.',
+              : lang === 'ja'
+                ? '要約情報のためのカード。素早い読取、明確なリンク、一貫した構造を重視します。'
+                : 'Compact content container focused on quick scanning, clear linking, and consistent structure.',
     footerNav:
         lang === 'es'
             ? 'Patrón de navegación secundaria para cierre de página y acceso a secciones clave.'
             : lang === 'no'
               ? 'Sekundært navigasjonsmønster for sidens avslutning og tilgang til viktige seksjoner.'
-              : 'Secondary navigation pattern used at page end for quick access to key sections.',
+              : lang === 'ja'
+                ? 'ページ末尾で主要セクションへ素早く移動するための補助ナビゲーションです。'
+                : 'Secondary navigation pattern used at page end for quick access to key sections.',
     keyboard:
         lang === 'es'
             ? 'Representación visual de atajos y teclas del sistema para documentación y ayuda contextual.'
             : lang === 'no'
               ? 'Visuell representasjon av hurtigtaster for dokumentasjon og konteksthjelp.'
-              : 'Visual representation of shortcuts and system keys for documentation and contextual help.',
+              : lang === 'ja'
+                ? 'ショートカットやシステムキーを視覚的に示し、ドキュメントや文脈ヘルプに活用します。'
+                : 'Visual representation of shortcuts and system keys for documentation and contextual help.',
     visual:
         lang === 'es'
             ? 'Recursos decorativos de menor prioridad que refuerzan identidad sin competir con el contenido.'
             : lang === 'no'
               ? 'Dekorative elementer med lavere prioritet som styrker identitet uten å forstyrre innholdet.'
-              : 'Lower-priority decorative resources that reinforce identity without competing with content.'
+              : lang === 'ja'
+                ? '装飾要素は優先度を低く保ち、内容を邪魔せずにサイトの個性を補強します。'
+                : 'Lower-priority decorative resources that reinforce identity without competing with content.'
 };
 
 const opacities = [100, 80, 60, 40, 20, 10] as const;
@@ -145,6 +165,12 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                     <>
                         <p class="text-base md:text-lg">Dette systemet bygger på en tydelig begrensning: to farger, skarpe kanter og typografi med stabilt hierarki. Når de visuelle valgene reduseres, får innholdet mer plass, og alle sider følger samme språk.</p>
                         <p class="text-base md:text-lg">Tilgjengelighet er bygget inn i designet: lesbar kontrast, synlig fokus, semantisk struktur og enkel navigasjon. Hvis du vil se kriterier og omfang i detalj, kan du lese <a href="/no/tilgjengelighetserklaering" class="underline underline-offset-2 decoration-[1.5px] hover:opacity-80">Tilgjengelighetserklæringen</a>.</p>
+                    </>
+                )}
+                {lang === 'ja' && (
+                    <>
+                        <p class="text-base md:text-lg">このシステムは明確な制約から生まれました。2色のみ、鋭い境界線、安定したタイポグラフィ階層です。視覚的な選択肢を絞ることで、コンテンツが主役になります。</p>
+                        <p class="text-base md:text-lg">アクセシビリティは設計段階から組み込まれています。十分なコントラスト、見えるフォーカス、意味論的な構造、シンプルなナビゲーション。詳細は <a href="/ja/accessibility-statement" class="underline underline-offset-2 decoration-[1.5px] hover:opacity-80">アクセシビリティ方針</a>をご覧ください。</p>
                     </>
                 )}
             </div>
@@ -507,17 +533,17 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                 <!-- Dropdown Button -->
                 <div class="bg-main/10 p-0 space-y-0">
                     <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
-                        {lang === 'es' ? 'Con menú' : lang === 'no' ? 'Med meny' : 'With Menu'}
+                        {lang === 'es' ? 'Con menú' : lang === 'no' ? 'Med meny' : lang === 'ja' ? 'メニュー付き' : 'With Menu'}
                     </div>
                     <div class="flex items-center justify-center p-4 aspect-5/2">
                         <DropdownButton id="ds-dropdown-default" onMainClick="nextDesignSystemOption" class="w-auto h-8" lang={lang}>
                             <span id="ds-dropdown-default-label" class="font-grotesk text-sm font-semibold uppercase px-1">
-                                {lang === 'es' ? 'Primera' : lang === 'no' ? 'Første' : 'First'}
+                                {lang === 'es' ? 'Primera' : lang === 'no' ? 'Første' : lang === 'ja' ? '1番目' : 'First'}
                             </span>
                             <DropdownContent slot="dropdown-content">
-                                <button type="button" data-ds-option="true" data-selected="true">{lang === 'es' ? 'Primera' : lang === 'no' ? 'Første' : 'First'}</button>
-                                <button type="button" data-ds-option="true">{lang === 'es' ? 'Segunda' : lang === 'no' ? 'Andre' : 'Second'}</button>
-                                <button type="button" data-ds-option="true">{lang === 'es' ? 'Tercera' : lang === 'no' ? 'Tredje' : 'Third'}</button>
+                                <button type="button" data-ds-option="true" data-selected="true">{lang === 'es' ? 'Primera' : lang === 'no' ? 'Første' : lang === 'ja' ? '1番目' : 'First'}</button>
+                                <button type="button" data-ds-option="true">{lang === 'es' ? 'Segunda' : lang === 'no' ? 'Andre' : lang === 'ja' ? '2番目' : 'Second'}</button>
+                                <button type="button" data-ds-option="true">{lang === 'es' ? 'Tercera' : lang === 'no' ? 'Tredje' : lang === 'ja' ? '3番目' : 'Third'}</button>
                             </DropdownContent>
                         </DropdownButton>
                     </div>
@@ -640,7 +666,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                     <ProjectCard
                         name={t('designSystem.cards.example1.name')}
                         hook={t('designSystem.cards.example1.hook')}
-                        href={lang === 'es' ? '/sistema-de-diseno' : lang === 'en' ? '/en/design-system' : '/no/designsystem'}
+                        href={lang === 'es' ? '/sistema-de-diseno' : lang === 'en' ? '/en/design-system' : lang === 'no' ? '/no/designsystem' : '/ja/design-system'}
                         slug="demo-card"
                         dataIndex={1}
                         lang={lang}
@@ -671,7 +697,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
             <p class="text-body text-main/80 max-w-3xl">{sectionIntro.keyboard}</p>
             <div class="bg-main/10 p-0 space-y-0">
                 <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
-                    {lang === 'es' ? 'Ejemplos de teclas' : lang === 'no' ? 'Taste-eksempler' : 'Keycap examples'}
+                    {lang === 'es' ? 'Ejemplos de teclas' : lang === 'no' ? 'Taste-eksempler' : lang === 'ja' ? 'キーキャップ例' : 'Keycap examples'}
                 </div>
                 <div class="p-4 space-y-4">
                     <div class="flex flex-wrap items-center gap-2" id="kbd-live-demo">

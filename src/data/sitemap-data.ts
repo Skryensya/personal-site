@@ -144,6 +144,72 @@ export const sitemapData: LanguageSitemap = {
       url: '/en/accessibility-statement/'
     }
   ],
+  ja: [
+    {
+      title: 'ホーム',
+      url: '/ja/',
+      children: [
+        {
+          title: '私について',
+          url: '/ja/#about'
+        },
+        {
+          title: '技術',
+          url: '/ja/#technologies'
+        },
+        {
+          title: '注目プロジェクト',
+          url: '/ja/#projects'
+        }
+      ]
+    },
+    {
+      title: 'プロジェクト',
+      url: '/ja/projects/',
+      children: [
+        {
+          title: 'Portal UC',
+          url: '/ja/projects/portal-uc/'
+        },
+        {
+          title: 'Kit Digital UC',
+          url: '/ja/projects/kit-digital-uc/'
+        },
+        {
+          title: 'API Agenda UC',
+          url: '/ja/projects/agenda-uc/'
+        },
+        {
+          title: 'Kit Digital USS',
+          url: '/ja/projects/kit-digital-uss/'
+        },
+        {
+          title: 'Hostal Micelio',
+          url: '/ja/projects/hostal-micelio/'
+        },
+        {
+          title: 'TTU',
+          url: '/ja/projects/ttu/'
+        },
+        {
+          title: 'Barrancas',
+          url: '/ja/projects/barrancas/'
+        }
+      ]
+    },
+    {
+      title: '履歴書',
+      url: '/ja/resume/'
+    },
+    {
+      title: 'デザインシステム',
+      url: '/ja/design-system/'
+    },
+    {
+      title: 'アクセシビリティ方針',
+      url: '/ja/accessibility-statement/'
+    }
+  ],
   no: [
     {
       title: 'Hjem',

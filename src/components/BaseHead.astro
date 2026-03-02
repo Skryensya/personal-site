@@ -48,17 +48,19 @@ const currentPath = Astro.url.pathname;
 const alternatePaths = {
     es: getEquivalentPage(currentPath, 'es'),
     en: getEquivalentPage(currentPath, 'en'),
-    no: getEquivalentPage(currentPath, 'no')
+    no: getEquivalentPage(currentPath, 'no'),
+    ja: getEquivalentPage(currentPath, 'ja')
 };
 
 const alternateURLs = {
     es: formatCanonicalURL(new URL(alternatePaths.es, Astro.site)),
     en: formatCanonicalURL(new URL(alternatePaths.en, Astro.site)),
-    no: formatCanonicalURL(new URL(alternatePaths.no, Astro.site))
+    no: formatCanonicalURL(new URL(alternatePaths.no, Astro.site)),
+    ja: formatCanonicalURL(new URL(alternatePaths.ja, Astro.site))
 };
 
-const ogLocale = lang === 'es' ? 'es_ES' : lang === 'en' ? 'en_US' : 'no_NO';
-const ogLocaleAlternates = ['es_ES', 'en_US', 'no_NO'].filter((locale) => locale !== ogLocale);
+const ogLocale = lang === 'es' ? 'es_ES' : lang === 'en' ? 'en_US' : lang === 'no' ? 'no_NO' : 'ja_JP';
+const ogLocaleAlternates = ['es_ES', 'en_US', 'no_NO', 'ja_JP'].filter((locale) => locale !== ogLocale);
 
 const websiteJsonLd = {
     '@context': 'https://schema.org',
@@ -66,7 +68,7 @@ const websiteJsonLd = {
     name: siteConfig.title,
     description: effectiveDescription,
     url: formatCanonicalURL(canonicalURL),
-    inLanguage: ['es', 'en', 'no'],
+    inLanguage: ['es', 'en', 'no', 'ja'],
     author: {
         '@type': 'Person',
         name: 'Allison Peña',
@@ -108,6 +110,7 @@ const additionalStructuredData = Array.isArray(structuredData)
 <link rel="alternate" hreflang="es" href={alternateURLs.es} />
 <link rel="alternate" hreflang="en" href={alternateURLs.en} />
 <link rel="alternate" hreflang="no" href={alternateURLs.no} />
+<link rel="alternate" hreflang="ja" href={alternateURLs.ja} />
 <link rel="alternate" hreflang="x-default" href={alternateURLs.es} />
 
 <meta property="og:type" content={pageType} />

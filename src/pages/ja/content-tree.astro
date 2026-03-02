@@ -1,0 +1,98 @@
+---
+import Layout from '@/layouts/Layout.astro';
+import SitemapTree from '@/components/SitemapTree.astro';
+import Sidebar from '@/components/Sidebar.astro';
+import { getSitemapForLanguage, sitemapData, type SitemapNode } from '@/data/sitemap-data';
+
+const lang = 'ja';
+const tree = getSitemapForLanguage(lang);
+
+const countNodes = (nodes: SitemapNode[]): number =>
+  nodes.reduce((total, node) => total + 1 + countNodes(node.children || []), 0);
+
+const getMaxDepth = (nodes: SitemapNode[], depth = 1): number => {
+  if (!nodes.length) return depth;
+  return Math.max(
+    ...nodes.map((node) =>
+      node.children?.length ? getMaxDepth(node.children, depth + 1) : depth,
+    ),
+  );
+};
+
+const mainSections = tree.length;
+const totalNodes = countNodes(tree);
+const projectsCount = tree.find((n) => n.url.includes('/projects/'))?.children?.length || 0;
+const supportedLanguages = Object.keys(sitemapData).length;
+const maxDepth = getMaxDepth(tree);
+---
+
+<Layout
+  title="コンテンツツリー - Allison Peña"
+  description="Allison Peña のサイト構造"
+  lang={lang}
+>
+  <div class="flex gap-4">
+    <section id="content-tree-main" class="flex-1 mx-auto max-w-[850px] py-8" data-heading-slug-root>
+      <div class="mb-8">
+        <h1 id="content" class="text-3xl font-mono font-bold text-main border-b-2 border-main pb-4 mb-4">
+          コンテンツツリー
+        </h1>
+        <p class="text-main font-mono">
+          サイト全体の構造を確認できます。
+        </p>
+      </div>
+
+      <div id="structure" class="mb-8">
+        <h2 class="text-xl font-mono font-bold text-main border-b border-main pb-2 mb-4">サイト構造</h2>
+        <SitemapTree lang={lang} showHeader={false} />
+      </div>
+
+      <div class="mt-12 space-y-8">
+        <div class="space-y-6">
+          <h2 id="info" class="text-xl font-mono font-bold text-main border-b border-main pb-2">追加情報</h2>
+
+          <h3 id="site-metrics" class="text-lg font-mono font-bold text-main">サイト指標</h3>
+          <div id="stats" class="grid gap-3 md:grid-cols-2 font-mono text-sm text-main">
+            <div class="border border-main p-3 bg-secondary text-main">
+              <p class="text-xs opacity-75">主要セクション</p>
+              <p class="text-lg font-bold">{mainSections}</p>
+            </div>
+            <div class="border border-main p-3">
+              <p class="text-xs opacity-75">ルート数</p>
+              <p class="text-lg font-bold">{totalNodes}</p>
+            </div>
+            <div class="border border-main p-3">
+              <p class="text-xs opacity-75">公開プロジェクト数</p>
+              <p class="text-lg font-bold">{projectsCount}</p>
+            </div>
+            <div class="border border-main p-3">
+              <p class="text-xs opacity-75">最大階層</p>
+              <p class="text-lg font-bold">レベル {maxDepth}</p>
+            </div>
+            <div class="border border-main p-3 md:col-span-2">
+              <p class="text-xs opacity-75">対応言語</p>
+              <p class="text-lg font-bold">{supportedLanguages}（スペイン語、イングリッシュ、ノルスク、日本語）</p>
+            </div>
+          </div>
+
+          <div class="border border-main p-3 text-sm font-mono text-main space-y-2">
+            <h3 id="useful-resources" class="text-base font-bold">リソース</h3>
+            <ul class="list-disc pl-5 space-y-1">
+              <li>
+                XML Sitemap:
+                <a href="/sitemap.xml" class="underline hover:no-underline">/sitemap.xml</a>
+              </li>
+              <li>ラストアップデート: {new Date().toLocaleDateString('ja-JP')}</li>
+              <li>
+                ホーム:
+                <a href="/ja/" class="underline hover:no-underline">/ja/</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <Sidebar contentId="content-tree-main" />
+  </div>
+</Layout>

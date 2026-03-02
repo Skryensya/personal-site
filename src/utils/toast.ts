@@ -7,6 +7,7 @@ type ToastOptions = {
 
 const CONTAINER_ID = 'app-toast-stack';
 const STYLE_ID = 'app-toast-style';
+let escapeCloseBound = false;
 
 function ensureStyle() {
   if (document.getElementById(STYLE_ID)) return;
@@ -16,13 +17,13 @@ function ensureStyle() {
   style.textContent = `
     #${CONTAINER_ID} {
       position: fixed;
-      top: 108px;
-      right: 16px;
+      top: 104px;
+      right: 14px;
       z-index: 10000;
       display: flex;
       flex-direction: column;
       gap: 10px;
-      width: min(92vw, 340px);
+      width: min(92vw, 348px);
       pointer-events: none;
     }
 
@@ -36,12 +37,13 @@ function ensureStyle() {
       font-family: var(--font-mono), monospace;
       font-size: 13px;
       font-weight: 700;
-      line-height: 1.35;
+      line-height: 1.36;
+      letter-spacing: 0.01em;
       padding: 11px 12px 13px;
-      box-shadow: 3px 3px 0 var(--color-secondary);
-      transform: translateX(12px) scale(0.985);
+      box-shadow: 4px 4px 0 var(--color-secondary);
+      transform: translateX(16px) scale(0.985);
       opacity: 0;
-      transition: transform 160ms cubic-bezier(0.22, 1, 0.36, 1), opacity 160ms ease;
+      transition: transform 190ms cubic-bezier(0.22, 1, 0.36, 1), opacity 190ms ease;
     }
 
     .app-toast[data-open='true'] {
@@ -80,21 +82,29 @@ function ensureStyle() {
     }
 
     .app-toast__close {
-      border: 0;
+      border: 1px solid currentColor;
       background: transparent;
       color: inherit;
       font: inherit;
+      font-size: 11px;
       line-height: 1;
+      width: 17px;
+      height: 17px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       padding: 0;
       margin-left: 6px;
       cursor: pointer;
-      opacity: 0.7;
+      opacity: 0.76;
     }
 
     .app-toast__close:hover,
     .app-toast__close:focus-visible {
       opacity: 1;
       outline: none;
+      background: var(--color-secondary);
+      color: var(--color-main);
     }
 
     .app-toast__progress {
@@ -102,11 +112,32 @@ function ensureStyle() {
       left: 0;
       right: 0;
       bottom: 0;
-      height: 2px;
+      height: 3px;
       background: currentColor;
       transform-origin: left center;
       transform: scaleX(1);
-      opacity: 0.9;
+      opacity: 0.95;
+    }
+
+    @media (min-width: 1024px) {
+      #${CONTAINER_ID} {
+        top: 94px;
+        right: 22px;
+        width: min(32vw, 396px);
+        gap: 12px;
+      }
+
+      .app-toast {
+        font-size: 14px;
+        line-height: 1.4;
+        padding: 12px 14px 14px;
+        box-shadow: 5px 5px 0 var(--color-secondary);
+      }
+
+      .app-toast__dot {
+        width: 8px;
+        height: 8px;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -146,6 +177,16 @@ export function showToast({ message, duration = 4200, kind = 'default', id }: To
     if (prev) prev.remove();
   }
 
+  if (!escapeCloseBound) {
+    escapeCloseBound = true;
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      const latest = document.querySelector(`#${CONTAINER_ID} .app-toast:first-child`) as HTMLElement | null;
+      const closeBtn = latest?.querySelector('.app-toast__close') as HTMLButtonElement | null;
+      closeBtn?.click();
+    });
+  }
+
   const toast = document.createElement('div');
   toast.className = 'app-toast';
   toast.dataset.kind = kind;
@@ -166,7 +207,7 @@ export function showToast({ message, duration = 4200, kind = 'default', id }: To
   const progressEl = toast.querySelector('.app-toast__progress') as HTMLElement;
 
   textEl.textContent = message;
-  container.appendChild(toast);
+  container.prepend(toast);
 
   requestAnimationFrame(() => {
     toast.dataset.open = 'true';

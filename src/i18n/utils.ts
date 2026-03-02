@@ -15,7 +15,7 @@ export function getTranslationValue(lang: Language, key: UIKeys): UIValue {
 export function getLangFromUrl(url: URL): Language {
     const [, firstSegment] = url.pathname.split('/');
     
-    // Check if first segment is a supported language code (en, no)
+    // Check if first segment is a supported language code (en, no, ja)
     // Spanish (es) has no prefix, so paths like /, /proyectos are Spanish
     if (firstSegment && supportedLanguages.includes(firstSegment as Language) && firstSegment !== 'es') {
         return firstSegment as Language;
@@ -33,7 +33,7 @@ export function getLangFromUrl(url: URL): Language {
 export function removeLocaleFromUrl(pathname: string): string {
     const [, possibleLang, ...rest] = pathname.split('/');
     
-    // Check if first segment is a non-Spanish language prefix (en, no)
+    // Check if first segment is a non-Spanish language prefix (en, no, ja)
     if (possibleLang && supportedLanguages.includes(possibleLang as Language) && possibleLang !== 'es') {
         return '/' + rest.join('/');
     }
@@ -117,7 +117,8 @@ export function getLanguageDisplayName(lang: Language): string {
     const names = {
         es: 'Español',
         en: 'English',
-        no: 'Norsk'
+        no: 'Norsk',
+        ja: '日本語'
     };
     return names[lang] || names[defaultLang];
 }

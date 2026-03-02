@@ -42,7 +42,8 @@ export default defineConfig({
     vite: {
         plugins: [tailwindcss()],
         server: {
-            hmr: true
+            hmr: true,
+            allowedHosts: ['host.docker.internal', 'localhost', '127.0.0.1']
         },
         resolve: {
             alias: {

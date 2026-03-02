@@ -14,7 +14,12 @@
         "test:debug": "playwright test --debug",
         "test:headed": "playwright test --headed",
         "test:cross-browser": "playwright test --config=playwright.cross-browser.config.ts",
-        "test:cross-browser:ui": "playwright test --config=playwright.cross-browser.config.ts --ui"
+        "test:cross-browser:ui": "playwright test --config=playwright.cross-browser.config.ts --ui",
+        "test:a11y": "playwright test tests/accessibility-smoke.spec.ts",
+        "test:a11y:deep": "playwright test tests/accessibility-deep.spec.ts",
+        "test:navbar": "playwright test tests/navbar-focus.spec.ts",
+        "test:navbar:advanced": "playwright test tests/navbar-keyboard-advanced.spec.ts",
+        "test:nav:a11y": "playwright test tests/navbar-focus.spec.ts tests/navbar-keyboard-advanced.spec.ts"
     },
     "dependencies": {
         "@astrojs/mdx": "^4.3.13",
@@ -41,6 +46,7 @@
     },
     "devDependencies": {
         "@astrojs/check": "^0.9.6",
+        "@axe-core/playwright": "^4.10.2",
         "@playwright/test": "^1.55.0",
         "@tailwindcss/typography": "^0.5.16",
         "@types/react": "^18.3.24",

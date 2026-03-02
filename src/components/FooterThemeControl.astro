@@ -1,0 +1,238 @@
+---
+import DropdownButton from './ui/DropdownButton.astro';
+import DropdownContent from './ui/DropdownContent.astro';
+import themesData from '@/data/themes.json';
+import { getTranslations } from '@/i18n/utils';
+import { defaultLang, type Language } from '@/i18n/ui';
+
+interface Props {
+  lang?: Language;
+  id?: string;
+}
+
+const { lang = defaultLang, id = 'footer-theme-control' } = Astro.props;
+const t = getTranslations(lang);
+
+const allThemeIds = [
+  ...themesData.default,
+  ...themesData.company,
+  ...themesData.special,
+].map((theme) => theme.id);
+
+const localizedThemeNames = Object.fromEntries(
+  allThemeIds.map((themeId) => {
+    const key = `theme.${themeId}` as any;
+    const localized = t(key);
+    return [themeId, (typeof localized === 'string' && localized !== key) ? localized : themeId];
+  })
+);
+---
+
+<div class="text-main">
+  <DropdownButton
+    id={id}
+    onMainClick="nextFooterTheme"
+    class="w-full h-8"
+    dropdownClassName="w-full max-w-[600px]"
+  >
+    <div class="flex items-center gap-2 w-full">
+      <div
+        id={`${id}-swatch`}
+        class="w-4 h-4 border border-main flex-shrink-0"
+        style="background: linear-gradient(135deg, var(--color-main) 50%, var(--color-secondary) 50%);"
+      ></div>
+      <span id={`${id}-label`} class="font-grotesk text-sm font-semibold text-main truncate uppercase">
+        {t('ui.loading')}
+      </span>
+    </div>
+
+    <DropdownContent slot="dropdown-content">
+      <div id={`${id}-desktop`} class="hidden lg:block"></div>
+      <div id={`${id}-mobile`} class="lg:hidden"></div>
+    </DropdownContent>
+  </DropdownButton>
+</div>
+
+<script is:inline define:vars={{ id, localizedThemeNames }}>
+  const footerThemeControlId = id;
+  const footerThemeNames = localizedThemeNames;
+
+  const initFooterThemeControl = async () => {
+    const label = document.getElementById(`${footerThemeControlId}-label`);
+    const swatch = document.getElementById(`${footerThemeControlId}-swatch`);
+    const desktop = document.getElementById(`${footerThemeControlId}-desktop`);
+    const mobile = document.getElementById(`${footerThemeControlId}-mobile`);
+
+    if (!label || !swatch || !desktop || !mobile) return;
+
+    const mainBtn = document.getElementById(`main-button-${footerThemeControlId}`);
+    const dropBtn = document.getElementById(`dropdown-button-${footerThemeControlId}`);
+    if (mainBtn) mainBtn.style.setProperty('color', 'var(--color-main)', 'important');
+    if (dropBtn) dropBtn.style.setProperty('color', 'var(--color-main)', 'important');
+    label.style.setProperty('color', 'var(--color-main)', 'important');
+
+    const { getAvailableThemes, applyTheme, themes } = await import('/src/data/themes.js');
+
+    const getCurrentTheme = () => {
+      const available = getAvailableThemes();
+      if (!available.length) return null;
+      const currentId = localStorage.getItem('theme-id') || window.__THEME_ID__ || available[0].id;
+      return available.find((theme) => theme.id === currentId) || available[0];
+    };
+
+    const getIsDark = () => {
+      const mode = localStorage.getItem('theme-mode') || 'system';
+      if (mode === 'system') return window.matchMedia('(prefers-color-scheme: dark)').matches;
+      return mode === 'dark';
+    };
+
+    const getThemeLabel = (theme) => footerThemeNames[theme.id] || theme.name || theme.id;
+
+    const createThemeButtonHTML = (theme, selected) => {
+      const baseClasses = 'w-full px-3 py-1 text-left block cursor-pointer relative focus-visible:z-[9999] ring-inset';
+      const stateClasses = selected
+        ? 'bg-main text-secondary hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary'
+        : 'bg-secondary text-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary';
+
+      return `
+        <button
+          type="button"
+          data-footer-theme-button="true"
+          data-theme-id="${theme.id}"
+          data-selected="${selected ? 'true' : 'false'}"
+          class="${baseClasses} ${stateClasses}"
+          role="menuitem"
+          tabindex="-1"
+          style="min-height: 36px; outline-width: 1px; outline-offset: 1px; box-shadow: inset 0 0 0 2px var(--color-secondary);"
+        >
+          <div class="flex items-center gap-2 pointer-events-none">
+            <div
+              class="w-6 h-6 aspect-square flex-shrink-0 pointer-events-none"
+              style="background: linear-gradient(135deg, ${theme.colorful} 50%, ${theme.contrasty} 50%); border: 2px solid ${theme.colorful};"
+            ></div>
+            <span class="flex-1 px-1 py-1 font-grotesk text-sm font-semibold pointer-events-none select-none uppercase whitespace-nowrap">${getThemeLabel(theme)}</span>
+            <div class="w-4 h-4 flex items-center justify-center pointer-events-none theme-checkmark" style="display: ${selected ? 'block' : 'none'};">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="20,6 9,17 4,12" /></svg>
+            </div>
+          </div>
+        </button>
+      `;
+    };
+
+    const updateDisplay = () => {
+      const current = getCurrentTheme();
+      if (!current) return;
+
+      label.textContent = getThemeLabel(current);
+      label.style.color = 'var(--color-main)';
+      swatch.style.background = `linear-gradient(135deg, ${current.colorful} 50%, ${current.contrasty} 50%)`;
+      swatch.style.borderColor = current.contrasty;
+
+      const buttons = document.querySelectorAll(`[data-footer-theme-button="true"]`);
+      buttons.forEach((button) => {
+        const themeId = button.getAttribute('data-theme-id');
+        const isSelected = themeId === current.id;
+        button.setAttribute('data-selected', isSelected ? 'true' : 'false');
+
+        const baseClasses = 'w-full px-3 py-1 text-left block cursor-pointer relative focus-visible:z-[9999] ring-inset';
+        const stateClasses = isSelected
+          ? 'bg-main text-secondary hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary'
+          : 'bg-secondary text-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary';
+        button.className = `${baseClasses} ${stateClasses}`;
+
+        const checkmark = button.querySelector('.theme-checkmark');
+        if (checkmark) checkmark.style.display = isSelected ? 'block' : 'none';
+      });
+    };
+
+    const bindButtons = () => {
+      const buttons = document.querySelectorAll(`[data-footer-theme-button="true"]`);
+      buttons.forEach((button) => {
+        if (button.getAttribute('data-bound') === 'true') return;
+        button.setAttribute('data-bound', 'true');
+
+        button.addEventListener('click', () => {
+          const themeId = button.getAttribute('data-theme-id');
+          const theme = themes.find((t) => t.id === themeId);
+          if (!theme) return;
+
+          localStorage.setItem('theme-id', theme.id);
+          const isDark = getIsDark();
+          applyTheme(theme.id, isDark);
+          window.__THEME_ID__ = theme.id;
+          updateDisplay();
+        });
+      });
+    };
+
+    const renderThemeOptions = () => {
+      const available = getAvailableThemes();
+      const current = getCurrentTheme();
+      const total = available.length;
+
+      const maxItemsPerColumn = 6;
+      const maxColumns = total <= 6 ? 1 : 6;
+      const idealColumns = Math.min(Math.ceil(total / maxItemsPerColumn), maxColumns);
+      const itemsPerColumn = Math.ceil(total / idealColumns);
+
+      const columns = [];
+      for (let i = 0; i < idealColumns; i++) {
+        const start = i * itemsPerColumn;
+        const end = Math.min(start + itemsPerColumn, total);
+        columns.push(available.slice(start, end));
+      }
+
+      desktop.innerHTML = total <= 6
+        ? `<div class="flex gap-0 w-full max-w-[200px]"><div class="w-full flex-shrink-0">${available.map((theme) => createThemeButtonHTML(theme, theme.id === current?.id)).join('')}</div></div>`
+        : `<div class="flex gap-0" style="max-width: 600px;">${columns.map((col, idx) => `<div class="w-[180px] flex-shrink-0 ${idx < columns.length - 1 ? 'border-r-2 border-main' : ''}">${col.map((theme) => createThemeButtonHTML(theme, theme.id === current?.id)).join('')}</div>`).join('')}</div>`;
+
+      mobile.innerHTML = available.map((theme) => createThemeButtonHTML(theme, theme.id === current?.id)).join('');
+
+      bindButtons();
+      updateDisplay();
+    };
+
+    window.nextFooterTheme = () => {
+      const available = getAvailableThemes();
+      if (!available.length) return;
+      const current = getCurrentTheme();
+      const currentIndex = Math.max(0, available.findIndex((theme) => theme.id === current?.id));
+      const next = available[(currentIndex + 1) % available.length];
+
+      localStorage.setItem('theme-id', next.id);
+      const isDark = getIsDark();
+      applyTheme(next.id, isDark);
+      window.__THEME_ID__ = next.id;
+      updateDisplay();
+    };
+
+    renderThemeOptions();
+
+    const rerender = () => renderThemeOptions();
+    window.addEventListener('themes-unlocked', rerender);
+    window.addEventListener('themes-locked', rerender);
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'theme-id' || e.key === 'theme-mode' || e.key === 'special-themes-visible') {
+        renderThemeOptions();
+      }
+    });
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initFooterThemeControl, { once: true });
+  } else {
+    initFooterThemeControl();
+  }
+
+  document.addEventListener('astro:page-load', initFooterThemeControl);
+</script>
+
+<style>
+  :global(#main-button-footer-theme-control),
+  :global(#dropdown-button-footer-theme-control),
+  :global(#main-button-footer-theme-control .theme-name-display),
+  :global(#footer-theme-control-label),
+  :global(#dropdown-button-footer-theme-control .dropdown-arrow) {
+    color: var(--color-main) !important;
+  }
+</style>

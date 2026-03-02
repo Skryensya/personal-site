@@ -56,10 +56,10 @@ function renderSitemapNode(node: SitemapNode, level: number = 0): string {
   {showHeader && (
     <div>
       <h2 class="text-xl font-mono font-bold text-main border-b border-main pb-2 mb-4">
-        {lang === 'es' ? 'Árbol de contenido' : lang === 'en' ? 'Content Tree' : 'Innholdstre'}
+        {lang === 'es' ? 'Árbol de contenido' : lang === 'en' ? 'Content Tree' : lang === 'no' ? 'Innholdstre' : 'コンテンツツリー'}
       </h2>
       <p class="text-sm font-mono text-main opacity-75 ml-4">
-        {lang === 'es' ? 'Navegación jerárquica de todas las páginas' : lang === 'en' ? 'Hierarchical navigation of all pages' : 'Hierarkisk navigasjon av alle sider'}
+        {lang === 'es' ? 'Navegación jerárquica de todas las páginas' : lang === 'en' ? 'Hierarchical navigation of all pages' : lang === 'no' ? 'Hierarkisk navigasjon av alle sider' : '全ページの階層ナビゲーション'}
       </p>
     </div>
   )}
@@ -68,9 +68,9 @@ function renderSitemapNode(node: SitemapNode, level: number = 0): string {
   
   <div class="mt-8 pt-4 border-t border-main">
     <div class="flex items-center gap-6 font-mono text-xs text-main opacity-75 ml-4">
-      <span>▶ {lang === 'es' ? 'Sección principal' : lang === 'en' ? 'Main section' : 'Hovedseksjon'}</span>
-      <span>├── {lang === 'es' ? 'Página' : lang === 'en' ? 'Page' : 'Side'}</span>
-      <span>└── {lang === 'es' ? 'Última página' : lang === 'en' ? 'Last page' : 'Siste side'}</span>
+      <span>▶ {lang === 'es' ? 'Sección principal' : lang === 'en' ? 'Main section' : lang === 'no' ? 'Hovedseksjon' : 'メインセクション'}</span>
+      <span>├── {lang === 'es' ? 'Página' : lang === 'en' ? 'Page' : lang === 'no' ? 'Side' : 'ページ'}</span>
+      <span>└── {lang === 'es' ? 'Última página' : lang === 'en' ? 'Last page' : lang === 'no' ? 'Siste side' : '最終ページ'}</span>
     </div>
   </div>
 </div>
