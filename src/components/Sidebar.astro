@@ -24,6 +24,10 @@ const homeLabel = t('nav.home');
 <aside
   class={`sticky top-20 w-[240px] min-w-[240px] max-h-[calc(100dvh-28rem)]  flex-shrink-0 hidden md:block overflow-hidden py-6 px-4 ${className}`}
   id="content-sidebar"
+  data-component="sidebar-toc"
+  data-content-id={contentId}
+  data-toc-id={tocId}
+  data-home-label={homeLabel}
   data-lang={lang}
   data-use-clerk={useClerkTOC}
 >
@@ -35,19 +39,69 @@ const homeLabel = t('nav.home');
   ) : null}
 </aside>
 
-<script type="module" is:inline define:vars={{ contentId, tocId, homeLabel }}>
-  import { applyHeadingSlugs } from '/src/utils/heading-slugs.ts';
+<script>
+  import { applyHeadingSlugs } from '@/utils/heading-slugs';
 
   const TOP_OFFSET = 112;
+  const SIDEBAR_SELECTOR = '[data-component="sidebar-toc"]';
 
   const initSidebarToc = () => {
-    const list = document.getElementById(tocId);
+    const sidebar = document.querySelector(SIDEBAR_SELECTOR) as HTMLElement | null;
+    if (!sidebar || sidebar.dataset.useClerk !== 'true') return;
+
+    const contentId = sidebar.dataset.contentId || 'main-content';
+    const tocId = sidebar.dataset.tocId;
+    const homeLabel = sidebar.dataset.homeLabel || 'Home';
+    const list = (tocId ? document.getElementById(tocId) : sidebar.querySelector('ul[id]')) as HTMLUListElement | null;
     if (!list) return;
 
     const getRoot = () => {
       const roots = Array.from(document.querySelectorAll('[data-heading-slug-root]'));
       const exact = roots.find((el) => el.id === contentId);
       return exact || document.getElementById(contentId) || roots[roots.length - 1] || document.querySelector('main');
+    };
+
+    const updateActive = (id: string) => {
+      const anchors = Array.from(list.querySelectorAll<HTMLAnchorElement>('a[data-toc-id]'));
+      anchors.forEach((a) => {
+        const active = a.dataset.tocId === id;
+        a.classList.toggle('text-main', active);
+        a.classList.toggle('font-semibold', active);
+        a.classList.toggle('bg-main/10', active);
+        a.classList.toggle('border-main', active);
+        a.classList.toggle('text-main/70', !active);
+        a.classList.toggle('border-transparent', !active);
+        if (active) a.setAttribute('aria-current', 'location');
+        else a.removeAttribute('aria-current');
+      });
+    };
+
+    const updateByScroll = () => {
+      const sy = window.scrollY || window.pageYOffset;
+      if (sy <= 24) {
+        updateActive('inicio');
+        return;
+      }
+
+      const anchors = Array.from(list.querySelectorAll<HTMLAnchorElement>('a[data-toc-id]'));
+      const entries = anchors
+        .map((a) => a.dataset.tocId)
+        .filter((id): id is string => Boolean(id) && id !== 'inicio')
+        .map((id) => {
+          const el = document.getElementById(id);
+          if (!el) return null;
+          return { id, top: el.getBoundingClientRect().top + sy };
+        })
+        .filter((entry): entry is { id: string; top: number } => Boolean(entry));
+
+      if (!entries.length) {
+        updateActive('inicio');
+        return;
+      }
+
+      const reached = entries.filter((e) => e.top <= sy + TOP_OFFSET + 2);
+      const current = reached.length ? reached.reduce((a, b) => (a.top > b.top ? a : b)) : entries[0];
+      updateActive(current.id);
     };
 
     const build = () => {
@@ -60,9 +114,9 @@ const homeLabel = t('nav.home');
       });
 
       const frag = document.createDocumentFragment();
-      const ids = new Set();
+      const ids = new Set<string>();
 
-      const pushItem = (id, title, depth) => {
+      const pushItem = (id: string, title: string, depth: number) => {
         if (!id || ids.has(id)) return;
         ids.add(id);
 
@@ -100,57 +154,11 @@ const homeLabel = t('nav.home');
       };
 
       pushItem('inicio', homeLabel, 1);
-
-      slugResults.forEach(({ id, text, level }) => {
-        pushItem(id, text, level);
-      });
+      slugResults.forEach(({ id, text, level }) => pushItem(id, text, level));
 
       list.innerHTML = '';
       list.appendChild(frag);
       updateByScroll();
-    };
-
-    const updateActive = (id) => {
-      const anchors = Array.from(list.querySelectorAll('a[data-toc-id]'));
-      anchors.forEach((a) => {
-        const active = a.dataset.tocId === id;
-        a.classList.toggle('text-main', active);
-        a.classList.toggle('font-semibold', active);
-        a.classList.toggle('bg-main/10', active);
-        a.classList.toggle('border-main', active);
-        a.classList.toggle('text-main/70', !active);
-        a.classList.toggle('border-transparent', !active);
-        if (active) a.setAttribute('aria-current', 'location');
-        else a.removeAttribute('aria-current');
-      });
-    };
-
-    const updateByScroll = () => {
-      const sy = window.scrollY || window.pageYOffset;
-      if (sy <= 24) {
-        updateActive('inicio');
-        return;
-      }
-
-      const anchors = Array.from(list.querySelectorAll('a[data-toc-id]'));
-      const entries = anchors
-        .map((a) => a.dataset.tocId)
-        .filter((id) => id && id !== 'inicio')
-        .map((id) => {
-          const el = document.getElementById(id);
-          if (!el) return null;
-          return { id, top: el.getBoundingClientRect().top + sy };
-        })
-        .filter(Boolean);
-
-      if (!entries.length) {
-        updateActive('inicio');
-        return;
-      }
-
-      const reached = entries.filter((e) => e.top <= sy + TOP_OFFSET + 2);
-      const current = reached.length ? reached.reduce((a, b) => (a.top > b.top ? a : b)) : entries[0];
-      updateActive(current.id);
     };
 
     build();
@@ -164,23 +172,26 @@ const homeLabel = t('nav.home');
       });
     };
 
+    const onResize = () => build();
     window.addEventListener('scroll', schedule, { passive: true });
-    window.addEventListener('resize', build, { passive: true });
+    window.addEventListener('resize', onResize, { passive: true });
     window.addEventListener('hashchange', schedule);
 
-    if (!window.__sidebarTocCleanup) window.__sidebarTocCleanup = [];
-    window.__sidebarTocCleanup.push(() => {
+    const win = window as Window & { __sidebarTocCleanup?: Array<() => void> };
+    if (!win.__sidebarTocCleanup) win.__sidebarTocCleanup = [];
+    win.__sidebarTocCleanup.push(() => {
       window.removeEventListener('scroll', schedule);
-      window.removeEventListener('resize', build);
+      window.removeEventListener('resize', onResize);
       window.removeEventListener('hashchange', schedule);
     });
   };
 
   const cleanupSidebarToc = () => {
-    (window.__sidebarTocCleanup || []).forEach((fn) => {
+    const win = window as Window & { __sidebarTocCleanup?: Array<() => void> };
+    (win.__sidebarTocCleanup || []).forEach((fn) => {
       try { fn(); } catch {}
     });
-    window.__sidebarTocCleanup = [];
+    win.__sidebarTocCleanup = [];
   };
 
   cleanupSidebarToc();

@@ -44,8 +44,8 @@ const resolvedContentId = contentId === 'main-content' ? 'main-content-article' 
     />
 </div>
 
-<script is:inline type="module" define:vars={{ resolvedContentId }}>
-    import { initializeHeadingSlugs } from '/src/utils/heading-slugs.ts';
+<script>
+    import { initializeHeadingSlugs } from '@/utils/heading-slugs';
 
-    initializeHeadingSlugs(resolvedContentId);
+    initializeHeadingSlugs();
 </script>

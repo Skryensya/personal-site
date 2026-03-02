@@ -156,12 +156,12 @@ const breadcrumbJsonLd = {
                             <div class=" font-mono font-medium text-main opacity-60 uppercase tracking-wider" style={`view-transition-name: folder-tab-${project.slug}`}>
                                 {name}
                             </div>
-                            <div class="flex items-center gap-2">
+                            <div class="flex items-center gap-2 px-1 py-0.5">
                                 <SevenSegmentDisplay
                                     id="reading-time-display"
                                     value={String(readingMinutes).padStart(2, '0')}
                                     inverted={true}
-                                    className="!min-h-[1.65rem] !min-w-[2.35rem] !px-0.5 !py-0 !gap-[1px] [transform:scaleX(0.82)_scaleY(0.9)]"
+                                    className="!min-h-[1.75rem] !min-w-[2.45rem] !px-0.5 !py-0 !gap-[1px] [transform:scaleX(0.82)_scaleY(0.95)]"
                                 />
                                 <span class="text-[11px] font-mono font-medium text-main/60 uppercase tracking-[0.14em]">{readingTimeText}</span>
                             </div>
