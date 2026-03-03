@@ -3,9 +3,10 @@
 A multilingual portfolio for product designer and creative technologist Allison Peña. The site curates projects, writing, and an interactive CV with a brutalist-inspired visual system. It is built with Astro for hybrid rendering, React for dynamic components, and Tailwind for consistent styling.
 
 ## Highlights
-- Three fully localized experiences (Spanish default, English, Norwegian) delivered with Astro content collections and shared layouts.
-- Interactive project browsing (table, carousel, tags) powered by React components and MDX-driven content.
-- Printable curriculum, accessibility statement, and design system pages generated from the same content pipeline.
+- Four fully localized experiences (Spanish default, English, Norwegian, Japanese) delivered with Astro content collections and shared layouts.
+- Interactive project browsing (table, carousel, tags) powered by Astro/React components and MDX-driven content.
+- Printable resume, accessibility statement, and design system pages generated from the same content pipeline.
+- Language-aware SEO (`hreflang` alternates + sitemap entries) across localized routes.
 - Image optimization, favicon management, and caching tuned for Vercel via `vercel.json`.
 
 ## Tech Stack
@@ -54,7 +55,7 @@ tests/               # Playwright E2E suites grouped by feature
 ```
 
 ## Content & Internationalization
-- Add or update strings in `src/i18n/ui.ts` and ship translations for `es`, `en`, and `no` together.
+- Add or update strings in `src/i18n/ui.ts` and ship translations for `es`, `en`, `no`, and `ja` together.
 - MDX content lives in `src/content`; align frontmatter across locales and leverage React components when needed.
 - Store public-facing assets in `public/` and reference them with absolute paths such as `/img/...`.
 
@@ -67,7 +68,6 @@ tests/               # Playwright E2E suites grouped by feature
 - The project is optimized for Vercel. `vercel.json` controls long-term caching for Astro assets, fonts, media, and PDFs.
 - Build outputs are static; ensure environment secrets (if introduced) are defined through Vercel project settings.
 
-## Documentation & Contributing
-- Contributor workflows, commands, and expectations are documented in [`AGENTS.md`](AGENTS.md).
+## Documentation
+- Project workflows, commands, and repository conventions are documented in [`AGENTS.md`](AGENTS.md).
 - Visual design language and component rules live in [`STYLE_GUIDE.md`](STYLE_GUIDE.md).
-- When opening a PR, include screenshots or recordings for UI changes in at least two locales and link relevant issues.

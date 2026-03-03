@@ -54,6 +54,8 @@ export const no = {
     'hero.cards.backend.description': 'Node.js, Python, APIer',
     'hero.cards.design.title': 'Design',
     'hero.cards.design.description': 'UI/UX, Figma, Prototyping',
+    'hero.cards.accessibility.title': 'Tilgjengelighet',
+    'hero.cards.accessibility.description': 'WCAG, tastatur, inkluderende UX',
 
     // About section redesign
     'about.subtitle': 'Fullstack-utvikler med erfaring i å lage tilgjengelige og funksjonelle digitale produkter',
@@ -338,14 +340,14 @@ export const no = {
     'designSystem.colors.opacity.secondaryOverMain': 'Sekundær over hoved',
     'designSystem.colors.themes.title': 'Temasystem',
     'designSystem.colors.themes.intro':
-        'Hvert tema definerer to farger: <strong>colorful</strong> (levende/aksentfarge) og <strong>contrasty</strong> (mørk/bakgrunnsfarge). I lys modus blir colorful til --color-main (tekst/kanter) og contrasty blir til --color-secondary (bakgrunner). I mørk modus bytter de: contrasty blir til --color-main og colorful blir til --color-secondary. På denne måten opprettholder systemet høy kontrast i begge moduser ved å bruke bare to farger per tema.',
+        'Hvert tema definerer to farger: <strong>aksentfarge</strong> (levende farge) og <strong>kontrastfarge</strong> (bakgrunn/støttefarge). I lys modus blir aksentfarge til --color-main (tekst/kanter) og kontrastfarge til --color-secondary (bakgrunner). I mørk modus bytter de. Slik holder systemet høy kontrast i begge moduser med bare to farger per tema.',
     'designSystem.colors.themes.available': 'Tilgjengelige temaer',
     'designSystem.colors.themes.helper': 'Utforsk standardtemaene og aktiver dem for å se paletten i bruk.',
-    'designSystem.colors.themes.colorful': 'colorful',
-    'designSystem.colors.themes.contrasty': 'contrasty',
+    'designSystem.colors.themes.colorful': 'aksentfarge',
+    'designSystem.colors.themes.contrasty': 'kontrastfarge',
     'designSystem.colors.themes.contrast': 'Kontrast',
     'designSystem.colors.visualizer.title': 'Temavisualisering',
-    'designSystem.colors.visualizer.intro': 'Øverste linje: råfargene i aktivt tema (colorful og contrasty). Nederste linje: hvordan de samme fargene fordeles mellom main og secondary i lys eller mørk modus.',
+    'designSystem.colors.visualizer.intro': 'Øverste linje: grunnfargene i aktivt tema (aksentfarge og kontrastfarge). Nederste linje: hvordan de samme fargene fordeles mellom main og secondary i lys eller mørk modus.',
     'designSystem.colors.visualizer.currentTheme': 'Aktivt tema',
     'designSystem.colors.visualizer.sourceLine': 'Temalinje',
     'designSystem.colors.visualizer.roleLine': 'Rollelinje',

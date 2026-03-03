@@ -92,7 +92,7 @@ const navItems = [
       <div class="flex lg:hidden  items-center flex-1 relative">
         <button
           id="skip-to-content-mobile"
-          class="ml-4 w-0 px-0 h-8 overflow-hidden opacity-0 border-0 bg-secondary text-main font-grotesk font-bold text-sm uppercase tracking-wide cursor-pointer border-double whitespace-nowrap flex items-center justify-center focus-visible:w-auto focus-visible:px-2 focus-visible:opacity-100 focus-visible:border-2 focus-visible:border-main focus-visible:shadow-[inset_0_0_0_2px_var(--color-secondary)] focus-visible:hover:bg-main focus-visible:hover:text-secondary motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-out"
+          class="absolute left-0 z-[60] w-0 px-0 h-8 overflow-hidden opacity-0 border-0 bg-secondary text-main font-grotesk font-bold text-sm uppercase tracking-wide cursor-pointer border-double whitespace-nowrap flex items-center justify-center focus:w-auto focus:px-2 focus:opacity-100 focus:border-2 focus:border-main focus:shadow-[inset_0_0_0_2px_var(--color-secondary)] focus:bg-main focus:text-secondary focus-visible:w-auto focus-visible:px-2 focus-visible:opacity-100 focus-visible:border-2 focus-visible:border-main focus-visible:shadow-[inset_0_0_0_2px_var(--color-secondary)] focus-visible:bg-main focus-visible:text-secondary motion-safe:transition-all motion-safe:duration-300 motion-safe:ease-out"
           aria-label={t('nav.skipToContent')}
         >
           {t('nav.skipToContentShort')}
@@ -101,7 +101,7 @@ const navItems = [
           href={getHomeUrl(currentLocale)}
           size="sm"
           filled={isHomePage}
-          class="flex items-center gap-1.5"
+          class="flex items-center gap-1.5 relative z-10 focus-visible:z-20"
           data-nav-link
           aria-current={isHomePage ? 'page' : undefined}
         >
@@ -110,7 +110,9 @@ const navItems = [
         <button
           type="button"
           id="mobile-menu-trigger"
-          class="lg:hidden ml-auto px-2 py-1 h-8 bg-secondary border-double border-2 border-main text-main hover:bg-main hover:text-secondary flex items-center gap-1 font-bold tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)] focus:outline-none [@media(hover:hover)]:focus:outline-none [&.menu-open]:focus:outline-3 [&.menu-open]:focus:outline-main [&.menu-open]:focus:outline-offset-3"
+          aria-controls="mobile-dropdown"
+          aria-expanded="false"
+          class="lg:hidden ml-auto px-2 py-1 h-8 bg-secondary border-double border-2 border-main text-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary flex items-center gap-1 font-bold tracking-wide cursor-pointer whitespace-nowrap justify-center shadow-[inset_0_0_0_2px_var(--color-secondary)]"
         >
           <svg id="hamburger-icon" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <line x1="4" x2="20" y1="12" y2="12"/>
@@ -427,6 +429,7 @@ const navItems = [
         hamburgerIcon?.classList.remove('hidden');
         closeIcon?.classList.add('hidden');
         button.classList.remove('menu-open');
+        button.setAttribute('aria-expanded', 'false');
 
         // Set tabindex=-1 for all interactive elements when closed
         const interactiveElements = dropdown.querySelectorAll('button, a, [tabindex]');
@@ -444,6 +447,7 @@ const navItems = [
         hamburgerIcon?.classList.add('hidden');
         closeIcon?.classList.remove('hidden');
         button.classList.add('menu-open');
+        button.setAttribute('aria-expanded', 'true');
 
         // Remove tabindex=-1 from interactive elements when open
         const interactiveElements = dropdown.querySelectorAll('button, a, [tabindex="-1"]');
@@ -554,13 +558,21 @@ const navItems = [
       const langCenter = document.getElementById('mobile-lang-center');
       
       // Theme navigation
+      const buildThemeShortcutEvent = (key) => {
+        const ua = navigator.userAgent || '';
+        const platform = navigator.platform || '';
+        const isAppleDevice = /mac|iphone|ipad|ipod/i.test(`${platform} ${ua}`);
+        return new KeyboardEvent('keydown', {
+          key,
+          metaKey: isAppleDevice,
+          ctrlKey: !isAppleDevice,
+        });
+      };
+
       if (themePrev) {
         themePrev.onclick = function() {
           // Use keyboard shortcut for previous theme
-          const event = new KeyboardEvent('keydown', { 
-            key: 'ArrowLeft', 
-            metaKey: true 
-          });
+          const event = buildThemeShortcutEvent('ArrowLeft');
           document.dispatchEvent(event);
           setTimeout(updateMobileThemeDisplay, 10);
         };
@@ -569,10 +581,7 @@ const navItems = [
       if (themeNext) {
         themeNext.onclick = function() {
           // Use keyboard shortcut for next theme
-          const event = new KeyboardEvent('keydown', { 
-            key: 'ArrowRight', 
-            metaKey: true 
-          });
+          const event = buildThemeShortcutEvent('ArrowRight');
           document.dispatchEvent(event);
           setTimeout(updateMobileThemeDisplay, 10);
         };
@@ -581,10 +590,7 @@ const navItems = [
       if (themeCenter) {
         themeCenter.onclick = function() {
           // Use keyboard shortcut for next theme (same as next button)
-          const event = new KeyboardEvent('keydown', { 
-            key: 'ArrowRight', 
-            metaKey: true 
-          });
+          const event = buildThemeShortcutEvent('ArrowRight');
           document.dispatchEvent(event);
           setTimeout(updateMobileThemeDisplay, 10);
         };
@@ -863,4 +869,14 @@ const navItems = [
     position: relative !important;
   }
 
+  /* Force keyboard focus state to match hover visuals */
+  :global([data-nav-link]:focus),
+  :global([data-nav-link]:focus-visible),
+  :global(#skip-to-content-desktop:focus),
+  :global(#skip-to-content-desktop:focus-visible),
+  :global(#skip-to-content-mobile:focus),
+  :global(#skip-to-content-mobile:focus-visible) {
+    background: var(--color-main) !important;
+    color: var(--color-secondary) !important;
+  }
 </style>

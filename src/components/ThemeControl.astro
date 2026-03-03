@@ -588,11 +588,16 @@ const localizedThemeNames = Object.fromEntries(
           return;
         }
 
+        const ua = navigator.userAgent || '';
+        const platform = navigator.platform || '';
+        const isAppleDevice = /mac|iphone|ipad|ipod/i.test(`${platform} ${ua}`);
+        const modifierPressed = isAppleDevice ? e.metaKey : e.ctrlKey;
+
         // Left/Right arrow keys for theme navigation
-        if (e.key === 'ArrowLeft' && (e.metaKey || e.ctrlKey)) {
+        if (e.key === 'ArrowLeft' && modifierPressed) {
           e.preventDefault();
           this.prevTheme();
-        } else if (e.key === 'ArrowRight' && (e.metaKey || e.ctrlKey)) {
+        } else if (e.key === 'ArrowRight' && modifierPressed) {
           e.preventDefault();
           this.nextTheme();
         }

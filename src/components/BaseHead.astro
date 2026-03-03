@@ -17,6 +17,7 @@ export type Props = {
 const { description = '', image = siteConfig.image, pageType = 'website', lang = 'es', noindex = false, structuredData } = Astro.props;
 const title = [Astro.props.title, siteConfig.title].filter(Boolean).join(' | ');
 const effectiveDescription = description?.trim() || siteConfig.description?.trim() || siteConfig.subtitle || 'Portfolio';
+const contentLanguage = lang === 'es' ? 'es-ES' : lang === 'en' ? 'en-US' : lang === 'no' ? 'nb-NO' : 'ja-JP';
 
 const resolvedImage = image?.src
     ? {
@@ -97,14 +98,14 @@ const additionalStructuredData = Array.isArray(structuredData)
 
 <link rel="dns-prefetch" href="https://api.github.com" />
 
-<link rel="icon" type="image/x-icon" href="/img/favicon/favicon-dos-dark.ico" />
-<link rel="shortcut icon" type="image/x-icon" href="/img/favicon/favicon-dos-dark.ico" />
+<link id="favicon" rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg" />
 <link rel="sitemap" href="/sitemap.xml" />
 <link rel="alternate" type="application/rss+xml" href="/rss.xml" title="RSS" />
 
 <link rel="canonical" href={formatCanonicalURL(canonicalURL)} />
 <meta name="description" content={effectiveDescription} />
 <meta name="language" content={lang} />
+<meta http-equiv="content-language" content={contentLanguage} />
 {noindex && <meta name="robots" content="noindex,follow" />}
 
 <link rel="alternate" hreflang="es" href={alternateURLs.es} />

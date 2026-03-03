@@ -14,7 +14,7 @@ import WaveDivider from '@/components/WaveDivider.astro';
 import SevenSegmentDisplay from '@/components/ui/seven-segment/SevenSegmentDisplay.astro';
 import LiveClockDisplay from '@/components/ui/seven-segment/LiveClockDisplay.astro';
 import FooterNavigationList from '@/components/FooterNavigationList.astro';
-import { Command, Option, ArrowUpToLine, CornerDownLeft, ArrowRight } from 'lucide-react';
+import { Option, ArrowRight, ArrowBigUp } from 'lucide-react';
 
 interface Props {
     lang?: Language;
@@ -699,35 +699,76 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                 <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
                     {lang === 'es' ? 'Ejemplos de teclas' : lang === 'no' ? 'Taste-eksempler' : lang === 'ja' ? 'キーキャップ例' : 'Keycap examples'}
                 </div>
-                <div class="p-4 space-y-4">
-                    <div class="flex flex-wrap items-center gap-2" id="kbd-live-demo">
-                        <Kbd class="!w-auto !min-w-[2.55rem] !px-2" data-kbd-live="true" data-kbd-key="control" data-kbd-code="controlleft">Ctrl</Kbd>
-                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><Command className="kbd-mod-icon" size={13} /></Kbd>
-                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="alt" data-kbd-code="altleft"><Option className="kbd-mod-icon" size={13} /></Kbd>
-                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="shift" data-kbd-code="shiftleft"><ArrowUpToLine className="kbd-mod-icon" size={13} /></Kbd>
-                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="enter" data-kbd-code="enter"><CornerDownLeft className="kbd-mod-icon" size={13} /></Kbd>
-                        <Kbd class="!w-auto !min-w-[2.25rem] !px-2" data-kbd-live="true" data-kbd-key="escape" data-kbd-code="escape">Esc</Kbd>
-                    </div>
+                <div class="p-4">
+                    <div class="grid gap-6 lg:grid-cols-2">
+                        <div class="space-y-2.5">
+                            <h3 class="font-mono uppercase tracking-wider text-xs font-bold text-main/70">
+                                {lang === 'es' ? 'Showcase' : lang === 'no' ? 'Utstilling' : 'Showcase'}
+                            </h3>
+                            <div id="kbd-live-demo" class="space-y-2.5">
+                                <div class="flex flex-wrap items-center gap-2">
+                                    <Kbd data-kbd-only-apple class="hidden !w-auto !min-w-[2.55rem] !px-2" data-kbd-live="true" data-kbd-key="control" data-kbd-code="controlleft">Ctrl</Kbd>
+                                    <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">Ctrl</span></Kbd>
+                                    <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="alt" data-kbd-code="altleft"><Option className="kbd-mod-icon" size={13} /></Kbd>
+                                    <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="shift" data-kbd-code="shiftleft"><ArrowBigUp className="kbd-mod-icon" size={16} /></Kbd>
+                                </div>
 
-                    <div class="flex flex-wrap items-center gap-2 text-main/80">
-                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><Command className="kbd-mod-icon" size={13} /></Kbd>
-                        <span class="font-mono text-xs">+</span>
-                        <Kbd data-kbd-live="true" data-kbd-key="f" data-kbd-code="keyf">F</Kbd>
-                        <span class="font-mono text-xs">·</span>
-                        <Kbd class="!w-auto !min-w-[2.25rem] !px-2" data-kbd-live="true" data-kbd-key="escape" data-kbd-code="escape">Esc</Kbd>
-                    </div>
+                                <div class="flex flex-wrap items-center gap-2 text-main/80">
+                                    <Kbd data-konami-key="arrowup" class="!w-[2.2rem] !h-[2.2rem]"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(-90deg)' }} /></Kbd>
+                                    <Kbd data-konami-key="arrowdown" class="!w-[2.2rem] !h-[2.2rem]"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(90deg)' }} /></Kbd>
+                                    <Kbd data-konami-key="arrowleft" class="!w-[2.2rem] !h-[2.2rem]"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(180deg)' }} /></Kbd>
+                                    <Kbd data-konami-key="arrowright" class="!w-[2.2rem] !h-[2.2rem]"><ArrowRight className="kbd-arrow-icon" size={10} /></Kbd>
+                                </div>
 
-                    <div class="flex flex-wrap items-center gap-2" id="kbd-konami-demo">
-                        <Kbd data-konami-step="0" data-konami-key="arrowup"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(-90deg)' }} /></Kbd>
-                        <Kbd data-konami-step="1" data-konami-key="arrowup"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(-90deg)' }} /></Kbd>
-                        <Kbd data-konami-step="2" data-konami-key="arrowdown"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(90deg)' }} /></Kbd>
-                        <Kbd data-konami-step="3" data-konami-key="arrowdown"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(90deg)' }} /></Kbd>
-                        <Kbd data-konami-step="4" data-konami-key="arrowleft"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(180deg)' }} /></Kbd>
-                        <Kbd data-konami-step="5" data-konami-key="arrowright"><ArrowRight className="kbd-arrow-icon" size={10} /></Kbd>
-                        <Kbd data-konami-step="6" data-konami-key="arrowleft"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(180deg)' }} /></Kbd>
-                        <Kbd data-konami-step="7" data-konami-key="arrowright"><ArrowRight className="kbd-arrow-icon" size={10} /></Kbd>
-                        <Kbd data-konami-step="8" data-konami-key="b">B</Kbd>
-                        <Kbd data-konami-step="9" data-konami-key="a">A</Kbd>
+                                <div class="flex flex-wrap items-center gap-2 text-main/80">
+                                    <Kbd data-konami-key="b" data-kbd-live="true" data-kbd-key="b" data-kbd-code="keyb">B</Kbd>
+                                    <Kbd data-konami-key="a" data-kbd-live="true" data-kbd-key="a" data-kbd-code="keya">A</Kbd>
+                                    <Kbd class="!w-auto !min-w-[2.25rem] !px-2" data-kbd-live="true" data-kbd-key="enter" data-kbd-code="enter">Enter</Kbd>
+                                    <Kbd class="!w-auto !min-w-[2.25rem] !px-2" data-kbd-live="true" data-kbd-key="tab" data-kbd-code="tab">Tab</Kbd>
+                                    <Kbd class="!w-auto !min-w-[2.25rem] !px-2" data-kbd-live="true" data-kbd-key="escape" data-kbd-code="escape">Esc</Kbd>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2.5 border border-transparent lg:pl-2" id="kbd-action-examples">
+                            <div class="grid gap-3 sm:grid-cols-2 text-main/80">
+                                <div class="space-y-2.5">
+                                    <div class="font-mono uppercase tracking-wider text-xs font-bold text-main/70">{lang === 'es' ? 'Tema anterior' : lang === 'no' ? 'Forrige tema' : 'Prev theme'}</div>
+                                    <div class="flex items-center gap-2">
+                                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">Ctrl</span></Kbd>
+                                        <span class="font-mono text-base leading-none font-bold">+</span>
+                                        <Kbd data-kbd-live="true" data-kbd-key="arrowleft" data-kbd-code="arrowleft"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(180deg)' }} /></Kbd>
+                                    </div>
+                                </div>
+                                <div class="space-y-2.5">
+                                    <div class="font-mono uppercase tracking-wider text-xs font-bold text-main/70">{lang === 'es' ? 'Tema siguiente' : lang === 'no' ? 'Neste tema' : 'Next theme'}</div>
+                                    <div class="flex items-center gap-2">
+                                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">Ctrl</span></Kbd>
+                                        <span class="font-mono text-base leading-none font-bold">+</span>
+                                        <Kbd data-kbd-live="true" data-kbd-key="arrowright" data-kbd-code="arrowright"><ArrowRight className="kbd-arrow-icon" size={10} /></Kbd>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid gap-3 sm:grid-cols-2 text-main/80">
+                                <div class="space-y-2.5">
+                                    <div class="font-mono uppercase tracking-wider text-xs font-bold text-main/70">{lang === 'es' ? 'Copiar' : lang === 'no' ? 'Kopier' : 'Copy'}</div>
+                                    <div class="flex items-center gap-2">
+                                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">Ctrl</span></Kbd>
+                                        <span class="font-mono text-base leading-none font-bold">+</span>
+                                        <Kbd data-kbd-live="true" data-kbd-key="c" data-kbd-code="keyc">C</Kbd>
+                                    </div>
+                                </div>
+                                <div class="space-y-2.5">
+                                    <div class="font-mono uppercase tracking-wider text-xs font-bold text-main/70">{lang === 'es' ? 'Pegar' : lang === 'no' ? 'Lim inn' : 'Paste'}</div>
+                                    <div class="flex items-center gap-2">
+                                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">Ctrl</span></Kbd>
+                                        <span class="font-mono text-base leading-none font-bold">+</span>
+                                        <Kbd data-kbd-live="true" data-kbd-key="v" data-kbd-code="keyv">V</Kbd>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -735,72 +776,247 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
 
         <script>
             const initKonamiKbdDemo = () => {
-                const container = document.getElementById('kbd-konami-demo');
-                if (!container) return;
+                const section = document.getElementById('kbd');
+                if (!section) return;
 
-                const steps = Array.from(container.querySelectorAll('[data-konami-step]'));
-                if (!steps.length) return;
+                const pieces = Array.from(section.querySelectorAll('[data-konami-key]'));
+                if (!pieces.length) return;
 
                 const sequence = ['arrowup', 'arrowup', 'arrowdown', 'arrowdown', 'arrowleft', 'arrowright', 'arrowleft', 'arrowright', 'b', 'a'];
                 const liveKeys = Array.from(document.querySelectorAll('#kbd [data-kbd-live]'));
+                const allExampleKbd = Array.from(document.querySelectorAll('#kbd .kbd'));
 
-                window.__kbdKonamiSteps = steps;
+                window.__kbdKonamiSteps = pieces;
                 window.__kbdLiveKeys = liveKeys;
 
-                const markProgress = (count) => {
-                    const currentSteps = window.__kbdKonamiSteps || [];
-                    currentSteps.forEach((el, i) => {
-                        if (i < count) el.classList.add('kbd-pressed');
-                        else el.classList.remove('kbd-pressed');
+                const ua = navigator.userAgent || '';
+                const platform = navigator.platform || '';
+                const isAppleDevice = /mac|iphone|ipad|ipod/i.test(`${platform} ${ua}`);
+
+                section.querySelectorAll('[data-kbd-platform-apple]').forEach((el) => {
+                    el.classList.toggle('hidden', !isAppleDevice);
+                });
+                section.querySelectorAll('[data-kbd-platform-win]').forEach((el) => {
+                    el.classList.toggle('hidden', isAppleDevice);
+                });
+                section.querySelectorAll('[data-kbd-only-apple]').forEach((el) => {
+                    el.classList.toggle('hidden', !isAppleDevice);
+                });
+
+                // Platform-specific modifier behavior for examples:
+                // macOS/iOS => Command only, others => Control only
+                section.querySelectorAll('[data-kbd-key="meta|control"]').forEach((el) => {
+                    el.setAttribute('data-kbd-key', isAppleDevice ? 'meta' : 'control');
+                    el.setAttribute('data-kbd-code', isAppleDevice ? 'metaleft|metaright' : 'controlleft|controlright');
+                });
+
+                let kbdClickAudio = null;
+                const getKbdClickAudio = () => {
+                    if (kbdClickAudio) return kbdClickAudio;
+                    kbdClickAudio = new Audio('/buttonPress.wav');
+                    kbdClickAudio.volume = 0.25;
+                    kbdClickAudio.preload = 'none';
+                    return kbdClickAudio;
+                };
+
+                let lastKbdSoundAt = 0;
+                const KBD_SOUND_COOLDOWN_MS = 90;
+
+                const playKbdClickSound = () => {
+                    const now = performance.now();
+                    if (now - lastKbdSoundAt < KBD_SOUND_COOLDOWN_MS) return;
+                    lastKbdSoundAt = now;
+
+                    try {
+                        const audio = getKbdClickAudio();
+                        audio.currentTime = 0;
+                        audio.play().catch(() => {});
+                    } catch (_) {}
+                };
+
+                const transientPressTimers = new WeakMap();
+
+                const keyLabelMap = {
+                    arrowup: 'Arrow Up',
+                    arrowdown: 'Arrow Down',
+                    arrowleft: 'Arrow Left',
+                    arrowright: 'Arrow Right',
+                    escape: 'Escape',
+                    enter: 'Enter',
+                    tab: 'Tab',
+                    shift: 'Shift',
+                    alt: 'Alt',
+                    control: 'Control',
+                    meta: 'Command',
+                };
+
+                const inferKbdTitle = (el) => {
+                    const konamiKey = String(el.getAttribute('data-konami-key') || '').toLowerCase();
+                    if (konamiKey) return keyLabelMap[konamiKey] || konamiKey.toUpperCase();
+
+                    const dataKey = String(el.getAttribute('data-kbd-key') || '').toLowerCase();
+                    if (dataKey) {
+                        const first = dataKey.split('|')[0]?.trim() || dataKey;
+                        if (first === 'meta') return 'Command';
+                        return keyLabelMap[first] || first.toUpperCase();
+                    }
+
+                    const text = (el.textContent || '').trim();
+                    if (text) return text;
+
+                    const dataCode = String(el.getAttribute('data-kbd-code') || '').toLowerCase();
+                    if (dataCode) return dataCode.toUpperCase();
+
+                    return 'Key';
+                };
+
+                allExampleKbd.forEach((kbdEl) => {
+                    const el = kbdEl;
+                    el.style.cursor = 'pointer';
+
+                    if (!el.getAttribute('title')) {
+                        const title = inferKbdTitle(el);
+                        el.setAttribute('title', title);
+                        if (!el.getAttribute('aria-label')) {
+                            el.setAttribute('aria-label', title);
+                        }
+                    }
+
+                    if (el.dataset.kbdClickBound === 'true') return;
+                    el.dataset.kbdClickBound = 'true';
+
+                    const press = () => {
+                        el.classList.add('kbd-clicking');
+
+                        const prev = transientPressTimers.get(el);
+                        if (prev) clearTimeout(prev);
+                        const timeoutId = setTimeout(() => {
+                            el.classList.remove('kbd-clicking');
+                            el.classList.remove('kbd-pressed');
+                        }, 180);
+                        transientPressTimers.set(el, timeoutId);
+                    };
+
+                    const release = () => {
+                        el.classList.remove('kbd-clicking');
+                    };
+
+                    el.addEventListener('pointerdown', press);
+                    el.addEventListener('click', () => {
+                        playKbdClickSound();
                     });
+                    el.addEventListener('pointerup', release);
+                    el.addEventListener('pointerleave', release);
+                    el.addEventListener('pointercancel', release);
+                });
+
+                const markProgress = (count) => {
+                    section.setAttribute('data-konami-progress', String(count));
                 };
 
                 const setKonamiPressed = (eventKey, pressed) => {
                     const key = String(eventKey || '').toLowerCase();
                     const currentSteps = window.__kbdKonamiSteps || [];
-                    const progress = Number(window.__kbdKonamiProgress || 0);
 
-                    if (pressed) {
-                        let target = currentSteps.find((el, i) => {
-                            if (i < progress) return false;
-                            const matchKey = String(el.getAttribute('data-konami-key') || '').toLowerCase();
-                            return matchKey && matchKey === key;
-                        });
-
-                        if (!target) {
-                            target = currentSteps.find((el) => {
-                                const matchKey = String(el.getAttribute('data-konami-key') || '').toLowerCase();
-                                return matchKey && matchKey === key;
-                            });
-                        }
-
-                        if (target) target.classList.add('kbd-pressed');
-                        return;
-                    }
-
-                    currentSteps.forEach((el, i) => {
+                    currentSteps.forEach((el) => {
                         const matchKey = String(el.getAttribute('data-konami-key') || '').toLowerCase();
                         if (!matchKey || matchKey !== key) return;
-                        if (i >= progress) el.classList.remove('kbd-pressed');
+                        if (pressed) el.classList.add('kbd-pressed');
+                        else el.classList.remove('kbd-pressed');
                     });
                 };
 
+                const normalizeKey = (rawKey) => {
+                    const key = String(rawKey || '').toLowerCase();
+                    if (key === 'os' || key === 'super' || key === 'command') return 'meta';
+                    if (key === 'ctrl') return 'control';
+                    return key;
+                };
+
+                const liveReleaseTimers = new WeakMap();
+
                 const setLivePressed = (eventKey, eventCode, pressed) => {
-                    const key = String(eventKey || '').toLowerCase();
+                    const key = normalizeKey(eventKey);
                     const code = String(eventCode || '').toLowerCase();
                     const currentLiveKeys = window.__kbdLiveKeys || [];
+                    const isModifier = key === 'meta' || key === 'control' || key === 'alt' || key === 'shift';
 
                     currentLiveKeys.forEach((el) => {
                         const matchKey = String(el.getAttribute('data-kbd-key') || '').toLowerCase();
                         const matchCode = String(el.getAttribute('data-kbd-code') || '').toLowerCase();
-                        const keyCandidates = matchKey ? matchKey.split('|').map((k) => k.trim()) : [];
+                        const keyCandidates = matchKey ? matchKey.split('|').map((k) => normalizeKey(k.trim())) : [];
                         const codeCandidates = matchCode ? matchCode.split('|').map((c) => c.trim()) : [];
                         const matches = keyCandidates.includes(key) || codeCandidates.includes(code);
 
                         if (!matches) return;
-                        if (pressed) el.classList.add('kbd-pressed');
-                        else el.classList.remove('kbd-pressed');
+                        if (pressed) {
+                            el.classList.add('kbd-pressed');
+
+                            // Keep modifier keys pressed while held (Command/Ctrl/Alt/Shift)
+                            if (isModifier) {
+                                const prev = liveReleaseTimers.get(el);
+                                if (prev) clearTimeout(prev);
+                                return;
+                            }
+
+                            const prev = liveReleaseTimers.get(el);
+                            if (prev) clearTimeout(prev);
+                            const timeoutId = setTimeout(() => {
+                                el.classList.remove('kbd-pressed');
+                            }, 260);
+                            liveReleaseTimers.set(el, timeoutId);
+                        } else {
+                            const prev = liveReleaseTimers.get(el);
+                            if (prev) clearTimeout(prev);
+                            el.classList.remove('kbd-pressed');
+                        }
                     });
+                };
+
+                const completeKonamiSequence = () => {
+                    if (window.__kbdKonamiCelebrating) return;
+                    window.__kbdKonamiCelebrating = true;
+
+                    const trigger = window.__TRIGGER_KONAMI__;
+                    if (typeof trigger === 'function') {
+                        trigger();
+                    }
+
+                    if (window.__kbdKonamiResetTimer) {
+                        clearTimeout(window.__kbdKonamiResetTimer);
+                    }
+
+                    window.__kbdKonamiResetTimer = setTimeout(() => {
+                        window.__kbdKonamiProgress = 0;
+                        window.__kbdKonamiCelebrating = false;
+                        markProgress(0);
+                    }, 1000);
+                };
+
+                const advanceKonamiProgress = (key) => {
+                    if (window.__kbdKonamiCelebrating) return;
+
+                    let progress = Number(window.__kbdKonamiProgress || 0);
+                    if (progress >= sequence.length) return;
+
+                    if (key === sequence[progress]) {
+                        progress += 1;
+                        window.__kbdKonamiProgress = progress;
+                        markProgress(progress);
+
+                        if (progress === sequence.length) {
+                            completeKonamiSequence();
+                        }
+                        return;
+                    }
+
+                    if (key === sequence[0]) {
+                        window.__kbdKonamiProgress = 1;
+                        markProgress(1);
+                    } else {
+                        window.__kbdKonamiProgress = 0;
+                        markProgress(0);
+                    }
                 };
 
                 if (window.__kbdKonamiBound) {
@@ -810,6 +1026,24 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
 
                 window.__kbdKonamiProgress = window.__kbdKonamiProgress || 0;
                 markProgress(Number(window.__kbdKonamiProgress || 0));
+
+                // Tap/click support for mobile and desktop demos
+                pieces.forEach((pieceEl) => {
+                    const el = pieceEl;
+                    if (el.dataset.konamiTapBound === 'true') return;
+                    el.dataset.konamiTapBound = 'true';
+
+                    const activatePiece = (event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+
+                        const key = String(el.getAttribute('data-konami-key') || '').toLowerCase();
+                        if (!key) return;
+                        advanceKonamiProgress(key);
+                    };
+
+                    el.addEventListener('click', activatePiece);
+                });
 
                 if (!window.__kbdKonamiBound) {
                     window.__kbdKonamiBound = true;
@@ -821,57 +1055,47 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                         setLivePressed('shift', 'shiftleft', pressed && !!e.shiftKey);
                     };
 
-                    const onKeyDown = (e) => {
-                        if (e.repeat) return;
+                    const setMetaButtonsPressed = (pressed) => {
+                        const metaButtons = section.querySelectorAll('[data-kbd-live][data-kbd-key*="meta"]');
+                        metaButtons.forEach((el) => {
+                            el.classList.toggle('kbd-pressed', !!pressed);
+                        });
+                    };
 
+                    const onKeyDown = (e) => {
                         const key = String(e.key || '').toLowerCase();
                         const code = String(e.code || '').toLowerCase();
+
+                        // Always register modifier presses (especially Meta/Command)
+                        if (key === 'meta' || code === 'metaleft' || code === 'metaright' || e.metaKey) {
+                            setLivePressed('meta', code || 'metaleft', true);
+                            setModifierPressedStateFromEvent(e, true);
+                            setMetaButtonsPressed(true);
+                        }
+
+                        if (e.repeat) return;
+
                         setLivePressed(key, code, true);
                         setModifierPressedStateFromEvent(e, true);
                         setKonamiPressed(key, true);
+                        advanceKonamiProgress(key);
+                    };
 
-                        if (window.__kbdKonamiCelebrating) return;
-
-                        let progress = Number(window.__kbdKonamiProgress || 0);
-
-                        if (progress >= sequence.length) return;
-
-                        if (key === sequence[progress]) {
-                            progress += 1;
-                            window.__kbdKonamiProgress = progress;
-                            markProgress(progress);
-
-                            if (progress === sequence.length) {
-                                // Let the global Konami handler (initKonami) own unlock + confetti logic
-                                // to avoid double-toggle and accidental lock without confetti.
-                                window.__kbdKonamiCelebrating = true;
-
-                                if (window.__kbdKonamiResetTimer) {
-                                    clearTimeout(window.__kbdKonamiResetTimer);
-                                }
-
-                                window.__kbdKonamiResetTimer = setTimeout(() => {
-                                    window.__kbdKonamiProgress = 0;
-                                    window.__kbdKonamiCelebrating = false;
-                                    markProgress(0);
-                                }, 1000);
-                            }
-
-                            return;
-                        }
-
-                        if (key === sequence[0]) {
-                            window.__kbdKonamiProgress = 1;
-                            markProgress(1);
-                        } else {
-                            window.__kbdKonamiProgress = 0;
-                            markProgress(0);
+                    const onKeyPress = (e) => {
+                        // Fallback listener requested for Command key presses
+                        const key = String(e.key || '').toLowerCase();
+                        const code = String(e.code || '').toLowerCase();
+                        if (key === 'meta' || code === 'metaleft' || code === 'metaright' || e.metaKey) {
+                            setLivePressed('meta', code || 'metaleft', true);
+                            setModifierPressedStateFromEvent(e, true);
+                            setMetaButtonsPressed(true);
                         }
                     };
 
                     const onKeyUp = (e) => {
                         setLivePressed(e.key, e.code, false);
                         setModifierPressedStateFromEvent(e, true);
+                        setMetaButtonsPressed(!!e.metaKey);
                         setKonamiPressed(e.key, false);
                         markProgress(Number(window.__kbdKonamiProgress || 0));
                     };
@@ -881,12 +1105,21 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                         const currentSteps = window.__kbdKonamiSteps || [];
                         currentLiveKeys.forEach((el) => el.classList.remove('kbd-pressed'));
                         currentSteps.forEach((el) => el.classList.remove('kbd-pressed'));
+                        setMetaButtonsPressed(false);
                         markProgress(Number(window.__kbdKonamiProgress || 0));
                     };
 
+                    const onVisibilityChange = () => {
+                        if (document.visibilityState !== 'visible') {
+                            onWindowBlur();
+                        }
+                    };
+
                     window.addEventListener('keydown', onKeyDown);
+                    window.addEventListener('keypress', onKeyPress);
                     window.addEventListener('keyup', onKeyUp);
                     window.addEventListener('blur', onWindowBlur);
+                    document.addEventListener('visibilitychange', onVisibilityChange);
                 }
             };
 

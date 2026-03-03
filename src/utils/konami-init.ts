@@ -9,6 +9,58 @@ import { showToast } from '@/utils/toast';
 
 let konamiInitialized = false;
 
+async function runKonamiActivation() {
+    try {
+        debugLogger.group('🎮 Konami Code Activation');
+        debugLogger.log('Starting Konami code activation sequence');
+
+        // Toggle themes first to know if we should show confetti
+        debugLogger.log('🎨 About to toggle hidden themes');
+        const result = toggleAllHiddenThemes() || { action: 'locked', themes: [], companyCleared: false };
+        debugLogger.log('🎨 Toggle result:', result);
+
+        const themeMessages = (window as any).__THEME_MESSAGES__;
+        const unlocked = result.action === 'unlocked';
+        const companyCleared = Boolean(result.companyCleared);
+        debugLogger.log('🏢 Company cleared during toggle:', companyCleared, '| Prev company:', result.previouslyActiveCompany, '| Fallback theme:', result.fallbackThemeId);
+        debugLogger.log('🎨 Unlocked status:', unlocked);
+        debugLogger.log('🎨 Theme messages:', themeMessages);
+
+        // Only show confetti when UNLOCKING themes
+        if (unlocked) {
+            createSimpleConfetti();
+            debugLogger.log('🎊 Confetti rain started for unlock');
+        } else {
+            debugLogger.log('🚫 No confetti for lock action');
+        }
+
+        // Dispatch event to update theme controls UI
+        if (unlocked) {
+            const themeEvent = new CustomEvent('themes-unlocked', {
+                detail: { themes: result.themes, action: result.action }
+            });
+            window.dispatchEvent(themeEvent);
+            debugLogger.log('📡 Dispatched themes-unlocked event', themeEvent.detail);
+        } else {
+            const themeEvent = new CustomEvent('themes-locked', {
+                detail: { themes: result.themes, action: result.action }
+            });
+            window.dispatchEvent(themeEvent);
+            debugLogger.log('📡 Dispatched themes-locked event', themeEvent.detail);
+        }
+
+        // Show notification
+        showKonamiNotification(unlocked, themeMessages, result, companyCleared);
+
+        debugLogger.log('🎭 Notification shown and scheduled for removal');
+        debugLogger.groupEnd();
+
+    } catch (error) {
+        debugLogger.error('❌ Konami callback error:', error);
+        debugLogger.groupEnd();
+    }
+}
+
 /**
  * Initialize the Konami code listener
  * This should only be called once per page load
@@ -33,56 +85,13 @@ export async function initKonami() {
 
         // Add activation callback
         konami.onActivate(async () => {
-            try {
-                debugLogger.group('🎮 Konami Code Activation');
-                debugLogger.log('Starting Konami code activation sequence');
-
-                // Toggle themes first to know if we should show confetti
-                debugLogger.log('🎨 About to toggle hidden themes');
-                const result = toggleAllHiddenThemes() || { action: 'locked', themes: [], companyCleared: false };
-                debugLogger.log('🎨 Toggle result:', result);
-
-                const themeMessages = (window as any).__THEME_MESSAGES__;
-                const unlocked = result.action === 'unlocked';
-                const companyCleared = Boolean(result.companyCleared);
-                debugLogger.log('🏢 Company cleared during toggle:', companyCleared, '| Prev company:', result.previouslyActiveCompany, '| Fallback theme:', result.fallbackThemeId);
-                debugLogger.log('🎨 Unlocked status:', unlocked);
-                debugLogger.log('🎨 Theme messages:', themeMessages);
-
-                // Only show confetti when UNLOCKING themes
-                if (unlocked) {
-                    createSimpleConfetti();
-                    debugLogger.log('🎊 Confetti rain started for unlock');
-                } else {
-                    debugLogger.log('🚫 No confetti for lock action');
-                }
-
-                // Dispatch event to update theme controls UI
-                if (unlocked) {
-                    const themeEvent = new CustomEvent('themes-unlocked', {
-                        detail: { themes: result.themes, action: result.action }
-                    });
-                    window.dispatchEvent(themeEvent);
-                    debugLogger.log('📡 Dispatched themes-unlocked event', themeEvent.detail);
-                } else {
-                    const themeEvent = new CustomEvent('themes-locked', {
-                        detail: { themes: result.themes, action: result.action }
-                    });
-                    window.dispatchEvent(themeEvent);
-                    debugLogger.log('📡 Dispatched themes-locked event', themeEvent.detail);
-                }
-
-                // Show notification
-                showKonamiNotification(unlocked, themeMessages, result, companyCleared);
-
-                debugLogger.log('🎭 Notification shown and scheduled for removal');
-                debugLogger.groupEnd();
-
-            } catch (error) {
-                debugLogger.error('❌ Konami callback error:', error);
-                debugLogger.groupEnd();
-            }
+            await runKonamiActivation();
         });
+
+        // Expose manual trigger for demos (mobile/touch)
+        (window as any).__TRIGGER_KONAMI__ = async () => {
+            await runKonamiActivation();
+        };
 
         // Clean up on page unload
         window.addEventListener('beforeunload', () => konami.stop());
@@ -104,6 +113,7 @@ export function resetKonami() {
     konami.stop();
     konamiInitialized = false;
     (window as any).__KONAMI_INITIALIZED__ = false;
+    (window as any).__TRIGGER_KONAMI__ = undefined;
 }
 
 /**

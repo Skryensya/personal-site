@@ -19,12 +19,20 @@ const deepPages = [
   '/no/',
   '/no/prosjekter',
   '/no/prosjekter/skryensya-dev',
-  '/no/tilgjengelighetserklaering'
+  '/no/tilgjengelighetserklaering',
+  '/ja/',
+  '/ja/projects',
+  '/ja/projects/skryensya-dev',
+  '/ja/accessibility-statement',
+  '/ja/design-system'
 ];
 
 const allowlistByPath: Record<string, AllowRule[]> = {
   '/sistema-de-diseno': [
     { id: 'nested-interactive', targetIncludes: 'div[data-anchor-id="theme-' }
+  ],
+  '/ja/design-system': [
+    { id: 'nested-interactive', targetIncludes: 'data-theme-id="' }
   ]
 };
 

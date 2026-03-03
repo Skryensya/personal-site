@@ -13,6 +13,7 @@ type DynamicThemeState = {
 };
 
 const SESSION_HUE_KEY = 'prism-flow-hue';
+const SESSION_ELAPSED_KEY = 'prism-flow-elapsed';
 const SESSION_COLORFUL_KEY = 'prism-flow-colorful';
 const SESSION_CONTRASTY_KEY = 'prism-flow-contrasty';
 
@@ -44,6 +45,18 @@ function loadSessionHue(): number | null {
   }
 }
 
+function loadSessionElapsed(): number | null {
+  try {
+    const raw = sessionStorage.getItem(SESSION_ELAPSED_KEY);
+    if (!raw) return null;
+    const parsed = Number(raw);
+    if (Number.isNaN(parsed) || parsed < 0) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
 function persistSessionThemeState(colorful: string, contrasty: string, force: boolean = false) {
   const now = performance.now();
   if (!force && now - state.lastPersistAt < 2000) return;
@@ -51,6 +64,10 @@ function persistSessionThemeState(colorful: string, contrasty: string, force: bo
   state.lastPersistAt = now;
   try {
     sessionStorage.setItem(SESSION_HUE_KEY, state.hue.toFixed(2));
+    if (state.startTime > 0) {
+      const elapsed = Math.max(0, (performance.now() - state.startTime) / 1000);
+      sessionStorage.setItem(SESSION_ELAPSED_KEY, elapsed.toFixed(3));
+    }
     sessionStorage.setItem(SESSION_COLORFUL_KEY, colorful);
     sessionStorage.setItem(SESSION_CONTRASTY_KEY, contrasty);
   } catch {
@@ -241,29 +258,46 @@ export function startDynamicTheme(isDark: boolean) {
   state.active = true;
   bindVisibilityListener();
 
-  stopInterval();
-
   if (!state.seededFromSession) {
     const sessionHue = loadSessionHue();
     if (sessionHue !== null) {
       state.hue = sessionHue;
     }
+
+    const sessionElapsed = loadSessionElapsed();
+    if (sessionElapsed !== null) {
+      state.startTime = performance.now() - sessionElapsed * 1000;
+    }
+
     state.seededFromSession = true;
   }
 
-  state.startTime = performance.now();
-  state.pausedAt = null;
+  if (state.startTime <= 0) {
+    state.startTime = performance.now();
+  }
+
+  if (state.pausedAt !== null) {
+    // Preserve continuity when mode/theme toggles restart Prism Flow.
+    state.startTime += performance.now() - state.pausedAt;
+    state.pausedAt = null;
+  }
 
   updateDynamicThemeColors();
 
-  if (!document.hidden) {
-    startInterval();
+  if (document.hidden) {
+    stopInterval();
+    return;
   }
+
+  startInterval();
 }
 
 export function stopDynamicTheme() {
   state.active = false;
-  state.pausedAt = null;
+  if (state.pausedAt === null) {
+    state.pausedAt = performance.now();
+  }
+
   const styles = getComputedStyle(document.documentElement);
   persistSessionThemeState(
     styles.getPropertyValue('--theme-colorful').trim(),

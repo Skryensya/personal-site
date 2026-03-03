@@ -12,6 +12,12 @@ import { getLocalizedUrl } from '@/utils/localized-routes';
 interface Props { lang?: Language; }
 const { lang = defaultLang } = Astro.props;
 const t = getTranslations(lang);
+const japaneseName = 'アリソン';
+const heroHeading = t('hero.heading');
+const heroNameToken = 'Allison';
+const heroHeadingParts = lang === 'ja' && heroHeading.includes(heroNameToken)
+  ? heroHeading.split(heroNameToken)
+  : null;
 
 // Get CV PDF path based on language
 const getCVPath = (locale: Language) => {
@@ -29,7 +35,20 @@ const getCVPath = (locale: Language) => {
     <CornersWithCrosses class="flex flex-col justify-center p-4 md:p-8 md:pr-16 min-h-[20rem] md:min-h-[24rem] lg:min-h-[450px] border-t border-l border-main/20">
       <div class="space-y-3 md:space-y-4">
         <h1 class="h1">
-          {t('hero.heading')}
+          {lang === 'ja' && heroHeadingParts ? (
+            <>
+              {heroHeadingParts[0]}
+              <span class="relative inline-block align-baseline">
+                <span class="absolute left-1/2 -translate-x-1/2 -top-[1.1em] font-mono text-[0.30em] tracking-[0.04em] text-main/60 whitespace-nowrap leading-none pointer-events-none select-none">
+                  ({japaneseName})
+                </span>
+                <span class="inline-block ml-[-0.4em] mr-[-0.2em] tracking-[-0.005em]">{heroNameToken}</span>
+              </span>
+              {heroHeadingParts[1]}
+            </>
+          ) : (
+            heroHeading
+          )}
         </h1>
         <p class="mb-4 md:mb-8 md:text-lg text-main/70 max-w-2xl">
           {t('hero.description')}

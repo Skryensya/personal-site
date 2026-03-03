@@ -65,6 +65,13 @@ const navigationSummaryLabel = {
     ja: '続きを読む'
 } as const;
 
+const projectPaginationAriaLabel = {
+    es: 'Paginación de proyectos',
+    en: 'Project pagination',
+    no: 'Prosjektpaginering',
+    ja: 'プロジェクトページネーション'
+} as const;
+
 const navigationItems = [
     {
         entry: previousProjectEntry,
@@ -186,7 +193,7 @@ const breadcrumbJsonLd = {
                             <h2 class="font-grotesk text-base sm:text-lg font-semibold text-main mb-4">
                                 {navigationSummaryLabel[currentLocale]}
                             </h2>
-                            <nav class="grid grid-cols-1 sm:grid-cols-2 gap-2" aria-label="Project pagination">
+                            <nav class="grid grid-cols-1 sm:grid-cols-2 gap-2" aria-label={projectPaginationAriaLabel[currentLocale]}>
                                 {navigationItems.map(({ entry, slug, label }) => (
                                     <a
                                         href={getLocalizedUrl(currentLocale, 'projects', slug!)}

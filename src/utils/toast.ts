@@ -9,6 +9,14 @@ const CONTAINER_ID = 'app-toast-stack';
 const STYLE_ID = 'app-toast-style';
 let escapeCloseBound = false;
 
+function getDismissLabel() {
+  const lang = document?.documentElement?.lang || 'en';
+  if (lang.startsWith('es')) return 'Cerrar notificación';
+  if (lang.startsWith('no')) return 'Lukk varsel';
+  if (lang.startsWith('ja')) return '通知を閉じる';
+  return 'Dismiss notification';
+}
+
 function ensureStyle() {
   if (document.getElementById(STYLE_ID)) return;
 
@@ -17,21 +25,24 @@ function ensureStyle() {
   style.textContent = `
     #${CONTAINER_ID} {
       position: fixed;
-      top: 104px;
       right: 14px;
+      bottom: 14px;
       z-index: 10000;
       display: flex;
       flex-direction: column;
       gap: 10px;
-      width: min(92vw, 348px);
+      width: min(92vw, 360px);
       pointer-events: none;
+      align-items: flex-end;
     }
 
     .app-toast {
       pointer-events: auto;
       position: relative;
       overflow: hidden;
-      border: 2px solid var(--color-secondary);
+      border: 2px solid var(--color-main);
+      outline: 2px solid var(--color-secondary);
+      outline-offset: -4px;
       background: var(--color-main);
       color: var(--color-secondary);
       font-family: var(--font-mono), monospace;
@@ -40,15 +51,27 @@ function ensureStyle() {
       line-height: 1.36;
       letter-spacing: 0.01em;
       padding: 11px 12px 13px;
-      box-shadow: 4px 4px 0 var(--color-secondary);
-      transform: translateX(16px) scale(0.985);
+      box-shadow: 3px 3px 0 color-mix(in srgb, var(--color-main) 42%, transparent);
+      transform: translateX(22px) scale(0.975);
       opacity: 0;
-      transition: transform 190ms cubic-bezier(0.22, 1, 0.36, 1), opacity 190ms ease;
+      transition:
+        transform 210ms cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 180ms ease,
+        box-shadow 180ms ease;
     }
 
     .app-toast[data-open='true'] {
       transform: translateX(0) scale(1);
       opacity: 1;
+    }
+
+    .app-toast[data-closing='true'] {
+      transform: translateX(24px) scale(0.975);
+      opacity: 0;
+    }
+
+    .app-toast:hover {
+      box-shadow: 5px 5px 0 color-mix(in srgb, var(--color-main) 56%, transparent);
     }
 
     .app-toast__row {
@@ -60,19 +83,11 @@ function ensureStyle() {
     .app-toast__dot {
       width: 7px;
       height: 7px;
-      border-radius: 999px;
       margin-top: 5px;
-      background: currentColor;
+      border: 1px solid currentColor;
+      background: transparent;
       flex-shrink: 0;
       opacity: 0.9;
-    }
-
-    .app-toast[data-kind='success'] .app-toast__dot {
-      background: color-mix(in srgb, #7CFC9A 72%, var(--color-secondary) 28%);
-    }
-
-    .app-toast[data-kind='warning'] .app-toast__dot {
-      background: color-mix(in srgb, #FFD86A 72%, var(--color-secondary) 28%);
     }
 
     .app-toast__text {
@@ -88,15 +103,16 @@ function ensureStyle() {
       font: inherit;
       font-size: 11px;
       line-height: 1;
-      width: 17px;
-      height: 17px;
+      width: 18px;
+      height: 18px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       padding: 0;
       margin-left: 6px;
       cursor: pointer;
-      opacity: 0.76;
+      opacity: 0.78;
+      flex-shrink: 0;
     }
 
     .app-toast__close:hover,
@@ -109,21 +125,22 @@ function ensureStyle() {
 
     .app-toast__progress {
       position: absolute;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      left: 6px;
+      right: 6px;
+      bottom: 6px;
       height: 3px;
-      background: currentColor;
+      background: color-mix(in srgb, var(--color-secondary) 30%, transparent);
+      border-top: 1px solid color-mix(in srgb, var(--color-secondary) 55%, transparent);
       transform-origin: left center;
       transform: scaleX(1);
-      opacity: 0.95;
+      opacity: 1;
     }
 
     @media (min-width: 1024px) {
       #${CONTAINER_ID} {
-        top: 94px;
         right: 22px;
-        width: min(32vw, 396px);
+        bottom: 18px;
+        width: min(34vw, 408px);
         gap: 12px;
       }
 
@@ -131,7 +148,7 @@ function ensureStyle() {
         font-size: 14px;
         line-height: 1.4;
         padding: 12px 14px 14px;
-        box-shadow: 5px 5px 0 var(--color-secondary);
+        box-shadow: 4px 4px 0 color-mix(in srgb, var(--color-main) 42%, transparent);
       }
 
       .app-toast__dot {
@@ -140,9 +157,19 @@ function ensureStyle() {
       }
     }
 
+    @media (max-width: 640px) {
+      #${CONTAINER_ID} {
+        right: 10px;
+        left: 10px;
+        width: auto;
+        align-items: stretch;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       .app-toast {
         transition: none;
+        filter: none !important;
       }
       .app-toast__progress {
         transition: none !important;
@@ -160,7 +187,8 @@ function ensureContainer() {
     container = document.createElement('div');
     container.id = CONTAINER_ID;
     container.setAttribute('aria-live', 'polite');
-    container.setAttribute('aria-atomic', 'true');
+    container.setAttribute('aria-relevant', 'additions text');
+    container.setAttribute('aria-atomic', 'false');
     document.body.appendChild(container);
   }
   return container;
@@ -190,14 +218,17 @@ export function showToast({ message, duration = 4200, kind = 'default', id }: To
   const toast = document.createElement('div');
   toast.className = 'app-toast';
   toast.dataset.kind = kind;
+  toast.dataset.open = 'false';
   if (id) toast.dataset.toastId = id;
   toast.setAttribute('role', 'status');
+
+  const dismissLabel = getDismissLabel();
 
   toast.innerHTML = `
     <div class="app-toast__row">
       <span class="app-toast__dot" aria-hidden="true"></span>
       <span class="app-toast__text"></span>
-      <button class="app-toast__close" type="button" aria-label="Dismiss notification">×</button>
+      <button class="app-toast__close" type="button" aria-label="${dismissLabel}">×</button>
     </div>
     <div class="app-toast__progress" aria-hidden="true"></div>
   `;
@@ -210,9 +241,12 @@ export function showToast({ message, duration = 4200, kind = 'default', id }: To
   container.prepend(toast);
 
   requestAnimationFrame(() => {
-    toast.dataset.open = 'true';
-    progressEl.style.transition = `transform ${duration}ms linear`;
-    progressEl.style.transform = 'scaleX(0)';
+    requestAnimationFrame(() => {
+      toast.dataset.closing = 'false';
+      toast.dataset.open = 'true';
+      progressEl.style.transition = `transform ${duration}ms linear`;
+      progressEl.style.transform = 'scaleX(0)';
+    });
   });
 
   let closed = false;
@@ -223,9 +257,10 @@ export function showToast({ message, duration = 4200, kind = 'default', id }: To
   function close() {
     if (closed) return;
     closed = true;
+    toast.dataset.closing = 'true';
     toast.dataset.open = 'false';
     window.clearTimeout(timer);
-    window.setTimeout(() => toast.remove(), 180);
+    window.setTimeout(() => toast.remove(), 230);
   }
 
   closeBtn.addEventListener('click', close);

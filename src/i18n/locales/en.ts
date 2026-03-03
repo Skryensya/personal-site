@@ -54,6 +54,8 @@ export const en = {
         'hero.cards.backend.description': 'Node.js, Python, APIs',
         'hero.cards.design.title': 'Design',
         'hero.cards.design.description': 'UI/UX, Figma, Prototyping',
+        'hero.cards.accessibility.title': 'Accessibility',
+        'hero.cards.accessibility.description': 'WCAG, Keyboard, Inclusive UX',
 
         // About section redesign
         'about.subtitle': 'Full-stack developer with experience creating accessible and functional digital products',
