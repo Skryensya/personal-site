@@ -157,6 +157,12 @@ const resolvedLinks = (links && links.length > 0) ? links : navigationLinks;
   .footer-nav-link__label {
     position: relative;
     white-space: nowrap;
+    transition: color var(--line-duration) linear;
+  }
+
+  .footer-nav-link:hover .footer-nav-link__label,
+  .footer-nav-link:focus-visible .footer-nav-link__label {
+    color: var(--link-fg-hover);
   }
 
   .footer-nav-link__label::after {

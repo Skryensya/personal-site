@@ -22,7 +22,7 @@ const homeLabel = t('nav.home');
 ---
 
 <aside
-  class={`sticky top-20 w-[240px] min-w-[240px] max-h-[calc(100dvh-28rem)]  flex-shrink-0 hidden md:block overflow-hidden py-6 px-4 ${className}`}
+  class={`sticky top-20 self-start w-[240px] min-w-[240px] flex-shrink-0 hidden md:block py-6 px-4 ${className}`}
   id="content-sidebar"
   data-component="sidebar-toc"
   data-content-id={contentId}
@@ -34,7 +34,7 @@ const homeLabel = t('nav.home');
   {useClerkTOC ? (
     <nav aria-label={t('sidebar.toc')}>
       <div class="mb-3 text-xs font-mono font-medium text-main uppercase tracking-wide">{t('sidebar.toc')}</div>
-      <ul id={tocId} class="flex flex-col gap-0.5 overflow-y-auto pe-1"></ul>
+      <ul id={tocId} class="flex flex-col gap-0.5 pe-1"></ul>
     </nav>
   ) : null}
 </aside>

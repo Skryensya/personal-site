@@ -71,6 +71,75 @@ const keyboardSectionHeading =
 const footerNavigationHeading =
     lang === 'es' ? 'Navegación de footer' : lang === 'no' ? 'Footer-navigasjon' : lang === 'ja' ? 'フッターナビゲーション' : 'Footer Navigation';
 
+const kbdText =
+    lang === 'es'
+        ? {
+              ctrl: 'Ctrl',
+              enter: 'Intro',
+              tab: 'Tab',
+              esc: 'Esc',
+              key: 'Tecla',
+              arrowUp: 'Flecha arriba',
+              arrowDown: 'Flecha abajo',
+              arrowLeft: 'Flecha izquierda',
+              arrowRight: 'Flecha derecha',
+              escape: 'Escape',
+              shift: 'Mayús',
+              alt: 'Alt',
+              control: 'Control',
+              command: 'Comando'
+          }
+        : lang === 'no'
+          ? {
+                ctrl: 'Ctrl',
+                enter: 'Enter',
+                tab: 'Tab',
+                esc: 'Esc',
+                key: 'Tast',
+                arrowUp: 'Pil opp',
+                arrowDown: 'Pil ned',
+                arrowLeft: 'Pil venstre',
+                arrowRight: 'Pil høyre',
+                escape: 'Escape',
+                shift: 'Shift',
+                alt: 'Alt',
+                control: 'Control',
+                command: 'Command'
+            }
+          : lang === 'ja'
+            ? {
+                  ctrl: 'Ctrl',
+                  enter: 'Enter',
+                  tab: 'Tab',
+                  esc: 'Esc',
+                  key: 'キー',
+                  arrowUp: '上矢印',
+                  arrowDown: '下矢印',
+                  arrowLeft: '左矢印',
+                  arrowRight: '右矢印',
+                  escape: 'Esc',
+                  shift: 'Shift',
+                  alt: 'Alt',
+                  control: 'Control',
+                  command: 'Command'
+              }
+            : {
+                  ctrl: 'Ctrl',
+                  enter: 'Enter',
+                  tab: 'Tab',
+                  esc: 'Esc',
+                  key: 'Key',
+                  arrowUp: 'Arrow Up',
+                  arrowDown: 'Arrow Down',
+                  arrowLeft: 'Arrow Left',
+                  arrowRight: 'Arrow Right',
+                  escape: 'Escape',
+                  shift: 'Shift',
+                  alt: 'Alt',
+                  control: 'Control',
+                  command: 'Command'
+              };
+
 const sectionIntro = {
     structure:
         lang === 'es'
@@ -676,7 +745,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
         </section>
 
         <!-- Footer Navigation List -->
-        <section id="footer-navigation" class="space-y-6 md:space-y-8" data-toc-ignore>
+        <section id="footer-navigation" class="space-y-6 md:space-y-8">
             <h2 id="footer-navigation-heading" class="h2">{footerNavigationHeading}</h2>
             <p class="text-body text-main/80 max-w-3xl">{sectionIntro.footerNav}</p>
             <div class="bg-main/10 p-0 space-y-0">
@@ -692,23 +761,23 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
         </section>
 
         <!-- KBD Section -->
-        <section id="kbd" class="space-y-6 md:space-y-8" data-toc-ignore>
+        <section id="kbd" class="space-y-6 md:space-y-8" data-locale={lang}>
             <h2 id="kbd-heading" class="h2">{keyboardSectionHeading}</h2>
             <p class="text-body text-main/80 max-w-3xl">{sectionIntro.keyboard}</p>
             <div class="bg-main/10 p-0 space-y-0">
                 <div class="w-full bg-main text-secondary border border-main px-3 py-2 font-mono text-sm uppercase font-bold">
-                    {lang === 'es' ? 'Ejemplos de teclas' : lang === 'no' ? 'Taste-eksempler' : lang === 'ja' ? 'キーキャップ例' : 'Keycap examples'}
+                    {t('designSystem.kbd.keycapExamples')}
                 </div>
                 <div class="p-4">
                     <div class="grid gap-6 lg:grid-cols-2">
                         <div class="space-y-2.5">
                             <h3 class="font-mono uppercase tracking-wider text-xs font-bold text-main/70">
-                                {lang === 'es' ? 'Showcase' : lang === 'no' ? 'Utstilling' : 'Showcase'}
+                                {t('designSystem.kbd.showcase')}
                             </h3>
                             <div id="kbd-live-demo" class="space-y-2.5">
                                 <div class="flex flex-wrap items-center gap-2">
-                                    <Kbd data-kbd-only-apple class="hidden !w-auto !min-w-[2.55rem] !px-2" data-kbd-live="true" data-kbd-key="control" data-kbd-code="controlleft">Ctrl</Kbd>
-                                    <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">Ctrl</span></Kbd>
+                                    <Kbd data-kbd-only-apple class="hidden !w-auto !min-w-[2.55rem] !px-2" data-kbd-live="true" data-kbd-key="control" data-kbd-code="controlleft">{kbdText.ctrl}</Kbd>
+                                    <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">{kbdText.ctrl}</span></Kbd>
                                     <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="alt" data-kbd-code="altleft"><Option className="kbd-mod-icon" size={13} /></Kbd>
                                     <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="shift" data-kbd-code="shiftleft"><ArrowBigUp className="kbd-mod-icon" size={16} /></Kbd>
                                 </div>
@@ -723,9 +792,9 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                                 <div class="flex flex-wrap items-center gap-2 text-main/80">
                                     <Kbd data-konami-key="b" data-kbd-live="true" data-kbd-key="b" data-kbd-code="keyb">B</Kbd>
                                     <Kbd data-konami-key="a" data-kbd-live="true" data-kbd-key="a" data-kbd-code="keya">A</Kbd>
-                                    <Kbd class="!w-auto !min-w-[2.25rem] !px-2" data-kbd-live="true" data-kbd-key="enter" data-kbd-code="enter">Enter</Kbd>
-                                    <Kbd class="!w-auto !min-w-[2.25rem] !px-2" data-kbd-live="true" data-kbd-key="tab" data-kbd-code="tab">Tab</Kbd>
-                                    <Kbd class="!w-auto !min-w-[2.25rem] !px-2" data-kbd-live="true" data-kbd-key="escape" data-kbd-code="escape">Esc</Kbd>
+                                    <Kbd class="!w-auto !min-w-[2.25rem] !px-2" data-kbd-live="true" data-kbd-key="enter" data-kbd-code="enter">{kbdText.enter}</Kbd>
+                                    <Kbd class="!w-auto !min-w-[2.25rem] !px-2" data-kbd-live="true" data-kbd-key="tab" data-kbd-code="tab">{kbdText.tab}</Kbd>
+                                    <Kbd class="!w-auto !min-w-[2.25rem] !px-2" data-kbd-live="true" data-kbd-key="escape" data-kbd-code="escape">{kbdText.esc}</Kbd>
                                 </div>
                             </div>
                         </div>
@@ -733,17 +802,17 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                         <div class="space-y-2.5 border border-transparent lg:pl-2" id="kbd-action-examples">
                             <div class="grid gap-3 sm:grid-cols-2 text-main/80">
                                 <div class="space-y-2.5">
-                                    <div class="font-mono uppercase tracking-wider text-xs font-bold text-main/70">{lang === 'es' ? 'Tema anterior' : lang === 'no' ? 'Forrige tema' : 'Prev theme'}</div>
+                                    <div class="font-mono uppercase tracking-wider text-xs font-bold text-main/70">{t('designSystem.kbd.prevTheme')}</div>
                                     <div class="flex items-center gap-2">
-                                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">Ctrl</span></Kbd>
+                                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">{kbdText.ctrl}</span></Kbd>
                                         <span class="font-mono text-base leading-none font-bold">+</span>
                                         <Kbd data-kbd-live="true" data-kbd-key="arrowleft" data-kbd-code="arrowleft"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(180deg)' }} /></Kbd>
                                     </div>
                                 </div>
                                 <div class="space-y-2.5">
-                                    <div class="font-mono uppercase tracking-wider text-xs font-bold text-main/70">{lang === 'es' ? 'Tema siguiente' : lang === 'no' ? 'Neste tema' : 'Next theme'}</div>
+                                    <div class="font-mono uppercase tracking-wider text-xs font-bold text-main/70">{t('designSystem.kbd.nextTheme')}</div>
                                     <div class="flex items-center gap-2">
-                                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">Ctrl</span></Kbd>
+                                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">{kbdText.ctrl}</span></Kbd>
                                         <span class="font-mono text-base leading-none font-bold">+</span>
                                         <Kbd data-kbd-live="true" data-kbd-key="arrowright" data-kbd-code="arrowright"><ArrowRight className="kbd-arrow-icon" size={10} /></Kbd>
                                     </div>
@@ -752,17 +821,17 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
 
                             <div class="grid gap-3 sm:grid-cols-2 text-main/80">
                                 <div class="space-y-2.5">
-                                    <div class="font-mono uppercase tracking-wider text-xs font-bold text-main/70">{lang === 'es' ? 'Copiar' : lang === 'no' ? 'Kopier' : 'Copy'}</div>
+                                    <div class="font-mono uppercase tracking-wider text-xs font-bold text-main/70">{t('designSystem.kbd.copy')}</div>
                                     <div class="flex items-center gap-2">
-                                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">Ctrl</span></Kbd>
+                                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">{kbdText.ctrl}</span></Kbd>
                                         <span class="font-mono text-base leading-none font-bold">+</span>
                                         <Kbd data-kbd-live="true" data-kbd-key="c" data-kbd-code="keyc">C</Kbd>
                                     </div>
                                 </div>
                                 <div class="space-y-2.5">
-                                    <div class="font-mono uppercase tracking-wider text-xs font-bold text-main/70">{lang === 'es' ? 'Pegar' : lang === 'no' ? 'Lim inn' : 'Paste'}</div>
+                                    <div class="font-mono uppercase tracking-wider text-xs font-bold text-main/70">{t('designSystem.kbd.paste')}</div>
                                     <div class="flex items-center gap-2">
-                                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">Ctrl</span></Kbd>
+                                        <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">{kbdText.ctrl}</span></Kbd>
                                         <span class="font-mono text-base leading-none font-bold">+</span>
                                         <Kbd data-kbd-live="true" data-kbd-key="v" data-kbd-code="keyv">V</Kbd>
                                     </div>
@@ -836,19 +905,67 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
 
                 const transientPressTimers = new WeakMap();
 
-                const keyLabelMap = {
-                    arrowup: 'Arrow Up',
-                    arrowdown: 'Arrow Down',
-                    arrowleft: 'Arrow Left',
-                    arrowright: 'Arrow Right',
-                    escape: 'Escape',
-                    enter: 'Enter',
-                    tab: 'Tab',
-                    shift: 'Shift',
-                    alt: 'Alt',
-                    control: 'Control',
-                    meta: 'Command',
+                const docLangRaw = String(section.getAttribute('data-locale') || document.documentElement.lang || 'es').toLowerCase();
+                const docLang = docLangRaw.split('-')[0].split('_')[0];
+                const labelsByLang = {
+                    es: {
+                        arrowup: 'Flecha arriba',
+                        arrowdown: 'Flecha abajo',
+                        arrowleft: 'Flecha izquierda',
+                        arrowright: 'Flecha derecha',
+                        escape: 'Escape',
+                        enter: 'Intro',
+                        tab: 'Tab',
+                        shift: 'Mayús',
+                        alt: 'Alt',
+                        control: 'Control',
+                        meta: 'Comando',
+                        key: 'Tecla',
+                    },
+                    en: {
+                        arrowup: 'Arrow Up',
+                        arrowdown: 'Arrow Down',
+                        arrowleft: 'Arrow Left',
+                        arrowright: 'Arrow Right',
+                        escape: 'Escape',
+                        enter: 'Enter',
+                        tab: 'Tab',
+                        shift: 'Shift',
+                        alt: 'Alt',
+                        control: 'Control',
+                        meta: 'Command',
+                        key: 'Key',
+                    },
+                    no: {
+                        arrowup: 'Pil opp',
+                        arrowdown: 'Pil ned',
+                        arrowleft: 'Pil venstre',
+                        arrowright: 'Pil høyre',
+                        escape: 'Escape',
+                        enter: 'Enter',
+                        tab: 'Tab',
+                        shift: 'Skift',
+                        alt: 'Alt',
+                        control: 'Kontroll',
+                        meta: 'Kommando',
+                        key: 'Tast',
+                    },
+                    ja: {
+                        arrowup: '上矢印',
+                        arrowdown: '下矢印',
+                        arrowleft: '左矢印',
+                        arrowright: '右矢印',
+                        escape: 'エスケープ',
+                        enter: 'エンター',
+                        tab: 'タブ',
+                        shift: 'シフト',
+                        alt: 'オプション',
+                        control: 'コントロール',
+                        meta: 'コマンド',
+                        key: 'キー',
+                    },
                 };
+                const keyLabelMap = labelsByLang[docLang] || labelsByLang.es;
 
                 const inferKbdTitle = (el) => {
                     const konamiKey = String(el.getAttribute('data-konami-key') || '').toLowerCase();
@@ -857,7 +974,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                     const dataKey = String(el.getAttribute('data-kbd-key') || '').toLowerCase();
                     if (dataKey) {
                         const first = dataKey.split('|')[0]?.trim() || dataKey;
-                        if (first === 'meta') return 'Command';
+                        if (first === 'meta') return keyLabelMap.meta;
                         return keyLabelMap[first] || first.toUpperCase();
                     }
 
@@ -867,20 +984,16 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                     const dataCode = String(el.getAttribute('data-kbd-code') || '').toLowerCase();
                     if (dataCode) return dataCode.toUpperCase();
 
-                    return 'Key';
+                    return keyLabelMap.key || 'Key';
                 };
 
                 allExampleKbd.forEach((kbdEl) => {
                     const el = kbdEl;
                     el.style.cursor = 'pointer';
 
-                    if (!el.getAttribute('title')) {
-                        const title = inferKbdTitle(el);
-                        el.setAttribute('title', title);
-                        if (!el.getAttribute('aria-label')) {
-                            el.setAttribute('aria-label', title);
-                        }
-                    }
+                    const title = inferKbdTitle(el);
+                    el.setAttribute('title', title);
+                    el.setAttribute('aria-label', title);
 
                     if (el.dataset.kbdClickBound === 'true') return;
                     el.dataset.kbdClickBound = 'true';
