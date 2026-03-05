@@ -14,9 +14,20 @@ interface Props {
 const { className = '', lang = defaultLang } = Astro.props;
 const t = getTranslations(lang);
 
+const contactLocalPartByLang: Record<Language, string> = {
+  es: 'contacto',
+  en: 'contact',
+  no: 'kontakt',
+  ja: 'renraku',
+};
+const localizedContactEmail = `${contactLocalPartByLang[lang]}@allison.sh`;
+const copyEmailLabel = t('about.cta.copy');
+const copyEmailSuccess = t('about.cta.copy.success');
+const copyEmailError = t('about.cta.copy.error');
+
 const aboutConnectLinks = [
   {
-    href: 'mailto:allison.jpb@gmail.com',
+    href: `mailto:${localizedContactEmail}`,
     text: t('social.email'),
     isExternal: true,
   },
@@ -73,14 +84,26 @@ const aboutConnectLinks = [
           <div class="leading-relaxed text-main !flex items-center gap-4 w-full">
             <span>{t('about.cta.message')}</span>
             <span>
-              <Button variant="outline" elevated href="mailto:allison.jpb@gmail.com">
+              <Button variant="outline" elevated href={`mailto:${localizedContactEmail}`} data-haptic="confirm">
                 {t('about.cta.button')}
               </Button>
             </span>
           </div>
-          <p class="text-sm text-main/70 mt-2">
-            ({t('about.cta.or')} <a href="mailto:allison.jpb@gmail.com" class="underline hover:bg-main hover:text-secondary">allison.jpb@gmail.com</a>)
-          </p>
+          <div class="mt-2 flex flex-wrap items-center gap-1 text-sm text-main/70">
+            <span>{t('about.cta.or')}</span>
+            <button
+              type="button"
+              class="underline hover:bg-main hover:text-secondary"
+              aria-label={`${copyEmailLabel}: ${localizedContactEmail}`}
+              data-copy-email-button
+              data-copy-email={localizedContactEmail}
+              data-copy-success={copyEmailSuccess}
+              data-copy-error={copyEmailError}
+              data-haptic="confirm"
+            >
+              {localizedContactEmail}
+            </button>
+          </div>
         </section>
       </CornersWithCrosses>
     </div>
@@ -151,6 +174,81 @@ const aboutConnectLinks = [
   </div>
 
 </section>
+
+<script>
+  import { showToast } from '@/utils/toast';
+
+  async function copyTextToClipboard(text) {
+    if (!text) return false;
+
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    textarea.style.left = '-9999px';
+    document.body.appendChild(textarea);
+    textarea.focus();
+    textarea.select();
+
+    let copied = false;
+    try {
+      copied = document.execCommand('copy');
+    } finally {
+      textarea.remove();
+    }
+
+    return copied;
+  }
+
+  function initCopyEmailButtons() {
+    const buttons = document.querySelectorAll<HTMLButtonElement>('[data-copy-email-button]');
+
+    buttons.forEach((button) => {
+      const buttonElement = button;
+      if (buttonElement.dataset.copyBound === 'true') return;
+      buttonElement.dataset.copyBound = 'true';
+
+      buttonElement.addEventListener('click', async () => {
+        const email = buttonElement.dataset.copyEmail || '';
+        const successMessage = buttonElement.dataset.copySuccess || 'Email copied';
+        const errorMessage = buttonElement.dataset.copyError || 'Could not copy email';
+
+        try {
+          const copied = await copyTextToClipboard(email);
+          if (!copied) throw new Error('copy-failed');
+
+          showToast({
+            id: 'copy-email-toast',
+            message: successMessage,
+            kind: 'success',
+            duration: 2200
+          });
+        } catch {
+          showToast({
+            id: 'copy-email-toast',
+            message: errorMessage,
+            kind: 'warning',
+            duration: 2800
+          });
+        }
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCopyEmailButtons, { once: true });
+  } else {
+    initCopyEmailButtons();
+  }
+
+  document.addEventListener('astro:page-load', initCopyEmailButtons);
+</script>
 
 <style>
   .about-content :global(a) {

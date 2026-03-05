@@ -98,17 +98,22 @@ const modes = [
 
 <script>
   import { applyTheme, themes } from '../data/themes.js';
+  import { haptic, isExplicitPointerClick } from '@/utils/haptics';
+
+  interface ModeChangeOptions {
+    triggerHaptic?: boolean;
+  }
 
   // Declare global types
   declare global {
     interface Window {
       modeControl: any;
-      toggleMode: () => void;
+      toggleMode: (options?: ModeChangeOptions) => void;
     }
   }
 
   // Global toggle function - direct implementation
-  window.toggleMode = () => {
+  window.toggleMode = (options: ModeChangeOptions = {}) => {
     const savedMode = localStorage.getItem('theme-mode') || 'system';
     let nextMode;
 
@@ -123,7 +128,7 @@ const modes = [
 
     // Apply the new mode
     if (window.modeControl && window.modeControl.changeMode) {
-      window.modeControl.changeMode(nextMode);
+      window.modeControl.changeMode(nextMode, options);
     } else {
       // Fallback if modeControl isn't ready yet
       localStorage.setItem('theme-mode', nextMode);
@@ -146,6 +151,10 @@ const modes = [
         if (window.modeControl && window.modeControl.updateDisplay) {
           window.modeControl.currentMode = nextMode;
           window.modeControl.updateDisplay();
+        }
+
+        if (options.triggerHaptic) {
+          haptic('mode');
         }
       });
     }
@@ -225,10 +234,14 @@ const modes = [
     },
     
     // Handle mode change
-    changeMode(mode: any) {
+    changeMode(mode: any, options: ModeChangeOptions = {}) {
       this.currentMode = mode;
       this.applyModeToDocument(mode);
       this.updateDisplay();
+
+      if (options.triggerHaptic) {
+        haptic('mode');
+      }
       
       // Emit custom event for mobile navbar
       const event = new CustomEvent('mode-changed', {
@@ -238,7 +251,7 @@ const modes = [
     },
     
     // Toggle mode (main button action)
-    toggleMode() {
+    toggleMode(options: ModeChangeOptions = {}) {
       let nextMode;
 
       if (this.currentMode === 'system') {
@@ -249,7 +262,7 @@ const modes = [
         nextMode = 'system';
       }
 
-      this.changeMode(nextMode);
+      this.changeMode(nextMode, options);
     },
     
     // Get mode name in current language
@@ -359,11 +372,13 @@ const modes = [
     addModeButtonListeners() {
       const modeButtons = document.querySelectorAll('[data-mode-button]');
       modeButtons.forEach(button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (event) => {
           const buttonElement = button as HTMLElement;
           const modeId = buttonElement.dataset.modeId;
           if (modeId && ['light', 'dark', 'system'].includes(modeId)) {
-            this.changeMode(modeId as any);
+            this.changeMode(modeId as any, {
+              triggerHaptic: isExplicitPointerClick(event)
+            });
           }
         });
       });

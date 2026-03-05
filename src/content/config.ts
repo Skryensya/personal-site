@@ -13,34 +13,6 @@ const seoSchema = z.object({
     pageType: z.enum(['website', 'article']).default('website')
 });
 
-// Blog collection with localized structure (blog/[lang]/[slug])
-const blog = defineCollection({
-    type: 'content',
-    schema: z.object({
-        title: z.string(),
-        excerpt: z.string().optional(),
-        publishDate: z.coerce.date(),
-        updatedDate: z.coerce.date().optional(),
-        isFeatured: z.boolean().default(false),
-        tags: z.array(z.string()).default([]),
-        seo: seoSchema.optional()
-        // Language is now inferred from the folder structure
-        // slug: z.string().optional(), // Base slug for cross-language linking
-    })
-});
-
-// Pages collection with localized structure (pages/[lang]/[slug])
-const pages = defineCollection({
-    type: 'content',
-    schema: z.object({
-        title: z.string(),
-        seo: seoSchema.optional()
-        // Language is now inferred from the folder structure
-        // slug: z.string().optional(), // Base slug for cross-language linking
-    })
-});
-
-// Projects collection with localized structure (projects/[lang]/[slug])
 const projects = defineCollection({
     type: 'content',
     schema: z.object({
@@ -54,9 +26,7 @@ const projects = defineCollection({
         clientLogo: z.string().optional(),
         tags: z.array(z.string()).default([]),
         audioUrl: z.string().optional()
-        // Language is now inferred from the folder structure
-        // slug: z.string().optional(), // Base slug for cross-language linking
     })
 });
 
-export const collections = { blog, pages, projects };
+export const collections = { projects };

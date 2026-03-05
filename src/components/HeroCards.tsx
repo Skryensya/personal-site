@@ -182,7 +182,7 @@ const HeroCards: React.FC<HeroCardsProps> = ({
                     </div>
 
                     {/* Window content */}
-                    <div className="p-4 h-[calc(100%-2rem)] flex flex-col border-t-2 border-main">
+                    <div className="window-content p-4 h-[calc(100%-2rem)] flex flex-col border-t-2 border-main bg-secondary">
                         <div className="text-center mb-4">
                             <h3 className="text-sm font-bold mb-2 font-mono uppercase tracking-wide">{card.title}</h3>
                             <p className="text-xs text-main/70 font-mono leading-relaxed">{card.description}</p>

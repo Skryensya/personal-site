@@ -57,7 +57,7 @@ const getCVPath = (locale: Language) => {
           <Button href={getLocalizedUrl(lang, 'projects')}  id="projects-button">
             {t('home.heroProjectsButton')}
           </Button>
-          <Button href={getCVPath(lang)} filled elevated target="_blank" rel="noopener noreferrer">
+          <Button href={getCVPath(lang)} filled elevated target="_blank" rel="noopener noreferrer" data-haptic="confirm">
             {t('home.cvButton')}
           </Button>
         </div>

@@ -50,11 +50,11 @@ const navigationLinks: NavigationLink[] = [
     isExternal: true
   },
   {
-    href: lang === 'es' ? '/sistema-de-diseno' : lang === 'en' ? '/en/design-system' : lang === 'no' ? '/no/designsystem' : '/ja/design-system',
+    href: getLocalizedUrl(lang, 'designSystem'),
     text: lang === 'es' ? 'Sistema de Diseño' : lang === 'en' ? 'Design System' : lang === 'no' ? 'Designsystem' : 'デザインシステム'
   },
   {
-    href: lang === 'es' ? '/arbol-de-contenido' : lang === 'en' ? '/en/content-tree' : lang === 'no' ? '/no/innholdstre' : '/ja/content-tree',
+    href: getLocalizedUrl(lang, 'contentTree'),
     text: lang === 'es' ? 'Árbol de contenido' : lang === 'en' ? 'Content Tree' : lang === 'no' ? 'Innholdstre' : 'コンテンツツリー'
   },
   {
@@ -67,28 +67,35 @@ const resolvedLinks = (links && links.length > 0) ? links : navigationLinks;
 ---
 
 <nav class={className}>
-  {resolvedLinks.map((link) => (
-    <a
-      href={link.href}
-      class={linkClass}
-      data-text={link.text}
-      target={link.isExternal ? '_blank' : undefined}
-      rel={link.isExternal ? 'noopener noreferrer' : undefined}
-    >
-      <span
-        class="scramble-part footer-nav-link__label"
-        data-link-text={link.text}
-        style={`--chars:${Math.max(link.text.length, 1)}`}
+  {resolvedLinks.map((link) => {
+    const shouldHaptic =
+      link.href.startsWith('mailto:') ||
+      /\/(curriculum|resume)\.pdf(?:$|[?#])/i.test(link.href);
+
+    return (
+      <a
+        href={link.href}
+        class={linkClass}
+        data-text={link.text}
+        data-haptic={shouldHaptic ? 'confirm' : undefined}
+        target={link.isExternal ? '_blank' : undefined}
+        rel={link.isExternal ? 'noopener noreferrer' : undefined}
       >
-        {link.text}
-      </span>
-      {link.isExternal ? (
-        <ExternalLink size={14} className={iconClass} />
-      ) : (
-        <ChevronRight size={14} className={iconClass} />
-      )}
-    </a>
-  ))}
+        <span
+          class="scramble-part footer-nav-link__label"
+          data-link-text={link.text}
+          style={`--chars:${Math.max(link.text.length, 1)}`}
+        >
+          {link.text}
+        </span>
+        {link.isExternal ? (
+          <ExternalLink size={14} className={iconClass} />
+        ) : (
+          <ChevronRight size={14} className={iconClass} />
+        )}
+      </a>
+    );
+  })}
 </nav>
 
 <style>

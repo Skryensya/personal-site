@@ -68,7 +68,7 @@ const cardData = [
 >
   {cardData.map((card, index) => (
     <div 
-      class="card-swap-card absolute top-1/2 left-1/2 border-2 border-main bg-secondary [transform-style:preserve-3d] [will-change:transform] [backface-visibility:hidden]" 
+      class="card-swap-card absolute top-1/2 left-1/2 border-2 border-main bg-secondary text-main overflow-hidden [transform-style:preserve-3d] [will-change:transform] [backface-visibility:hidden] [-webkit-backface-visibility:hidden] [-webkit-transform-style:preserve-3d]" 
       style={`width: ${typeof width === 'number' ? width + 'px' : width}; height: ${typeof height === 'number' ? height + 'px' : height};`}
       data-card-index={index}>
       <!-- Browser window header -->
@@ -123,7 +123,7 @@ const cardData = [
       </div>
 
       <!-- Window content -->
-      <div class="p-4 h-[calc(100%-2rem)] flex flex-col border-t-2 border-main">
+      <div class="window-content p-4 h-[calc(100%-2rem)] flex flex-col border-t-2 border-main bg-secondary">
         <div class="text-center mb-4">
           <h3 class="text-sm font-bold mb-2 font-mono uppercase tracking-wide">{card.title}</h3>
           <p class="text-xs text-main/70 font-mono leading-relaxed">{card.description}</p>
@@ -183,6 +183,29 @@ const cardData = [
     </div>
   ))}
 </CardSwapAstro>
+
+<style>
+  .card-swap-card {
+    background-color: var(--color-secondary);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+  }
+
+  .card-swap-card .window-header,
+  .card-swap-card .window-content {
+    background-color: var(--color-secondary);
+  }
+
+  @media (max-width: 767px) {
+    .card-swap-card {
+      isolation: isolate;
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+    }
+  }
+</style>
 
 <script>
   import { debugLogger } from '@/utils/debug-logger';

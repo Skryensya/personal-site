@@ -6,13 +6,18 @@ import { debugLogger } from '@/utils/debug-logger';
 import konami from '@/utils/konami.js';
 import { toggleAllHiddenThemes } from '@/data/themes.js';
 import { showToast } from '@/utils/toast';
+import { haptic } from '@/utils/haptics';
 
 let konamiInitialized = false;
 
-async function runKonamiActivation() {
+async function runKonamiActivation(options: { triggerHaptic?: boolean } = {}) {
     try {
         debugLogger.group('🎮 Konami Code Activation');
         debugLogger.log('Starting Konami code activation sequence');
+
+        if (options.triggerHaptic) {
+            haptic('easterEgg');
+        }
 
         // Toggle themes first to know if we should show confetti
         debugLogger.log('🎨 About to toggle hidden themes');
@@ -22,7 +27,14 @@ async function runKonamiActivation() {
         const themeMessages = (window as any).__THEME_MESSAGES__;
         const unlocked = result.action === 'unlocked';
         const companyCleared = Boolean(result.companyCleared);
-        debugLogger.log('🏢 Company cleared during toggle:', companyCleared, '| Prev company:', result.previouslyActiveCompany, '| Fallback theme:', result.fallbackThemeId);
+        debugLogger.log(
+            '🏢 Company cleared during toggle:',
+            companyCleared,
+            '| Prev company:',
+            result.previouslyActiveCompany,
+            '| Fallback theme:',
+            result.fallbackThemeId
+        );
         debugLogger.log('🎨 Unlocked status:', unlocked);
         debugLogger.log('🎨 Theme messages:', themeMessages);
 
@@ -54,7 +66,6 @@ async function runKonamiActivation() {
 
         debugLogger.log('🎭 Notification shown and scheduled for removal');
         debugLogger.groupEnd();
-
     } catch (error) {
         debugLogger.error('❌ Konami callback error:', error);
         debugLogger.groupEnd();
@@ -89,8 +100,8 @@ export async function initKonami() {
         });
 
         // Expose manual trigger for demos (mobile/touch)
-        (window as any).__TRIGGER_KONAMI__ = async () => {
-            await runKonamiActivation();
+        (window as any).__TRIGGER_KONAMI__ = async (options: { triggerHaptic?: boolean } = {}) => {
+            await runKonamiActivation(options);
         };
 
         // Clean up on page unload
@@ -98,7 +109,6 @@ export async function initKonami() {
 
         debugLogger.log('🎮 Konami initialization completed successfully');
         debugLogger.groupEnd();
-
     } catch (error) {
         debugLogger.error('❌ Konami initialization error:', error);
         debugLogger.groupEnd();
@@ -215,12 +225,7 @@ function createSimpleConfetti() {
 /**
  * Show notification when Konami code is activated
  */
-function showKonamiNotification(
-    unlocked: boolean,
-    themeMessages: any,
-    result: any,
-    companyCleared: boolean
-) {
+function showKonamiNotification(unlocked: boolean, themeMessages: any, result: any, companyCleared: boolean) {
     let message = '';
     if (unlocked) {
         const themeCount = result.themes ? result.themes.length : 0;

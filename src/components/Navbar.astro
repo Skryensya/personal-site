@@ -51,7 +51,7 @@ const displayName = 'Allison Peña';
 const navItems = [
   { label: displayName, href: getHomeUrl(currentLocale) },
   { label: t('nav.projects'), href: `${getHomeUrl(currentLocale)}#${projectsAnchor}` },
-  { label: t('nav.cv'), href: getCVPath(currentLocale), isExternal: true },
+  { label: t('nav.cv'), href: getCVPath(currentLocale), isExternal: true, haptic: 'confirm' },
 ];
 
 ---
@@ -77,6 +77,7 @@ const navItems = [
               size="sm"
               filled={isCurrentPage}
               data-nav-link
+              data-haptic={item.haptic}
               aria-current={isCurrentPage ? 'page' : undefined}
               aria-label={item.label}
               target={item.isExternal ? '_blank' : undefined}
@@ -160,6 +161,7 @@ const navItems = [
               href={item.href}  
               class="!w-full !flex !items-center !justify-center font-grotesk text-sm uppercase select-none"
               data-nav-link
+              data-haptic={item.haptic}
               aria-current={!item.isExternal && currentPath.startsWith(item.href) ? 'page' : undefined}
               target={item.isExternal ? '_blank' : undefined}
               rel={item.isExternal ? 'noopener noreferrer' : undefined}
@@ -597,27 +599,30 @@ const navItems = [
       }
 
       // Mode navigation
-      function callModeToggle() {
+      function callModeToggle(event) {
+        const isPointerClick = event instanceof MouseEvent && event.button === 0 && event.detail > 0;
+        const triggerHaptic = !!isPointerClick;
+
         if (window.toggleMode && typeof window.toggleMode === 'function') {
-          window.toggleMode();
+          window.toggleMode({ triggerHaptic });
           setTimeout(updateMobileModeDisplay, 50);
         } else if (window.modeControl && typeof window.modeControl.toggleMode === 'function') {
-          window.modeControl.toggleMode();
+          window.modeControl.toggleMode({ triggerHaptic });
           setTimeout(updateMobileModeDisplay, 50);
         } else {
         }
       }
       
       if (modePrev) {
-        modePrev.onclick = callModeToggle;
+        modePrev.onclick = (event) => callModeToggle(event);
       }
       
       if (modeNext) {
-        modeNext.onclick = callModeToggle;
+        modeNext.onclick = (event) => callModeToggle(event);
       }
       
       if (modeCenter) {
-        modeCenter.onclick = callModeToggle;
+        modeCenter.onclick = (event) => callModeToggle(event);
       }
 
       // Language navigation - enhanced with better reliability

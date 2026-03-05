@@ -80,16 +80,6 @@ function ensureStyle() {
       gap: 8px;
     }
 
-    .app-toast__dot {
-      width: 7px;
-      height: 7px;
-      margin-top: 5px;
-      border: 1px solid currentColor;
-      background: transparent;
-      flex-shrink: 0;
-      opacity: 0.9;
-    }
-
     .app-toast__text {
       flex: 1;
       white-space: normal;
@@ -97,30 +87,60 @@ function ensureStyle() {
     }
 
     .app-toast__close {
-      border: 1px solid currentColor;
-      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      background: color-mix(in srgb, var(--color-secondary) 10%, transparent);
       color: inherit;
-      font: inherit;
-      font-size: 11px;
+      font-family: var(--font-mono), monospace;
+      font-size: 13px;
+      font-weight: 700;
       line-height: 1;
-      width: 18px;
-      height: 18px;
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      min-height: 22px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
       padding: 0;
       margin-left: 6px;
+      margin-top: -1px;
       cursor: pointer;
-      opacity: 0.78;
+      opacity: 0;
+      transform: translateX(2px) scale(0.92);
+      pointer-events: none;
+      -webkit-tap-highlight-color: transparent;
+      transition:
+        opacity 150ms ease,
+        transform 150ms ease,
+        background 120ms ease,
+        color 120ms ease,
+        border-color 120ms ease,
+        box-shadow 120ms ease;
       flex-shrink: 0;
+    }
+
+    .app-toast:hover .app-toast__close,
+    .app-toast:focus-within .app-toast__close,
+    .app-toast__close:focus-visible {
+      opacity: 0.74;
+      transform: translateX(0) scale(1);
+      pointer-events: auto;
+      border-color: color-mix(in srgb, var(--color-secondary) 60%, transparent);
     }
 
     .app-toast__close:hover,
     .app-toast__close:focus-visible {
       opacity: 1;
-      outline: none;
       background: var(--color-secondary);
       color: var(--color-main);
+      border-color: var(--color-secondary);
+      box-shadow: 0 0 0 1px color-mix(in srgb, var(--color-main) 20%, transparent);
+    }
+
+    .app-toast__close:focus-visible {
+      outline: 2px solid color-mix(in srgb, var(--color-secondary) 80%, transparent);
+      outline-offset: 1px;
     }
 
     .app-toast__progress {
@@ -151,10 +171,6 @@ function ensureStyle() {
         box-shadow: 4px 4px 0 color-mix(in srgb, var(--color-main) 42%, transparent);
       }
 
-      .app-toast__dot {
-        width: 8px;
-        height: 8px;
-      }
     }
 
     @media (max-width: 640px) {
@@ -163,6 +179,15 @@ function ensureStyle() {
         left: 10px;
         width: auto;
         align-items: stretch;
+      }
+    }
+
+    @media (hover: none) {
+      .app-toast__close {
+        opacity: 0.78;
+        transform: translateX(0) scale(1);
+        pointer-events: auto;
+        border-color: color-mix(in srgb, var(--color-secondary) 60%, transparent);
       }
     }
 
@@ -226,9 +251,8 @@ export function showToast({ message, duration = 4200, kind = 'default', id }: To
 
   toast.innerHTML = `
     <div class="app-toast__row">
-      <span class="app-toast__dot" aria-hidden="true"></span>
       <span class="app-toast__text"></span>
-      <button class="app-toast__close" type="button" aria-label="${dismissLabel}">×</button>
+      <button class="app-toast__close" type="button" aria-label="${dismissLabel}">✕</button>
     </div>
     <div class="app-toast__progress" aria-hidden="true"></div>
   `;

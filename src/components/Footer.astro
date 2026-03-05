@@ -18,21 +18,37 @@ interface Props {
 const { lang = defaultLang } = Astro.props;
 const t = getTranslations(lang);
 
+const contactLocalPartByLang: Record<Language, string> = {
+  es: 'contacto',
+  en: 'contact',
+  no: 'kontakt',
+  ja: 'renraku',
+};
+const localizedContactEmail = `${contactLocalPartByLang[lang]}@allison.sh`;
+
 const connectLinks = (siteConfig.socialLinks || []).map((link: Link) => {
   let text = link.text;
+  let href = link.href;
 
-  if (link.href.startsWith('mailto:')) text = t('social.email');
-  else if (link.href.includes('github.com')) text = t('social.github');
+  if (link.href.startsWith('mailto:')) {
+    text = t('social.email');
+    href = `mailto:${localizedContactEmail}`;
+  } else if (link.href.includes('github.com')) text = t('social.github');
   else if (link.href.includes('linkedin.com')) text = t('social.linkedin');
   else if (link.href.includes('lichess.org')) text = t('social.lichess');
 
   return {
-    href: link.href,
+    href,
     text,
     isExternal: true,
   };
 });
 
+const signatureName = 'Allison Peña';
+const byAllisonText = t('footer.byAllison');
+const hasSignatureName = byAllisonText.includes(signatureName);
+const byAllisonPrefix = hasSignatureName ? byAllisonText.replace(signatureName, '').trim() : '';
+const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
 
 ---
 
@@ -65,7 +81,7 @@ const connectLinks = (siteConfig.socialLinks || []).map((link: Link) => {
             <div class="block font-mono text-sm pt-0 pb-0">
               <div class="relative text-secondary font-mono text-sm pr-20 md:pr-0">
                 <div class="md:hidden absolute right-0 top-[18px] scale-[1.1] origin-top-right" style="view-transition-name: none;">
-                  <CircularTextAstro text="ALLISON PEÑA * SKRYENSYA * " onHover="speedUp" spinDuration={20}/>
+                  <CircularTextAstro text="ALLISON PEÑA * SKRYENSYA * " onHover="speedUp" spinDuration={20} />
                 </div>
 
                 <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-1 !mt-1 text-secondary scramble-text" data-text={lang === 'es' ? 'Modo' : lang === 'no' ? 'Modus' : lang === 'ja' ? 'モード' : 'Mode'}>
@@ -116,7 +132,7 @@ const connectLinks = (siteConfig.socialLinks || []).map((link: Link) => {
 
       <!-- CircularText - hidden on mobile/md, visible on lg+ -->
       <div class="hidden lg:flex lg:w-36 justify-center items-start overflow-visible" style="view-transition-name: none;">
-        <CircularTextAstro text="ALLISON PEÑA * SKRYENSYA * " onHover="speedUp" spinDuration={20}/>
+        <CircularTextAstro text="ALLISON PEÑA * SKRYENSYA * " onHover="speedUp" spinDuration={20} />
       </div>
     </div>
 
@@ -127,7 +143,8 @@ const connectLinks = (siteConfig.socialLinks || []).map((link: Link) => {
       <p class="font-mono text-sm text-secondary scramble-text flex items-center justify-center gap-2 text-center -translate-y-[5px] pt-1" data-text={`${t('footer.builtWith')} ${t('footer.byAllison')}`} data-has-heart="true">
         <span class="scramble-part">{t('footer.builtWith')}</span>
         <Heart size={14} className="text-secondary" fill="currentColor" />
-        <span class="scramble-part">{t('footer.byAllison')}</span>
+        {byAllisonPrefix && <span class="scramble-part">{byAllisonPrefix}</span>}
+        <span class="footer-signature-name">{byAllisonName}</span>
       </p>
     </div>
   </div>
@@ -638,10 +655,19 @@ const connectLinks = (siteConfig.socialLinks || []).map((link: Link) => {
 </script>
 
 <style>
- .text-body-mono {
-        font-family: var(--font-mono);
-        font-size: var(--fs-body);
-        line-height: var(--lh-normal);
-    }
+  .text-body-mono {
+    font-family: var(--font-mono);
+    font-size: var(--fs-body);
+    line-height: var(--lh-normal);
+  }
+
+  .footer-signature-name {
+    font-family: 'Allison', cursive;
+    font-size: clamp(1.4rem, 0.8vw + 1.1rem, 1.9rem);
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    text-transform: none;
+  }
 
 </style>

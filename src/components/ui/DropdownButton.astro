@@ -215,7 +215,8 @@ const mainButtonId = `main-button-${id}`;
           event.stopPropagation();
           const actionName = mainButton.dataset.mainAction;
           if (actionName && (window as any)[actionName] && typeof (window as any)[actionName] === 'function') {
-            (window as any)[actionName]();
+            const isPointerClick = event instanceof MouseEvent && event.button === 0 && event.detail > 0;
+            (window as any)[actionName]({ triggerHaptic: isPointerClick });
           }
         });
         

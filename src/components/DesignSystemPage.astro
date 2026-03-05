@@ -1086,13 +1086,13 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                     });
                 };
 
-                const completeKonamiSequence = () => {
+                const completeKonamiSequence = (source = 'keyboard') => {
                     if (window.__kbdKonamiCelebrating) return;
                     window.__kbdKonamiCelebrating = true;
 
                     const trigger = window.__TRIGGER_KONAMI__;
                     if (typeof trigger === 'function') {
-                        trigger();
+                        trigger({ triggerHaptic: source === 'pointer' });
                     }
 
                     if (window.__kbdKonamiResetTimer) {
@@ -1106,7 +1106,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                     }, 1000);
                 };
 
-                const advanceKonamiProgress = (key) => {
+                const advanceKonamiProgress = (key, source = 'keyboard') => {
                     if (window.__kbdKonamiCelebrating) return;
 
                     let progress = Number(window.__kbdKonamiProgress || 0);
@@ -1118,7 +1118,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                         markProgress(progress);
 
                         if (progress === sequence.length) {
-                            completeKonamiSequence();
+                            completeKonamiSequence(source);
                         }
                         return;
                     }
@@ -1152,7 +1152,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
 
                         const key = String(el.getAttribute('data-konami-key') || '').toLowerCase();
                         if (!key) return;
-                        advanceKonamiProgress(key);
+                        advanceKonamiProgress(key, 'pointer');
                     };
 
                     el.addEventListener('click', activatePiece);
@@ -1191,7 +1191,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                         setLivePressed(key, code, true);
                         setModifierPressedStateFromEvent(e, true);
                         setKonamiPressed(key, true);
-                        advanceKonamiProgress(key);
+                        advanceKonamiProgress(key, 'keyboard');
                     };
 
                     const onKeyPress = (e) => {

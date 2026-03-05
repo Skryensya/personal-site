@@ -512,6 +512,22 @@ declare global {
             });
         </script>
 
+        <script>
+            import { bindHapticActions } from '@/utils/haptics';
+
+            const initHapticBindings = () => {
+                bindHapticActions();
+            };
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initHapticBindings, { once: true });
+            } else {
+                initHapticBindings();
+            }
+
+            document.addEventListener('astro:page-load', initHapticBindings);
+        </script>
+
         <!-- PostHog Analytics -->
         <PostHogAnalytics />
 

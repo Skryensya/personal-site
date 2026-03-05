@@ -56,7 +56,7 @@ const siteConfig: SiteConfig = {
         },
         {
             text: 'Proyectos',
-            href: '/projects'
+            href: '/proyectos'
         }
     ],
     footerNavLinks: [
@@ -66,7 +66,7 @@ const siteConfig: SiteConfig = {
         },
         {
             text: 'Proyectos',
-            href: '/projects'
+            href: '/proyectos'
         }
     ],
     socialLinks: [
@@ -84,7 +84,7 @@ const siteConfig: SiteConfig = {
         },
         {
             text: 'Email',
-            href: 'mailto:allison.jpb@gmail.com'
+            href: 'mailto:contacto@allison.sh'
         }
     ],
 
