@@ -1,0 +1,35 @@
+---
+import Layout from '@/layouts/Layout.astro';
+---
+
+<Layout title="Haptics" description="Haptics debug" lang="en" noindex={true}>
+  <main class="max-w-xl mx-auto px-4 py-24 space-y-4">
+    <h1 class="text-2xl font-bold uppercase">Haptics test</h1>
+    <p class="text-sm opacity-80">Quick production test page.</p>
+
+    <div class="flex flex-wrap gap-2">
+      <button class="px-3 h-10 border-2 border-main" data-trigger="light">light</button>
+      <button class="px-3 h-10 border-2 border-main" data-trigger="medium">medium</button>
+      <button class="px-3 h-10 border-2 border-main" data-trigger="heavy">heavy</button>
+      <button class="px-3 h-10 border-2 border-main" data-trigger="selection">selection</button>
+      <button class="px-3 h-10 border-2 border-main" data-trigger="success">success</button>
+      <button class="px-3 h-10 border-2 border-main" data-trigger="warning">warning</button>
+      <button class="px-3 h-10 border-2 border-main" data-trigger="error">error</button>
+    </div>
+  </main>
+</Layout>
+
+<script>
+  import { WebHaptics } from 'web-haptics';
+
+  const haptics = new WebHaptics();
+
+  document.querySelectorAll('[data-trigger]').forEach((btn) => {
+    btn.addEventListener('click', async (event) => {
+      const el = event.currentTarget;
+      if (!(el instanceof HTMLElement)) return;
+      const type = el.dataset.trigger || 'medium';
+      await haptics.trigger(type);
+    });
+  });
+</script>
