@@ -1,0 +1,157 @@
+---
+import Layout from '@/layouts/Layout.astro';
+
+const isEnabled = Astro.url.searchParams.get('debug-haptics') === '1';
+
+if (!isEnabled) {
+  return Astro.redirect('/', 302);
+}
+---
+
+<Layout
+  title="Haptics debug"
+  description="Internal haptics test page"
+  lang="en"
+  noindex={true}
+>
+  <main class="max-w-3xl mx-auto px-4 py-24 space-y-6">
+    <h1 class="text-2xl font-bold uppercase">Internal haptics debug</h1>
+    <p class="text-sm opacity-80">
+      Hidden page for production mobile testing. Open with
+      <code class="px-1 py-0.5 border border-main">?debug-haptics=1</code>.
+    </p>
+
+    <section class="border-2 border-main p-4 space-y-3 bg-secondary">
+      <h2 class="font-bold uppercase">Environment</h2>
+      <pre id="haptic-env" class="text-xs whitespace-pre-wrap bg-main text-secondary p-3 min-h-20"></pre>
+    </section>
+
+    <section class="border-2 border-main p-4 space-y-3 bg-secondary">
+      <h2 class="font-bold uppercase">Direct web-haptics trigger()</h2>
+      <div class="flex flex-wrap gap-2">
+        <button class="px-3 h-10 border-2 border-main" data-trigger="light">light</button>
+        <button class="px-3 h-10 border-2 border-main" data-trigger="medium">medium</button>
+        <button class="px-3 h-10 border-2 border-main" data-trigger="heavy">heavy</button>
+        <button class="px-3 h-10 border-2 border-main" data-trigger="selection">selection</button>
+        <button class="px-3 h-10 border-2 border-main" data-trigger="success">success</button>
+        <button class="px-3 h-10 border-2 border-main" data-trigger="warning">warning</button>
+        <button class="px-3 h-10 border-2 border-main" data-trigger="error">error</button>
+      </div>
+      <div class="flex flex-wrap gap-2">
+        <button class="px-3 h-10 border-2 border-main" id="custom-nudge">custom nudge pattern</button>
+        <button class="px-3 h-10 border-2 border-main" id="cancel-haptic">cancel</button>
+      </div>
+    </section>
+
+    <section class="border-2 border-main p-4 space-y-3 bg-secondary">
+      <h2 class="font-bold uppercase">App utility (src/utils/haptics.ts)</h2>
+      <div class="flex flex-wrap gap-2">
+        <button class="px-3 h-10 border-2 border-main" data-app-haptic="light">app light</button>
+        <button class="px-3 h-10 border-2 border-main" data-app-haptic="medium">app medium</button>
+        <button class="px-3 h-10 border-2 border-main" data-app-haptic="selection">app selection</button>
+        <button class="px-3 h-10 border-2 border-main" data-app-haptic="success">app success</button>
+        <button class="px-3 h-10 border-2 border-main" data-app-haptic="error">app error</button>
+      </div>
+    </section>
+
+    <section class="border-2 border-main p-4 space-y-3 bg-secondary">
+      <h2 class="font-bold uppercase">Data attribute binding (Layout init)</h2>
+      <div class="flex flex-wrap gap-2">
+        <button class="px-3 h-10 border-2 border-main" data-haptic="light">data-haptic light</button>
+        <button class="px-3 h-10 border-2 border-main" data-haptic="selection">data-haptic selection</button>
+        <button class="px-3 h-10 border-2 border-main" data-haptic="success">data-haptic success</button>
+      </div>
+    </section>
+
+    <section class="border-2 border-main p-4 space-y-3 bg-secondary">
+      <div class="flex items-center justify-between gap-2">
+        <h2 class="font-bold uppercase">Log</h2>
+        <button id="copy-log" class="px-3 h-8 border-2 border-main text-xs uppercase">copy</button>
+      </div>
+      <pre id="haptic-log" class="text-xs whitespace-pre-wrap bg-main text-secondary p-3 min-h-48 max-h-80 overflow-auto"></pre>
+    </section>
+  </main>
+</Layout>
+
+<script>
+  import { WebHaptics } from 'web-haptics';
+  import { haptic } from '@/utils/haptics';
+
+  const logEl = document.getElementById('haptic-log');
+  const envEl = document.getElementById('haptic-env');
+
+  const haptics = new WebHaptics();
+
+  const appendLog = (line) => {
+    if (!logEl) return;
+    const prefix = new Date().toISOString().split('T')[1]?.replace('Z', '') || '';
+    logEl.textContent = `${logEl.textContent || ''}[${prefix}] ${line}\n`;
+    logEl.scrollTop = logEl.scrollHeight;
+  };
+
+  const env = {
+    userAgent: navigator.userAgent,
+    platform: navigator.platform,
+    language: navigator.language,
+    webHapticsSupported: WebHaptics.isSupported,
+    hasNavigatorVibrate: typeof navigator.vibrate === 'function',
+    reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
+    isSecureContext: window.isSecureContext,
+    visibilityState: document.visibilityState,
+    url: window.location.href
+  };
+
+  if (envEl) envEl.textContent = JSON.stringify(env, null, 2);
+  appendLog(`env: ${JSON.stringify(env)}`);
+
+  document.querySelectorAll('[data-trigger]').forEach((btn) => {
+    btn.addEventListener('click', async (event) => {
+      const el = event.currentTarget;
+      if (!(el instanceof HTMLElement)) return;
+      const type = el.dataset.trigger || 'medium';
+      appendLog(`direct trigger("${type}")`);
+      await haptics.trigger(type);
+    });
+  });
+
+  document.getElementById('custom-nudge')?.addEventListener('click', async () => {
+    appendLog('direct custom pattern: [{duration:80,intensity:0.8},{delay:80,duration:50,intensity:0.3}]');
+    await haptics.trigger([
+      { duration: 80, intensity: 0.8 },
+      { delay: 80, duration: 50, intensity: 0.3 }
+    ]);
+  });
+
+  document.getElementById('cancel-haptic')?.addEventListener('click', () => {
+    appendLog('direct cancel()');
+    haptics.cancel();
+  });
+
+  document.querySelectorAll('[data-app-haptic]').forEach((btn) => {
+    btn.addEventListener('click', (event) => {
+      const el = event.currentTarget;
+      if (!(el instanceof HTMLElement)) return;
+      const type = el.dataset.appHaptic || 'medium';
+      appendLog(`app haptic("${type}")`);
+      haptic(type as any);
+    });
+  });
+
+  document.querySelectorAll('[data-haptic]').forEach((btn) => {
+    btn.addEventListener('click', (event) => {
+      const el = event.currentTarget;
+      if (!(el instanceof HTMLElement)) return;
+      appendLog(`data-haptic click (type=${el.dataset.haptic})`);
+    });
+  });
+
+  document.getElementById('copy-log')?.addEventListener('click', async () => {
+    const text = [envEl?.textContent || '', '', logEl?.textContent || ''].join('\n');
+    try {
+      await navigator.clipboard.writeText(text);
+      appendLog('copied log to clipboard');
+    } catch {
+      appendLog('copy failed');
+    }
+  });
+</script>
