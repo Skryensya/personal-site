@@ -5,22 +5,32 @@ import Layout from '@/layouts/Layout.astro';
 <Layout title="Haptics" description="Haptics debug" lang="en" noindex={true}>
   <main class="max-w-xl mx-auto px-4 py-24 space-y-4">
     <h1 class="text-2xl font-bold uppercase">Haptics test</h1>
-    <p class="text-sm opacity-80">Quick production test page.</p>
+    <p class="text-sm opacity-80">Scale remapped to success/warning/error for this device.</p>
 
-    <div class="flex flex-wrap gap-2">
-      <button class="px-3 h-10 border-2 border-main" data-trigger="light">light</button>
-      <button class="px-3 h-10 border-2 border-main" data-trigger="medium">medium</button>
-      <button class="px-3 h-10 border-2 border-main" data-trigger="heavy">heavy</button>
-      <button class="px-3 h-10 border-2 border-main" data-trigger="selection">selection</button>
-      <button class="px-3 h-10 border-2 border-main" data-trigger="success">success</button>
-      <button class="px-3 h-10 border-2 border-main" data-trigger="warning">warning</button>
-      <button class="px-3 h-10 border-2 border-main" data-trigger="error">error</button>
+    <div class="space-y-2">
+      <div class="font-bold text-sm uppercase">Raw working presets</div>
+      <div class="flex flex-wrap gap-2">
+        <button class="px-3 h-10 border-2 border-main" data-trigger="success">success</button>
+        <button class="px-3 h-10 border-2 border-main" data-trigger="warning">warning</button>
+        <button class="px-3 h-10 border-2 border-main" data-trigger="error">error</button>
+      </div>
+    </div>
+
+    <div class="space-y-2">
+      <div class="font-bold text-sm uppercase">App mapped scale</div>
+      <div class="flex flex-wrap gap-2">
+        <button class="px-3 h-10 border-2 border-main" data-app-trigger="light">light → success</button>
+        <button class="px-3 h-10 border-2 border-main" data-app-trigger="medium">medium → warning</button>
+        <button class="px-3 h-10 border-2 border-main" data-app-trigger="heavy">heavy → error</button>
+        <button class="px-3 h-10 border-2 border-main" data-app-trigger="selection">selection → success</button>
+      </div>
     </div>
   </main>
 </Layout>
 
 <script>
   import { WebHaptics } from 'web-haptics';
+  import { haptic } from '@/utils/haptics';
 
   const haptics = new WebHaptics();
 
@@ -28,8 +38,16 @@ import Layout from '@/layouts/Layout.astro';
     btn.addEventListener('click', async (event) => {
       const el = event.currentTarget;
       if (!(el instanceof HTMLElement)) return;
-      const type = el.dataset.trigger || 'medium';
+      const type = el.dataset.trigger || 'success';
       await haptics.trigger(type);
+    });
+  });
+
+  document.querySelectorAll('[data-app-trigger]').forEach((btn) => {
+    btn.addEventListener('click', (event) => {
+      const el = event.currentTarget;
+      if (!(el instanceof HTMLElement)) return;
+      haptic((el.dataset.appTrigger || 'light') as any);
     });
   });
 </script>

@@ -18,21 +18,24 @@ let lastHapticAt = 0;
 
 const haptics = new WebHaptics();
 
-const HAPTIC_MAP: Record<HapticType, 'success' | 'warning' | 'error' | 'light' | 'medium' | 'heavy' | 'selection'> = {
+// Device compatibility remap:
+// On some phones only notification-style presets are reliably perceptible.
+// We remap the whole scale to success/warning/error as the new baseline.
+const HAPTIC_MAP: Record<HapticType, 'success' | 'warning' | 'error'> = {
   // Legacy aliases used around the app
-  default: 'medium',
-  mode: 'light',
-  confirm: 'medium',
-  easterEgg: 'heavy',
+  default: 'success',
+  mode: 'success',
+  confirm: 'warning',
+  easterEgg: 'error',
 
-  // Native web-haptics types
+  // Native web-haptics types (kept for call-site compatibility)
   success: 'success',
   warning: 'warning',
   error: 'error',
-  light: 'light',
-  medium: 'medium',
-  heavy: 'heavy',
-  selection: 'selection'
+  light: 'success',
+  medium: 'warning',
+  heavy: 'error',
+  selection: 'success'
 };
 
 export function canUseHaptics(): boolean {
