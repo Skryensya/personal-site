@@ -1,39 +1,54 @@
-export type HapticType = 'default' | 'mode' | 'confirm' | 'easterEgg';
+import { WebHaptics } from 'web-haptics';
 
-const HAPTIC_PATTERNS: Record<HapticType, number | number[]> = {
-  // Keep the default pulse almost imperceptible.
-  default: 8,
-  // Theme mode changes should feel very light.
-  mode: 6,
-  // Confirmation actions can be slightly stronger.
-  confirm: 10,
-  // Short celebratory pulse pattern for easter eggs.
-  easterEgg: [10, 24, 14]
-};
+export type HapticType =
+  | 'default'
+  | 'mode'
+  | 'confirm'
+  | 'easterEgg'
+  | 'success'
+  | 'warning'
+  | 'error'
+  | 'light'
+  | 'medium'
+  | 'heavy'
+  | 'selection';
 
-const MIN_HAPTIC_INTERVAL_MS = 180;
+const MIN_HAPTIC_INTERVAL_MS = 160;
 let lastHapticAt = 0;
 
+const haptics = new WebHaptics();
+
+const HAPTIC_MAP: Record<HapticType, 'success' | 'warning' | 'error' | 'light' | 'medium' | 'heavy' | 'selection'> = {
+  // Legacy aliases used around the app
+  default: 'medium',
+  mode: 'light',
+  confirm: 'medium',
+  easterEgg: 'heavy',
+
+  // Native web-haptics types
+  success: 'success',
+  warning: 'warning',
+  error: 'error',
+  light: 'light',
+  medium: 'medium',
+  heavy: 'heavy',
+  selection: 'selection'
+};
+
 export function canUseHaptics(): boolean {
-  if (typeof window === 'undefined') return false;
-  if (typeof navigator === 'undefined' || typeof navigator.vibrate !== 'function') return false;
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
   return true;
 }
 
 export function haptic(type: HapticType = 'default'): boolean {
-  if (!canUseHaptics()) return false;
+  if (typeof window === 'undefined') return false;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
 
   const now = performance.now();
   if (now - lastHapticAt < MIN_HAPTIC_INTERVAL_MS) return false;
 
   lastHapticAt = now;
-
-  try {
-    return navigator.vibrate(HAPTIC_PATTERNS[type]);
-  } catch {
-    return false;
-  }
+  void haptics.trigger(HAPTIC_MAP[type]);
+  return true;
 }
 
 export function isExplicitPointerClick(event: Event): boolean {
@@ -53,7 +68,7 @@ export function bindHapticActions(root: ParentNode = document): void {
       if (!isExplicitPointerClick(event)) return;
 
       const requestedType = (node.dataset.haptic || 'default') as HapticType;
-      const type: HapticType = requestedType in HAPTIC_PATTERNS ? requestedType : 'default';
+      const type: HapticType = requestedType in HAPTIC_MAP ? requestedType : 'default';
       haptic(type);
     });
   });

@@ -89,6 +89,11 @@ const alternateUrls = supportedLanguages.map((lang) => ({
   import { supportedLanguages, languages, type Language } from '@/i18n/ui';
   import { getLangFromUrl } from '@/i18n/utils';
   import { getEquivalentPage } from '@/utils/localized-routes';
+  import { haptic, isExplicitPointerClick } from '@/utils/haptics';
+
+  interface HapticOptions {
+    triggerHaptic?: boolean;
+  }
 
   // Global language management functions
   (window as any).languageControl = {
@@ -143,22 +148,25 @@ const alternateUrls = supportedLanguages.map((lang) => ({
     },
     
     // Handle language switch
-    switchLanguage(lang: Language, url: string, viaKeyboard = false) {
+    switchLanguage(lang: Language, url: string, viaKeyboard = false, options: HapticOptions = {}) {
       localStorage.setItem('langChoice', lang);
       // Only save focus state if changed via keyboard
       if (viaKeyboard) {
         localStorage.setItem('focusAfterNavigation', 'language-control');
       }
+      if (options.triggerHaptic) {
+        haptic('selection');
+      }
       window.location.href = url;
     },
     
     // Next language (for main button)
-    nextLanguage() {
+    nextLanguage(options: HapticOptions = {}) {
       const currentIndex = supportedLanguages.findIndex(lang => lang === this.currentLang);
       const nextIndex = (currentIndex + 1) % supportedLanguages.length;
       const nextLang = supportedLanguages[nextIndex];
       const url = this.alternateUrls.find((alt: any) => alt.lang === nextLang)?.url || '/';
-      this.switchLanguage(nextLang, url, true); // Always via keyboard when using main button
+      this.switchLanguage(nextLang, url, true, options); // Always via keyboard when using main button
     },
     
     // Update display elements
@@ -211,7 +219,9 @@ const alternateUrls = supportedLanguages.map((lang) => ({
           const lang = linkElement.dataset.lang as Language;
           const url = linkElement.dataset.url;
           if (lang && url) {
-            this.switchLanguage(lang, url, false);
+            this.switchLanguage(lang, url, false, {
+              triggerHaptic: isExplicitPointerClick(event)
+            });
           }
         });
       });
@@ -235,8 +245,8 @@ const alternateUrls = supportedLanguages.map((lang) => ({
   };
 
   // Global function for main button
-  (window as any).nextLanguage = () => {
-    (window as any).languageControl.nextLanguage();
+  (window as any).nextLanguage = (options: HapticOptions = {}) => {
+    (window as any).languageControl.nextLanguage(options);
   };
 
   // Initialize when DOM is ready

@@ -5,7 +5,6 @@ import { Heart } from 'lucide-react';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import CircularTextAstro from '@/components/CircularTextAstro.astro';
-import FooterContrastDisplay from '@/components/ui/seven-segment/FooterContrastDisplay.astro';
 import FooterNavigationList from '@/components/FooterNavigationList.astro';
 import ThemeControl from '@/components/ThemeControl.astro';
 import ModeControl from '@/components/ModeControl.astro';
@@ -108,22 +107,6 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
                   </div>
                 </div>
 
-                <div class="mt-3 pb-1">
-                  <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-0.5 !mt-0 text-secondary scramble-text" data-text={t('footer.aspectRatio.title')}>
-                    {t('footer.aspectRatio.title')}
-                  </h3>
-                  <div class="inline-block bg-main pr-1.5 pl-0 py-1.5 rounded-sm">
-                    <div class="flex items-center gap-2 bg-secondary px-2 py-1.5 rounded-sm">
-                      <FooterContrastDisplay
-                        id="footer-contrast-display"
-                        initialValue="00.0:0"
-                        className="text-main !min-h-[1.75rem] !min-w-[2.55rem] !px-1 !py-0.5 !gap-[1px] !border-0 !border-transparent !shadow-none [transform:scaleX(0.82)_scaleY(0.9)] ss-display-proportion-standard"
-                        inverted={false}
-                      />
-                      <div id="footer-wcag-levels" class="flex gap-1.5"></div>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </nav>
@@ -144,7 +127,7 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
         <span class="scramble-part">{t('footer.builtWith')}</span>
         <Heart size={14} className="text-secondary" fill="currentColor" />
         {byAllisonPrefix && <span class="scramble-part">{byAllisonPrefix}</span>}
-        <span class="footer-signature-name">{byAllisonName}</span>
+        <span class="scramble-part">{byAllisonName}</span>
       </p>
     </div>
   </div>
@@ -172,293 +155,6 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
 
     let footerAnimated = false;
     const cleanupFns: Array<() => void> = [];
-
-    // Contrast ratio calculation functions
-    function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
-      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-      } : null;
-    }
-
-    function getRelativeLuminance(r: number, g: number, b: number): number {
-      const [rNorm, gNorm, bNorm] = [r, g, b].map(c => {
-        c = c / 255;
-        return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-      });
-      return 0.2126 * rNorm + 0.7152 * gNorm + 0.0722 * bNorm;
-    }
-
-    function getContrastRatio(color1: string, color2: string): number {
-      const rgb1 = hexToRgb(color1);
-      const rgb2 = hexToRgb(color2);
-
-      if (!rgb1 || !rgb2) return 1;
-
-      const lum1 = getRelativeLuminance(rgb1.r, rgb1.g, rgb1.b);
-      const lum2 = getRelativeLuminance(rgb2.r, rgb2.g, rgb2.b);
-
-      const brightest = Math.max(lum1, lum2);
-      const darkest = Math.min(lum1, lum2);
-
-      return (brightest + 0.05) / (darkest + 0.05);
-    }
-
-    function updateWcagLevelsUI(ratio: number): void {
-      const wcagLevelsElement = document.getElementById('footer-wcag-levels');
-      if (!wcagLevelsElement) return;
-
-      const thresholds: Record<string, number> = {
-        A: 3,
-        AA: 4.5,
-        AAA: 7
-      };
-
-      const boxes = wcagLevelsElement.querySelectorAll('[data-wcag-level]');
-      boxes.forEach((box) => {
-        const level = (box as HTMLElement).dataset.wcagLevel || '';
-        const required = thresholds[level] ?? 99;
-        const passed = ratio >= required;
-        (box as HTMLElement).classList.toggle('opacity-100', passed);
-        (box as HTMLElement).classList.toggle('opacity-30', !passed);
-      });
-    }
-
-    function rgbToHex(rgb: string): string {
-      const result = rgb.match(/\d+/g);
-      if (!result || result.length < 3) return '#000000';
-
-      const r = parseInt(result[0]);
-      const g = parseInt(result[1]);
-      const b = parseInt(result[2]);
-
-      return '#' + [r, g, b].map(x => {
-        const hex = x.toString(16);
-        return hex.length === 1 ? '0' + hex : hex;
-      }).join('');
-    }
-
-    function formatContrastDisplayValue(ratio: number): string {
-      const left = ratio.toFixed(1).padStart(4, '0'); // e.g. 04.5
-      const right = '1';
-      return `${left}:${right}`;
-    }
-
-    function setContrastDisplayValue(value: string): void {
-      (window as any).__footerContrastValue = value;
-      window.dispatchEvent(new CustomEvent('footer-contrast-change', {
-        detail: { value, targetId: 'footer-contrast-display' }
-      }));
-    }
-
-    function calculateAndDisplayFooterContrast(): void {
-
-      try {
-        const rootStyles = getComputedStyle(document.documentElement);
-        const colorMain = rootStyles.getPropertyValue('--color-main').trim();
-        const colorSecondary = rootStyles.getPropertyValue('--color-secondary').trim();
-
-        debugLogger.log('Footer contrast calculation:', { colorMain, colorSecondary });
-
-        let mainColor = colorMain;
-        let secondaryColor = colorSecondary;
-
-        if (!mainColor || !secondaryColor) {
-          const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
-          mainColor = isDarkMode ? '#ffffff' : '#000000';
-          secondaryColor = isDarkMode ? '#000000' : '#ffffff';
-        }
-
-        if (!mainColor.startsWith('#')) {
-          mainColor = mainColor.startsWith('rgb') ? rgbToHex(mainColor) : '#000000';
-        }
-        if (!secondaryColor.startsWith('#')) {
-          secondaryColor = secondaryColor.startsWith('rgb') ? rgbToHex(secondaryColor) : '#ffffff';
-        }
-
-        const contrastRatio = getContrastRatio(mainColor, secondaryColor);
-
-        const wcagLevelsElement = document.getElementById('footer-wcag-levels');
-        setContrastDisplayValue(formatContrastDisplayValue(contrastRatio));
-        
-        if (wcagLevelsElement) {
-          // Get language from document
-          const lang = document.documentElement.getAttribute('lang') || 'es';
-
-          const shouldBuild =
-            wcagLevelsElement.children.length === 0 ||
-            wcagLevelsElement.getAttribute('data-lang') !== lang;
-
-          // Define levels and their requirements
-          const levels = [
-            { name: 'A', requirement: 3, passed: contrastRatio >= 3 },
-            { name: 'AA', requirement: 4.5, passed: contrastRatio >= 4.5 },
-            { name: 'AAA', requirement: 7, passed: contrastRatio >= 7 }
-          ];
-
-          if (shouldBuild) {
-            wcagLevelsElement.innerHTML = '';
-            wcagLevelsElement.setAttribute('data-lang', lang);
-
-            levels.forEach(level => {
-            const levelBox = document.createElement('div');
-            levelBox.dataset.wcagLevel = level.name;
-            levelBox.className = `px-2 py-1 text-xs font-mono font-bold min-h-[28px] flex items-center gap-1.5 border border-main ${level.passed ? 'bg-secondary text-main' : 'bg-secondary text-main/65'} cursor-help relative`;
-            
-            const titleKey = `footer.wcag.${level.name.toLowerCase()}.title`;
-            const descKey = `footer.wcag.${level.name.toLowerCase()}.desc`;
-            
-            // Get tooltip text from translations
-            let tooltipTitle = '';
-            let tooltipDesc = '';
-            if (lang === 'en') {
-              const enTranslations: Record<string, string> = {
-                'footer.wcag.a.title': 'WCAG A - Minimum',
-                'footer.wcag.a.desc': '3:1 contrast for graphics, icons and UI components',
-                'footer.wcag.aa.title': 'WCAG AA - Standard',
-                'footer.wcag.aa.desc': '4.5:1 contrast for normal text and legal compliance',
-                'footer.wcag.aaa.title': 'WCAG AAA - Enhanced',
-                'footer.wcag.aaa.desc': '7:1 contrast for maximum accessibility and readability'
-              };
-              tooltipTitle = enTranslations[titleKey] || '';
-              tooltipDesc = enTranslations[descKey] || '';
-            } else if (lang === 'no') {
-              const noTranslations: Record<string, string> = {
-                'footer.wcag.a.title': 'WCAG A - Minimum',
-                'footer.wcag.a.desc': '3:1 kontrast for grafikk, ikoner og UI-komponenter',
-                'footer.wcag.aa.title': 'WCAG AA - Standard',
-                'footer.wcag.aa.desc': '4.5:1 kontrast for normal tekst og lovmessig overholdelse',
-                'footer.wcag.aaa.title': 'WCAG AAA - Forbedret',
-                'footer.wcag.aaa.desc': '7:1 kontrast for maksimal tilgjengelighet og lesbarhet'
-              };
-              tooltipTitle = noTranslations[titleKey] || '';
-              tooltipDesc = noTranslations[descKey] || '';
-            } else if (lang === 'ja') {
-              const jaTranslations: Record<string, string> = {
-                'footer.wcag.a.title': 'WCAG A - 最低基準',
-                'footer.wcag.a.desc': '図やUI要素で3:1コントラスト',
-                'footer.wcag.aa.title': 'WCAG AA - 標準',
-                'footer.wcag.aa.desc': '通常テキストで4.5:1コントラスト',
-                'footer.wcag.aaa.title': 'WCAG AAA - 強化',
-                'footer.wcag.aaa.desc': '最大可読性のため7:1コントラスト'
-              };
-              tooltipTitle = jaTranslations[titleKey] || '';
-              tooltipDesc = jaTranslations[descKey] || '';
-            } else {
-              const esTranslations: Record<string, string> = {
-                'footer.wcag.a.title': 'WCAG A - Mínimo',
-                'footer.wcag.a.desc': 'Contraste 3:1 para elementos gráficos, iconos y componentes de interfaz',
-                'footer.wcag.aa.title': 'WCAG AA - Estándar',
-                'footer.wcag.aa.desc': 'Contraste 4.5:1 para texto normal y cumplimiento legal',
-                'footer.wcag.aaa.title': 'WCAG AAA - Superior',
-                'footer.wcag.aaa.desc': 'Contraste 7:1 para máxima accesibilidad y legibilidad'
-              };
-              tooltipTitle = esTranslations[titleKey] || '';
-              tooltipDesc = esTranslations[descKey] || '';
-            }
-            
-            // Create icon element
-            const iconContainer = document.createElement('span');
-            iconContainer.className = 'inline-flex w-3.5 h-3.5 items-center justify-center';
-            
-            if (level.passed) {
-              // Use circle-check-big icon for passed levels
-              iconContainer.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>';
-            } else {
-              // Use ban icon for failed levels
-              iconContainer.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.929 4.929 19.07 19.071"/><circle cx="12" cy="12" r="10"/></svg>';
-            }
-            
-            const label = document.createElement('span');
-            label.textContent = level.name;
-            
-            // Create tooltip element
-            const tooltip = document.createElement('div');
-            tooltip.className = 'fixed bg-secondary text-main border-2 border-main shadow-[4px_4px_0px_var(--color-main)] z-[9999] pointer-events-none';
-            tooltip.style.width = '280px';
-            tooltip.style.maxWidth = 'min(92vw, 320px)';
-            tooltip.style.opacity = '0';
-            tooltip.style.visibility = 'hidden';
-            
-            // Create tooltip content
-            const tooltipContent = document.createElement('div');
-            tooltipContent.className = 'p-4 flex flex-col gap-3';
-            
-            // Header with title and icon
-            const header = document.createElement('div');
-            header.className = 'flex items-start justify-between gap-3';
-            
-            const title = document.createElement('div');
-            title.className = 'text-sm font-mono font-bold leading-tight';
-            title.textContent = tooltipTitle;
-            
-            // Status icon
-            const statusIcon = document.createElement('div');
-            statusIcon.className = 'w-5 h-5 flex items-center justify-center';
-            if (level.passed) {
-              statusIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>';
-            } else {
-              statusIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.929 4.929 19.07 19.071"/><circle cx="12" cy="12" r="10"/></svg>';
-            }
-            
-            header.appendChild(title);
-            header.appendChild(statusIcon);
-
-            const requirement = document.createElement('div');
-            requirement.className = 'inline-flex w-fit items-center border border-main px-2 py-1 text-[11px] font-mono font-bold leading-none';
-            const minimumLabel = lang === 'es' ? 'mínimo' : lang === 'no' ? 'minimum' : lang === 'ja' ? '最小' : 'minimum';
-            requirement.textContent = `${level.requirement}:1 ${minimumLabel}`;
-            
-            // Description
-            const desc = document.createElement('div');
-            desc.className = 'text-xs font-mono leading-relaxed text-left';
-            desc.textContent = tooltipDesc;
-            
-            tooltipContent.appendChild(header);
-            tooltipContent.appendChild(requirement);
-            tooltipContent.appendChild(desc);
-            tooltip.appendChild(tooltipContent);
-            
-            levelBox.appendChild(iconContainer);
-            levelBox.appendChild(label);
-            
-            // Add hover events
-            levelBox.addEventListener('mouseenter', () => {
-              // Position tooltip relative to the levelBox
-              const rect = levelBox.getBoundingClientRect();
-              tooltip.style.left = `${rect.left + rect.width / 2}px`;
-              tooltip.style.top = `${rect.top - 8}px`;
-              tooltip.style.transform = 'translate(-50%, -100%)';
-              tooltip.style.opacity = '1';
-              tooltip.style.visibility = 'visible';
-              
-              // Append to body to avoid opacity inheritance
-              document.body.appendChild(tooltip);
-            });
-            
-            levelBox.addEventListener('mouseleave', () => {
-              tooltip.style.opacity = '0';
-              tooltip.style.visibility = 'hidden';
-              // Remove from body
-              if (tooltip.parentNode) {
-                tooltip.parentNode.removeChild(tooltip);
-              }
-            });
-            
-            wcagLevelsElement.appendChild(levelBox);
-          });
-        }
-
-          updateWcagLevelsUI(contrastRatio);
-        }
-
-      } catch (error) {
-        debugLogger.warn('Failed to calculate contrast ratio:', error);
-        setContrastDisplayValue('00.0:0');
-      }
-    }
 
     // Scramble a single text node (span.scramble-part)
     const scrambleTimers = new WeakMap<HTMLElement, number>();
@@ -528,70 +224,11 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
       }
     }
 
-    // Lazy-init footer utilities to avoid competing with above-the-fold rendering
-    let contrastRaf: number | null = null;
-    let footerUtilitiesReady = false;
-
-    const scheduleContrastUpdate = () => {
-      if (!footerUtilitiesReady) return;
-      if (contrastRaf !== null) {
-        cancelAnimationFrame(contrastRaf);
-      }
-      contrastRaf = requestAnimationFrame(() => {
-        contrastRaf = null;
-        calculateAndDisplayFooterContrast();
-      });
-    };
-
-    const initFooterUtilities = () => {
-      if (footerUtilitiesReady) return;
-      footerUtilitiesReady = true;
-
-      calculateAndDisplayFooterContrast();
-
-      const observer = new MutationObserver((mutations) => {
-        for (const mutation of mutations) {
-          if (
-            mutation.type === 'attributes' &&
-            (mutation.attributeName === 'data-theme' || mutation.attributeName === 'class')
-          ) {
-            scheduleContrastUpdate();
-            break;
-          }
-        }
-      });
-
-      observer.observe(document.documentElement, {
-        attributes: true,
-        attributeFilter: ['data-theme', 'class']
-      });
-      cleanupFns.push(() => observer.disconnect());
-
-      // Live contrast updates for dynamic theme (throttled)
-      let lastDynamicContrastUpdate = 0;
-      const onDynamicThemeContrast = (event: Event) => {
-        const now = performance.now();
-        if (now - lastDynamicContrastUpdate < 220) return;
-        lastDynamicContrastUpdate = now;
-
-        const ratio = (event as CustomEvent).detail?.ratio;
-        if (typeof ratio !== 'number' || Number.isNaN(ratio)) return;
-
-        setContrastDisplayValue(formatContrastDisplayValue(ratio));
-
-        updateWcagLevelsUI(ratio);
-      };
-
-      window.addEventListener('dynamic-theme-contrast', onDynamicThemeContrast);
-      cleanupFns.push(() => window.removeEventListener('dynamic-theme-contrast', onDynamicThemeContrast));
-    };
-
     // Intersection Observer: run once when footer enters viewport
     const runFooterScramble = (footerEl: Element) => {
       if (footerAnimated) return;
       footerAnimated = true;
 
-      initFooterUtilities();
       window.dispatchEvent(new CustomEvent('footer-scramble-start'));
 
       const elements = footerEl.querySelectorAll('.scramble-text');
@@ -616,22 +253,9 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
       // Run scramble only once, when footer enters viewport
       scrambleObserver.observe(footer);
 
-      // Idle fallback: initialize metrics lazily even if footer is never reached
-      const idleId = 'requestIdleCallback' in window
-        ? (window as any).requestIdleCallback(() => initFooterUtilities(), { timeout: 2500 })
-        : window.setTimeout(() => initFooterUtilities(), 1800);
-
-      cleanupFns.push(() => {
-        if ('cancelIdleCallback' in window) {
-          (window as any).cancelIdleCallback?.(idleId);
-        } else {
-          clearTimeout(idleId as number);
-        }
-      });
     }
     cleanupFns.push(() => {
       scrambleObserver.disconnect();
-      if (contrastRaf !== null) cancelAnimationFrame(contrastRaf);
     });
 
     footerCleanup = () => {
@@ -661,13 +285,5 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
     line-height: var(--lh-normal);
   }
 
-  .footer-signature-name {
-    font-family: 'Allison', cursive;
-    font-size: clamp(1.4rem, 0.8vw + 1.1rem, 1.9rem);
-    font-weight: 400;
-    line-height: 1;
-    letter-spacing: 0.01em;
-    text-transform: none;
-  }
 
 </style>

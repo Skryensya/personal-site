@@ -8,6 +8,7 @@ export interface Props {
   size?: 'normal' | 'sm';
   filled?: boolean;
   elevated?: boolean;
+  haptic?: 'light' | 'medium' | 'heavy' | 'selection' | 'success' | 'warning' | 'error' | 'none';
   class?: string;
   style?: string;
   onClick?: string;
@@ -23,18 +24,31 @@ const {
   size = 'normal',
   filled = false,
   elevated = false,
+  haptic,
   class: className,
   style,
   onClick,
   type = 'button',
   disabled = false,
   id,
+  'data-haptic': dataHaptic,
   ...rest
-} = Astro.props as Props;
+} = Astro.props as Props & { 'data-haptic'?: string };
 
 
 const Tag = href ? 'a' : 'button';
 
+const resolvedHaptic =
+  dataHaptic ??
+  (haptic === 'none'
+    ? undefined
+    : haptic
+      ? haptic
+      : href
+        ? undefined
+        : filled
+          ? 'medium'
+          : 'light');
 
 const buttonClasses = cn(
   'font-bold uppercase tracking-wide cursor-pointer border-double border-2 whitespace-nowrap flex items-center justify-center no-underline w-fit h-fit',
@@ -79,6 +93,7 @@ const shadowClasses = cn(
         type={type}
         disabled={disabled}
         id={id}
+        data-haptic={resolvedHaptic}
         {...rest}
       >
         <slot />
@@ -93,13 +108,13 @@ const shadowClasses = cn(
     </div>
     <!-- Movable button -->
     <div class="outline-elevated-button relative z-20">
-      <Tag class={cn(buttonClasses, 'group outline-animated-button', { 'button-with-sound': elevated })} href={href} style={size === 'sm' ? `font-size: 14px; ${style || ''}` : style} onclick={onClick} type={type} disabled={disabled} id={id} {...rest}>
+      <Tag class={cn(buttonClasses, 'group outline-animated-button', { 'button-with-sound': elevated })} href={href} style={size === 'sm' ? `font-size: 14px; ${style || ''}` : style} onclick={onClick} type={type} disabled={disabled} id={id} data-haptic={resolvedHaptic} {...rest}>
         <slot />
       </Tag>
     </div>
   </div>
 ) : (
-  <Tag class={cn(buttonClasses, { 'button-with-sound': elevated })} href={href} style={size === 'sm' ? `font-size: 14px; ${style || ''}` : style} onclick={onClick} type={type} disabled={disabled} id={id} {...rest}>
+  <Tag class={cn(buttonClasses, { 'button-with-sound': elevated })} href={href} style={size === 'sm' ? `font-size: 14px; ${style || ''}` : style} onclick={onClick} type={type} disabled={disabled} id={id} data-haptic={resolvedHaptic} {...rest}>
     {variant === 'outline' && (
       <>
         <div class="absolute top-0 left-0 w-full h-0 border-t-2 border-double border-main transform -translate-x-full group-hover:translate-x-0 group-hover:delay-0 transition-transform duration-200 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] delay-600"></div>

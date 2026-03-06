@@ -13,6 +13,7 @@ import { defaultLang, type Language } from '@/i18n/ui';
 import WaveDivider from '@/components/WaveDivider.astro';
 import SevenSegmentDisplay from '@/components/ui/seven-segment/SevenSegmentDisplay.astro';
 import LiveClockDisplay from '@/components/ui/seven-segment/LiveClockDisplay.astro';
+import FooterContrastDisplay from '@/components/ui/seven-segment/FooterContrastDisplay.astro';
 import FooterNavigationList from '@/components/FooterNavigationList.astro';
 import { Option, ArrowRight, ArrowBigUp } from 'lucide-react';
 
@@ -326,6 +327,182 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                     </div>
                 </div>
             </div>
+
+            <div class="space-y-3 md:space-y-4 mt-8">
+                <h3 class="h3">{t('footer.aspectRatio.title')}</h3>
+                <div class="inline-block bg-main pr-1.5 pl-0 py-1.5 rounded-sm">
+                    <div class="flex items-center gap-2 bg-secondary px-2 py-1.5 rounded-sm">
+                        <FooterContrastDisplay
+                            id="design-system-contrast-display"
+                            initialValue="00.0:0"
+                            className="text-main !min-h-[1.75rem] !min-w-[2.55rem] !px-1 !py-0.5 !gap-[1px] !border-0 !border-transparent !shadow-none [transform:scaleX(0.82)_scaleY(0.9)] ss-display-proportion-standard"
+                            inverted={false}
+                        />
+                        <div id="design-system-wcag-levels" class="flex gap-1.5"></div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                const initDesignSystemContrastRatio = () => {
+                    const displayTargetId = 'design-system-contrast-display';
+                    const wcagLevelsEl = document.getElementById('design-system-wcag-levels');
+                    if (!wcagLevelsEl) return;
+
+                    const hexToRgb = (hex: string) => {
+                        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                        return result
+                            ? {
+                                  r: parseInt(result[1], 16),
+                                  g: parseInt(result[2], 16),
+                                  b: parseInt(result[3], 16)
+                              }
+                            : null;
+                    };
+
+                    const getRelativeLuminance = (r: number, g: number, b: number) => {
+                        const [rNorm, gNorm, bNorm] = [r, g, b].map((c) => {
+                            const normalized = c / 255;
+                            return normalized <= 0.03928 ? normalized / 12.92 : Math.pow((normalized + 0.055) / 1.055, 2.4);
+                        });
+                        return 0.2126 * rNorm + 0.7152 * gNorm + 0.0722 * bNorm;
+                    };
+
+                    const getContrastRatio = (color1: string, color2: string) => {
+                        const rgb1 = hexToRgb(color1);
+                        const rgb2 = hexToRgb(color2);
+                        if (!rgb1 || !rgb2) return 1;
+                        const lum1 = getRelativeLuminance(rgb1.r, rgb1.g, rgb1.b);
+                        const lum2 = getRelativeLuminance(rgb2.r, rgb2.g, rgb2.b);
+                        const brightest = Math.max(lum1, lum2);
+                        const darkest = Math.min(lum1, lum2);
+                        return (brightest + 0.05) / (darkest + 0.05);
+                    };
+
+                    const rgbToHex = (rgb: string) => {
+                        const values = rgb.match(/\d+/g);
+                        if (!values || values.length < 3) return '#000000';
+                        const [r, g, b] = values.slice(0, 3).map((v) => parseInt(v, 10));
+                        return `#${[r, g, b]
+                            .map((x) => {
+                                const hex = x.toString(16);
+                                return hex.length === 1 ? `0${hex}` : hex;
+                            })
+                            .join('')}`;
+                    };
+
+                    const formatRatio = (ratio: number) => `${ratio.toFixed(1).padStart(4, '0')}:1`;
+
+                    const renderWcagLevels = (ratio: number) => {
+                        const levels = [
+                            { name: 'A', threshold: 3 },
+                            { name: 'AA', threshold: 4.5 },
+                            { name: 'AAA', threshold: 7 }
+                        ];
+
+                        wcagLevelsEl.innerHTML = '';
+                        for (const level of levels) {
+                            const passed = ratio >= level.threshold;
+                            const levelBox = document.createElement('div');
+                            levelBox.className = `px-2 py-1 text-xs font-mono font-bold min-h-[28px] flex items-center border border-main ${
+                                passed ? 'bg-secondary text-main opacity-100' : 'bg-secondary text-main/65 opacity-40'
+                            }`;
+                            levelBox.textContent = level.name;
+                            wcagLevelsEl.appendChild(levelBox);
+                        }
+                    };
+
+                    const updateContrast = () => {
+                        const rootStyles = getComputedStyle(document.documentElement);
+                        let mainColor = rootStyles.getPropertyValue('--color-main').trim();
+                        let secondaryColor = rootStyles.getPropertyValue('--color-secondary').trim();
+
+                        if (!mainColor || !secondaryColor) {
+                            const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
+                            mainColor = isDarkMode ? '#ffffff' : '#000000';
+                            secondaryColor = isDarkMode ? '#000000' : '#ffffff';
+                        }
+
+                        if (!mainColor.startsWith('#')) {
+                            mainColor = mainColor.startsWith('rgb') ? rgbToHex(mainColor) : '#000000';
+                        }
+                        if (!secondaryColor.startsWith('#')) {
+                            secondaryColor = secondaryColor.startsWith('rgb') ? rgbToHex(secondaryColor) : '#ffffff';
+                        }
+
+                        const ratio = getContrastRatio(mainColor, secondaryColor);
+                        window.dispatchEvent(
+                            new CustomEvent('footer-contrast-change', {
+                                detail: { value: formatRatio(ratio), targetId: displayTargetId }
+                            })
+                        );
+                        renderWcagLevels(ratio);
+                    };
+
+                    let rafId: number | null = null;
+                    const scheduleUpdate = () => {
+                        if (rafId !== null) cancelAnimationFrame(rafId);
+                        rafId = requestAnimationFrame(() => {
+                            rafId = null;
+                            updateContrast();
+                        });
+                    };
+
+                    updateContrast();
+
+                    const observer = new MutationObserver((mutations) => {
+                        for (const mutation of mutations) {
+                            if (mutation.type === 'attributes' && (mutation.attributeName === 'data-theme' || mutation.attributeName === 'class')) {
+                                scheduleUpdate();
+                                break;
+                            }
+                        }
+                    });
+
+                    observer.observe(document.documentElement, {
+                        attributes: true,
+                        attributeFilter: ['data-theme', 'class']
+                    });
+
+                    const onDynamicThemeContrast = (event: Event) => {
+                        const ratio = (event as CustomEvent).detail?.ratio;
+                        if (typeof ratio !== 'number' || Number.isNaN(ratio)) return;
+                        window.dispatchEvent(
+                            new CustomEvent('footer-contrast-change', {
+                                detail: { value: formatRatio(ratio), targetId: displayTargetId }
+                            })
+                        );
+                        renderWcagLevels(ratio);
+                    };
+
+                    window.addEventListener('dynamic-theme-contrast', onDynamicThemeContrast);
+
+                    const cleanup = () => {
+                        observer.disconnect();
+                        window.removeEventListener('dynamic-theme-contrast', onDynamicThemeContrast);
+                        if (rafId !== null) cancelAnimationFrame(rafId);
+                    };
+
+                    window.addEventListener('astro:before-preparation', cleanup, { once: true });
+                    return cleanup;
+                };
+
+                const designSystemWindow = window as Window & {
+                    __designSystemContrastCleanup?: (() => void) | null;
+                    __designSystemContrastPageLoadBound?: boolean;
+                };
+
+                const runDesignSystemContrastInit = () => {
+                    designSystemWindow.__designSystemContrastCleanup?.();
+                    designSystemWindow.__designSystemContrastCleanup = initDesignSystemContrastRatio();
+                };
+
+                runDesignSystemContrastInit();
+                if (!designSystemWindow.__designSystemContrastPageLoadBound) {
+                    document.addEventListener('astro:page-load', runDesignSystemContrastInit);
+                    designSystemWindow.__designSystemContrastPageLoadBound = true;
+                }
+            </script>
 
         </section>
 

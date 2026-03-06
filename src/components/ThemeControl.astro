@@ -66,18 +66,23 @@ const localizedThemeNames = Object.fromEntries(
 
 <script>
   import { applyTheme, themes, getAvailableThemes } from '../data/themes.js';
+  import { haptic, isExplicitPointerClick } from '@/utils/haptics';
+
+  interface HapticOptions {
+    triggerHaptic?: boolean;
+  }
 
   // Declare global types
   declare global {
     interface Window {
       themeControl: any;
-      nextTheme: () => void;
+      nextTheme: (options?: HapticOptions) => void;
       __THEME_NAMES__?: Record<string, string>;
     }
   }
 
   // Simple theme toggle function - works immediately
-  window.nextTheme = () => {
+  window.nextTheme = (options: HapticOptions = {}) => {
     import('../data/themes.js').then(({ getAvailableThemes, applyTheme }) => {
       const availableThemes = getAvailableThemes();
       if (availableThemes.length === 0) return;
@@ -111,6 +116,10 @@ const localizedThemeNames = Object.fromEntries(
         if (window.themeControl.updateDisplay) {
           window.themeControl.updateDisplay();
         }
+      }
+
+      if (options.triggerHaptic) {
+        haptic('selection');
       }
     });
   };
@@ -225,28 +234,32 @@ const localizedThemeNames = Object.fromEntries(
     },
     
     // Handle theme selection
-    selectTheme(theme: any) {
+    selectTheme(theme: any, options: HapticOptions = {}) {
       this.currentTheme = theme;
       this.applyThemeToDocument(theme);
       this.updateDisplay();
+
+      if (options.triggerHaptic) {
+        haptic('selection');
+      }
     },
     
     // Next theme (for main button)
-    nextTheme() {
+    nextTheme(options: HapticOptions = {}) {
       if (!this.currentTheme || this.availableThemes.length === 0) return;
       const currentIndex = this.availableThemes.findIndex((t: any) => t.id === this.currentTheme.id);
       const nextIndex = (currentIndex + 1) % this.availableThemes.length;
       const newTheme = this.availableThemes[nextIndex];
-      this.selectTheme(newTheme);
+      this.selectTheme(newTheme, options);
     },
     
     // Previous theme
-    prevTheme() {
+    prevTheme(options: HapticOptions = {}) {
       if (!this.currentTheme || this.availableThemes.length === 0) return;
       const currentIndex = this.availableThemes.findIndex((t: any) => t.id === this.currentTheme.id);
       const prevIndex = currentIndex === 0 ? this.availableThemes.length - 1 : currentIndex - 1;
       const newTheme = this.availableThemes[prevIndex];
-      this.selectTheme(newTheme);
+      this.selectTheme(newTheme, options);
     },
     
     // Update dropdown width based on available themes
@@ -500,12 +513,14 @@ const localizedThemeNames = Object.fromEntries(
     addThemeButtonListeners() {
       const themeButtons = document.querySelectorAll('[data-theme-button]');
       themeButtons.forEach(button => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (event) => {
           const buttonElement = button as HTMLElement;
           const themeId = buttonElement.dataset.themeId;
           const theme = this.availableThemes.find((t: any) => t.id === themeId);
           if (theme) {
-            this.selectTheme(theme);
+            this.selectTheme(theme, {
+              triggerHaptic: isExplicitPointerClick(event)
+            });
           }
         });
       });

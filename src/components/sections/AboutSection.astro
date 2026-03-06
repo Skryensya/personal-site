@@ -177,6 +177,7 @@ const aboutConnectLinks = [
 
 <script>
   import { showToast } from '@/utils/toast';
+  import { haptic } from '@/utils/haptics';
 
   async function copyTextToClipboard(text) {
     if (!text) return false;
@@ -229,6 +230,7 @@ const aboutConnectLinks = [
             kind: 'success',
             duration: 2200
           });
+          haptic('success');
         } catch {
           showToast({
             id: 'copy-email-toast',
@@ -236,6 +238,7 @@ const aboutConnectLinks = [
             kind: 'warning',
             duration: 2800
           });
+          haptic('error');
         }
       });
     });

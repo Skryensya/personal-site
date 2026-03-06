@@ -572,28 +572,49 @@ const navItems = [
       };
 
       if (themePrev) {
-        themePrev.onclick = function() {
-          // Use keyboard shortcut for previous theme
-          const event = buildThemeShortcutEvent('ArrowLeft');
-          document.dispatchEvent(event);
+        themePrev.onclick = function(event) {
+          const isPointerClick = event instanceof MouseEvent && event.button === 0 && event.detail > 0;
+
+          if (window.themeControl && typeof window.themeControl.prevTheme === 'function') {
+            window.themeControl.prevTheme({ triggerHaptic: isPointerClick });
+          } else {
+            // Fallback to keyboard shortcut behavior
+            const keyboardEvent = buildThemeShortcutEvent('ArrowLeft');
+            document.dispatchEvent(keyboardEvent);
+          }
+
           setTimeout(updateMobileThemeDisplay, 10);
         };
       }
       
       if (themeNext) {
-        themeNext.onclick = function() {
-          // Use keyboard shortcut for next theme
-          const event = buildThemeShortcutEvent('ArrowRight');
-          document.dispatchEvent(event);
+        themeNext.onclick = function(event) {
+          const isPointerClick = event instanceof MouseEvent && event.button === 0 && event.detail > 0;
+
+          if (window.nextTheme && typeof window.nextTheme === 'function') {
+            window.nextTheme({ triggerHaptic: isPointerClick });
+          } else {
+            // Fallback to keyboard shortcut behavior
+            const keyboardEvent = buildThemeShortcutEvent('ArrowRight');
+            document.dispatchEvent(keyboardEvent);
+          }
+
           setTimeout(updateMobileThemeDisplay, 10);
         };
       }
       
       if (themeCenter) {
-        themeCenter.onclick = function() {
-          // Use keyboard shortcut for next theme (same as next button)
-          const event = buildThemeShortcutEvent('ArrowRight');
-          document.dispatchEvent(event);
+        themeCenter.onclick = function(event) {
+          const isPointerClick = event instanceof MouseEvent && event.button === 0 && event.detail > 0;
+
+          if (window.nextTheme && typeof window.nextTheme === 'function') {
+            window.nextTheme({ triggerHaptic: isPointerClick });
+          } else {
+            // Fallback to keyboard shortcut behavior
+            const keyboardEvent = buildThemeShortcutEvent('ArrowRight');
+            document.dispatchEvent(keyboardEvent);
+          }
+
           setTimeout(updateMobileThemeDisplay, 10);
         };
       }
@@ -626,7 +647,14 @@ const navItems = [
       }
 
       // Language navigation - enhanced with better reliability
-      function clickLanguageButton() {
+      function clickLanguageButton(event) {
+        const isPointerClick = event instanceof MouseEvent && event.button === 0 && event.detail > 0;
+
+        if (window.nextLanguage && typeof window.nextLanguage === 'function') {
+          window.nextLanguage({ triggerHaptic: isPointerClick });
+          return;
+        }
+
         // Wait for the language control to be ready
         const maxAttempts = 10;
         let attempts = 0;
