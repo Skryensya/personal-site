@@ -667,22 +667,22 @@ declare global {
  
         <!-- Lazy loading script to change body background from secondary to main after everything loads -->
         <script is:inline>
-            // Function to apply main background color to body
+            // Function to bind body background to the live theme variable
             function applyBodyMainBackground() {
                 const body = document.body;
                 const html = document.documentElement;
-                
+
                 // Wait a bit more to ensure theme variables are fully loaded
                 setTimeout(() => {
-                    // Get the computed main color value
                     const computedStyle = getComputedStyle(html);
                     const mainColor = computedStyle.getPropertyValue('--color-main').trim();
 
                     if (mainColor && body) {
-                        // Apply main color as background instead of secondary
-                        body.style.setProperty('background-color', mainColor, 'important');
+                        // Keep a live CSS variable reference so dynamic themes like Prisma
+                        // continue updating without needing to rewrite inline colors every frame.
+                        body.style.setProperty('background-color', 'var(--color-main)', 'important');
                         if (window.debugLogger) {
-                            window.debugLogger.log('🎨 Body background changed to main color:', mainColor);
+                            window.debugLogger.log('🎨 Body background bound to --color-main:', mainColor);
                         }
                     } else {
                         if (window.debugLogger) {
