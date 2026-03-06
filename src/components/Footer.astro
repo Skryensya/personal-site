@@ -93,17 +93,17 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
                   </div>
 
                   <div class="pb-1">
-                    <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-0.5 !mt-0 text-secondary scramble-text" data-text={lang === 'es' ? 'Idioma' : lang === 'no' ? 'Språk' : lang === 'ja' ? '言語' : 'Language'}>
-                      {lang === 'es' ? 'Idioma' : lang === 'no' ? 'Språk' : lang === 'ja' ? '言語' : 'Language'}
-                    </h3>
-                    <LanguageControl id="footer-language-control" currentPath={Astro.url.pathname} initialLocale={lang} />
-                  </div>
-
-                  <div class="pb-1">
                     <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-0.5 !mt-0 text-secondary scramble-text" data-text={lang === 'es' ? 'Tema' : lang === 'no' ? 'Tema' : lang === 'ja' ? 'テーマ' : 'Theme'}>
                       {lang === 'es' ? 'Tema' : lang === 'no' ? 'Tema' : lang === 'ja' ? 'テーマ' : 'Theme'}
                     </h3>
                     <ThemeControl id="footer-theme-control" />
+                  </div>
+
+                  <div class="pb-1">
+                    <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-0.5 !mt-0 text-secondary scramble-text" data-text={lang === 'es' ? 'Idioma' : lang === 'no' ? 'Språk' : lang === 'ja' ? '言語' : 'Language'}>
+                      {lang === 'es' ? 'Idioma' : lang === 'no' ? 'Språk' : lang === 'ja' ? '言語' : 'Language'}
+                    </h3>
+                    <LanguageControl id="footer-language-control" currentPath={Astro.url.pathname} initialLocale={lang} />
                   </div>
                 </div>
 
