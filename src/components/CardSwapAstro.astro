@@ -407,62 +407,24 @@ const {
     initCardSwapPositioning();
   }
 
-  // Initialize positioning immediately, then animations when GSAP loads
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', immediateInit);
   } else {
     immediateInit();
   }
 
-  // Re-initialize once GSAP is available so swap cycle starts correctly
-  window.addEventListener('gsap-ready', resetAndReinitCardSwap);
-
-  // Handle Astro page transitions with cleanup
   document.addEventListener('astro:page-load', () => {
-    // Clean up existing controllers
     controllers.forEach((controller) => {
       controller.destroy();
     });
     controllers.clear();
-
-    // Re-initialize
     immediateInit();
   });
 
-  // Clean up on page unload
   document.addEventListener('astro:before-preparation', () => {
     controllers.forEach((controller) => {
       controller.destroy();
     });
     controllers.clear();
-    window.removeEventListener('gsap-ready', resetAndReinitCardSwap);
   });
-</script>
-
-<!-- Load GSAP from CDN if not already available - defer loading -->
-<script is:inline>
-  function notifyGSAPReady() {
-    window.dispatchEvent(new CustomEvent('gsap-ready'));
-  }
-
-  function loadGSAP() {
-    if (window.gsap) {
-      notifyGSAPReady();
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js';
-    script.async = true;
-    script.defer = true;
-    script.onload = notifyGSAPReady;
-    document.head.appendChild(script);
-  }
-
-  // Defer GSAP loading to idle time
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(loadGSAP, { timeout: 1500 });
-  } else {
-    setTimeout(loadGSAP, 500);
-  }
 </script>

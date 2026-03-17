@@ -19,6 +19,10 @@ const { class: className = '' } = Astro.props;
       const items = content.querySelectorAll('button, a');
       
       items.forEach((item) => {
+        const dropdownItem = item as HTMLElement;
+        if (dropdownItem.dataset.dropdownEnhanced === 'true') return;
+        dropdownItem.dataset.dropdownEnhanced = 'true';
+
         // Only enhance items that don't already have proper dropdown styling
         const hasDropdownStyling = item.classList.contains('w-full') && 
                                   item.classList.contains('hover:bg-main') && 
@@ -83,6 +87,18 @@ const { class: className = '' } = Astro.props;
         }
       });
     });
+  }
+
+  const dropdownWindow = window as Window & {
+    __enhanceDropdownItems?: () => void;
+    __dropdownEnhanceBound?: boolean;
+  };
+
+  dropdownWindow.__enhanceDropdownItems = enhanceDropdownItems;
+
+  if (!dropdownWindow.__dropdownEnhanceBound) {
+    document.addEventListener('dropdowns:refresh', enhanceDropdownItems);
+    dropdownWindow.__dropdownEnhanceBound = true;
   }
 
   // Initialize on page load and navigation

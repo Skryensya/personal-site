@@ -130,16 +130,21 @@ const localizedThemeNames = Object.fromEntries(
     availableThemes: [],
     localizedThemeNames: (window as any).__THEME_NAMES__ || {},
     prismPreviewInterval: null,
-    
-    // Initialize theme control
-    init() {
+    listenersBound: false,
+
+    refresh() {
       this.loadCurrentTheme();
       this.loadAvailableThemes();
-      this.setupEventListeners();
-      this.updateDropdownWidth(); // Set initial width based on available themes
+      this.updateDropdownWidth();
       this.renderThemeOptions();
       this.updateDisplay();
       this.startPrismDropdownPreview();
+    },
+    
+    // Initialize theme control
+    init() {
+      this.setupEventListeners();
+      this.refresh();
       
       // Signal that theme control is ready
       setTimeout(() => {
@@ -391,6 +396,15 @@ const localizedThemeNames = Object.fromEntries(
 
       // Add event listeners
       this.addThemeButtonListeners();
+
+      requestAnimationFrame(() => {
+        const dropdownWindow = window as Window & {
+          __enhanceDropdownItems?: () => void;
+          __initializeDropdowns?: () => void;
+        };
+        dropdownWindow.__enhanceDropdownItems?.();
+        dropdownWindow.__initializeDropdowns?.();
+      });
     },
     
     // Resolve localized theme label
@@ -513,8 +527,11 @@ const localizedThemeNames = Object.fromEntries(
     addThemeButtonListeners() {
       const themeButtons = document.querySelectorAll('[data-theme-button]');
       themeButtons.forEach(button => {
+        const buttonElement = button as HTMLElement;
+        if (buttonElement.dataset.themeBound === 'true') return;
+        buttonElement.dataset.themeBound = 'true';
+
         button.addEventListener('click', (event) => {
-          const buttonElement = button as HTMLElement;
           const themeId = buttonElement.dataset.themeId;
           const theme = this.availableThemes.find((t: any) => t.id === themeId);
           if (theme) {
@@ -528,6 +545,9 @@ const localizedThemeNames = Object.fromEntries(
     
     // Setup event listeners
     setupEventListeners() {
+      if (this.listenersBound) return;
+      this.listenersBound = true;
+
       // Listen for theme unlock/lock events
       const handleThemeUpdates = (event: any) => {
         import('../utils/debug-logger.ts').then(({ debugLogger }) => {

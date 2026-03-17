@@ -10,8 +10,8 @@ import ThemeControl from '@/components/ThemeControl.astro';
 import ModeControl from '@/components/ModeControl.astro';
 import LanguageControl from '@/components/LanguageControl.astro';
 
-interface Props { 
-  lang?: Language; 
+interface Props {
+  lang?: Language;
 }
 
 const { lang = defaultLang } = Astro.props;
@@ -48,17 +48,16 @@ const byAllisonText = t('footer.byAllison');
 const hasSignatureName = byAllisonText.includes(signatureName);
 const byAllisonPrefix = hasSignatureName ? byAllisonText.replace(signatureName, '').trim() : '';
 const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
-
+const modeLabel = lang === 'es' ? 'Modo' : lang === 'no' ? 'Modus' : lang === 'ja' ? 'モード' : 'Mode';
+const themeLabel = lang === 'es' ? 'Tema' : lang === 'no' ? 'Tema' : lang === 'ja' ? 'テーマ' : 'Theme';
+const languageLabel = lang === 'es' ? 'Idioma' : lang === 'no' ? 'Språk' : lang === 'ja' ? '言語' : 'Language';
 ---
 
 <footer id="site-footer" class="bg-main border-t-double border-t-2 border-secondary selection-opposite">
   <WaveDivider inverted />
   <div class="mx-auto max-w-[var(--max-w-size)] px-4 pb-4">
-    <!-- Main content flex - Mobile: stacked, Desktop: 83.33% content + 16.67% circle -->
     <div class="flex flex-col md:flex-row gap-4 mb-8">
-      <!-- Content sections container - full width when circle is hidden, flexes with circle on lg -->
       <div class="flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-14 w-full lg:flex-1">
-        <!-- Navigation - 33.33% of content area -->
         <div class="md:w-[33.33%] w-full">
           <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-2 !mt-1 text-secondary scramble-text" data-text={t('footer.navigation')}>
             {t('footer.navigation')}
@@ -66,7 +65,6 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
           <FooterNavigationList lang={lang} />
         </div>
 
-        <!-- Social - 33.33% of content area -->
         <div class="md:w-[33.33%] w-full">
           <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-2 !mt-1 text-secondary scramble-text" data-text={t('footer.connect')}>
             {t('footer.connect')}
@@ -74,51 +72,65 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
           <FooterNavigationList lang={lang} links={connectLinks} />
         </div>
 
-        <!-- Controls - 33.33% of content area -->
         <div class="md:w-[33.33%] w-full">
-          <nav class="space-y-1">
-            <div class="block font-mono text-sm pt-0 pb-0">
-              <div class="relative text-secondary font-mono text-sm pr-20 md:pr-0">
-                <div class="md:hidden absolute right-0 top-[18px] scale-[1.1] origin-top-right" style="view-transition-name: none;">
-                  <CircularTextAstro text="ALLISON PEÑA * SKRYENSYA * " onHover="speedUp" spinDuration={20} />
-                </div>
-
-                <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-1 !mt-1 text-secondary scramble-text" data-text={lang === 'es' ? 'Modo' : lang === 'no' ? 'Modus' : lang === 'ja' ? 'モード' : 'Mode'}>
-                  {lang === 'es' ? 'Modo' : lang === 'no' ? 'Modus' : lang === 'ja' ? 'モード' : 'Mode'}
-                </h3>
-
-                <div class="mt-1 text-main space-y-2.5">
-                  <div class="pb-1">
-                    <ModeControl id="footer-mode-control" />
-                  </div>
-
-                  <div class="pb-1">
-                    <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-0.5 !mt-0 text-secondary scramble-text" data-text={lang === 'es' ? 'Tema' : lang === 'no' ? 'Tema' : lang === 'ja' ? 'テーマ' : 'Theme'}>
-                      {lang === 'es' ? 'Tema' : lang === 'no' ? 'Tema' : lang === 'ja' ? 'テーマ' : 'Theme'}
-                    </h3>
-                    <ThemeControl id="footer-theme-control" />
-                  </div>
-
-                  <div class="pb-1">
-                    <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-0.5 !mt-0 text-secondary scramble-text" data-text={lang === 'es' ? 'Idioma' : lang === 'no' ? 'Språk' : lang === 'ja' ? '言語' : 'Language'}>
-                      {lang === 'es' ? 'Idioma' : lang === 'no' ? 'Språk' : lang === 'ja' ? '言語' : 'Language'}
-                    </h3>
-                    <LanguageControl id="footer-language-control" currentPath={Astro.url.pathname} initialLocale={lang} />
-                  </div>
-                </div>
-
-              </div>
+          <div
+            data-footer-controls-host
+            class="relative min-h-[9.5rem] md:min-h-[10rem]"
+            aria-live="polite"
+          >
+            <div data-footer-controls-placeholder class="space-y-2 pt-1" aria-hidden="true">
+              <div class="h-3.5 w-16 border border-secondary/25 bg-secondary/15"></div>
+              <div class="h-8 w-full max-w-[220px] border border-secondary/25 bg-secondary/10"></div>
+              <div class="h-3.5 w-16 border border-secondary/25 bg-secondary/15"></div>
+              <div class="h-8 w-full max-w-[220px] border border-secondary/25 bg-secondary/10"></div>
+              <div class="h-3.5 w-20 border border-secondary/25 bg-secondary/15"></div>
+              <div class="h-8 w-full max-w-[220px] border border-secondary/25 bg-secondary/10"></div>
             </div>
-          </nav>
+          </div>
+
+          <template data-footer-controls-template>
+            <nav class="space-y-1">
+              <div class="block font-mono text-sm pt-0 pb-0">
+                <div class="relative text-secondary font-mono text-sm pr-20 md:pr-0">
+                  <div class="md:hidden absolute right-0 top-[18px] scale-[1.1] origin-top-right" style="view-transition-name: none;">
+                    <CircularTextAstro text="ALLISON PEÑA * SKRYENSYA * " onHover="speedUp" spinDuration={20} />
+                  </div>
+
+                  <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-1 !mt-1 text-secondary scramble-text" data-text={modeLabel}>
+                    {modeLabel}
+                  </h3>
+
+                  <div class="mt-1 text-main space-y-2.5">
+                    <div class="pb-1">
+                      <ModeControl id="footer-mode-control" />
+                    </div>
+
+                    <div class="pb-1">
+                      <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-0.5 !mt-0 text-secondary scramble-text" data-text={themeLabel}>
+                        {themeLabel}
+                      </h3>
+                      <ThemeControl id="footer-theme-control" />
+                    </div>
+
+                    <div class="pb-1">
+                      <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-0.5 !mt-0 text-secondary scramble-text" data-text={languageLabel}>
+                        {languageLabel}
+                      </h3>
+                      <LanguageControl id="footer-language-control" currentPath={Astro.url.pathname} initialLocale={lang} />
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </nav>
+          </template>
         </div>
       </div>
 
-      <!-- CircularText - hidden on mobile/md, visible on lg+ -->
       <div class="hidden lg:flex lg:w-36 justify-center items-start overflow-visible" style="view-transition-name: none;">
         <CircularTextAstro text="ALLISON PEÑA * SKRYENSYA * " onHover="speedUp" spinDuration={20} />
       </div>
     </div>
-
   </div>
 
   <div class="mx-auto w-full max-w-[var(--max-w-size)] px-4 pt-2 pb-8">
@@ -143,9 +155,7 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
 
   let footerCleanup: (() => void) | null = null;
 
-  // Function to initialize footer functionality
   function initFooter() {
-    // Clean previous listeners/observers to avoid stacking on Astro transitions
     if (footerCleanup) {
       footerCleanup();
       footerCleanup = null;
@@ -155,8 +165,6 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
 
     let footerAnimated = false;
     const cleanupFns: Array<() => void> = [];
-
-    // Scramble a single text node (span.scramble-part)
     const scrambleTimers = new WeakMap<HTMLElement, number>();
 
     function scrambleText(element: HTMLElement, originalText: string, duration: number = 450): void {
@@ -165,7 +173,6 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
       const stepMs = 50;
       const maxSteps = Math.ceil(duration / stepMs);
 
-      // Avoid overlapping timers that can leave text corrupted
       const existing = scrambleTimers.get(element);
       if (existing) {
         clearInterval(existing);
@@ -185,21 +192,19 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
         if (progress >= 1) {
           clearInterval(timer);
           scrambleTimers.delete(element);
-          element.textContent = originalText; // ensure final stable text
+          element.textContent = originalText;
         }
       }, stepMs);
 
       scrambleTimers.set(element, timer);
     }
 
-    // Scramble only the .scramble-part children; never touch icons/components
     function scrambleContainer(container: HTMLElement): void {
       const parts = container.querySelectorAll('.scramble-part');
       if (parts.length) {
         parts.forEach((part: Element, idx: number) => {
           const el = part as HTMLElement;
 
-          // Persist real source text once; never read from transient scrambled text
           if (!el.dataset.originalText) {
             el.dataset.originalText = (el.textContent || '').trim();
           }
@@ -210,21 +215,45 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
           setTimeout(() => scrambleText(el, txt), delay);
         });
       } else {
-        // fallback: if no .scramble-part, scramble the element text safely
         if (!container.dataset.originalText) {
           container.dataset.originalText = (container.dataset.text || container.textContent || '').trim();
         }
 
         const txt = container.dataset.originalText || '';
         if (!txt.trim()) return;
-        // Only scramble if the element has no child elements (avoid nuking icons)
         if (container.children.length === 0) {
           scrambleText(container, txt);
         }
       }
     }
 
-    // Intersection Observer: run once when footer enters viewport
+    const mountFooterControls = () => {
+      const host = document.querySelector('[data-footer-controls-host]') as HTMLElement | null;
+      const template = document.querySelector('[data-footer-controls-template]') as HTMLTemplateElement | null;
+
+      if (!host || !template || host.dataset.mounted === 'true') return;
+
+      host.innerHTML = '';
+      host.appendChild(template.content.cloneNode(true));
+      host.dataset.mounted = 'true';
+
+      requestAnimationFrame(() => {
+        const controlWindow = window as Window & {
+          __initializeDropdowns?: () => void;
+          __enhanceDropdownItems?: () => void;
+          modeControl?: { refresh?: () => void };
+          languageControl?: { refresh?: () => void };
+          themeControl?: { refresh?: () => void };
+        };
+
+        controlWindow.modeControl?.refresh?.();
+        controlWindow.languageControl?.refresh?.();
+        controlWindow.themeControl?.refresh?.();
+        controlWindow.__enhanceDropdownItems?.();
+        controlWindow.__initializeDropdowns?.();
+      });
+    };
+
     const runFooterScramble = (footerEl: Element) => {
       if (footerAnimated) return;
       footerAnimated = true;
@@ -240,7 +269,6 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
     const scrambleObserver = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
       for (const entry of entries) {
         if (entry.isIntersecting) {
-          // Small delay so user can actually see start of effect when footer enters view
           setTimeout(() => runFooterScramble(entry.target), 80);
           scrambleObserver.disconnect();
           break;
@@ -250,10 +278,34 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
 
     const footer = document.getElementById('site-footer');
     if (footer) {
-      // Run scramble only once, when footer enters viewport
       scrambleObserver.observe(footer);
-
     }
+
+    const controlsHost = document.querySelector('[data-footer-controls-host]') as HTMLElement | null;
+    if (controlsHost) {
+      const controlsObserver = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            mountFooterControls();
+            controlsObserver.disconnect();
+            break;
+          }
+        }
+      }, { threshold: 0, rootMargin: '240px 0px' });
+
+      const eagerMount = () => mountFooterControls();
+
+      controlsObserver.observe(controlsHost);
+      controlsHost.addEventListener('pointerenter', eagerMount, { once: true });
+      controlsHost.addEventListener('focusin', eagerMount, { once: true });
+
+      cleanupFns.push(() => {
+        controlsObserver.disconnect();
+        controlsHost.removeEventListener('pointerenter', eagerMount);
+        controlsHost.removeEventListener('focusin', eagerMount);
+      });
+    }
+
     cleanupFns.push(() => {
       scrambleObserver.disconnect();
     });
@@ -263,14 +315,12 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
     };
   }
 
-  // Initialize on first load
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initFooter, { once: true });
   } else {
     initFooter();
   }
 
-  // Re-initialize on page transitions (bind once)
   const footerWindow = window as Window & { __footerPageLoadBound?: boolean };
   if (!footerWindow.__footerPageLoadBound) {
     document.addEventListener('astro:page-load', initFooter);
@@ -284,6 +334,4 @@ const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
     font-size: var(--fs-body);
     line-height: var(--lh-normal);
   }
-
-
 </style>

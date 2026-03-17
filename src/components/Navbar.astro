@@ -673,10 +673,11 @@ const navItems = [
           } else {
             // Fallback: manually cycle through languages
             const currentLang = getCurrentLanguageFromURL();
-            const languages = ['es', 'en', 'no', 'ja'];
+            const konamiUnlocked = localStorage.getItem('special-themes-visible') === 'true';
+            const languages = konamiUnlocked ? ['es', 'en', 'no', 'ja'] : ['es', 'en'];
             const currentIndex = languages.indexOf(currentLang);
             const nextIndex = (currentIndex + 1) % languages.length;
-            const nextLang = languages[nextIndex];
+            const nextLang = languages[currentIndex === -1 ? 0 : nextIndex];
             
             // Build next URL
             const currentPath = window.location.pathname;

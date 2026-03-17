@@ -10,7 +10,7 @@ export const en = {
     'home.cvButton': 'View my CV',
     'home.stats.location': 'Location',
     'home.stats.status': 'Status',
-    'hero.heading': "Hello, I'm Allison Welcome to my site",
+    'hero.heading': "I like building for the web, and it turns out I'm good at it.",
     'hero.description': 'I love creating websites that work well and are easy to use. I work primarily with React and TypeScript.',
     'hero.cards.frontend.title': 'Frontend',
     'hero.cards.frontend.description': 'React, TypeScript, Astro',

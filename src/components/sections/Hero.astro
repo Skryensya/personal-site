@@ -1,9 +1,6 @@
 ---
-// imports normales
 import Button from '../Button.astro';
-
 import CornersWithCrosses from '../CornersWithCrosses.astro';
-import SimplePixelBlastWithCssVar from '../SimplePixelBlastWithCssVar.tsx';
 import HeroCardsAstro from '../HeroCardsAstro.astro';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
@@ -19,19 +16,14 @@ const heroHeadingParts = lang === 'ja' && heroHeading.includes(heroNameToken)
   ? heroHeading.split(heroNameToken)
   : null;
 
-// Get CV PDF path based on language
 const getCVPath = (locale: Language) => {
-  // Spanish uses curriculum.pdf
   if (locale === 'es') return '/curriculum.pdf';
-  // English and Norwegian use resume.pdf
   return '/resume.pdf';
 };
- 
 ---
 
 <section class="hero-section pt-2 mb-10 md:mb-12 relative">
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-0">
-    <!-- Text Content -->
     <CornersWithCrosses class="flex flex-col justify-center p-4 md:p-8 md:pr-16 min-h-[20rem] md:min-h-[24rem] lg:min-h-[450px] border-t border-l border-main/20">
       <div class="space-y-3 md:space-y-4">
         <h1 class="h1">
@@ -54,7 +46,7 @@ const getCVPath = (locale: Language) => {
           {t('hero.description')}
         </p>
         <div class="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-5">
-          <Button href={getLocalizedUrl(lang, 'projects')}  id="projects-button">
+          <Button href={getLocalizedUrl(lang, 'projects')} id="projects-button">
             {t('home.heroProjectsButton')}
           </Button>
           <Button href={getCVPath(lang)} filled elevated target="_blank" rel="noopener noreferrer" data-haptic="confirm">
@@ -64,24 +56,8 @@ const getCVPath = (locale: Language) => {
       </div>
     </CornersWithCrosses>
 
-    <!-- Cards Section -->
     <CornersWithCrosses class="flex items-center justify-center min-h-[20rem] md:min-h-[24rem] lg:min-h-[450px]" showLeft={false}>
       <div class="overflow-hidden w-full h-full min-h-[20rem] md:min-h-[24rem] lg:min-h-[450px] relative border-b border-r border-main/20">
-        <!-- PixelBlast Background -->
-        <SimplePixelBlastWithCssVar
-          className="absolute inset-0 w-full h-full"
-          cssVar="--color-main"
-          fallbackColor="#B19EEF"
-          pixelSize={8}
-          density={0.1}
-          speed={0.08}
-          decay={0.92}
-          maxCells={6000}
-          threshold={0.08}
-          client:idle
-        />
-
-        <!-- Hero Cards on top -->
         <div class="relative z-10 h-full">
           <HeroCardsAstro
             cardDistance={50}
@@ -101,9 +77,4 @@ const getCVPath = (locale: Language) => {
       </div>
     </CornersWithCrosses>
   </div>
-  
-  <!-- OS Debug Toggle -->
-  <!-- <div class="mt-8">
-    <SimpleOSDebug client:load />
-  </div> -->
 </section>

@@ -15,7 +15,7 @@ export const ja = {
     'home.cvButton': '履歴書を見る',
     'home.stats.location': '所在地',
     'home.stats.status': 'ステータス',
-    'hero.heading': 'こんにちは、Allisonです。サイトへようこそ',
+    'hero.heading': 'ウェブのために何かを作るのが好きで、それが結構得意です。',
     'hero.description': '使いやすく、アクセシブルで、細部まで丁寧なウェブ体験を作っています。',
     'hero.cards.frontend.title': 'フロントエンド',
     'hero.cards.frontend.description': 'リアクト、タイプスクリプト、アストロ',

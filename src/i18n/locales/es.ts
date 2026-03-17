@@ -10,9 +10,9 @@ export const es = {
     'home.cvButton': 'Ver currículum',
     'home.stats.location': 'Ubicación',
     'home.stats.status': 'Estado',
-    'hero.heading': 'Hola, soy Allison. Bienvenido a mi sitio',
+    'hero.heading': 'Me gusta construir para la web, y resulta que se me da bien.',
     'hero.description':
-        'Construyo experiencias web que priorizan la usabilidad, la accesibilidad y los detalles que importan. Este sitio es en sí mismo un proyecto: cada decisión de diseño y código está pensada para mostrar cómo trabajo.',
+        'Trabajo en la intersección entre diseño y desarrollo para crear experiencias web sólidas, accesibles y mantenibles. Busco que cada producto se vea bien, funcione bien y sea fácil de usar.',
     'hero.cards.frontend.title': 'Interfaces',
     'hero.cards.frontend.description': 'Código limpio, componentes accesibles, atención al detalle',
     'hero.cards.backend.title': 'Sistemas',

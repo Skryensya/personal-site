@@ -84,7 +84,7 @@ declare global {
                             path: '/fonts/Atkinson_Hyperlegible_Next/AtkinsonHyperlegibleNext-Italic-VariableFont_wght.ttf'
                         }
                     ],
-                    preload: true,
+                    preload: false,
                     display: 'swap',
                     selector: 'body',
                     fallback: 'sans-serif'
@@ -773,49 +773,50 @@ declare global {
 
             // Strategy 3: Multiple event listeners to ensure it runs
             function setupLazyBackground() {
+                if (window.__lazyBackgroundBound) return;
+                window.__lazyBackgroundBound = true;
+
                 if (window.debugLogger) {
                     window.debugLogger.log('🔧 Setting up lazy background, readyState:', document.readyState);
                 }
 
-                // If page is already complete
                 if (document.readyState === 'complete') {
                     if (window.debugLogger) {
                         window.debugLogger.log('✅ Page already complete, initializing immediately');
                     }
                     setTimeout(initLazyBodyMainBackground, 0);
                 } else {
-                    // Listen for load event
                     window.addEventListener('load', () => {
                         if (window.debugLogger) {
                             window.debugLogger.log('📄 Window load event fired');
                         }
                         initLazyBodyMainBackground();
-                    });
+                    }, { once: true });
 
-                    // Also listen for DOMContentLoaded as backup
                     document.addEventListener('DOMContentLoaded', () => {
                         if (window.debugLogger) {
                             window.debugLogger.log('🏗️ DOMContentLoaded fired');
                         }
                         setTimeout(initLazyBodyMainBackground, 200);
-                    });
+                    }, { once: true });
                 }
             }
 
             // Keep body background in sync with --color-main after theme changes
             function setupThemeBackgroundSync() {
+                if (window.__themeBackgroundSyncBound) return;
+                window.__themeBackgroundSyncBound = true;
+
                 let syncTimer;
                 const sync = () => {
                     clearTimeout(syncTimer);
                     syncTimer = setTimeout(() => applyBodyMainBackground(), 0);
                 };
 
-                // 1) Listen to explicit theme events
                 window.addEventListener('theme-changed', sync);
                 window.addEventListener('company-theme-activated', sync);
                 window.addEventListener('company-theme-deactivated', sync);
 
-                // 2) Observe theme identity changes only (avoid per-frame style updates)
                 const rootObserver = new MutationObserver((mutations) => {
                     const changedThemeProps = mutations.some((m) =>
                         m.type === 'attributes' && ['data-theme', 'class'].includes(m.attributeName)
@@ -829,10 +830,22 @@ declare global {
                 });
             }
 
-            // Initialize immediately when this script runs
-            setupLazyBackground();
-            setupThemeBackgroundSync();
-            initClickRayBurst();
+            function initDeferredEffects() {
+                setupLazyBackground();
+                setupThemeBackgroundSync();
+                initClickRayBurst();
+            }
+
+            function scheduleDeferredEffects() {
+                if ('requestIdleCallback' in window) {
+                    requestIdleCallback(initDeferredEffects, { timeout: 2500 });
+                } else {
+                    setTimeout(initDeferredEffects, 700);
+                }
+            }
+
+            // Initialize deferred visual effects lazily
+            scheduleDeferredEffects();
 
             // Re-apply after page transitions
             document.addEventListener('astro:page-load', () => {
@@ -840,7 +853,7 @@ declare global {
                     window.debugLogger.log('🔄 Astro page transition detected');
                 }
                 setTimeout(() => {
-                    initLazyBodyMainBackground();
+                    scheduleDeferredEffects();
                 }, 100);
             });
         </script>

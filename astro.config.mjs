@@ -52,7 +52,15 @@ export default defineConfig({
             dedupe: ['react', 'react-dom']
         },
         optimizeDeps: {
-            include: ['react', 'react-dom']
+            include: [
+                'react',
+                'react-dom',
+                'react/jsx-runtime',
+                'embla-carousel',
+                'web-haptics',
+                'clsx',
+                'tailwind-merge'
+            ]
         },
         build: {
             modulePreload: {

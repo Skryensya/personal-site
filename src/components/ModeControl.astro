@@ -163,13 +163,18 @@ const modes = [
   // Global mode management functions
   window.modeControl = {
     currentMode: 'system',
+    listenersBound: false,
     
-    // Initialize mode control
-    init() {
+    refresh() {
       this.loadCurrentMode();
-      this.setupEventListeners();
       this.updateDisplay();
       this.addModeButtonListeners();
+    },
+
+    // Initialize mode control
+    init() {
+      this.setupEventListeners();
+      this.refresh();
       
       // Signal that mode control is ready
       setTimeout(() => {
@@ -372,8 +377,11 @@ const modes = [
     addModeButtonListeners() {
       const modeButtons = document.querySelectorAll('[data-mode-button]');
       modeButtons.forEach(button => {
+        const buttonElement = button as HTMLElement;
+        if (buttonElement.dataset.modeBound === 'true') return;
+        buttonElement.dataset.modeBound = 'true';
+
         button.addEventListener('click', (event) => {
-          const buttonElement = button as HTMLElement;
           const modeId = buttonElement.dataset.modeId;
           if (modeId && ['light', 'dark', 'system'].includes(modeId)) {
             this.changeMode(modeId as any, {
@@ -386,6 +394,9 @@ const modes = [
     
     // Setup event listeners
     setupEventListeners() {
+      if (this.listenersBound) return;
+      this.listenersBound = true;
+
       // Listen for system preference changes when in system mode
       const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
       const handleSystemChange = () => {

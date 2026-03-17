@@ -10,7 +10,7 @@ export const no = {
     'home.cvButton': 'Se CV-en min',
     'home.stats.location': 'Lokasjon',
     'home.stats.status': 'Status',
-    'hero.heading': 'Hei, jeg er Allison. Velkommen til nettsiden min',
+    'hero.heading': 'Jeg liker å bygge for weben, og det viser seg at jeg er god til det.',
     'hero.description': 'Jeg elsker å lage nettsteder som fungerer godt og er enkle å bruke. Jeg jobber hovedsakelig med React og TypeScript.',
     'hero.cards.frontend.title': 'Frontend',
     'hero.cards.frontend.description': 'React, TypeScript, Astro',
