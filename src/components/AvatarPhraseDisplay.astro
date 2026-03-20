@@ -1,0 +1,454 @@
+---
+interface Props {
+  phrases?: string[];
+  className?: string;
+  label?: string;
+  avatarId?: string;
+}
+
+const {
+  phrases = [],
+  className = '',
+  label = 'About highlights',
+  avatarId = '',
+} = Astro.props;
+
+const longestPhrase = phrases.reduce(
+  (longest, phrase) => (phrase.length > longest.length ? phrase : longest),
+  phrases[0] ?? ''
+);
+---
+
+{phrases.length > 0 && (
+  <section
+    class={`avatar-phrase-display border border-main bg-main p-3 selection-opposite ${className}`}
+    aria-label={label}
+    data-avatar-phrase-display
+    data-avatar-target={avatarId}
+    data-avatar-phrases={JSON.stringify(phrases)}
+  >
+    <div class="avatar-phrase-display__stage">
+      <p class="avatar-phrase-display__ghost text-xl sm:text-2xl font-semibold leading-tight text-secondary" aria-hidden="true">{longestPhrase}</p>
+      <p class="avatar-phrase-display__output text-xl sm:text-2xl font-semibold leading-tight text-secondary" aria-live="polite">
+        <span data-avatar-phrase-text></span><span class="avatar-phrase-display__cursor" data-avatar-phrase-cursor>_</span>
+      </p>
+    </div>
+  </section>
+)}
+
+<script>
+  type AvatarMouthState = 'default' | 'neutral' | 'closed' | 'a' | 'e' | 'i' | 'o' | 'u';
+  type AvatarGazeDirection =
+    | 'base'
+    | 'top-left'
+    | 'top'
+    | 'top-right'
+    | 'left'
+    | 'right'
+    | 'bottom-left'
+    | 'bottom'
+    | 'bottom-right';
+  type PhraseDisplayRoot = HTMLElement & { __phraseCleanup?: () => void };
+  type NextPhraseButton = HTMLButtonElement & {
+    __avatarPhraseNextBound?: boolean;
+    __avatarPhrasePointerDown?: boolean;
+  };
+
+  function parsePhrases(raw: string | undefined) {
+    if (!raw) return [] as string[];
+
+    try {
+      const parsed = JSON.parse(raw);
+      return Array.isArray(parsed) ? parsed.map((value) => String(value)).filter(Boolean) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function findAvatarRoot(avatarId: string) {
+    const escapedId = window.CSS?.escape ? window.CSS.escape(avatarId) : avatarId;
+    return document.querySelector<HTMLElement>(`.avatar[data-avatar-id="${escapedId}"]`);
+  }
+
+  function findNextPhraseButtons(avatarId: string) {
+    const escapedId = window.CSS?.escape ? window.CSS.escape(avatarId) : avatarId;
+    return Array.from(
+      document.querySelectorAll<NextPhraseButton>(`[data-avatar-phrase-next][data-avatar-target="${escapedId}"]`)
+    );
+  }
+
+  function setAvatarMouth(avatar: HTMLElement | null, state: AvatarMouthState) {
+    if (!avatar) return;
+    avatar.dispatchEvent(new CustomEvent('avatar:set-mouth', { detail: { state } }));
+  }
+
+  function setAvatarGaze(avatar: HTMLElement | null, direction: AvatarGazeDirection) {
+    if (!avatar) return;
+    avatar.dispatchEvent(new CustomEvent('avatar:set-gaze', { detail: { direction } }));
+  }
+
+  function mouthForChar(char: string): AvatarMouthState {
+    const lower = char.toLowerCase();
+    if (/[aáàäâã]/u.test(lower)) return 'a';
+    if (/[eéèëê]/u.test(lower)) return 'e';
+    if (/[iíìïî]/u.test(lower)) return 'i';
+    if (/[oóòöôõ]/u.test(lower)) return 'o';
+    if (/[uúùüû]/u.test(lower)) return 'u';
+    if (/[mnbp]/u.test(lower)) return 'closed';
+    if (/\s/u.test(char)) return 'default';
+    return 'neutral';
+  }
+
+  function isClausePause(char: string) {
+    return /[,;:、]/u.test(char);
+  }
+
+  function isSentencePause(char: string) {
+    return /[.!?。！？]/u.test(char);
+  }
+
+  function getTypeDelay(phrase: string, index: number) {
+    const char = phrase[index] || '';
+    const previous = phrase[index - 1] || '';
+    const next = phrase[index + 1] || '';
+
+    if (isSentencePause(char)) {
+      return 320 + Math.round(Math.random() * 180);
+    }
+
+    if (isClausePause(char)) {
+      return 180 + Math.round(Math.random() * 120);
+    }
+
+    if (/[-–—]/u.test(char)) {
+      return 150 + Math.round(Math.random() * 90);
+    }
+
+    if (/\s/u.test(char)) {
+      if (isSentencePause(previous)) return 120 + Math.round(Math.random() * 70);
+      if (isClausePause(previous)) return 75 + Math.round(Math.random() * 40);
+      if (/[-–—]/u.test(previous)) return 85 + Math.round(Math.random() * 45);
+      return 26 + Math.round(Math.random() * 16);
+    }
+
+    let delay = 18 + Math.round(Math.random() * 10);
+
+    if (/[A-ZÁÉÍÓÚÜÑ]/u.test(char) && index > 0) {
+      delay += 6;
+    }
+
+    if (/[aáàäâãeéèëêiíìïîoóòöôõuúùüû]/u.test(char)) {
+      delay += 4;
+    }
+
+    if (next && /\s/u.test(next)) {
+      delay += 10 + Math.round(Math.random() * 10);
+    }
+
+    return delay;
+  }
+
+  function initPhraseDisplay(root: PhraseDisplayRoot) {
+    root.__phraseCleanup?.();
+
+    const phrases = parsePhrases(root.dataset.avatarPhrases);
+    const targetId = root.dataset.avatarTarget || '';
+    const avatar = targetId ? findAvatarRoot(targetId) : null;
+    const nextButtons = targetId ? findNextPhraseButtons(targetId) : [];
+    const textEl = root.querySelector<HTMLElement>('[data-avatar-phrase-text]');
+    const cursorEl = root.querySelector<HTMLElement>('[data-avatar-phrase-cursor]');
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!textEl || !cursorEl || phrases.length === 0) return;
+
+    let destroyed = false;
+    let phraseIndex = 0;
+    let sequenceToken = 0;
+    let cursorVisible = true;
+    let cursorInterval = 0;
+    let queuedPhraseCount = 0;
+    const activeTimeouts = new Set<number>();
+
+    const clearTimers = () => {
+      if (cursorInterval) {
+        window.clearInterval(cursorInterval);
+        cursorInterval = 0;
+      }
+
+      activeTimeouts.forEach((id) => window.clearTimeout(id));
+      activeTimeouts.clear();
+    };
+
+    const setSpeaking = (value: boolean) => {
+      root.dataset.speaking = value ? 'true' : 'false';
+      root.setAttribute('aria-hidden', value ? 'false' : 'true');
+    };
+
+    setSpeaking(false);
+
+    const wait = (ms: number, token = sequenceToken) =>
+      new Promise<boolean>((resolve) => {
+        const timeoutId = window.setTimeout(() => {
+          activeTimeouts.delete(timeoutId);
+          resolve(!destroyed && token === sequenceToken);
+        }, ms);
+
+        activeTimeouts.add(timeoutId);
+      });
+
+    const startCursorBlink = () => {
+      cursorEl.style.opacity = '1';
+      cursorVisible = true;
+      cursorInterval = window.setInterval(() => {
+        cursorVisible = !cursorVisible;
+        cursorEl.style.opacity = cursorVisible ? '1' : '0';
+      }, 430);
+    };
+
+    const typePhrase = async (phrase: string, token: number) => {
+      setSpeaking(true);
+      textEl.textContent = '';
+      cursorEl.style.opacity = '1';
+      setAvatarMouth(avatar, 'neutral');
+      setAvatarGaze(avatar, 'base');
+
+      let mouthState: AvatarMouthState = 'neutral';
+      let elapsedSinceMouthChange = 0;
+      const mouthFrameMs = 82;
+
+      for (let index = 0; index < phrase.length; index += 1) {
+        if (destroyed || token !== sequenceToken) return false;
+        textEl.textContent = phrase.slice(0, index + 1);
+
+        const char = phrase[index] || '';
+        const nextMouthState = mouthForChar(char);
+        const delay = getTypeDelay(phrase, index);
+
+        elapsedSinceMouthChange += delay;
+
+        if (
+          index === 0 ||
+          isSentencePause(char) ||
+          isClausePause(char) ||
+          /\s/u.test(char) ||
+          elapsedSinceMouthChange >= mouthFrameMs
+        ) {
+          if (nextMouthState !== mouthState) {
+            mouthState = nextMouthState;
+            setAvatarMouth(avatar, mouthState);
+          }
+          elapsedSinceMouthChange = 0;
+        }
+
+        if (isSentencePause(char)) {
+          setAvatarGaze(avatar, 'base');
+          setAvatarMouth(avatar, 'default');
+        }
+
+        const shouldContinue = await wait(delay, token);
+        if (!shouldContinue) return false;
+      }
+
+      setAvatarMouth(avatar, 'default');
+      setAvatarGaze(avatar, 'base');
+      return true;
+    };
+
+    const startPhraseSequence = () => {
+      phraseIndex = 0;
+      queuedPhraseCount = phrases.length;
+      sequenceToken += 1;
+      textEl.textContent = '';
+      cursorEl.style.opacity = '1';
+      setSpeaking(false);
+      setAvatarMouth(avatar, 'default');
+      setAvatarGaze(avatar, 'base');
+    };
+
+    const handleNextPhrasePointerDown = (event: Event) => {
+      const button = event.currentTarget as NextPhraseButton | null;
+      if (!button) return;
+      button.__avatarPhrasePointerDown = true;
+    };
+
+    const handleNextPhraseClick = (event: Event) => {
+      const button = event.currentTarget as NextPhraseButton | null;
+
+      if (prefersReducedMotion) {
+        textEl.textContent = phrases.join(' · ');
+        setSpeaking(true);
+        setAvatarMouth(avatar, 'default');
+        setAvatarGaze(avatar, 'base');
+      } else {
+        startPhraseSequence();
+      }
+
+      if (button?.__avatarPhrasePointerDown) {
+        button.blur();
+        button.__avatarPhrasePointerDown = false;
+      }
+    };
+
+    const run = async () => {
+      if (prefersReducedMotion) {
+        textEl.textContent = '';
+        cursorEl.style.display = 'none';
+        setSpeaking(false);
+        setAvatarMouth(avatar, 'default');
+        setAvatarGaze(avatar, 'base');
+        return;
+      }
+
+      startCursorBlink();
+      textEl.textContent = '';
+      setAvatarMouth(avatar, 'default');
+      setAvatarGaze(avatar, 'base');
+
+      while (!destroyed) {
+        const idle = await wait(120, sequenceToken);
+        if (!idle && destroyed) return;
+        if (queuedPhraseCount <= 0) {
+          setSpeaking(false);
+          continue;
+        }
+
+        const token = sequenceToken;
+
+        while (!destroyed && token === sequenceToken && queuedPhraseCount > 0) {
+          const phrase = phrases[phraseIndex] || '';
+          const typed = await typePhrase(phrase, token);
+          if (!typed) break;
+
+          queuedPhraseCount -= 1;
+          if (queuedPhraseCount <= 0) break;
+
+          const shouldContinue = await wait(520, token);
+          if (!shouldContinue) break;
+
+          phraseIndex = (phraseIndex + 1) % phrases.length;
+        }
+
+        setAvatarMouth(avatar, 'default');
+        setAvatarGaze(avatar, 'base');
+        setSpeaking(false);
+      }
+    };
+
+    nextButtons.forEach((button) => {
+      if (button.__avatarPhraseNextBound) return;
+      button.__avatarPhraseNextBound = true;
+      button.__avatarPhrasePointerDown = false;
+      button.addEventListener('pointerdown', handleNextPhrasePointerDown);
+      button.addEventListener('click', handleNextPhraseClick);
+    });
+
+    void run();
+
+    root.__phraseCleanup = () => {
+      destroyed = true;
+      clearTimers();
+      nextButtons.forEach((button) => {
+        button.removeEventListener('pointerdown', handleNextPhrasePointerDown);
+        button.removeEventListener('click', handleNextPhraseClick);
+        button.__avatarPhraseNextBound = false;
+        button.__avatarPhrasePointerDown = false;
+      });
+      setAvatarMouth(avatar, 'default');
+      setAvatarGaze(avatar, 'base');
+      setSpeaking(false);
+    };
+  }
+
+  function initPhraseDisplays() {
+    document.querySelectorAll<PhraseDisplayRoot>('[data-avatar-phrase-display]').forEach((display) => {
+      initPhraseDisplay(display);
+    });
+  }
+
+  initPhraseDisplays();
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initPhraseDisplays, { once: true });
+  }
+
+  document.addEventListener('astro:page-load', initPhraseDisplays);
+  window.addEventListener('astro:before-preparation', () => {
+    document.querySelectorAll<PhraseDisplayRoot>('[data-avatar-phrase-display]').forEach((display) => {
+      display.__phraseCleanup?.();
+    });
+  });
+</script>
+
+<style>
+  .avatar-phrase-display {
+    position: relative;
+    z-index: 320;
+    contain: layout paint style;
+    overflow: visible;
+    visibility: hidden;
+    opacity: 0;
+    isolation: isolate;
+    border-radius: 1rem;
+    box-shadow: 0 0 0 2px var(--color-main);
+  }
+
+  .avatar-phrase-display[data-speaking='true'] {
+    visibility: visible;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .avatar-phrase-display::before,
+  .avatar-phrase-display::after {
+    content: '';
+    position: absolute;
+    top: 2rem;
+    right: calc(100% - 1px);
+    clip-path: polygon(0 50%, 100% 0, 100% 100%);
+    pointer-events: none;
+  }
+
+  .avatar-phrase-display::before {
+    width: 1.25rem;
+    height: 1.5rem;
+    background: var(--color-main);
+  }
+
+  .avatar-phrase-display::after {
+    width: 0.95rem;
+    height: 1.125rem;
+    background: var(--color-main);
+    transform: translate(1px, 0.1875rem);
+  }
+
+  .avatar-phrase-display__stage {
+    position: relative;
+    min-height: 2.2lh;
+    padding-right: 1ch;
+  }
+
+  .avatar-phrase-display__ghost {
+    margin: 0;
+    opacity: 0;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .avatar-phrase-display__output {
+    position: absolute;
+    inset: 0 auto auto 0;
+    margin: 0;
+    max-width: 100%;
+    text-wrap: balance;
+  }
+
+  .avatar-phrase-display__cursor {
+    display: inline-block;
+    pointer-events: none;
+  }
+
+  .avatar-phrase-display ::selection {
+    background: var(--color-secondary);
+    color: var(--color-main);
+  }
+</style>

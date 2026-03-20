@@ -21,6 +21,18 @@ export const no = {
     'about.title': 'Om Meg',
     'about.tldr': 'Jeg lager tydelige og tilgjengelige nettopplevelser, med blikk for detaljer og menneskene som faktisk skal bruke dem.',
     'about.tldrLabel': 'Kort fortalt',
+    'about.sayingsLabel': 'Slik tenker jeg',
+    'about.sayingsIdle': 'klar',
+    'about.sayingsSpeaking': 'snakker',
+    'about.avatarAudio.enable': 'Slå på stemme',
+    'about.avatarAudio.disable': 'Slå av stemme',
+    'about.avatarPhrase.next': 'En annen idé',
+    'about.sayings': [
+        'Jeg designer og utvikler tydelige, tilgjengelige og gjennomtenkte nettopplevelser.',
+        'Klarhet er ikke en detalj; det er en del av produktet.',
+        'Jeg gjør kompleksitet om til opplevelser som er enklere å bruke.',
+        'Jeg tenker i systemer som er konsistente, nyttige og lette å vedlikeholde.'
+    ],
     'about.expanded': [
         'De siste fire årene har jeg jobbet i konsulentbransjen og bidratt i store prosjekter som <a href="/no/prosjekter/kit-digital-uc">Kit Digital UC</a>, designsystemet som nå brukes av mer enn 100 nettsider ved Universidad Católica. Den erfaringen styrket frontend-grunnlaget mitt og måten jeg tenker produkt på: tydelige beslutninger, konsistens på tvers av team og løsninger som holder over tid.',
         'Jeg motiveres av å bygge gjennomtenkte produkter der tilgjengelighet, klarhet og åpen kommunikasjon er en del av prosessen fra start. Utenom jobb bruker jeg mye tid på å lære norsk, spille sjakk, utforske musikk og lage personlige prosjekter for å tilfredsstille behovet mitt for å skape interessante ting. Dette nettstedet er et godt eksempel på det.'

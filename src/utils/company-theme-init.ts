@@ -1,7 +1,6 @@
 // Company Theme Query Parameter Detection Module
 // Handles automatic theme unlocking and application via URL parameters
 
-import { debugLogger } from '@/utils/debug-logger';
 import {
     unlockCompanyTheme,
     unlockSpecialTheme,

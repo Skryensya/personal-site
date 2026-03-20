@@ -2,7 +2,7 @@
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import Kbd from '@/components/ui/Kbd.astro';
-import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
+
 
 export interface Props {
   // Contenido del botón principal (lado izquierdo)
@@ -22,6 +22,8 @@ export interface Props {
   id?: string;
   // Language for translations
   lang?: Language;
+  // Dropdown alignment relative to trigger
+  placement?: 'bottom-right' | 'bottom-left';
 }
 
 const {
@@ -32,7 +34,8 @@ const {
   initialSelectedIndex = 0,
   ariaLabel,
   id = crypto.randomUUID(),
-  lang = defaultLang
+  lang = defaultLang,
+  placement = 'bottom-right'
 } = Astro.props;
 
 const t = getTranslations(lang);
@@ -50,7 +53,7 @@ const menuId = `dropdown-menu-${id}`;
 const mainButtonId = `main-button-${id}`;
 ---
 
-<div class={`inline-flex ${className}`} data-dropdown-container>
+<div class={`inline-flex ${className}`} data-dropdown-container data-dropdown-placement={placement}>
   <!-- Botón principal (lado izquierdo) -->
   <button
     type="button"
@@ -108,8 +111,12 @@ const mainButtonId = `main-button-${id}`;
   >
     <div class="flex items-center gap-2">
       <div class="flex gap-1">
-        <Kbd class="aspect-square"><ArrowUp size={12} /></Kbd>
-        <Kbd class="aspect-square"><ArrowDown size={12} /></Kbd>
+        <Kbd class="aspect-square">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
+        </Kbd>
+        <Kbd class="aspect-square">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m19 12-7 7-7-7"/><path d="M12 5v14"/></svg>
+        </Kbd>
       </div>
       <span>{t('ui.shortcuts.navigate')}</span>
     </div>
@@ -130,6 +137,11 @@ const mainButtonId = `main-button-${id}`;
       if (dropdownButton && dropdownMenu && dropdownButton.getAttribute('aria-expanded') === 'true') {
         // Close this dropdown
         dropdownMenu.style.display = 'none';
+        dropdownMenu.style.visibility = 'hidden';
+        dropdownMenu.style.left = '-9999px';
+        dropdownMenu.style.top = '-9999px';
+        dropdownMenu.style.pointerEvents = 'none';
+        dropdownMenu.setAttribute('aria-hidden', 'true');
         dropdownButton.setAttribute('aria-expanded', 'false');
         
         // Update arrow
@@ -165,9 +177,10 @@ const mainButtonId = `main-button-${id}`;
   // Global escape key handler
   function handleGlobalEscape(event: KeyboardEvent) {
     if (event.key === 'Escape' && globalOpenDropdown) {
+      const previousOpenDropdown = globalOpenDropdown;
       closeAllDropdowns();
       // Focus the dropdown button that was open
-      const dropdownButton = globalOpenDropdown.container.querySelector('[aria-haspopup="menu"]') as HTMLElement;
+      const dropdownButton = previousOpenDropdown.container.querySelector('[aria-haspopup="menu"]') as HTMLElement;
       if (dropdownButton) {
         dropdownButton.focus();
       }
@@ -218,7 +231,6 @@ const mainButtonId = `main-button-${id}`;
 
       let isOpen = false;
       let activeIndex = -1;
-      let isKeyboardNavigation = false;
       const initialSelectedIndex = parseInt(dropdownButton.dataset.initialSelectedIndex || '0');
       const keyboardHint = dropdownMenu.querySelector('.dropdown-keyboard-hint') as HTMLElement;
       
@@ -250,8 +262,11 @@ const mainButtonId = `main-button-${id}`;
         // Get dropdown dimensions after it's visible
         const dropdownRect = dropdownMenu.getBoundingClientRect();
 
-        // Align dropdown to the right edge of the trigger button itself
-        let left = anchorRect.right - dropdownRect.width;
+        const placement = containerElement.dataset.dropdownPlacement || 'bottom-right';
+
+        let left = placement === 'bottom-left'
+          ? anchorRect.left
+          : anchorRect.right - dropdownRect.width;
         let top = anchorRect.bottom + 4;
 
         // Keep inside viewport horizontally
@@ -347,7 +362,6 @@ const mainButtonId = `main-button-${id}`;
         if (keyboardHint) {
           keyboardHint.style.display = 'none';
         }
-        isKeyboardNavigation = false;
 
         const interactiveElements = dropdownMenu.querySelectorAll('[role="menuitem"]');
         interactiveElements.forEach(el => {
@@ -411,7 +425,6 @@ const mainButtonId = `main-button-${id}`;
           closeDropdown();
         } else {
           // Mark as mouse/pointer interaction
-          isKeyboardNavigation = false;
           if (keyboardHint) {
             keyboardHint.style.display = 'none';
           }
@@ -453,7 +466,6 @@ const mainButtonId = `main-button-${id}`;
             event.preventDefault();
             if (!isOpen) {
               // Mark as keyboard interaction
-              isKeyboardNavigation = true;
               if (keyboardHint) {
                 keyboardHint.style.display = 'block';
               }
@@ -465,7 +477,6 @@ const mainButtonId = `main-button-${id}`;
             if (!isOpen) {
               event.preventDefault();
               // Mark as keyboard interaction
-              isKeyboardNavigation = true;
               if (keyboardHint) {
                 keyboardHint.style.display = 'block';
               }

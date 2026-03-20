@@ -1,0 +1,74 @@
+[
+  {
+    "id": "a-wide-open",
+    "label": "a wide open",
+    "source": "src/assets/avatar/mouth/a-wide-open.png",
+    "tiles": {
+      "left": "src/assets/avatar/tiles/mouth/expressions/a-wide-open-left.svg",
+      "right": "src/assets/avatar/tiles/mouth/expressions/a-wide-open-right.svg"
+    }
+  },
+  {
+    "id": "closed-m-b-p",
+    "label": "closed m b p",
+    "source": "src/assets/avatar/mouth/closed-m-b-p.png",
+    "tiles": {
+      "left": "src/assets/avatar/tiles/mouth/expressions/closed-m-b-p-left.svg",
+      "right": "src/assets/avatar/tiles/mouth/expressions/closed-m-b-p-right.svg"
+    }
+  },
+  {
+    "id": "e-mid-open",
+    "label": "e mid open",
+    "source": "src/assets/avatar/mouth/e-mid-open.png",
+    "tiles": {
+      "left": "src/assets/avatar/tiles/mouth/expressions/e-mid-open-left.svg",
+      "right": "src/assets/avatar/tiles/mouth/expressions/e-mid-open-right.svg"
+    }
+  },
+  {
+    "id": "i-tight-stretched",
+    "label": "i tight stretched",
+    "source": "src/assets/avatar/mouth/i-tight-stretched.png",
+    "tiles": {
+      "left": "src/assets/avatar/tiles/mouth/expressions/i-tight-stretched-left.svg",
+      "right": "src/assets/avatar/tiles/mouth/expressions/i-tight-stretched-right.svg"
+    }
+  },
+  {
+    "id": "neutral-slight-open",
+    "label": "neutral slight open",
+    "source": "src/assets/avatar/mouth/neutral-slight-open.png",
+    "tiles": {
+      "left": "src/assets/avatar/tiles/mouth/expressions/neutral-slight-open-left.svg",
+      "right": "src/assets/avatar/tiles/mouth/expressions/neutral-slight-open-right.svg"
+    }
+  },
+  {
+    "id": "o-rounded",
+    "label": "o rounded",
+    "source": "src/assets/avatar/mouth/o-rounded.png",
+    "tiles": {
+      "left": "src/assets/avatar/tiles/mouth/expressions/o-rounded-left.svg",
+      "right": "src/assets/avatar/tiles/mouth/expressions/o-rounded-right.svg"
+    }
+  },
+  {
+    "id": "smile",
+    "label": "smile",
+    "source": "src/assets/avatar/mouth/smile.png",
+    "tiles": {
+      "left": "src/assets/avatar/tiles/mouth/expressions/smile-left.svg",
+      "right": "src/assets/avatar/tiles/mouth/expressions/smile-right.svg"
+    }
+  },
+  {
+    "id": "u-tight-rounded",
+    "label": "u tight rounded",
+    "source": "src/assets/avatar/mouth/u-tight-rounded.png",
+    "tiles": {
+      "left": "src/assets/avatar/tiles/mouth/expressions/u-tight-rounded-left.svg",
+      "right": "src/assets/avatar/tiles/mouth/expressions/u-tight-rounded-right.svg"
+    }
+  }
+]

@@ -1,7 +1,7 @@
 ---
 import siteConfig, { type Link } from '@/data/site-config';
 import WaveDivider from './WaveDivider.astro';
-import { Heart } from 'lucide-react';
+
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import CircularTextAstro from '@/components/CircularTextAstro.astro';
@@ -73,57 +73,38 @@ const languageLabel = lang === 'es' ? 'Idioma' : lang === 'no' ? 'Språk' : lang
         </div>
 
         <div class="md:w-[33.33%] w-full">
-          <div
-            data-footer-controls-host
-            class="relative min-h-[9.5rem] md:min-h-[10rem]"
-            aria-live="polite"
-          >
-            <div data-footer-controls-placeholder class="space-y-2 pt-1" aria-hidden="true">
-              <div class="h-3.5 w-16 border border-secondary/25 bg-secondary/15"></div>
-              <div class="h-8 w-full max-w-[220px] border border-secondary/25 bg-secondary/10"></div>
-              <div class="h-3.5 w-16 border border-secondary/25 bg-secondary/15"></div>
-              <div class="h-8 w-full max-w-[220px] border border-secondary/25 bg-secondary/10"></div>
-              <div class="h-3.5 w-20 border border-secondary/25 bg-secondary/15"></div>
-              <div class="h-8 w-full max-w-[220px] border border-secondary/25 bg-secondary/10"></div>
-            </div>
-          </div>
+          <nav class="space-y-1 relative min-h-[9.5rem] md:min-h-[10rem]">
+            <div class="block font-mono text-sm pt-0 pb-0">
+              <div class="relative text-secondary font-mono text-sm pr-20 md:pr-0">
+                <div class="md:hidden absolute right-0 top-[18px] scale-[1.1] origin-top-right" style="view-transition-name: none;">
+                  <CircularTextAstro text="ALLISON PEÑA * SKRYENSYA * " onHover="speedUp" spinDuration={20} />
+                </div>
 
-          <template data-footer-controls-template>
-            <nav class="space-y-1">
-              <div class="block font-mono text-sm pt-0 pb-0">
-                <div class="relative text-secondary font-mono text-sm pr-20 md:pr-0">
-                  <div class="md:hidden absolute right-0 top-[18px] scale-[1.1] origin-top-right" style="view-transition-name: none;">
-                    <CircularTextAstro text="ALLISON PEÑA * SKRYENSYA * " onHover="speedUp" spinDuration={20} />
+                <div class="mt-1 text-main space-y-2.5">
+                  <div class="pb-1">
+                    <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-0.5 !mt-0 text-secondary scramble-text" data-text={themeLabel}>
+                      {themeLabel}
+                    </h3>
+                    <ThemeControl id="footer-theme-control" placement="bottom-left" />
                   </div>
 
-                  <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-1 !mt-1 text-secondary scramble-text" data-text={modeLabel}>
-                    {modeLabel}
-                  </h3>
+                  <div class="pb-1">
+                    <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-0.5 !mt-0 text-secondary scramble-text" data-text={modeLabel}>
+                      {modeLabel}
+                    </h3>
+                    <ModeControl id="footer-mode-control" />
+                  </div>
 
-                  <div class="mt-1 text-main space-y-2.5">
-                    <div class="pb-1">
-                      <ModeControl id="footer-mode-control" />
-                    </div>
-
-                    <div class="pb-1">
-                      <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-0.5 !mt-0 text-secondary scramble-text" data-text={themeLabel}>
-                        {themeLabel}
-                      </h3>
-                      <ThemeControl id="footer-theme-control" />
-                    </div>
-
-                    <div class="pb-1">
-                      <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-0.5 !mt-0 text-secondary scramble-text" data-text={languageLabel}>
-                        {languageLabel}
-                      </h3>
-                      <LanguageControl id="footer-language-control" currentPath={Astro.url.pathname} initialLocale={lang} />
-                    </div>
-
+                  <div class="pb-1">
+                    <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-0.5 !mt-0 text-secondary scramble-text" data-text={languageLabel}>
+                      {languageLabel}
+                    </h3>
+                    <LanguageControl id="footer-language-control" placement="bottom-left" />
                   </div>
                 </div>
               </div>
-            </nav>
-          </template>
+            </div>
+          </nav>
         </div>
       </div>
 
@@ -137,7 +118,7 @@ const languageLabel = lang === 'es' ? 'Idioma' : lang === 'no' ? 'Språk' : lang
     <div class="w-full border-t border-secondary/50 pt-2 flex justify-center">
       <p class="font-mono text-sm text-secondary scramble-text flex items-center justify-center gap-2 text-center -translate-y-[5px] pt-1" data-text={`${t('footer.builtWith')} ${t('footer.byAllison')}`} data-has-heart="true">
         <span class="scramble-part">{t('footer.builtWith')}</span>
-        <Heart size={14} className="text-secondary" fill="currentColor" />
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-secondary" aria-hidden="true"><path d="M2 9.5a5.5 5.5 0 0 1 9.591-3.676.56.56 0 0 0 .818 0A5.49 5.49 0 0 1 22 9.5c0 2.29-1.5 4-3 5.5l-5.492 5.313a2 2 0 0 1-3 .019L5 15c-1.5-1.5-3-3.2-3-5.5"/></svg>
         {byAllisonPrefix && <span class="scramble-part">{byAllisonPrefix}</span>}
         <span class="scramble-part">{byAllisonName}</span>
       </p>
@@ -227,16 +208,7 @@ const languageLabel = lang === 'es' ? 'Idioma' : lang === 'no' ? 'Språk' : lang
       }
     }
 
-    const mountFooterControls = () => {
-      const host = document.querySelector('[data-footer-controls-host]') as HTMLElement | null;
-      const template = document.querySelector('[data-footer-controls-template]') as HTMLTemplateElement | null;
-
-      if (!host || !template || host.dataset.mounted === 'true') return;
-
-      host.innerHTML = '';
-      host.appendChild(template.content.cloneNode(true));
-      host.dataset.mounted = 'true';
-
+    const refreshFooterControls = () => {
       requestAnimationFrame(() => {
         const controlWindow = window as Window & {
           __initializeDropdowns?: () => void;
@@ -281,30 +253,7 @@ const languageLabel = lang === 'es' ? 'Idioma' : lang === 'no' ? 'Språk' : lang
       scrambleObserver.observe(footer);
     }
 
-    const controlsHost = document.querySelector('[data-footer-controls-host]') as HTMLElement | null;
-    if (controlsHost) {
-      const controlsObserver = new IntersectionObserver((entries: IntersectionObserverEntry[]) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            mountFooterControls();
-            controlsObserver.disconnect();
-            break;
-          }
-        }
-      }, { threshold: 0, rootMargin: '240px 0px' });
-
-      const eagerMount = () => mountFooterControls();
-
-      controlsObserver.observe(controlsHost);
-      controlsHost.addEventListener('pointerenter', eagerMount, { once: true });
-      controlsHost.addEventListener('focusin', eagerMount, { once: true });
-
-      cleanupFns.push(() => {
-        controlsObserver.disconnect();
-        controlsHost.removeEventListener('pointerenter', eagerMount);
-        controlsHost.removeEventListener('focusin', eagerMount);
-      });
-    }
+    refreshFooterControls();
 
     cleanupFns.push(() => {
       scrambleObserver.disconnect();

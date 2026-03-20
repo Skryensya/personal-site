@@ -2,7 +2,7 @@
 // This file handles the initialization of the Konami code detector
 // and integrates it with the theme system
 
-import { debugLogger } from '@/utils/debug-logger';
+import { debugLogger } from '@/utils/debug-lite';
 import konami from '@/utils/konami.js';
 import { toggleAllHiddenThemes } from '@/data/themes.js';
 import { showToast } from '@/utils/toast';

@@ -21,6 +21,18 @@ export const en = {
     'about.title': 'About Me',
     'about.tldr': 'I create clear, accessible web experiences, paying attention to details and always thinking about the people who use them.',
     'about.tldrLabel': 'TL;DR',
+    'about.sayingsLabel': 'How I think',
+    'about.sayingsIdle': 'ready',
+    'about.sayingsSpeaking': 'speaking',
+    'about.avatarAudio.enable': 'Enable voice',
+    'about.avatarAudio.disable': 'Mute voice',
+    'about.avatarPhrase.next': 'Another idea',
+    'about.sayings': [
+        'I design and build web experiences that are clear, accessible, and thoughtfully made.',
+        'Clarity is not a detail: it is part of the product.',
+        'I turn complexity into experiences that are simpler to use.',
+        'I think in systems that are consistent, useful, and maintainable.'
+    ],
     'about.expanded': [
         'For the past four years, I\'ve worked in consulting, contributing to large-scale projects like <a href="/en/projects/kit-digital-uc">Kit Digital UC</a>, the design system now used by more than 100 Universidad Católica websites. That experience strengthened my frontend foundation and how I think about product: clear decisions, team-wide consistency, and solutions that hold up over time.',
         "I'm motivated by building thoughtful products where accessibility, clarity, and open communication are part of the process from the start. Outside of work, I spend much of my time learning Norwegian, playing chess, exploring music, and creating personal projects to satisfy my need to build interesting things. This site is proof of that."

@@ -22,6 +22,18 @@ export const es = {
     'about.title': 'Sobre mí',
     'about.tldr': 'Creo experiencias web claras y accesibles, cuidando los detalles y pensando siempre en quienes las usan.',
     'about.tldrLabel': 'Resumen',
+    'about.sayingsLabel': 'Frases de Allison',
+    'about.sayingsIdle': 'lista',
+    'about.sayingsSpeaking': 'hablando',
+    'about.avatarAudio.enable': 'Activar voz',
+    'about.avatarAudio.disable': 'Silenciar voz',
+    'about.avatarPhrase.next': 'Saludar',
+    'about.sayings': [
+        'Diseño y desarrollo experiencias web claras, accesibles y bien pensadas.',
+        'La claridad no es un detalle: es parte del producto.',
+        'Convierto complejidad en experiencias más simples de usar.',
+        'Pienso en sistemas que sean consistentes, útiles y mantenibles.'
+    ],
     'about.expanded': [
         'Durante los últimos cuatro años he trabajado en consultoría, participando en proyectos de gran escala como el <a href="/proyectos/kit-digital-uc">Kit Digital UC</a>, sistema de diseño que hoy utilizan más de 100 sitios de la Universidad Católica. Esa experiencia fortaleció mi base frontend y mi forma de pensar producto: decisiones claras, consistencia entre equipos y soluciones que se sostengan en el tiempo.',
         'Me motiva construir productos bien pensados, donde la accesibilidad, la claridad y la comunicación abierta estén integradas desde el inicio. Fuera del trabajo, dedico gran parte de mi tiempo a aprender noruego, jugar ajedrez, explorar música y crear proyectos personales para satisfacer mi necesidad de construir cosas interesantes. Este sitio es una prueba de ello.'

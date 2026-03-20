@@ -1,5 +1,5 @@
 ---
-import { type CollectionEntry } from 'astro:content';
+import { type CollectionEntry, render } from 'astro:content';
 import Layout from '../layouts/Layout.astro';   
 import ContentPage from './ContentPage.astro';
 import SevenSegmentDisplay from '@/components/ui/seven-segment/SevenSegmentDisplay.astro';
@@ -32,7 +32,7 @@ if (!project) {
 }
 
 const { name, hook, seo, clientLogo } = project.data;
-const { Content } = await project.render();
+const { Content } = await render(project);
 
 const readingSource = (project.body || '')
     .replace(/```[\s\S]*?```/g, ' ')
@@ -157,10 +157,10 @@ const breadcrumbJsonLd = {
                 <!-- Content with project header -->
                 <div class="py-8 px-2 lg:px-4 lg:py-4 flex flex-col items-center">
                     <!-- Project Title and Hook - Part of Content -->
-                    <header class="pb-8 border-b border-dotted border-main/20 w-full" style={`max-width: var(--paragraph-max-width); view-transition-name: folder-body-${project.slug}`}>
+                    <header class="pb-8 border-b border-dotted border-main/20 w-full" style={`max-width: var(--paragraph-max-width); view-transition-name: folder-body-${projectSlug}`}>
                         <!-- Project Name and Reading Time -->
                         <div class="flex justify-between items-center mb-8">
-                            <div class=" font-mono font-medium text-main opacity-60 uppercase tracking-wider" style={`view-transition-name: folder-tab-${project.slug}`}>
+                            <div class=" font-mono font-medium text-main opacity-60 uppercase tracking-wider" style={`view-transition-name: folder-tab-${projectSlug}`}>
                                 {name}
                             </div>
                             <div class="flex items-center gap-2 px-1 py-0.5">
@@ -279,47 +279,10 @@ const breadcrumbJsonLd = {
             }
         </style>
 
-        <script is:inline>
-            // Animate statistics numbers
-            function animateStats() {
-                const elements = document.querySelectorAll('[data-target]');
-                elements.forEach(function(el) {
-                    const target = parseInt(el.getAttribute('data-target'));
-                    let current = 0;
-                    const increment = target / 50;
-                    
-                    const timer = setInterval(function() {
-                        current += increment;
-                        if (current >= target) {
-                            current = target;
-                            clearInterval(timer);
-                        }
-                        
-                        let display = Math.floor(current).toLocaleString();
-                        if (target === 100) display += '+';
-                        el.textContent = display;
-                    }, 60);
-                });
-            }
 
-            // Initialize everything
-            function init() {
-                setTimeout(animateStats, 500);
-            }
-
-            // Run when DOM is ready
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', init);
-            } else {
-                init();
-            }
-
-            // Also run on Astro page transitions
-            document.addEventListener('astro:page-load', init);
-        </script>
     </article>
 
 </Layout>
 
-<!-- Preload client logo -->
-{clientLogo && <link rel="preload" as="image" href={clientLogo} />}
+<!-- clientLogo: cargado bajo demanda, no preload para no ocupar ancho de banda crítico -->
+{clientLogo && <link rel="prefetch" as="image" href={clientLogo} />}

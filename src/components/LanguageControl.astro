@@ -2,39 +2,45 @@
 import DropdownButton from './ui/DropdownButton.astro';
 import DropdownContent from './ui/DropdownContent.astro';
 import { supportedLanguages, languages, type Language } from '@/i18n/ui';
-import { getLangFromUrl } from '@/i18n/utils';
+import { getLangFromUrl, getTranslations } from '@/i18n/utils';
 import { getEquivalentPage } from '@/utils/localized-routes';
 
 interface Props {
   id?: string;
-  currentPath?: string;
-  initialLocale?: Language;
+  placement?: 'bottom-left' | 'bottom-right';
 }
 
-const { id = 'language-control' } = Astro.props;
+const { id = 'language-control', placement = 'bottom-right' } = Astro.props;
 const currentLocale = getLangFromUrl(Astro.url);
 const pathname = Astro.url.pathname;
+const t = getTranslations(currentLocale);
 const konamiLockedLanguages: Language[] = ['no', 'ja'];
 
-const isLanguageVisible = (lang: Language) => {
-  if (!konamiLockedLanguages.includes(lang)) return true;
-  return currentLocale === lang;
+const translatedNameMap: Record<Language, Record<Language, string>> = {
+  es: { es: 'Español', en: 'Inglés', no: 'Noruego', ja: 'Japonés' },
+  en: { es: 'Spanish', en: 'English', no: 'Norwegian', ja: 'Japanese' },
+  no: { es: 'Spansk', en: 'Engelsk', no: 'Norsk', ja: 'Japansk' },
+  ja: { es: 'スペイン語', en: '英語', no: 'ノルウェー語', ja: '日本語' },
 };
 
-// Generate alternate URLs for all languages
-const alternateUrls = supportedLanguages.map((lang) => ({
+const languageItems = supportedLanguages.map((lang) => ({
   lang,
-  url: getEquivalentPage(pathname, lang)
+  url: getEquivalentPage(pathname, lang),
+  nativeName: languages[lang],
+  translatedName: translatedNameMap[currentLocale][lang],
+  isCurrent: lang === currentLocale,
+  isKonamiLocked: konamiLockedLanguages.includes(lang),
 }));
-
-const initialVisibleLanguages = supportedLanguages.filter(isLanguageVisible);
 ---
 
-<div data-component="language-control" data-language-control-id={id}>
+<div data-component="language-control" data-language-control-id={id} data-current-lang={currentLocale}>
   <DropdownButton
+    id={id}
     onMainClick="nextLanguage"
     class="w-7 h-7 lg:w-auto lg:h-8"
-    id={id}
+    placement={placement}
+    ariaLabel={t('nav.menu')}
+    lang={currentLocale}
   >
     <div class="flex items-center gap-2">
       <div class="w-3.5 h-3.5 flex-shrink-0 -ml-px translate-y-[0.5px]" aria-hidden="true">
@@ -50,44 +56,50 @@ const initialVisibleLanguages = supportedLanguages.filter(isLanguageVisible);
       </span>
     </div>
 
-    <DropdownContent slot="dropdown-content">
+    <DropdownContent slot="dropdown-content" class="min-w-[160px]">
       <div data-language-dropdown-content>
-        {initialVisibleLanguages.map((lang) => {
-          const url = alternateUrls.find(alt => alt.lang === lang)?.url || '/';
-          return (
-            <a
-              href={url}
-              data-language-link
-              data-lang={lang}
-              data-url={url}
-              class="w-full px-1 py-0.5 text-left block cursor-pointer relative focus-visible:z-[9999] no-underline transition-all duration-150 bg-secondary text-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary"
-              style="outline-width: 1px; outline-offset: 1px; min-height: 32px;"
-            >
-              <div class="flex items-center gap-0 pointer-events-none">
-                <div class="flex-1 px-1 py-1 pointer-events-none select-none">
-                  <div class="font-grotesk text-sm font-semibold uppercase whitespace-nowrap">
-                    {languages[lang]}
-                  </div>
-                  <div class="font-grotesk text-sm opacity-70 mt-0.5 uppercase whitespace-nowrap language-translated-name">
-                    <!-- Will be populated by JavaScript -->
-                  </div>
+        {languageItems.map(({ lang, url, nativeName, translatedName, isCurrent, isKonamiLocked }) => (
+          <a
+            href={url}
+            data-language-link
+            data-lang={lang}
+            data-url={url}
+            data-konami-locked={isKonamiLocked ? 'true' : undefined}
+            data-selected={isCurrent ? 'true' : 'false'}
+            class:list={[
+              'w-full px-1 py-0.5 text-left block cursor-pointer relative focus-visible:z-[9999] no-underline transition-all duration-150',
+              isCurrent
+                ? 'bg-main text-secondary hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary'
+                : 'bg-secondary text-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary',
+              isKonamiLocked && !isCurrent ? 'hidden' : '',
+            ]}
+            style="outline-width: 1px; outline-offset: 1px; min-height: 32px;"
+            aria-current={isCurrent ? 'true' : undefined}
+          >
+            <div class="flex items-center gap-0 pointer-events-none">
+              <div class="flex-1 px-1 py-1 pointer-events-none select-none">
+                <div class="font-grotesk text-sm font-semibold uppercase whitespace-nowrap">
+                  {nativeName}
                 </div>
-                <div class="w-4 h-4 flex items-center justify-center pointer-events-none">
-                  <svg
-                    class="w-4 h-4 pointer-events-none language-checkmark"
-                    style="display: none;"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <polyline points="20,6 9,17 4,12" />
-                  </svg>
+                <div class="font-grotesk text-sm opacity-70 mt-0.5 uppercase whitespace-nowrap language-translated-name">
+                  {translatedName}
                 </div>
               </div>
-            </a>
-          );
-        })}
+              <div class="w-4 h-4 flex items-center justify-center pointer-events-none">
+                <svg
+                  class="w-4 h-4 pointer-events-none language-checkmark"
+                  style={`display: ${isCurrent ? 'block' : 'none'};`}
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  viewBox="0 0 24 24"
+                >
+                  <polyline points="20,6 9,17 4,12" />
+                </svg>
+              </div>
+            </div>
+          </a>
+        ))}
       </div>
     </DropdownContent>
   </DropdownButton>
@@ -97,267 +109,141 @@ const initialVisibleLanguages = supportedLanguages.filter(isLanguageVisible);
   import { supportedLanguages, languages, type Language } from '@/i18n/ui';
   import { getLangFromUrl } from '@/i18n/utils';
   import { getEquivalentPage } from '@/utils/localized-routes';
-  import { haptic, isExplicitPointerClick } from '@/utils/haptics';
+  import { haptic } from '@/utils/haptics';
 
   interface HapticOptions {
     triggerHaptic?: boolean;
   }
 
-  const konamiLockedLanguages: Language[] = ['no', 'ja'];
+  const KONAMI_LOCKED_LANGUAGES: Language[] = ['no', 'ja'];
 
-  // Global language management functions
-  (window as any).languageControl = {
-    currentLang: 'es',
-    alternateUrls: [],
+  const translatedNameMap: Record<Language, Record<Language, string>> = {
+    es: { es: 'Español', en: 'Inglés', no: 'Noruego', ja: 'Japonés' },
+    en: { es: 'Spanish', en: 'English', no: 'Norwegian', ja: 'Japanese' },
+    no: { es: 'Spansk', en: 'Engelsk', no: 'Norsk', ja: 'Japansk' },
+    ja: { es: 'スペイン語', en: '英語', no: 'ノルウェー語', ja: '日本語' },
+  };
 
-    isKonamiUnlocked() {
-      return localStorage.getItem('special-themes-visible') === 'true';
+  function isKonamiUnlocked() {
+    return localStorage.getItem('special-themes-visible') === 'true';
+  }
+
+  function getVisibleLanguages(currentLang: Language) {
+    return supportedLanguages.filter((lang) => {
+      if (!KONAMI_LOCKED_LANGUAGES.includes(lang)) return true;
+      return isKonamiUnlocked() || lang === currentLang;
+    });
+  }
+
+  const languageControl = {
+    currentLang: 'es' as Language,
+
+    loadCurrentLanguage() {
+      this.currentLang = getLangFromUrl(new URL(window.location.href));
     },
 
-    getVisibleLanguages() {
-      return supportedLanguages.filter((lang) => {
-        if (!konamiLockedLanguages.includes(lang)) return true;
-        return this.isKonamiUnlocked() || lang === this.currentLang;
+    nextLanguage(options: HapticOptions = {}) {
+      const visibleLanguages = getVisibleLanguages(this.currentLang);
+      const currentIndex = visibleLanguages.findIndex((lang) => lang === this.currentLang);
+      const nextLang = visibleLanguages[(currentIndex + 1) % visibleLanguages.length];
+      const nextUrl = getEquivalentPage(window.location.pathname, nextLang);
+
+      localStorage.setItem('langChoice', nextLang);
+      if (options.triggerHaptic) haptic('selection');
+      window.location.href = nextUrl;
+    },
+
+    updateDisplay() {
+      const currentLang = this.currentLang;
+      const translatedNames = translatedNameMap[currentLang];
+
+      document.querySelectorAll<HTMLElement>('[data-language-name-display]').forEach((el) => {
+        el.textContent = languages[currentLang];
+      });
+
+      document.querySelectorAll<HTMLElement>('[data-language-link]').forEach((link) => {
+        const lang = link.dataset.lang as Language;
+        const isSelected = lang === currentLang;
+        const isHiddenLocked = KONAMI_LOCKED_LANGUAGES.includes(lang) && !isKonamiUnlocked() && !isSelected;
+
+        link.dataset.selected = isSelected ? 'true' : 'false';
+        link.classList.toggle('hidden', isHiddenLocked);
+        link.classList.remove('bg-main', 'text-secondary', 'bg-secondary', 'text-main');
+        link.classList.add(...(isSelected ? ['bg-main', 'text-secondary'] : ['bg-secondary', 'text-main']));
+
+        const checkmark = link.querySelector<HTMLElement>('.language-checkmark');
+        if (checkmark) checkmark.style.display = isSelected ? 'block' : 'none';
+
+        const translatedName = link.querySelector<HTMLElement>('.language-translated-name');
+        if (translatedName) translatedName.textContent = translatedNames[lang];
       });
     },
 
-    renderDropdownItems() {
-      const containers = document.querySelectorAll('[data-language-dropdown-content]');
-      if (!containers.length) return;
+    bindLinks() {
+      document.querySelectorAll<HTMLElement>('[data-language-link]').forEach((link) => {
+        if (link.dataset.languageBound === 'true') return;
+        link.dataset.languageBound = 'true';
 
-      const visibleLanguages = this.getVisibleLanguages();
-      const content = visibleLanguages.map((lang: Language) => {
-        const url = this.alternateUrls.find((alt: any) => alt.lang === lang)?.url || '/';
-        return `
-          <a
-            href="${url}"
-            data-language-link
-            data-lang="${lang}"
-            data-url="${url}"
-            class="w-full px-1 py-0.5 text-left block cursor-pointer relative focus-visible:z-[9999] no-underline transition-all duration-150 bg-secondary text-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary"
-            style="outline-width: 1px; outline-offset: 1px; min-height: 32px;"
-          >
-            <div class="flex items-center gap-0 pointer-events-none">
-              <div class="flex-1 px-1 py-1 pointer-events-none select-none">
-                <div class="font-grotesk text-sm font-semibold uppercase whitespace-nowrap">
-                  ${this.getNativeLanguageName(lang)}
-                </div>
-                <div class="font-grotesk text-sm opacity-70 mt-0.5 uppercase whitespace-nowrap language-translated-name"></div>
-              </div>
-              <div class="w-4 h-4 flex items-center justify-center pointer-events-none">
-                <svg
-                  class="w-4 h-4 pointer-events-none language-checkmark"
-                  style="display: none;"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  viewBox="0 0 24 24"
-                >
-                  <polyline points="20,6 9,17 4,12"></polyline>
-                </svg>
-              </div>
-            </div>
-          </a>
-        `;
-      }).join('');
+        link.addEventListener('click', (event) => {
+          const lang = link.dataset.lang as Language;
+          const url = link.dataset.url || '/';
+          const isPointerClick = event instanceof MouseEvent && event.button === 0 && event.detail > 0;
 
-      containers.forEach((container) => {
-        (container as HTMLElement).innerHTML = content;
-      });
+          localStorage.setItem('langChoice', lang);
+          if (!isPointerClick) {
+            localStorage.setItem('focusAfterNavigation', 'language-control');
+          }
+          if (isPointerClick) haptic('selection');
 
-      requestAnimationFrame(() => {
-        const dropdownWindow = window as Window & {
-          __enhanceDropdownItems?: () => void;
-          __initializeDropdowns?: () => void;
-        };
-        dropdownWindow.__enhanceDropdownItems?.();
-        dropdownWindow.__initializeDropdowns?.();
+          event.preventDefault();
+          window.location.href = url;
+        });
       });
     },
 
     refresh() {
       this.loadCurrentLanguage();
-      this.generateAlternateUrls();
-      this.renderDropdownItems();
       this.updateDisplay();
-      this.addLanguageButtonListeners();
+      this.bindLinks();
     },
-    
-    // Initialize language control
+
     init() {
       this.refresh();
-      this.setupFocusRestoration();
-      
-      // Signal that language control is ready
-      setTimeout(() => {
-        const event = new CustomEvent('language-control-ready', {
-          detail: { language: this.currentLang }
-        });
-        window.dispatchEvent(event);
-      }, 100);
-    },
-    
-    // Load current language from URL
-    loadCurrentLanguage() {
-      this.currentLang = getLangFromUrl(new URL(window.location.href));
-    },
-    
-    // Generate alternate URLs for all languages
-    generateAlternateUrls() {
-      const pathname = window.location.pathname;
-      this.alternateUrls = supportedLanguages.map((lang) => ({
-        lang,
-        url: getEquivalentPage(pathname, lang)
-      }));
-    },
-    
-    // Get native language name
-    getNativeLanguageName(lang: Language) {
-      return languages[lang];
-    },
-    
-    // Get language name in current language
-    getLanguageNameInCurrent(lang: Language) {
-      const langNames: any = {
-        es: { es: 'Español', en: 'Inglés', no: 'Noruego', ja: 'Japonés' },
-        en: { es: 'Spanish', en: 'English', no: 'Norwegian', ja: 'Japanese' },
-        no: { es: 'Spansk', en: 'Engelsk', no: 'Norsk', ja: 'Japansk' },
-        ja: { es: 'スペイン語', en: '英語', no: 'ノルウェー語', ja: '日本語' }
-      };
-      return langNames[this.currentLang][lang];
-    },
-    
-    // Handle language switch
-    switchLanguage(lang: Language, url: string, viaKeyboard = false, options: HapticOptions = {}) {
-      localStorage.setItem('langChoice', lang);
-      // Only save focus state if changed via keyboard
-      if (viaKeyboard) {
-        localStorage.setItem('focusAfterNavigation', 'language-control');
-      }
-      if (options.triggerHaptic) {
-        haptic('selection');
-      }
-      window.location.href = url;
-    },
-    
-    // Next language (for main button)
-    nextLanguage(options: HapticOptions = {}) {
-      const visibleLanguages = this.getVisibleLanguages();
-      const currentIndex = visibleLanguages.findIndex((lang: Language) => lang === this.currentLang);
-      const nextIndex = (currentIndex + 1) % visibleLanguages.length;
-      const nextLang = visibleLanguages[nextIndex];
-      const url = this.alternateUrls.find((alt: any) => alt.lang === nextLang)?.url || '/';
-      this.switchLanguage(nextLang, url, true, options); // Always via keyboard when using main button
-    },
-    
-    // Update display elements
-    updateDisplay() {
-      // Update main display
-      document.querySelectorAll('[data-language-name-display]').forEach((nameDisplay) => {
-        (nameDisplay as HTMLElement).textContent = this.getNativeLanguageName(this.currentLang);
-      });
-      
-      // Update dropdown items
-      const languageLinks = document.querySelectorAll('[data-language-link]');
-      languageLinks.forEach(link => {
-        const linkElement = link as HTMLElement;
-        const lang = linkElement.dataset.lang as Language;
-        const isSelected = lang === this.currentLang;
-        linkElement.setAttribute('data-selected', isSelected ? 'true' : 'false');
-        
-        // Update link classes for selected state
-        const baseClasses = "w-full px-1 py-0.5 text-left block cursor-pointer relative focus-visible:z-[9999] no-underline transition-all duration-150";
-        const stateClasses = isSelected 
-          ? "bg-main text-secondary hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary" 
-          : "bg-secondary text-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary";
-        linkElement.className = `${baseClasses} ${stateClasses}`;
-        linkElement.style.outlineWidth = "1px";
-        linkElement.style.outlineOffset = "1px";
-        linkElement.style.minHeight = "32px";
-        
-        // Update checkmark visibility
-        const checkmark = linkElement.querySelector('.language-checkmark') as HTMLElement;
-        if (checkmark) {
-          checkmark.style.display = isSelected ? 'block' : 'none';
-        }
-        
-        // Update translated name
-        const translatedName = linkElement.querySelector('.language-translated-name') as HTMLElement;
-        if (translatedName) {
-          translatedName.textContent = this.getLanguageNameInCurrent(lang);
-        }
-      });
-    },
-    
-    // Add event listeners to language buttons
-    addLanguageButtonListeners() {
-      const languageLinks = document.querySelectorAll('[data-language-link]');
-      languageLinks.forEach(link => {
-        const linkElement = link as HTMLElement;
-        if (linkElement.dataset.languageBound === 'true') return;
-        linkElement.dataset.languageBound = 'true';
-
-        // Override default link behavior to use our switch function
-        link.addEventListener('click', (event) => {
-          event.preventDefault();
-          const lang = linkElement.dataset.lang as Language;
-          const url = linkElement.dataset.url;
-          if (lang && url) {
-            this.switchLanguage(lang, url, false, {
-              triggerHaptic: isExplicitPointerClick(event)
-            });
-          }
-        });
-      });
-    },
-
-    handleKonamiVisibilityChange() {
-      this.renderDropdownItems();
-      this.updateDisplay();
-      this.addLanguageButtonListeners();
-    },
-    
-    // Setup focus restoration
-    setupFocusRestoration() {
-      // Check if we should restore focus after navigation
-      const shouldFocus = localStorage.getItem('focusAfterNavigation');
-      if (shouldFocus === 'language-control') {
-        localStorage.removeItem('focusAfterNavigation');
-        // Focus the main language control button after component is ready
-        setTimeout(() => {
-          const mainLanguageButton = document.querySelector('[data-component="language-control"] .inline-flex button:first-child') as HTMLElement;
-          if (mainLanguageButton) {
-            mainLanguageButton.focus();
-          }
-        }, 150);
-      }
+      window.nextLanguage = (options: HapticOptions = {}) => this.nextLanguage(options);
     }
   };
 
-  // Global function for main button
-  (window as any).nextLanguage = (options: HapticOptions = {}) => {
-    (window as any).languageControl.nextLanguage(options);
-  };
-
-  window.addEventListener('themes-unlocked', () => {
-    (window as any).languageControl.handleKonamiVisibilityChange();
-  });
-
-  window.addEventListener('themes-locked', () => {
-    (window as any).languageControl.handleKonamiVisibilityChange();
-  });
-
-  // Initialize when DOM is ready
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      (window as any).languageControl.init();
-    });
-  } else {
-    (window as any).languageControl.init();
+  declare global {
+    interface Window {
+      languageControl: typeof languageControl;
+      nextLanguage: (options?: HapticOptions) => void;
+    }
   }
 
-  // Also initialize on Astro page transitions
-  document.addEventListener('astro:page-load', () => {
-    (window as any).languageControl.init();
-  });
+  window.languageControl = languageControl;
+
+  const initializeLanguageControl = () => {
+    window.languageControl.init();
+
+    const sync = () => window.languageControl.refresh();
+    window.addEventListener('themes-unlocked', sync);
+    window.addEventListener('themes-locked', sync);
+
+    const focusTarget = localStorage.getItem('focusAfterNavigation');
+    if (focusTarget === 'language-control') {
+      localStorage.removeItem('focusAfterNavigation');
+      setTimeout(() => {
+        document.querySelector<HTMLElement>('[data-component="language-control"][data-language-control-id="language-control"] [data-main-action="nextLanguage"]')?.focus()
+          ?? document.querySelector<HTMLElement>('[data-component="language-control"] [data-main-action="nextLanguage"]')?.focus();
+      }, 120);
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeLanguageControl, { once: true });
+  } else {
+    initializeLanguageControl();
+  }
+
+  document.addEventListener('astro:page-load', initializeLanguageControl);
 </script>

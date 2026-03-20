@@ -1,4 +1,18 @@
 ---
+/**
+ * CardSwapAstro — animación de baraja sin GSAP.
+ *
+ * Antes: dependía de window.gsap que nunca se cargaba → las cards se apilaban
+ * pero el swap no ocurría visualmente. Ahora usa CSS transitions nativas, lo que
+ * hace el efecto funcionar realmente en producción.
+ *
+ * El stack y el swap son idénticos al diseño original:
+ * - Cards posicionadas en diagonal (offset x/y/z con skewY)
+ * - Container escalado para encajar en el padre (ResizeObserver)
+ * - Swap automático cada `delay` ms rotando el orden del array
+ * - Animación manejada por CSS transition (translate3d, ease)
+ * - pauseOnHover soportado
+ */
 interface Props {
   width?: number | string;
   height?: number | string;
@@ -8,27 +22,25 @@ interface Props {
   pauseOnHover?: boolean;
   enableSwap?: boolean;
   skewAmount?: number;
-  easing?: 'linear' | 'elastic';
   class?: string;
 }
 
 const {
-  width = 500,
-  height = 400,
-  cardDistance = 60,
+  width          = 500,
+  height         = 400,
+  cardDistance   = 60,
   verticalDistance = 70,
-  delay = 5000,
-  pauseOnHover = false,
-  enableSwap = true,
-  skewAmount = 6,
-  easing = 'elastic',
+  delay          = 5000,
+  pauseOnHover   = false,
+  enableSwap     = true,
+  skewAmount     = 6,
   class: className = ''
 } = Astro.props;
 ---
 
-<div 
+<div
   class={`card-swap-container absolute inset-0 flex items-center justify-center overflow-visible ${className}`}
-  style={`--card-swap-scale: 1;`}
+  style="--card-swap-scale:1"
   data-width={typeof width === 'number' ? String(width) : width}
   data-height={typeof height === 'number' ? String(height) : height}
   data-card-distance={cardDistance}
@@ -37,394 +49,154 @@ const {
   data-pause-on-hover={pauseOnHover}
   data-enable-swap={enableSwap}
   data-skew-amount={skewAmount}
-  data-easing={easing}
 >
   <slot />
 </div>
 
 <style>
   .card-swap-container {
-    -webkit-transform: translateZ(0) scale(var(--card-swap-scale, 1));
     transform: translateZ(0) scale(var(--card-swap-scale, 1));
     transform-origin: center center;
   }
 </style>
 
 <script>
-  // Import GSAP from CDN or use existing GSAP if available
-  declare global {
-    interface Window {
-      gsap: any;
+  interface Slot { x: number; y: number; z: number; zIndex: number; }
+
+  function makeSlot(i: number, distX: number, distY: number, total: number): Slot {
+    const cx = (total - 1) / 2;
+    return {
+      x:      (i - cx) * distX * 0.7,
+      y:      (cx - i) * distY * 0.7,
+      z:      -i * 20,
+      zIndex: total - i
+    };
+  }
+
+  function applySlot(el: HTMLElement, slot: Slot, skew: number, animate: boolean) {
+    if (animate) {
+      el.style.transition = 'transform 0.65s cubic-bezier(0.4,0,0.2,1)';
+    } else {
+      el.style.transition = 'none';
     }
+    el.style.transform  = `translate(-50%,-50%) translate3d(${slot.x}px,${slot.y}px,${slot.z}px) skewY(${skew}deg)`;
+    el.style.zIndex     = String(slot.zIndex);
+    el.style.transformOrigin = 'center center';
+    el.style.willChange = 'transform';
   }
 
-  interface Slot {
-    x: number;
-    y: number;
-    z: number;
-    zIndex: number;
+  function parseDim(v: string | undefined, fallback: number, parent: number): number {
+    if (!v) return fallback;
+    const s = v.trim();
+    if (s.endsWith('%')) return (parent * parseFloat(s)) / 100;
+    const n = parseFloat(s);
+    return isNaN(n) ? fallback : n;
   }
 
-  class CardSwapController {
-    private container: HTMLElement;
-    private cards: HTMLElement[];
-    private order: number[];
-    private timeline: any = null;
-    private interval: number | null = null;
-    private resizeObserver: ResizeObserver | null = null;
-    private applyContainerScaleBound: () => void;
-    private config: any;
-    private isAnimating: boolean = false;
-    constructor(container: HTMLElement) {
- 
-      this.container = container;
-      this.cards = Array.from(container.querySelectorAll('.card-swap-card'));
-   
-      this.order = Array.from({ length: this.cards.length }, (_, i) => i);
-      
-      // Get configuration from data attributes
-      const cardDistance = parseInt(container.dataset.cardDistance || '60');
-      const verticalDistance = parseInt(container.dataset.verticalDistance || '70');
-      const delay = parseInt(container.dataset.delay || '5000');
-      const pauseOnHover = container.dataset.pauseOnHover === 'true';
-      const enableSwap = container.dataset.enableSwap !== 'false';
-      const skewAmount = parseInt(container.dataset.skewAmount || '6');
-      const easing = container.dataset.easing || 'elastic';
+  class CardSwap {
+    private el:      HTMLElement;
+    private cards:   HTMLElement[];
+    private order:   number[];
+    private cfg:     { distX: number; distY: number; delay: number; skew: number; pause: boolean; swap: boolean };
+    private timer:   number | null  = null;
+    private ro:      ResizeObserver | null = null;
+    private animating = false;
 
-      this.config = {
-        cardDistance,
-        verticalDistance,
-        delay,
-        pauseOnHover,
-        enableSwap,
-        skewAmount,
-        easing: easing === 'elastic' 
-          ? {
-              ease: 'power2.out',
-              durDrop: 0.8,
-              durMove: 0.6,
-              durReturn: 0.6,
-              promoteOverlap: 0.8,
-              returnDelay: 0.05
-            }
-          : {
-              ease: 'power1.inOut',
-              durDrop: 0.8,
-              durMove: 0.8,
-              durReturn: 0.8,
-              promoteOverlap: 0.45,
-              returnDelay: 0.2
-            }
+    constructor(el: HTMLElement) {
+      this.el    = el;
+      this.cards = Array.from(el.querySelectorAll<HTMLElement>('.card-swap-card'));
+      this.order = this.cards.map((_, i) => i);
+      this.cfg   = {
+        distX:  parseInt(el.dataset.cardDistance     || '60'),
+        distY:  parseInt(el.dataset.verticalDistance || '70'),
+        delay:  parseInt(el.dataset.delay            || '5000'),
+        skew:   parseInt(el.dataset.skewAmount       || '6'),
+        pause:  el.dataset.pauseOnHover === 'true',
+        swap:   el.dataset.enableSwap   !== 'false'
       };
-
-      this.applyContainerScaleBound = this.applyContainerScale.bind(this);
-
       this.init();
     }
 
-    private makeSlot(i: number, distX: number, distY: number, total: number): Slot {
-      const spreadX = distX * 0.7;
-      const spreadY = distY * 0.7;
-      const center = (total - 1) / 2;
-      return {
-        x: (i - center) * spreadX,
-        y: (center - i) * spreadY,
-        z: -i * 20,
-        zIndex: total - i
-      };
+    private scale() {
+      const parent = this.el.parentElement;
+      const c0     = this.cards[0];
+      if (!parent || !c0) return;
+      const pr = parent.getBoundingClientRect();
+      const bw = parseDim(this.el.dataset.width,  c0.offsetWidth  || 1, pr.width);
+      const bh = parseDim(this.el.dataset.height, c0.offsetHeight || 1, pr.height);
+      const sx = pr.width  / Math.max(bw + (this.cards.length - 1) * this.cfg.distX * 0.7 + 40, 1);
+      const sy = pr.height / Math.max(bh + (this.cards.length - 1) * this.cfg.distY * 0.7 + 48, 1);
+      this.el.style.setProperty('--card-swap-scale', String(Math.max(0.45, Math.min(1, sx, sy))));
     }
 
-    private placeNow(el: HTMLElement, slot: Slot, skew: number) {
-      if (window.gsap) {
-        window.gsap.set(el, {
-          x: slot.x,
-          y: slot.y,
-          z: slot.z,
-          xPercent: -50,
-          yPercent: -50,
-          skewY: skew,
-          transformOrigin: 'center center',
-          zIndex: slot.zIndex,
-          force3D: true,
-          rotation: 0
-        });
-      } else {
-        // Fallback without GSAP - set initial position immediately
-        el.style.transform = `translate(-50%, -50%) translate3d(${slot.x}px, ${slot.y}px, ${slot.z}px) skewY(${skew}deg)`;
-        el.style.transformOrigin = 'center center';
-        el.style.zIndex = slot.zIndex.toString();
-        el.style.willChange = 'transform';
-      }
-    }
-
-    private parseDimension(value: string | undefined, fallback: number, parentSize: number): number {
-      if (!value) return fallback;
-      const v = value.trim();
-      if (v.endsWith('%')) {
-        const percent = Number(v.slice(0, -1));
-        if (!Number.isNaN(percent)) return (parentSize * percent) / 100;
-      }
-      const numeric = Number(v.replace('px', ''));
-      return Number.isNaN(numeric) ? fallback : numeric;
-    }
-
-    private applyContainerScale() {
-      const parent = this.container.parentElement;
-      const firstCard = this.cards[0];
-      if (!parent || !firstCard) return;
-
-      const parentRect = parent.getBoundingClientRect();
-      const rawWidth = this.container.dataset.width;
-      const rawHeight = this.container.dataset.height;
-      const fallbackWidth = firstCard.offsetWidth || 1;
-      const fallbackHeight = firstCard.offsetHeight || 1;
-
-      const baseWidth = this.parseDimension(rawWidth, fallbackWidth, parentRect.width);
-      const baseHeight = this.parseDimension(rawHeight, fallbackHeight, parentRect.height);
-
-      const spreadX = (this.cards.length - 1) * (this.config.cardDistance * 0.7);
-      const spreadY = (this.cards.length - 1) * (this.config.verticalDistance * 0.7);
-
-      // extra safety area for skew/rotation during animation
-      const neededWidth = baseWidth + spreadX + 40;
-      const neededHeight = baseHeight + spreadY + 48;
-
-      const widthScale = parentRect.width / Math.max(neededWidth, 1);
-      const heightScale = parentRect.height / Math.max(neededHeight, 1);
-      const scale = Math.max(0.45, Math.min(1, widthScale, heightScale));
-
-      this.container.style.setProperty('--card-swap-scale', String(scale));
-    }
-
-
-    private init() {
-      // Initial positioning (always apply, even without GSAP)
-      this.cards.forEach((card, i) => {
-        const slot = this.makeSlot(i, this.config.cardDistance, this.config.verticalDistance, this.cards.length);
-        this.placeNow(card, slot, this.config.skewAmount);
-      });
-
-      // Fit to available space in parent (parent may be overflow-hidden)
-      this.applyContainerScale();
-      this.resizeObserver = new ResizeObserver(() => this.applyContainerScale());
-      const parent = this.container.parentElement;
-      if (parent) {
-        this.resizeObserver.observe(parent);
-        this.resizeObserver.observe(this.container);
-      }
-      window.addEventListener('resize', this.applyContainerScaleBound);
-
-      if (!window.gsap) {
-        console.warn('GSAP not found. CardSwap animations will be limited to initial positioning.');
-        return;
-      }
-
-      if (!this.config.enableSwap) {
-        return;
-      }
-
-      // Start animation cycle only if GSAP is available (wait for reveal to complete)
-      setTimeout(() => {
-        this.startSwapCycle();
-      }, 1000); // Wait for reveal to complete
-
-      // Setup hover pause if enabled
-      if (this.config.pauseOnHover) {
-        this.setupHoverPause();
-      }
+    private place(animate: boolean) {
+      this.order.forEach((ci, pos) =>
+        applySlot(this.cards[ci], makeSlot(pos, this.cfg.distX, this.cfg.distY, this.cards.length), this.cfg.skew, animate)
+      );
     }
 
     private swap() {
-      if (!window.gsap || this.order.length < 2 || this.isAnimating) {
-        return;
-      }
-
-      this.isAnimating = true;
-
-      // Kill any existing timeline to prevent overlaps
-      if (this.timeline) {
-        this.timeline.kill();
-      }
-
-      // Create master timeline
-      const masterTL = window.gsap.timeline({
-        onComplete: () => {
-          this.isAnimating = false;
-          // Update order after animation completes
-          const [front, ...rest] = this.order;
-          this.order = [...rest, front];
-        }
-      });
-
-      // Get current state
-      const [frontIndex, ...restIndices] = this.order;
-      const frontCard = this.cards[frontIndex];
-
-      // Phase 1: Move front card down and out of the way (bounded by visible height)
-      const parentHeight = this.container.parentElement?.clientHeight || this.container.clientHeight || 0;
-      const currentScale = Number(getComputedStyle(this.container).getPropertyValue('--card-swap-scale')) || 1;
-      const cardHeight = Number(this.container.dataset.height?.replace('px', '')) || frontCard.offsetHeight || 0;
-      const availableDown = Math.max(36, ((parentHeight / currentScale) - cardHeight) / 2 - 10);
-      const dropDistance = Math.min(availableDown, 190);
-
-      masterTL.to(frontCard, {
-        y: dropDistance,
-        z: -100,
-        scale: 0.8,
-        rotation: -10,
-        duration: 0.4,
-        ease: 'power2.out'
-      });
-
-      // Phase 2: Animate remaining cards to their new positions (parallel)
-      restIndices.forEach((cardIndex, newPosition) => {
-        const card = this.cards[cardIndex];
-        const targetSlot = this.makeSlot(newPosition, this.config.cardDistance, this.config.verticalDistance, this.cards.length);
-        
-        masterTL.to(card, {
-          x: targetSlot.x,
-          y: targetSlot.y,
-          z: targetSlot.z,
-          zIndex: targetSlot.zIndex,
-          duration: 0.6,
-          ease: 'power2.out'
-        }, '-=0.2'); // Overlap with previous animation
-      });
-
-      // Phase 3: Move front card to back position
-      const backSlot = this.makeSlot(this.cards.length - 1, this.config.cardDistance, this.config.verticalDistance, this.cards.length);
-      masterTL.to(frontCard, {
-        x: backSlot.x,
-        y: backSlot.y,
-        z: backSlot.z,
-        zIndex: backSlot.zIndex,
-        scale: 1,
-        rotation: 0,
-        duration: 0.6,
-        ease: 'power2.out'
-      }, '-=0.3');
-
-      this.timeline = masterTL;
+      if (this.animating || this.order.length < 2) return;
+      this.animating = true;
+      // Rotar: el de adelante pasa al fondo
+      this.order = [...this.order.slice(1), this.order[0]];
+      this.place(true);
+      setTimeout(() => { this.animating = false; }, 700);
     }
 
-    private startSwapCycle() {
-      // Clear any existing interval
-      if (this.interval) {
-        clearInterval(this.interval);
-      }
-      
-      // Start first swap
-      this.swap();
-      
-      // Set up robust interval with animation completion check
-      this.interval = window.setInterval(() => {
-        if (!this.isAnimating) {
-          this.swap();
-        }
-      }, this.config.delay);
+    private startCycle() {
+      if (!this.cfg.swap) return;
+      // Primer swap tras un segundo (deja que el reveal termine)
+      setTimeout(() => this.swap(), 1000);
+      this.timer = window.setInterval(() => this.swap(), this.cfg.delay);
     }
 
-    private setupHoverPause() {
-      const pause = () => {
-        if (this.timeline) this.timeline.pause();
-        if (this.interval) {
-          clearInterval(this.interval);
-          this.interval = null;
-        }
-      };
+    init() {
+      // Posicionado inmediato sin animación (evita CLS)
+      this.place(false);
+      this.scale();
 
-      const resume = () => {
-        if (this.timeline) this.timeline.play();
-        if (!this.interval && !this.isAnimating) {
-          this.interval = window.setInterval(() => {
-            if (!this.isAnimating) {
-              this.swap();
-            }
-          }, this.config.delay);
-        }
-      };
+      this.ro = new ResizeObserver(() => this.scale());
+      if (this.el.parentElement) this.ro.observe(this.el.parentElement);
+      this.ro.observe(this.el);
 
-      this.container.addEventListener('mouseenter', pause);
-      this.container.addEventListener('mouseleave', resume);
+      this.startCycle();
+
+      if (this.cfg.pause) {
+        this.el.addEventListener('mouseenter', () => {
+          if (this.timer) { clearInterval(this.timer); this.timer = null; }
+        });
+        this.el.addEventListener('mouseleave', () => {
+          if (!this.timer) this.timer = window.setInterval(() => this.swap(), this.cfg.delay);
+        });
+      }
     }
 
-    public destroy() {
-      this.isAnimating = false;
-      if (this.interval) {
-        clearInterval(this.interval);
-        this.interval = null;
-      }
-      if (this.timeline) {
-        this.timeline.kill();
-        this.timeline = null;
-      }
-      if (this.resizeObserver) {
-        this.resizeObserver.disconnect();
-        this.resizeObserver = null;
-      }
-      window.removeEventListener('resize', this.applyContainerScaleBound);
+    destroy() {
+      if (this.timer) { clearInterval(this.timer); this.timer = null; }
+      if (this.ro)    { this.ro.disconnect(); this.ro = null; }
     }
   }
 
-  // Store controllers to prevent multiple initializations
-  const controllers = new Set<CardSwapController>();
+  const instances = new Set<CardSwap>();
 
-  function resetAndReinitCardSwap() {
-    controllers.forEach((controller) => controller.destroy());
-    controllers.clear();
-
-    const containers = document.querySelectorAll('.card-swap-container');
-    containers.forEach((container) => {
-      const htmlContainer = container as HTMLElement;
-      delete htmlContainer.dataset.cardSwapInitialized;
+  function init() {
+    instances.forEach(i => i.destroy());
+    instances.clear();
+    document.querySelectorAll<HTMLElement>('.card-swap-container').forEach(el => {
+      instances.add(new CardSwap(el));
     });
-
-    initCardSwapPositioning();
-  }
-
-  // Initialize all CardSwap containers immediately for positioning
-  function initCardSwapPositioning() {
-
-    const containers = document.querySelectorAll('.card-swap-container');
-
-
-    containers.forEach((container) => {
-      const htmlContainer = container as HTMLElement;
-
-      // Skip if already initialized (check by data attribute)
-      if (htmlContainer.dataset.cardSwapInitialized === 'true') {
-        return;
-      }
-
-      const controller = new CardSwapController(htmlContainer);
-      controllers.add(controller);
-      htmlContainer.dataset.cardSwapInitialized = 'true';
-    });
-  }
-
-  // Initialize positioning immediately to prevent CLS
-  function immediateInit() {
-    initCardSwapPositioning();
   }
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', immediateInit);
+    document.addEventListener('DOMContentLoaded', init, { once: true });
   } else {
-    immediateInit();
+    init();
   }
 
-  document.addEventListener('astro:page-load', () => {
-    controllers.forEach((controller) => {
-      controller.destroy();
-    });
-    controllers.clear();
-    immediateInit();
-  });
-
+  document.addEventListener('astro:page-load', init);
   document.addEventListener('astro:before-preparation', () => {
-    controllers.forEach((controller) => {
-      controller.destroy();
-    });
-    controllers.clear();
+    instances.forEach(i => i.destroy());
+    instances.clear();
   });
 </script>

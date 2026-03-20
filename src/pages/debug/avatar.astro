@@ -1,0 +1,590 @@
+---
+import AvatarComponent from '@/components/Avatar.astro';
+import Layout from '@/layouts/Layout.astro';
+import { avatarHats, avatarOutfits } from '@/data/avatarSprite';
+
+const outfitNames = Object.keys(avatarOutfits);
+const hatNames = Object.keys(avatarHats);
+const sampleLines = [
+  'Hola. Este es el entorno de debug del avatar.',
+  'Estoy probando un outfit nuevo.',
+  'La gorra LA todavía puede mejorar.',
+  'Necesito revisar mejor los tiles laterales.',
+];
+
+function formatControlLabel(name: string) {
+  if (name === 'none') return 'Sin hat';
+
+  return name
+    .split('-')
+    .map((part) => {
+      if (!part) return part;
+      if (part === 'la') return 'LA';
+      return part[0]?.toUpperCase() + part.slice(1);
+    })
+    .join(' ');
+}
+---
+
+<Layout
+  title="Avatar debug - Allison Peña"
+  description="Entorno de debug para probar outfits, hats y diálogo del avatar."
+  lang="es"
+  noindex={true}
+  headerTitle="Avatar debug"
+  headerSubtitle="Pruebas manuales de outfits, hats y habla"
+>
+  <section class="avatar-debug mx-auto max-w-[960px] py-8" data-avatar-debug data-avatar-debug-id="debug-avatar">
+    <div class="avatar-debug__intro space-y-3">
+      <h1 class="text-3xl font-bold text-main">Avatar debug</h1>
+      <p class="max-w-[70ch] text-base text-main">
+        Usa esta página para alternar outfits y hats manualmente, y para hacer hablar al avatar mientras revisas sprites nuevos.
+      </p>
+    </div>
+
+    <div class="avatar-debug__stage">
+      <div class="avatar-debug__bubble" data-avatar-debug-bubble aria-live="polite" aria-hidden="true" data-visible="false">
+        <p class="avatar-debug__bubble-text">
+          <span data-avatar-debug-text></span><span class="avatar-debug__cursor" data-avatar-debug-cursor>_</span>
+        </p>
+      </div>
+
+      <div class="avatar-debug__avatar-frame">
+        <AvatarComponent id="debug-avatar" className="size-full" alt="Vista previa del avatar para debug" />
+      </div>
+    </div>
+
+    <div class="avatar-debug__composer">
+      <label class="avatar-debug__label" for="debug-avatar-line">Texto</label>
+      <textarea id="debug-avatar-line" class="avatar-debug__textarea" rows="3" data-avatar-debug-input>{sampleLines[0]}</textarea>
+
+      <div class="avatar-debug__actions">
+        <button type="button" class="avatar-debug__control avatar-debug__control--primary" data-avatar-debug-speak>
+          Hablar
+        </button>
+        <button type="button" class="avatar-debug__control" data-avatar-debug-stop>
+          Detener
+        </button>
+        <button type="button" class="avatar-debug__control" data-avatar-debug-random-outfit>
+          Outfit random
+        </button>
+        <button type="button" class="avatar-debug__control" data-avatar-debug-random-hat>
+          Hat random
+        </button>
+      </div>
+
+      <div class="avatar-debug__preset-list" aria-label="Frases de prueba">
+        {sampleLines.map((line) => (
+          <button type="button" class="avatar-debug__control avatar-debug__control--small" data-avatar-debug-preset={line}>
+            {line}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <div class="avatar-debug__status">
+      <div class="avatar-debug__status-card">
+        <div class="avatar-debug__label">Outfit actual</div>
+        <div class="avatar-debug__status-value" data-avatar-debug-status-outfit>{formatControlLabel(outfitNames[0] || 'base')}</div>
+      </div>
+      <div class="avatar-debug__status-card">
+        <div class="avatar-debug__label">Hat actual</div>
+        <div class="avatar-debug__status-value" data-avatar-debug-status-hat>{formatControlLabel(hatNames[0] || 'none')}</div>
+      </div>
+    </div>
+
+    <div class="avatar-debug__panels">
+      <section class="avatar-debug__panel" aria-labelledby="debug-outfits-heading">
+        <h2 id="debug-outfits-heading" class="avatar-debug__panel-title">Outfits</h2>
+        <div class="avatar-debug__button-grid">
+          {outfitNames.map((name) => (
+            <button type="button" class="avatar-debug__control" data-avatar-debug-outfit={name}>
+              {formatControlLabel(name)}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section class="avatar-debug__panel" aria-labelledby="debug-hats-heading">
+        <h2 id="debug-hats-heading" class="avatar-debug__panel-title">Hats</h2>
+        <div class="avatar-debug__button-grid">
+          {hatNames.map((name) => (
+            <button type="button" class="avatar-debug__control" data-avatar-debug-hat={name}>
+              {formatControlLabel(name)}
+            </button>
+          ))}
+        </div>
+      </section>
+    </div>
+  </section>
+</Layout>
+
+<script is:inline define:vars={{ avatarOutfits, avatarHats }}>
+  const OUTFIT_STORAGE_KEY = 'avatar-outfit';
+  const HAT_STORAGE_KEY = 'avatar-hat';
+  const SPECIAL_CONFIG_STORAGE_KEY = 'avatar-special-config';
+
+  function initAvatarDebugPage() {
+    const root = document.querySelector('[data-avatar-debug]');
+    if (!(root instanceof HTMLElement)) return;
+    if (root.dataset.avatarDebugBound === 'true') return;
+    root.dataset.avatarDebugBound = 'true';
+
+    const avatarId = root.dataset.avatarDebugId || 'debug-avatar';
+    const escapedId = window.CSS?.escape ? window.CSS.escape(avatarId) : avatarId;
+    const avatar = document.querySelector(`.avatar[data-avatar-id="${escapedId}"]`);
+    if (!(avatar instanceof HTMLElement)) return;
+
+    const bubble = root.querySelector('[data-avatar-debug-bubble]');
+    const textEl = root.querySelector('[data-avatar-debug-text]');
+    const cursorEl = root.querySelector('[data-avatar-debug-cursor]');
+    const input = root.querySelector('[data-avatar-debug-input]');
+    const speakButton = root.querySelector('[data-avatar-debug-speak]');
+    const stopButton = root.querySelector('[data-avatar-debug-stop]');
+    const randomOutfitButton = root.querySelector('[data-avatar-debug-random-outfit]');
+    const randomHatButton = root.querySelector('[data-avatar-debug-random-hat]');
+    const outfitStatus = root.querySelector('[data-avatar-debug-status-outfit]');
+    const hatStatus = root.querySelector('[data-avatar-debug-status-hat]');
+
+    if (
+      !(bubble instanceof HTMLElement) ||
+      !(textEl instanceof HTMLElement) ||
+      !(cursorEl instanceof HTMLElement) ||
+      !(input instanceof HTMLTextAreaElement) ||
+      !(speakButton instanceof HTMLButtonElement) ||
+      !(stopButton instanceof HTMLButtonElement) ||
+      !(randomOutfitButton instanceof HTMLButtonElement) ||
+      !(randomHatButton instanceof HTMLButtonElement) ||
+      !(outfitStatus instanceof HTMLElement) ||
+      !(hatStatus instanceof HTMLElement)
+    ) {
+      return;
+    }
+
+    const outfitButtons = Array.from(root.querySelectorAll('[data-avatar-debug-outfit]'));
+    const hatButtons = Array.from(root.querySelectorAll('[data-avatar-debug-hat]'));
+    const presetButtons = Array.from(root.querySelectorAll('[data-avatar-debug-preset]'));
+
+    const spriteBaseUrl = avatar.dataset.avatarSpriteUrl || '';
+    const outfitNames = Object.keys(avatarOutfits);
+    const hatNames = Object.keys(avatarHats);
+
+    let selectedOutfit = localStorage.getItem(OUTFIT_STORAGE_KEY) || 'base';
+    if (!avatarOutfits[selectedOutfit]) {
+      selectedOutfit = outfitNames.includes('base') ? 'base' : outfitNames[0] || 'base';
+    }
+
+    let selectedHat = localStorage.getItem(HAT_STORAGE_KEY) || 'none';
+    if (!avatarHats[selectedHat]) {
+      selectedHat = hatNames.includes('none') ? 'none' : hatNames[0] || 'none';
+    }
+
+    let speechToken = 0;
+    let cursorInterval = 0;
+    const activeTimeouts = new Set();
+
+    function formatLabel(name) {
+      if (name === 'none') return 'Sin hat';
+
+      return name
+        .split('-')
+        .map((part) => {
+          if (!part) return part;
+          if (part === 'la') return 'LA';
+          return part.charAt(0).toUpperCase() + part.slice(1);
+        })
+        .join(' ');
+    }
+
+    function getSpriteHref(tileName) {
+      return `${spriteBaseUrl}#avatar-sprite-${tileName}`;
+    }
+
+    function setUseTarget(use, href) {
+      if (!(use instanceof SVGUseElement)) return;
+      if (use.getAttribute('href') === href) return;
+      use.setAttribute('href', href);
+      use.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', href);
+    }
+
+    function setAvatarMouth(state) {
+      avatar.dispatchEvent(new CustomEvent('avatar:set-mouth', { detail: { state } }));
+    }
+
+    function setAvatarGaze(direction) {
+      avatar.dispatchEvent(new CustomEvent('avatar:set-gaze', { detail: { direction } }));
+    }
+
+    function clearSpeechTimers() {
+      if (cursorInterval) {
+        window.clearInterval(cursorInterval);
+        cursorInterval = 0;
+      }
+
+      activeTimeouts.forEach((timeoutId) => window.clearTimeout(timeoutId));
+      activeTimeouts.clear();
+    }
+
+    function wait(ms, token) {
+      return new Promise((resolve) => {
+        const timeoutId = window.setTimeout(() => {
+          activeTimeouts.delete(timeoutId);
+          resolve(token === speechToken);
+        }, ms);
+
+        activeTimeouts.add(timeoutId);
+      });
+    }
+
+    function startCursorBlink() {
+      cursorEl.hidden = false;
+      cursorEl.style.opacity = '1';
+      let visible = true;
+
+      cursorInterval = window.setInterval(() => {
+        visible = !visible;
+        cursorEl.style.opacity = visible ? '1' : '0';
+      }, 420);
+    }
+
+    function showBubble() {
+      bubble.dataset.visible = 'true';
+      bubble.setAttribute('aria-hidden', 'false');
+    }
+
+    function hideBubble() {
+      bubble.dataset.visible = 'false';
+      bubble.setAttribute('aria-hidden', 'true');
+      textEl.textContent = '';
+      cursorEl.hidden = true;
+      cursorEl.style.opacity = '1';
+    }
+
+    function mouthForChar(char) {
+      const lower = char.toLowerCase();
+      if (/[aáàäâã]/u.test(lower)) return 'a';
+      if (/[eéèëê]/u.test(lower)) return 'e';
+      if (/[iíìïî]/u.test(lower)) return 'i';
+      if (/[oóòöôõ]/u.test(lower)) return 'o';
+      if (/[uúùüû]/u.test(lower)) return 'u';
+      if (/[mnbp]/u.test(lower)) return 'closed';
+      if (/\s/u.test(char)) return 'default';
+      return 'neutral';
+    }
+
+    function getTypeDelay(char) {
+      if (/[.!?]/u.test(char)) return 260;
+      if (/[,;:]/u.test(char)) return 140;
+      if (/\s/u.test(char)) return 30;
+      return 22;
+    }
+
+    function stopSpeech(hide = true) {
+      speechToken += 1;
+      clearSpeechTimers();
+      setAvatarMouth('default');
+      setAvatarGaze('base');
+      if (hide) {
+        hideBubble();
+      } else {
+        cursorEl.hidden = true;
+        cursorEl.style.opacity = '1';
+      }
+    }
+
+    async function speak(text) {
+      const phrase = text.trim();
+      if (!phrase) return;
+
+      stopSpeech(false);
+      speechToken += 1;
+      const token = speechToken;
+
+      showBubble();
+      textEl.textContent = '';
+      startCursorBlink();
+      setAvatarMouth('neutral');
+      setAvatarGaze('base');
+
+      for (let index = 0; index < phrase.length; index += 1) {
+        if (token !== speechToken) return;
+
+        const char = phrase[index] || '';
+        textEl.textContent = phrase.slice(0, index + 1);
+        setAvatarMouth(mouthForChar(char));
+
+        const shouldContinue = await wait(getTypeDelay(char), token);
+        if (!shouldContinue) return;
+      }
+
+      clearSpeechTimers();
+      cursorEl.hidden = true;
+      setAvatarMouth('default');
+      setAvatarGaze('base');
+    }
+
+    function updateActiveButtons() {
+      outfitButtons.forEach((button) => {
+        if (!(button instanceof HTMLButtonElement)) return;
+        button.dataset.active = button.dataset.avatarDebugOutfit === selectedOutfit ? 'true' : 'false';
+      });
+
+      hatButtons.forEach((button) => {
+        if (!(button instanceof HTMLButtonElement)) return;
+        button.dataset.active = button.dataset.avatarDebugHat === selectedHat ? 'true' : 'false';
+      });
+
+      outfitStatus.textContent = formatLabel(selectedOutfit);
+      hatStatus.textContent = formatLabel(selectedHat);
+    }
+
+    function applyOutfit(name) {
+      const tiles = avatarOutfits[name] || avatarOutfits.base;
+      avatar.querySelectorAll('.avatar__part--outfit').forEach((part, index) => {
+        setUseTarget(part, getSpriteHref(tiles[index]));
+      });
+    }
+
+    function applyHat(name) {
+      const tiles = avatarHats[name] || avatarHats.none;
+      avatar.querySelectorAll('.avatar__part--hat').forEach((part, index) => {
+        setUseTarget(part, getSpriteHref(tiles[index] || 'hat-empty'));
+      });
+    }
+
+    function persistSelection() {
+      localStorage.setItem(OUTFIT_STORAGE_KEY, selectedOutfit);
+      localStorage.setItem(HAT_STORAGE_KEY, selectedHat);
+      localStorage.removeItem(SPECIAL_CONFIG_STORAGE_KEY);
+    }
+
+    function applySelection() {
+      applyOutfit(selectedOutfit);
+      applyHat(selectedHat);
+      persistSelection();
+      updateActiveButtons();
+    }
+
+    function pickRandomName(names, currentName) {
+      if (!names.length) return currentName;
+      if (names.length === 1) return names[0];
+
+      let nextName = currentName;
+      while (nextName === currentName) {
+        nextName = names[Math.floor(Math.random() * names.length)] || currentName;
+      }
+
+      return nextName;
+    }
+
+    outfitButtons.forEach((button) => {
+      if (!(button instanceof HTMLButtonElement)) return;
+      button.addEventListener('click', () => {
+        const nextOutfit = button.dataset.avatarDebugOutfit;
+        if (!nextOutfit) return;
+        selectedOutfit = nextOutfit;
+        applySelection();
+      });
+    });
+
+    hatButtons.forEach((button) => {
+      if (!(button instanceof HTMLButtonElement)) return;
+      button.addEventListener('click', () => {
+        const nextHat = button.dataset.avatarDebugHat;
+        if (!nextHat) return;
+        selectedHat = nextHat;
+        applySelection();
+      });
+    });
+
+    presetButtons.forEach((button) => {
+      if (!(button instanceof HTMLButtonElement)) return;
+      button.addEventListener('click', () => {
+        input.value = button.dataset.avatarDebugPreset || '';
+      });
+    });
+
+    speakButton.addEventListener('click', () => {
+      void speak(input.value);
+    });
+
+    stopButton.addEventListener('click', () => {
+      stopSpeech(true);
+    });
+
+    randomOutfitButton.addEventListener('click', () => {
+      selectedOutfit = pickRandomName(outfitNames, selectedOutfit);
+      applySelection();
+    });
+
+    randomHatButton.addEventListener('click', () => {
+      selectedHat = pickRandomName(hatNames, selectedHat);
+      applySelection();
+    });
+
+    input.addEventListener('keydown', (event) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+        event.preventDefault();
+        void speak(input.value);
+      }
+    });
+
+    applySelection();
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        applySelection();
+      });
+    });
+    window.setTimeout(() => {
+      applySelection();
+    }, 180);
+  }
+
+  initAvatarDebugPage();
+  document.addEventListener('astro:page-load', initAvatarDebugPage);
+</script>
+
+<style>
+  .avatar-debug {
+    display: grid;
+    gap: 1.5rem;
+  }
+
+  .avatar-debug__stage {
+    display: grid;
+    gap: 1rem;
+    justify-items: center;
+  }
+
+  .avatar-debug__bubble {
+    position: relative;
+    width: min(100%, 34rem);
+    min-height: 5.5rem;
+    border: 2px double var(--color-main);
+    background: var(--color-secondary);
+    padding: 1rem 1.25rem;
+    color: var(--color-main);
+    visibility: hidden;
+  }
+
+  .avatar-debug__bubble[data-visible='true'] {
+    visibility: visible;
+  }
+
+  .avatar-debug__bubble::after {
+    content: '';
+    position: absolute;
+    left: calc(50% - 0.75rem);
+    top: calc(100% - 1px);
+    width: 1.5rem;
+    height: 1rem;
+    background: var(--color-secondary);
+    border-left: 2px double var(--color-main);
+    border-bottom: 2px double var(--color-main);
+    transform: skewY(35deg);
+  }
+
+  .avatar-debug__bubble-text {
+    margin: 0;
+    font-size: 1.125rem;
+    line-height: 1.4;
+    font-weight: 700;
+  }
+
+  .avatar-debug__cursor {
+    display: inline-block;
+    margin-left: 0.125rem;
+  }
+
+  .avatar-debug__avatar-frame {
+    width: min(18rem, 100%);
+    aspect-ratio: 1 / 1;
+  }
+
+  .avatar-debug__composer,
+  .avatar-debug__status,
+  .avatar-debug__panels {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .avatar-debug__status {
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  }
+
+  .avatar-debug__status-card,
+  .avatar-debug__panel {
+    border: 2px double var(--color-main);
+    background: var(--color-secondary);
+    padding: 1rem;
+  }
+
+  .avatar-debug__status-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-main);
+  }
+
+  .avatar-debug__label,
+  .avatar-debug__panel-title {
+    font-family: var(--font-atkinson-hyperlegible-mono, monospace);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgb(from var(--color-main) r g b / 0.75);
+  }
+
+  .avatar-debug__textarea {
+    width: 100%;
+    resize: vertical;
+    border: 2px double var(--color-main);
+    background: var(--color-secondary);
+    color: var(--color-main);
+    padding: 0.75rem;
+    font: inherit;
+    min-height: 6rem;
+  }
+
+  .avatar-debug__actions,
+  .avatar-debug__preset-list,
+  .avatar-debug__button-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .avatar-debug__control {
+    border: 2px double var(--color-main);
+    background: var(--color-secondary);
+    color: var(--color-main);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .avatar-debug__control:hover,
+  .avatar-debug__control:focus-visible,
+  .avatar-debug__control[data-active='true'] {
+    background: var(--color-main);
+    color: var(--color-secondary);
+  }
+
+  .avatar-debug__control--primary {
+    background: var(--color-main);
+    color: var(--color-secondary);
+  }
+
+  .avatar-debug__control--small {
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.8125rem;
+  }
+
+  .avatar-debug__panels {
+    grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  }
+</style>

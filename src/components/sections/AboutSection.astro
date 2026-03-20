@@ -1,10 +1,11 @@
 ---
 import { getTranslationValue, getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
+import Avatar from '../Avatar.astro';
+import AvatarPhraseDisplay from '../AvatarPhraseDisplay.astro';
 import Button from '../Button.astro';
 import CornersWithCrosses from '../CornersWithCrosses.astro';
 import FooterNavigationList from '../FooterNavigationList.astro';
-import { MapPin, CheckCircle } from 'lucide-react';
 
 interface Props {
   className?: string;
@@ -24,6 +25,16 @@ const localizedContactEmail = `${contactLocalPartByLang[lang]}@allison.sh`;
 const copyEmailLabel = t('about.cta.copy');
 const copyEmailSuccess = t('about.cta.copy.success');
 const copyEmailError = t('about.cta.copy.error');
+
+const aboutSayingsRaw = getTranslationValue(lang, 'about.sayings');
+const aboutSayings: string[] = Array.isArray(aboutSayingsRaw)
+  ? [...aboutSayingsRaw].map((phrase) => String(phrase))
+  : [String(aboutSayingsRaw)];
+
+const expandedRaw = getTranslationValue(lang, 'about.expanded');
+const aboutParagraphs: string[] = Array.isArray(expandedRaw)
+  ? [...expandedRaw].map((paragraph) => String(paragraph))
+  : [String(expandedRaw)];
 
 const aboutConnectLinks = [
   {
@@ -52,35 +63,65 @@ const aboutConnectLinks = [
 <section id="about" aria-labelledby="about-heading" class={`relative ${className}`} style="view-transition-name: about-section;">
   <h2 id="about-heading" class="h2">{t('about.title')}</h2>
 
-  <div class="grid items-start gap-4 lg:grid-cols-[1fr_minmax(12rem,16rem)]">
-    <!-- Content -->
-    <div class=" ">
-      <!-- TL;DR Block -->
-      <section class="border-2 border-main bg-main p-4 w-full !max-w-[850ch] selection-opposite">
-        <h3 class="text-body-mono !my-0 text-secondary">
-          {t('about.tldrLabel')}
-        </h3>
-        <p class="text-2xl leading-[1.25] text-secondary font-semibold text-balance ">
-          {t('about.tldr')}
-        </p>
-      </section>
- 
+  <div class="grid items-start gap-6 lg:grid-cols-[minmax(12rem,16rem)_1fr] lg:gap-8">
+    <!-- Avatar and Contact Info -->
+    <div class="relative z-[300] space-y-6 overflow-visible lg:-mt-2 lg:sticky lg:top-16">
+      <div class="relative z-[310] space-y-2 overflow-visible">
+        <figure class="relative aspect-square w-48 overflow-hidden ring-1 ring-main/20 lg:w-full" style="view-transition-name: photo-block;">
+          <Avatar id="about-avatar" className="size-full" alt={t('cv.photo.alt.pixelated')} />
+        </figure>
+        <Button
+          size="sm"
+          class="w-48 lg:w-full justify-center"
+          data-avatar-phrase-next
+          data-avatar-target="about-avatar"
+          aria-label={t('about.avatarPhrase.next')}
+        >
+          {t('about.avatarPhrase.next')}
+        </Button>
+      </div>
 
-      <!-- Expanded content + Contact CTA -->
-      <CornersWithCrosses showLeft={true} showBottom={true} showTopRight={true} showBottomRight={false} class="mt-10 text-main w-full p-5 border-t border-l border-main/20 overflow-visible">
-        <div class="about-content space-y-4 max-w-[75ch]">
-          {(() => {
-            const expandedRaw = getTranslationValue(lang, 'about.expanded');
-            const paragraphs: string[] = Array.isArray(expandedRaw)
-              ? [...expandedRaw]
-              : [String(expandedRaw)];
-            return paragraphs.map((paragraph: string) => (
-              <p class="text-lg leading-relaxed font-normal" set:html={paragraph} />
-            ));
-          })()}
+      <div class="space-y-4">
+        <div class="space-y-3">
+          <div class="flex items-start gap-3 text-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-main mt-0.5 flex-shrink-0" aria-hidden="true"><path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/></svg>
+            <div class="flex-1">
+              <div class="font-mono text-xs text-main/70 uppercase tracking-wide">{t('home.stats.location')}</div>
+              <div class="font-medium text-main">Santiago, Chile</div>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 text-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-main mt-0.5 flex-shrink-0" aria-hidden="true"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>
+            <div class="flex-1">
+              <div class="font-mono text-xs text-main/70 uppercase tracking-wide">{t('home.stats.status')}</div>
+              <div class="font-medium text-main">{t('footer.availableForProjects')}</div>
+            </div>
+          </div>
         </div>
 
-        <section>
+        <div class="border-t border-main/20 pt-4">
+          <div class="font-mono text-sm font-bold text-main uppercase mb-4">{t('footer.connect')}</div>
+          <FooterNavigationList links={aboutConnectLinks} inverted />
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div>
+      <AvatarPhraseDisplay
+        avatarId="about-avatar"
+        phrases={aboutSayings}
+        label={t('about.sayingsLabel')}
+        className="mb-6 max-w-[75ch]"
+      />
+      <CornersWithCrosses showLeft={true} showBottom={true} showTopRight={true} showBottomRight={false} class="text-main w-full p-5 border-t border-l border-main/20 overflow-visible about-copy-selection">
+        <div class="about-content space-y-4 max-w-[75ch]">
+          {aboutParagraphs.map((paragraph: string) => (
+            <p class="text-lg leading-relaxed font-normal" set:html={paragraph} />
+          ))}
+        </div>
+
+        <section class="mt-8">
           <div class="leading-relaxed text-main !flex items-center gap-4 w-full">
             <span>{t('about.cta.message')}</span>
             <span>
@@ -107,70 +148,6 @@ const aboutConnectLinks = [
         </section>
       </CornersWithCrosses>
     </div>
-
-    <!-- Photo and Contact Info -->
-    <div class="space-y-6">
-      <figure class="relative aspect-square w-48 lg:w-full overflow-hidden ring-1 ring-main/20 bg-secondary/10 group" style="view-transition-name: photo-block;">
-        <picture class="absolute inset-0 size-full transition-opacity duration-300 ease-out group-hover:opacity-0">
-          <source srcset="/img/me.webp" type="image/webp" />
-          <img
-            src="/img/me.png"
-            alt={t('cv.photo.alt.pixelated')}
-            class="absolute inset-0 size-full object-cover"
-            loading="lazy"
-            decoding="async"
-            fetchpriority="low"
-            width="1200"
-            height="1600"
-          />
-        </picture>
-        <picture class="absolute inset-0 size-full opacity-0 transition-opacity duration-300 ease-out group-hover:opacity-100">
-          <source srcset="/img/true_me.webp" type="image/webp" />
-          <img
-            src="/img/true_me.png"
-            alt={t('cv.photo.alt.original')}
-            class="absolute inset-0 size-full object-cover"
-            loading="lazy"
-            decoding="async"
-            fetchpriority="low"
-            width="1148"
-            height="1425"
-          />
-        </picture>
-        <div
-          class="absolute inset-0 pointer-events-none z-10"
-          style="background: var(--theme-colorful); mix-blend-mode: color; opacity: 0.28;"
-          aria-hidden="true"
-        ></div>
-      </figure>
-
-      <!-- Contact Info -->
-      <div class="space-y-4">
-        <!-- Basic Info -->
-        <div class="space-y-3">
-          <div class="flex items-start gap-3 text-sm">
-            <MapPin size={16} className="text-main mt-0.5 flex-shrink-0" />
-            <div class="flex-1">
-              <div class="font-mono text-xs text-main/70 uppercase tracking-wide">{t('home.stats.location')}</div>
-              <div class="font-medium text-main">Santiago, Chile</div>
-            </div>
-          </div>
-          <div class="flex items-start gap-3 text-sm">
-            <CheckCircle size={16} className="text-main mt-0.5 flex-shrink-0" />
-            <div class="flex-1">
-              <div class="font-mono text-xs text-main/70 uppercase tracking-wide">{t('home.stats.status')}</div>
-              <div class="font-medium text-main">{t('footer.availableForProjects')}</div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Social Links -->
-        <div class="border-t border-main/20 pt-4">
-          <div class="font-mono text-sm font-bold text-main uppercase mb-4">{t('footer.connect')}</div>
-          <FooterNavigationList links={aboutConnectLinks} inverted />
-        </div>
-      </div>
-    </div>
   </div>
 
 </section>
@@ -179,32 +156,12 @@ const aboutConnectLinks = [
   import { showToast } from '@/utils/toast';
   import { haptic } from '@/utils/haptics';
 
-  async function copyTextToClipboard(text) {
+  async function copyTextToClipboard(text: string) {
     if (!text) return false;
+    if (!navigator.clipboard || !window.isSecureContext) return false;
 
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return true;
-    }
-
-    const textarea = document.createElement('textarea');
-    textarea.value = text;
-    textarea.setAttribute('readonly', '');
-    textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
-    textarea.style.left = '-9999px';
-    document.body.appendChild(textarea);
-    textarea.focus();
-    textarea.select();
-
-    let copied = false;
-    try {
-      copied = document.execCommand('copy');
-    } finally {
-      textarea.remove();
-    }
-
-    return copied;
+    await navigator.clipboard.writeText(text);
+    return true;
   }
 
   function initCopyEmailButtons() {
@@ -262,5 +219,11 @@ const aboutConnectLinks = [
   .about-content :global(a:hover) {
     background-color: var(--color-main);
     color: var(--color-secondary);
+  }
+
+  .about-copy-selection ::selection {
+    background: var(--color-main);
+    color: var(--color-secondary);
+    box-shadow: 0 0 0 2px var(--color-main);
   }
 </style>

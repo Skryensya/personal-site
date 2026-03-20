@@ -36,12 +36,22 @@ const allowlistByPath: Record<string, AllowRule[]> = {
   ]
 };
 
-function isAllowed(path: string, ruleId: string, targets: string[]): boolean {
+function flattenTargets(targets: unknown): string[] {
+  if (Array.isArray(targets)) {
+    return targets.flatMap((target) => flattenTargets(target));
+  }
+
+  return typeof targets === 'string' ? [targets] : [];
+}
+
+function isAllowed(path: string, ruleId: string, targets: unknown): boolean {
   const rules = allowlistByPath[path] ?? [];
+  const normalizedTargets = flattenTargets(targets);
+
   return rules.some((rule) => {
     if (rule.id !== ruleId) return false;
     if (!rule.targetIncludes) return true;
-    return targets.some((target) => target.includes(rule.targetIncludes!));
+    return normalizedTargets.some((target) => target.includes(rule.targetIncludes!));
   });
 }
 

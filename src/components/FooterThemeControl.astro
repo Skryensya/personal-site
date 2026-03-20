@@ -1,9 +1,8 @@
 ---
 import DropdownButton from './ui/DropdownButton.astro';
 import DropdownContent from './ui/DropdownContent.astro';
-import themesData from '@/data/themes.json';
-import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
+import { getTranslations } from '@/i18n/utils';
 
 interface Props {
   lang?: Language;
@@ -12,20 +11,8 @@ interface Props {
 
 const { lang = defaultLang, id = 'footer-theme-control' } = Astro.props;
 const t = getTranslations(lang);
-
-const allThemeIds = [
-  ...themesData.default,
-  ...themesData.company,
-  ...themesData.special,
-].map((theme) => theme.id);
-
-const localizedThemeNames = Object.fromEntries(
-  allThemeIds.map((themeId) => {
-    const key = `theme.${themeId}` as any;
-    const localized = t(key);
-    return [themeId, (typeof localized === 'string' && localized !== key) ? localized : themeId];
-  })
-);
+// localizedThemeNames ya está en window.__THEME_NAMES__ (emitido por ThemeControl en la Navbar).
+// No re-emitimos el JSON aquí para evitar duplicarlo en cada página.
 ---
 
 <div class="text-main">
@@ -53,9 +40,11 @@ const localizedThemeNames = Object.fromEntries(
   </DropdownButton>
 </div>
 
-<script is:inline define:vars={{ id, localizedThemeNames }}>
+<script is:inline define:vars={{ id }}>
   const footerThemeControlId = id;
-  const footerThemeNames = localizedThemeNames;
+  // Reutilizar los nombres ya emitidos por ThemeControl (window.__THEME_NAMES__)
+  // en vez de duplicar el JSON en cada página.
+  const footerThemeNames = window.__THEME_NAMES__ || {};
 
   const initFooterThemeControl = async () => {
     const label = document.getElementById(`${footerThemeControlId}-label`);

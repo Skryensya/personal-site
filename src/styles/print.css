@@ -181,8 +181,8 @@
     /* Avatar container */
     .cv-container .rounded-full.overflow-hidden,
     .cv-container .w-24.h-24,
-    .cv-container .lg\\:w-32.lg\\:h-32,
-    .cv-container .print\\:w-20.print\\:h-20 {
+    .cv-container .lg\:w-32.lg\:h-32,
+    .cv-container .print\:w-20.print\:h-20 {
         opacity: 1 !important;
         visibility: visible !important;
         display: block !important;

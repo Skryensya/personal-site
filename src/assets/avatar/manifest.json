@@ -1,0 +1,690 @@
+{
+  "name": "avatar",
+  "symbolPrefix": "avatar-sprite",
+  "generatedAt": "2026-03-20T04:20:52.100Z",
+  "tileCount": 135,
+  "sourceDir": "src/assets/avatar/tiles",
+  "outputDir": "src/assets/avatar",
+  "width": 150,
+  "height": 525,
+  "columns": 6,
+  "tileSize": 25,
+  "padding": 0,
+  "tiles": [
+    {
+      "name": "base-tile-00",
+      "source": "src/assets/avatar/tiles/base/base-tile-00.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-01",
+      "source": "src/assets/avatar/tiles/base/base-tile-01.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-02",
+      "source": "src/assets/avatar/tiles/base/base-tile-02.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-03",
+      "source": "src/assets/avatar/tiles/base/base-tile-03.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-04",
+      "source": "src/assets/avatar/tiles/base/base-tile-04.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-05",
+      "source": "src/assets/avatar/tiles/base/base-tile-05.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-06",
+      "source": "src/assets/avatar/tiles/base/base-tile-06.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-07",
+      "source": "src/assets/avatar/tiles/base/base-tile-07.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-08",
+      "source": "src/assets/avatar/tiles/base/base-tile-08.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-09",
+      "source": "src/assets/avatar/tiles/base/base-tile-09.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-10",
+      "source": "src/assets/avatar/tiles/base/base-tile-10.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-11",
+      "source": "src/assets/avatar/tiles/base/base-tile-11.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-12",
+      "source": "src/assets/avatar/tiles/base/base-tile-12.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-13",
+      "source": "src/assets/avatar/tiles/base/base-tile-13.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-14",
+      "source": "src/assets/avatar/tiles/base/base-tile-14.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-15",
+      "source": "src/assets/avatar/tiles/base/base-tile-15.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-16",
+      "source": "src/assets/avatar/tiles/base/base-tile-16.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-17",
+      "source": "src/assets/avatar/tiles/base/base-tile-17.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-18",
+      "source": "src/assets/avatar/tiles/base/base-tile-18.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-19",
+      "source": "src/assets/avatar/tiles/base/base-tile-19.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-20",
+      "source": "src/assets/avatar/tiles/base/base-tile-20.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-21",
+      "source": "src/assets/avatar/tiles/base/base-tile-21.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "base-tile-22",
+      "source": "src/assets/avatar/tiles/base/base-tile-22.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "left-eye-base",
+      "source": "src/assets/avatar/tiles/eyes/left-eye-base.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "left-eye-blink",
+      "source": "src/assets/avatar/tiles/eyes/left-eye-blink.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "left-eye-bottom-left",
+      "source": "src/assets/avatar/tiles/eyes/left-eye-bottom-left.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "left-eye-bottom-right",
+      "source": "src/assets/avatar/tiles/eyes/left-eye-bottom-right.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "left-eye-bottom",
+      "source": "src/assets/avatar/tiles/eyes/left-eye-bottom.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "left-eye-left",
+      "source": "src/assets/avatar/tiles/eyes/left-eye-left.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "left-eye-right",
+      "source": "src/assets/avatar/tiles/eyes/left-eye-right.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "left-eye-top-left",
+      "source": "src/assets/avatar/tiles/eyes/left-eye-top-left.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "left-eye-top-right",
+      "source": "src/assets/avatar/tiles/eyes/left-eye-top-right.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "left-eye-top",
+      "source": "src/assets/avatar/tiles/eyes/left-eye-top.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "right-eye-base",
+      "source": "src/assets/avatar/tiles/eyes/right-eye-base.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "right-eye-blink",
+      "source": "src/assets/avatar/tiles/eyes/right-eye-blink.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "right-eye-bottom-left",
+      "source": "src/assets/avatar/tiles/eyes/right-eye-bottom-left.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "right-eye-bottom-right",
+      "source": "src/assets/avatar/tiles/eyes/right-eye-bottom-right.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "right-eye-bottom",
+      "source": "src/assets/avatar/tiles/eyes/right-eye-bottom.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "right-eye-left",
+      "source": "src/assets/avatar/tiles/eyes/right-eye-left.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "right-eye-right",
+      "source": "src/assets/avatar/tiles/eyes/right-eye-right.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "right-eye-top-left",
+      "source": "src/assets/avatar/tiles/eyes/right-eye-top-left.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "right-eye-top-right",
+      "source": "src/assets/avatar/tiles/eyes/right-eye-top-right.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "right-eye-top",
+      "source": "src/assets/avatar/tiles/eyes/right-eye-top.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "right-eye-wink",
+      "source": "src/assets/avatar/tiles/eyes/right-eye-wink.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-mask-slot-02",
+      "source": "src/assets/avatar/tiles/hats/batman-mask-slot-02.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-mask-slot-03",
+      "source": "src/assets/avatar/tiles/hats/batman-mask-slot-03.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-mask-slot-07",
+      "source": "src/assets/avatar/tiles/hats/batman-mask-slot-07.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-mask-slot-08",
+      "source": "src/assets/avatar/tiles/hats/batman-mask-slot-08.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-mask-slot-09",
+      "source": "src/assets/avatar/tiles/hats/batman-mask-slot-09.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-mask-slot-10",
+      "source": "src/assets/avatar/tiles/hats/batman-mask-slot-10.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-mask-slot-13",
+      "source": "src/assets/avatar/tiles/hats/batman-mask-slot-13.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-mask-slot-14",
+      "source": "src/assets/avatar/tiles/hats/batman-mask-slot-14.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-mask-slot-15",
+      "source": "src/assets/avatar/tiles/hats/batman-mask-slot-15.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-mask-slot-16",
+      "source": "src/assets/avatar/tiles/hats/batman-mask-slot-16.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-mask-slot-19",
+      "source": "src/assets/avatar/tiles/hats/batman-mask-slot-19.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-mask-slot-20",
+      "source": "src/assets/avatar/tiles/hats/batman-mask-slot-20.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-mask-slot-21",
+      "source": "src/assets/avatar/tiles/hats/batman-mask-slot-21.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-mask-slot-22",
+      "source": "src/assets/avatar/tiles/hats/batman-mask-slot-22.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "hat-empty",
+      "source": "src/assets/avatar/tiles/hats/hat-empty.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "la-cap-slot-02",
+      "source": "src/assets/avatar/tiles/hats/la-cap-slot-02.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "la-cap-slot-03",
+      "source": "src/assets/avatar/tiles/hats/la-cap-slot-03.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "la-cap-slot-07",
+      "source": "src/assets/avatar/tiles/hats/la-cap-slot-07.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "la-cap-slot-08",
+      "source": "src/assets/avatar/tiles/hats/la-cap-slot-08.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "la-cap-slot-09",
+      "source": "src/assets/avatar/tiles/hats/la-cap-slot-09.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "la-cap-slot-10",
+      "source": "src/assets/avatar/tiles/hats/la-cap-slot-10.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "la-cap-slot-13",
+      "source": "src/assets/avatar/tiles/hats/la-cap-slot-13.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "la-cap-slot-14",
+      "source": "src/assets/avatar/tiles/hats/la-cap-slot-14.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "la-cap-slot-15",
+      "source": "src/assets/avatar/tiles/hats/la-cap-slot-15.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "la-cap-slot-16",
+      "source": "src/assets/avatar/tiles/hats/la-cap-slot-16.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "la-cap-slot-19",
+      "source": "src/assets/avatar/tiles/hats/la-cap-slot-19.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "la-cap-slot-22",
+      "source": "src/assets/avatar/tiles/hats/la-cap-slot-22.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "a-wide-open-left",
+      "source": "src/assets/avatar/tiles/mouth/expressions/a-wide-open-left.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "a-wide-open-right",
+      "source": "src/assets/avatar/tiles/mouth/expressions/a-wide-open-right.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "closed-m-b-p-left",
+      "source": "src/assets/avatar/tiles/mouth/expressions/closed-m-b-p-left.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "closed-m-b-p-right",
+      "source": "src/assets/avatar/tiles/mouth/expressions/closed-m-b-p-right.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "e-mid-open-left",
+      "source": "src/assets/avatar/tiles/mouth/expressions/e-mid-open-left.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "e-mid-open-right",
+      "source": "src/assets/avatar/tiles/mouth/expressions/e-mid-open-right.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "i-tight-stretched-left",
+      "source": "src/assets/avatar/tiles/mouth/expressions/i-tight-stretched-left.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "i-tight-stretched-right",
+      "source": "src/assets/avatar/tiles/mouth/expressions/i-tight-stretched-right.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "neutral-slight-open-left",
+      "source": "src/assets/avatar/tiles/mouth/expressions/neutral-slight-open-left.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "neutral-slight-open-right",
+      "source": "src/assets/avatar/tiles/mouth/expressions/neutral-slight-open-right.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "o-rounded-left",
+      "source": "src/assets/avatar/tiles/mouth/expressions/o-rounded-left.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "o-rounded-right",
+      "source": "src/assets/avatar/tiles/mouth/expressions/o-rounded-right.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "smile-left",
+      "source": "src/assets/avatar/tiles/mouth/expressions/smile-left.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "smile-right",
+      "source": "src/assets/avatar/tiles/mouth/expressions/smile-right.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "u-tight-rounded-left",
+      "source": "src/assets/avatar/tiles/mouth/expressions/u-tight-rounded-left.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "u-tight-rounded-right",
+      "source": "src/assets/avatar/tiles/mouth/expressions/u-tight-rounded-right.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "mouth-rest-left",
+      "source": "src/assets/avatar/tiles/mouth/mouth-rest-left.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "mouth-rest-right",
+      "source": "src/assets/avatar/tiles/mouth/mouth-rest-right.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-tile-11",
+      "source": "src/assets/avatar/tiles/outfits/batman-tile-11.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-tile-12",
+      "source": "src/assets/avatar/tiles/outfits/batman-tile-12.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-tile-13",
+      "source": "src/assets/avatar/tiles/outfits/batman-tile-13.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-tile-14",
+      "source": "src/assets/avatar/tiles/outfits/batman-tile-14.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-tile-15",
+      "source": "src/assets/avatar/tiles/outfits/batman-tile-15.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-tile-16",
+      "source": "src/assets/avatar/tiles/outfits/batman-tile-16.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-tile-17",
+      "source": "src/assets/avatar/tiles/outfits/batman-tile-17.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-tile-18",
+      "source": "src/assets/avatar/tiles/outfits/batman-tile-18.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-tile-19",
+      "source": "src/assets/avatar/tiles/outfits/batman-tile-19.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-tile-20",
+      "source": "src/assets/avatar/tiles/outfits/batman-tile-20.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-tile-21",
+      "source": "src/assets/avatar/tiles/outfits/batman-tile-21.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "batman-tile-22",
+      "source": "src/assets/avatar/tiles/outfits/batman-tile-22.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "shirt-tile-11",
+      "source": "src/assets/avatar/tiles/outfits/shirt-tile-11.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "shirt-tile-12",
+      "source": "src/assets/avatar/tiles/outfits/shirt-tile-12.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "shirt-tile-13",
+      "source": "src/assets/avatar/tiles/outfits/shirt-tile-13.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "shirt-tile-14",
+      "source": "src/assets/avatar/tiles/outfits/shirt-tile-14.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "shirt-tile-15",
+      "source": "src/assets/avatar/tiles/outfits/shirt-tile-15.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "shirt-tile-17",
+      "source": "src/assets/avatar/tiles/outfits/shirt-tile-17.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "shirt-tile-18",
+      "source": "src/assets/avatar/tiles/outfits/shirt-tile-18.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "shirt-tile-19",
+      "source": "src/assets/avatar/tiles/outfits/shirt-tile-19.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "shirt-tile-20",
+      "source": "src/assets/avatar/tiles/outfits/shirt-tile-20.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "shirt-tile-21",
+      "source": "src/assets/avatar/tiles/outfits/shirt-tile-21.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "shirt-tile-22",
+      "source": "src/assets/avatar/tiles/outfits/shirt-tile-22.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-alt-tile-11",
+      "source": "src/assets/avatar/tiles/outfits/sweater-alt-tile-11.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-alt-tile-12",
+      "source": "src/assets/avatar/tiles/outfits/sweater-alt-tile-12.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-alt-tile-13",
+      "source": "src/assets/avatar/tiles/outfits/sweater-alt-tile-13.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-alt-tile-14",
+      "source": "src/assets/avatar/tiles/outfits/sweater-alt-tile-14.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-alt-tile-15",
+      "source": "src/assets/avatar/tiles/outfits/sweater-alt-tile-15.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-alt-tile-17",
+      "source": "src/assets/avatar/tiles/outfits/sweater-alt-tile-17.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-alt-tile-18",
+      "source": "src/assets/avatar/tiles/outfits/sweater-alt-tile-18.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-alt-tile-19",
+      "source": "src/assets/avatar/tiles/outfits/sweater-alt-tile-19.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-alt-tile-20",
+      "source": "src/assets/avatar/tiles/outfits/sweater-alt-tile-20.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-alt-tile-21",
+      "source": "src/assets/avatar/tiles/outfits/sweater-alt-tile-21.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-alt-tile-22",
+      "source": "src/assets/avatar/tiles/outfits/sweater-alt-tile-22.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-tile-11",
+      "source": "src/assets/avatar/tiles/outfits/sweater-tile-11.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-tile-12",
+      "source": "src/assets/avatar/tiles/outfits/sweater-tile-12.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-tile-13",
+      "source": "src/assets/avatar/tiles/outfits/sweater-tile-13.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-tile-14",
+      "source": "src/assets/avatar/tiles/outfits/sweater-tile-14.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-tile-15",
+      "source": "src/assets/avatar/tiles/outfits/sweater-tile-15.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-tile-16",
+      "source": "src/assets/avatar/tiles/outfits/sweater-tile-16.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-tile-17",
+      "source": "src/assets/avatar/tiles/outfits/sweater-tile-17.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-tile-18",
+      "source": "src/assets/avatar/tiles/outfits/sweater-tile-18.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-tile-19",
+      "source": "src/assets/avatar/tiles/outfits/sweater-tile-19.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-tile-20",
+      "source": "src/assets/avatar/tiles/outfits/sweater-tile-20.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-tile-21",
+      "source": "src/assets/avatar/tiles/outfits/sweater-tile-21.svg",
+      "viewBox": "0 0 25 25"
+    },
+    {
+      "name": "sweater-tile-22",
+      "source": "src/assets/avatar/tiles/outfits/sweater-tile-22.svg",
+      "viewBox": "0 0 25 25"
+    }
+  ]
+}

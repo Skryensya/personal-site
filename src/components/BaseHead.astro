@@ -96,7 +96,17 @@ const additionalStructuredData = Array.isArray(structuredData)
 <title>{title}</title>
 <meta name="generator" content={Astro.generator} />
 
-<link rel="dns-prefetch" href="https://api.github.com" />
+<!-- dns-prefetch eliminado: api.github.com no se usa en runtime del sitio -->
+
+<!-- Preload de la fuente body (Atkinson Hyperlegible woff2) para mejorar LCP.
+     Es la fuente que aplica a body, visible above-the-fold en todas las páginas. -->
+<link
+  rel="preload"
+  as="font"
+  type="font/woff2"
+  href="/fonts/Atkinson_Hyperlegible_Next/AtkinsonHyperlegibleNext-VariableFont_wght.woff2"
+  crossorigin="anonymous"
+/>
 
 <link id="favicon" rel="icon" type="image/svg+xml" sizes="any" href="/favicon.svg" />
 <link rel="sitemap" href="/sitemap.xml" />
@@ -129,7 +139,7 @@ const additionalStructuredData = Array.isArray(structuredData)
 {resolvedImage?.src && <meta name="twitter:image" content={resolvedImage.src} />}
 {resolvedImage?.alt && <meta name="twitter:image:alt" content={resolvedImage.alt} />}
 
-<script type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)}></script>
+<script is:inline type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)}></script>
 {additionalStructuredData.map((entry) => (
-    <script type="application/ld+json" set:html={JSON.stringify(entry)}></script>
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(entry)}></script>
 ))}

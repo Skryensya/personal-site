@@ -15,7 +15,7 @@ import SevenSegmentDisplay from '@/components/ui/seven-segment/SevenSegmentDispl
 import LiveClockDisplay from '@/components/ui/seven-segment/LiveClockDisplay.astro';
 import FooterContrastDisplay from '@/components/ui/seven-segment/FooterContrastDisplay.astro';
 import FooterNavigationList from '@/components/FooterNavigationList.astro';
-import { Option, ArrowRight, ArrowBigUp } from 'lucide-react';
+
 
 interface Props {
     lang?: Language;
@@ -344,6 +344,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
             </div>
 
             <script>
+                // @ts-nocheck
                 const initDesignSystemContrastRatio = () => {
                     const displayTargetId = 'design-system-contrast-display';
                     const wcagLevelsEl = document.getElementById('design-system-wcag-levels');
@@ -546,7 +547,17 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
             </div>
 
             <script>
+                // @ts-nocheck
+                //
+                // Controlador unificado de ThemeCards — reemplaza el script-por-tarjeta.
+                // Antes: 1 script × tarjeta (9 scripts × ~7 KB = ~63 KB inline).
+                // Ahora: 1 controlador con event delegation sobre el contenedor.
+                //
                 const initDesignSystemThemeCards = () => {
+                    const container = document.getElementById('default-themes');
+                    if (!container) return;
+
+                    // ── helpers ──────────────────────────────────────────────────────────
 
                     function getMode() {
                         const savedMode = localStorage.getItem('theme-mode') || 'system';
@@ -558,8 +569,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
 
                     function updateActiveChecks() {
                         const activeId = localStorage.getItem('theme-id') || window.__THEME_ID__;
-                        const cards = document.querySelectorAll('.theme-card');
-                        cards.forEach((card) => {
+                        container.querySelectorAll('.theme-card').forEach((card) => {
                             const id = card.getAttribute('data-theme-id');
                             const checked = card.querySelector('.theme-checked');
                             const unchecked = card.querySelector('.theme-unchecked');
@@ -568,7 +578,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                                 checked.classList.remove('hidden');
                                 unchecked.classList.add('hidden');
                                 checked.classList.remove('theme-dot-pop');
-                                void checked.offsetWidth;
+                                void checked.offsetWidth; // force reflow para reiniciar animación
                                 checked.classList.add('theme-dot-pop');
                             } else {
                                 checked.classList.add('hidden');
@@ -580,59 +590,169 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
 
                     function applyVisibilityState() {
                         const activeCompany = sessionStorage.getItem('active-company-theme');
-                        const companyWrappers = document.querySelectorAll('.company-theme');
-                        companyWrappers.forEach((el) => {
+                        document.querySelectorAll('.company-theme').forEach((el) => {
                             const id = el.getAttribute('data-theme-id');
-                            if (activeCompany && id === activeCompany) el.classList.remove('hidden');
-                            else el.classList.add('hidden');
+                            el.classList.toggle('hidden', !(activeCompany && id === activeCompany));
                         });
-
                         const specialUnlocked = localStorage.getItem('special-themes-visible') === 'true';
-                        const specialWrappers = document.querySelectorAll('.special-theme');
-                        specialWrappers.forEach((el) => {
-                            if (specialUnlocked) el.classList.remove('hidden');
-                            else el.classList.add('hidden');
+                        document.querySelectorAll('.special-theme').forEach((el) => {
+                            el.classList.toggle('hidden', !specialUnlocked);
                         });
                     }
 
-                    function wireApplyButtons() {
-                        const buttons = document.querySelectorAll('.apply-theme-btn');
-                        buttons.forEach((btn) => {
-                            if (btn.hasAttribute('data-check-bound')) return;
-                            btn.setAttribute('data-check-bound', 'true');
-                            btn.addEventListener('click', async (e) => {
+                    // ── aplicar tema por id ───────────────────────────────────────────────
+
+                    async function applyThemeById(themeId) {
+                        if (!themeId) return;
+                        const tc = window.themeControl;
+                        if (tc && Array.isArray(tc.availableThemes) && typeof tc.selectTheme === 'function') {
+                            const found = tc.availableThemes.find((t) => t.id === themeId);
+                            if (found) {
+                                tc.selectTheme(found);
+                                window.dispatchEvent(new CustomEvent('theme-changed', { detail: { themeId } }));
+                                return;
+                            }
+                        }
+                        // Fallback si ThemeControl todavía no terminó de inicializar
+                        window.dispatchEvent(new CustomEvent('theme-card-select', { detail: { themeId } }));
+                        window.dispatchEvent(new CustomEvent('theme-changed', { detail: { themeId } }));
+                    }
+
+                    // ── event delegation (UN listener para todas las tarjetas) ────────────
+
+                    if (!container.hasAttribute('data-delegation-bound')) {
+                        container.setAttribute('data-delegation-bound', 'true');
+
+                        container.addEventListener('click', async (e) => {
+                            // Click en el botón de aplicar (círculo check)
+                            const btn = e.target.closest('.apply-theme-btn');
+                            if (btn) {
                                 e.preventDefault();
+                                e.stopPropagation();
                                 const themeId = btn.getAttribute('data-theme-id');
                                 if (!themeId) return;
-                                const mode = getMode();
-                                const isDark = mode === 'dark';
+                                const isDark = getMode() === 'dark';
                                 const mod = await import('../data/themes.js');
                                 mod.applyTheme(themeId, isDark);
                                 updateActiveChecks();
-                            });
+                                return;
+                            }
+                            // Click en el cuerpo de la tarjeta
+                            const card = e.target.closest('.theme-card');
+                            if (card) await applyThemeById(card.getAttribute('data-theme-id'));
+                        });
+
+                        container.addEventListener('keydown', async (e) => {
+                            if (e.key !== 'Enter' && e.key !== ' ') return;
+                            const card = e.target.closest('.theme-card');
+                            if (card) {
+                                e.preventDefault();
+                                await applyThemeById(card.getAttribute('data-theme-id'));
+                            }
                         });
                     }
 
-                    const handleVisibilityEvent = () => {
+                    // ── prism-flow preview (una sola instancia global) ────────────────────
+
+                    function startPrismPreview() {
+                        if (window.__prismPreviewInterval) return;
+                        const prismCard = container.querySelector('[data-prism-preview="true"]');
+                        if (!prismCard) return;
+
+                        const colorfulPane  = prismCard.querySelector('[data-prism-colorful]');
+                        const contrastyPane = prismCard.querySelector('[data-prism-contrasty]');
+                        const colorfulVal   = prismCard.querySelector('[data-prism-colorful-value]');
+                        const contrastyVal  = prismCard.querySelector('[data-prism-contrasty-value]');
+                        if (!colorfulPane || !contrastyPane) return;
+
+                        const w = window;
+                        const sessionHue = Number(sessionStorage.getItem('prism-flow-hue'));
+                        w.__prismPreviewHue   = Number.isFinite(sessionHue) ? sessionHue : (w.__prismPreviewHue ?? 275);
+                        w.__prismPreviewStart = performance.now();
+
+                        const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+
+                        // Probe temporal para convertir colores CSS a hex
+                        const probe = document.createElement('span');
+                        probe.style.display = 'none';
+                        document.body.appendChild(probe);
+                        const cssToHex = (c) => {
+                            probe.style.color = c;
+                            const rgb = getComputedStyle(probe).color.match(/\d+/g);
+                            if (!rgb || rgb.length < 3) return c;
+                            return '#' + rgb.slice(0, 3).map((n) => (+n).toString(16).padStart(2, '0')).join('').toUpperCase();
+                        };
+
+                        const paint = (colorful, contrasty) => {
+                            colorfulPane.style.backgroundColor = colorful;
+                            colorfulPane.style.color           = contrasty;
+                            contrastyPane.style.backgroundColor = contrasty;
+                            contrastyPane.style.color          = colorful;
+                            prismCard.style.borderColor        = colorful;
+                            prismCard.style.outline            = `2px solid ${contrasty}`;
+                            if (colorfulVal)  colorfulVal.textContent  = cssToHex(colorful);
+                            if (contrastyVal) contrastyVal.textContent = cssToHex(contrasty);
+                        };
+
+                        const tick = () => {
+                            // Si prism-flow está activo, reflejar los colores reales del runtime
+                            if (localStorage.getItem('theme-id') === 'prism-flow') {
+                                const rs = getComputedStyle(document.documentElement);
+                                const cf = rs.getPropertyValue('--theme-colorful').trim();
+                                const ct = rs.getPropertyValue('--theme-contrasty').trim();
+                                if (cf && ct) { paint(cf, ct); return; }
+                            }
+                            // Curva animada propia del tema
+                            const elapsed = (performance.now() - (w.__prismPreviewStart || 0)) / 1000;
+                            const anchors = [196, 228, 272, 318, 18, 52];
+                            const cycle   = ((elapsed / 36) % 1 + 1) % 1;
+                            const scaled  = cycle * anchors.length;
+                            const fi = Math.floor(scaled) % anchors.length;
+                            const ti = (fi + 1) % anchors.length;
+                            const lt = scaled - Math.floor(scaled);
+                            const et = lt * lt * (3 - 2 * lt);
+                            const delta = ((anchors[ti] - anchors[fi] + 540) % 360) - 180;
+                            const base  = (anchors[fi] + delta * et + 360) % 360;
+                            w.__prismPreviewHue = (base + Math.sin(elapsed * 0.19) * 2.6 + Math.sin(elapsed * 0.07 + 1.1) * 1.4 + 360) % 360;
+                            const h1 = w.__prismPreviewHue;
+                            const h2 = (h1 + 158 + Math.sin(elapsed * 0.11 + 0.6) * 6.5 + 360) % 360;
+                            paint(
+                                `hsl(${h1.toFixed(1)} ${clamp(66 + Math.sin(elapsed * 0.23) * 7 + Math.sin(elapsed * 0.09 + 1.7) * 4, 56, 78).toFixed(1)}% ${clamp(83 + Math.sin(elapsed * 0.17 + 0.4) * 3.6 + Math.sin(elapsed * 0.05) * 1.8, 76, 88).toFixed(1)}%)`,
+                                `hsl(${h2.toFixed(1)} ${clamp(48 + Math.sin(elapsed * 0.21 + 2.2) * 8, 36, 62).toFixed(1)}% ${clamp(20 + Math.sin(elapsed * 0.16 + 0.9) * 3.2, 14, 26).toFixed(1)}%)`
+                            );
+                        };
+
+                        tick();
+                        w.__prismPreviewInterval = window.setInterval(tick, 180);
+
+                        // Limpiar al navegar (View Transitions)
+                        window.addEventListener('astro:before-preparation', () => {
+                            clearInterval(w.__prismPreviewInterval);
+                            w.__prismPreviewInterval = null;
+                            probe.remove();
+                        }, { once: true });
+                    }
+
+                    // ── arranque ─────────────────────────────────────────────────────────
+
+                    applyVisibilityState();
+                    updateActiveChecks();
+                    startPrismPreview();
+
+                    const onThemeEvent = () => {
                         applyVisibilityState();
-                        wireApplyButtons();
                         updateActiveChecks();
                     };
 
-                    handleVisibilityEvent();
-
-                    window.addEventListener('themes-unlocked', handleVisibilityEvent);
-                    window.addEventListener('themes-locked', handleVisibilityEvent);
-                    window.addEventListener('theme-unlocked', handleVisibilityEvent);
-                    window.addEventListener('theme-changed', handleVisibilityEvent);
-                    window.addEventListener('theme-control-ready', handleVisibilityEvent);
-                    window.addEventListener('company-theme-activated', handleVisibilityEvent);
-                    window.addEventListener('company-theme-deactivated', handleVisibilityEvent);
-
+                    window.addEventListener('themes-unlocked',           onThemeEvent);
+                    window.addEventListener('themes-locked',             onThemeEvent);
+                    window.addEventListener('theme-unlocked',            onThemeEvent);
+                    window.addEventListener('theme-changed',             onThemeEvent);
+                    window.addEventListener('theme-control-ready',       onThemeEvent);
+                    window.addEventListener('company-theme-activated',   onThemeEvent);
+                    window.addEventListener('company-theme-deactivated', onThemeEvent);
                     window.addEventListener('storage', (e) => {
-                        if (e.key === 'special-themes-visible' || e.key === 'theme-id') {
-                            handleVisibilityEvent();
-                        }
+                        if (e.key === 'special-themes-visible' || e.key === 'theme-id') onThemeEvent();
                     });
                 };
 
@@ -856,6 +976,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
         </section>
 
         <script>
+            // @ts-nocheck
             const initDesignSystemDropdownDemo = () => {
                 const label = document.getElementById('ds-dropdown-default-label');
                 const optionButtons = Array.from(document.querySelectorAll('#dropdown-menu-ds-dropdown-default [data-ds-option="true"]'));
@@ -955,15 +1076,15 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                                 <div class="flex flex-wrap items-center gap-2">
                                     <Kbd data-kbd-only-apple class="hidden !w-auto !min-w-[2.55rem] !px-2" data-kbd-live="true" data-kbd-key="control" data-kbd-code="controlleft">{kbdText.ctrl}</Kbd>
                                     <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">{kbdText.ctrl}</span></Kbd>
-                                    <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="alt" data-kbd-code="altleft"><Option className="kbd-mod-icon" size={13} /></Kbd>
-                                    <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="shift" data-kbd-code="shiftleft"><ArrowBigUp className="kbd-mod-icon" size={16} /></Kbd>
+                                    <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="alt" data-kbd-code="altleft"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="kbd-mod-icon" aria-hidden="true"><path d="M3 3h6l6 18h6"/><path d="M14 3h7"/></svg></Kbd>
+                                    <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="shift" data-kbd-code="shiftleft"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="kbd-mod-icon" aria-hidden="true"><path d="M9 13a1 1 0 0 0-1-1H5.061a1 1 0 0 1-.75-1.811l6.836-6.835a1.207 1.207 0 0 1 1.707 0l6.835 6.835a1 1 0 0 1-.75 1.811H16a1 1 0 0 0-1 1v6a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1z"/></svg></Kbd>
                                 </div>
 
                                 <div class="flex flex-wrap items-center gap-2 text-main/80">
-                                    <Kbd data-konami-key="arrowup" class="!w-[2.2rem] !h-[2.2rem]"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(-90deg)' }} /></Kbd>
-                                    <Kbd data-konami-key="arrowdown" class="!w-[2.2rem] !h-[2.2rem]"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(90deg)' }} /></Kbd>
-                                    <Kbd data-konami-key="arrowleft" class="!w-[2.2rem] !h-[2.2rem]"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(180deg)' }} /></Kbd>
-                                    <Kbd data-konami-key="arrowright" class="!w-[2.2rem] !h-[2.2rem]"><ArrowRight className="kbd-arrow-icon" size={10} /></Kbd>
+                                    <Kbd data-konami-key="arrowup" class="!w-[2.2rem] !h-[2.2rem]"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="kbd-arrow-icon" style="transform:rotate(-90deg)" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></Kbd>
+                                    <Kbd data-konami-key="arrowdown" class="!w-[2.2rem] !h-[2.2rem]"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="kbd-arrow-icon" style="transform:rotate(90deg)" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></Kbd>
+                                    <Kbd data-konami-key="arrowleft" class="!w-[2.2rem] !h-[2.2rem]"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="kbd-arrow-icon" style="transform:rotate(180deg)" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></Kbd>
+                                    <Kbd data-konami-key="arrowright" class="!w-[2.2rem] !h-[2.2rem]"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="kbd-arrow-icon" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></Kbd>
                                 </div>
 
                                 <div class="flex flex-wrap items-center gap-2 text-main/80">
@@ -983,7 +1104,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                                     <div class="flex items-center gap-2">
                                         <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">{kbdText.ctrl}</span></Kbd>
                                         <span class="font-mono text-base leading-none font-bold">+</span>
-                                        <Kbd data-kbd-live="true" data-kbd-key="arrowleft" data-kbd-code="arrowleft"><ArrowRight className="kbd-arrow-icon" size={10} style={{ transform: 'rotate(180deg)' }} /></Kbd>
+                                        <Kbd data-kbd-live="true" data-kbd-key="arrowleft" data-kbd-code="arrowleft"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="kbd-arrow-icon" style="transform:rotate(180deg)" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></Kbd>
                                     </div>
                                 </div>
                                 <div class="space-y-2.5">
@@ -991,7 +1112,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                                     <div class="flex items-center gap-2">
                                         <Kbd class="!w-[2.3rem] !min-w-[2.3rem]" data-kbd-live="true" data-kbd-key="meta|control" data-kbd-code="metaleft|metaright|controlleft|controlright"><span data-kbd-platform-apple class="hidden block w-full text-center leading-none" aria-hidden="true">⌘</span><span data-kbd-platform-win class="hidden block w-full text-center font-mono text-[10px] leading-none uppercase tracking-tight" aria-hidden="true">{kbdText.ctrl}</span></Kbd>
                                         <span class="font-mono text-base leading-none font-bold">+</span>
-                                        <Kbd data-kbd-live="true" data-kbd-key="arrowright" data-kbd-code="arrowright"><ArrowRight className="kbd-arrow-icon" size={10} /></Kbd>
+                                        <Kbd data-kbd-live="true" data-kbd-key="arrowright" data-kbd-code="arrowright"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="kbd-arrow-icon" aria-hidden="true"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></Kbd>
                                     </div>
                                 </div>
                             </div>
@@ -1021,6 +1142,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
         </section>
 
         <script>
+            // @ts-nocheck
             const initKonamiKbdDemo = () => {
                 const section = document.getElementById('kbd');
                 if (!section) return;
@@ -1059,7 +1181,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
                 let kbdClickAudio = null;
                 const getKbdClickAudio = () => {
                     if (kbdClickAudio) return kbdClickAudio;
-                    kbdClickAudio = new Audio('/buttonPress.wav');
+                    kbdClickAudio = new Audio('/buttonPress.mp3');
                     kbdClickAudio.volume = 0.25;
                     kbdClickAudio.preload = 'none';
                     return kbdClickAudio;
@@ -1453,6 +1575,7 @@ const secondaryBgClasses: Record<(typeof opacities)[number], string> = {
             </div>
 
             <script>
+                // @ts-nocheck
                 const initSevenSegmentKonamiEasterEgg = () => {
                     const updateKonamiDisplays = () => {
                         const isKonamiActive = localStorage.getItem('special-themes-visible') === 'true';

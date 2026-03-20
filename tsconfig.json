@@ -12,6 +12,14 @@
         "allowSyntheticDefaultImports": true,
         "esModuleInterop": true,
         "jsx": "react-jsx",
-        "types": ["react", "react-dom"]
-    }
+        "types": ["react", "react-dom"],
+        "skipLibCheck": true
+    },
+    "exclude": [
+        "dist",
+        "node_modules",
+        "unlighthouse-report",
+        "playwright-report",
+        "test-results"
+    ]
 }

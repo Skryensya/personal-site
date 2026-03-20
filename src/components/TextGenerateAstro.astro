@@ -1,0 +1,102 @@
+---
+/**
+ * TextGenerateAstro — typewriter effect sin React.
+ * Idéntico al original TextGenerate.tsx pero en ~300 bytes de JS puro.
+ *
+ * - Capa ghost invisible reserva el espacio exacto → CLS = 0
+ * - Arranca cuando el elemento entra en viewport (IntersectionObserver)
+ * - Respeta prefers-reduced-motion: muestra el texto completo directamente
+ * - Accesible: el texto completo está disponible vía .sr-only desde el inicio
+ */
+interface Props {
+  words: string;
+  speed?: number;
+  cursorCharacter?: string;
+  class?: string;
+}
+
+const {
+  words,
+  speed = 20,
+  cursorCharacter = '_',
+  class: className = ''
+} = Astro.props;
+---
+
+<div
+  class={`relative md:text-lg text-main/70 max-w-2xl ${className}`}
+  data-tg
+  data-tg-words={words}
+  data-tg-speed={speed}
+  data-tg-cursor={cursorCharacter}
+>
+  <!-- Ghost: reserva el espacio exacto para prevenir CLS -->
+  <span class="opacity-0 select-none" aria-hidden="true">{words}</span>
+
+  <!-- Texto animado (puramente visual) -->
+  <div class="absolute top-0 left-0 w-full h-full" aria-hidden="true">
+    <span data-tg-text></span><span data-tg-cur class="select-none pointer-events-none">{cursorCharacter}</span>
+  </div>
+
+  <!-- Accesible desde el inicio para lectores de pantalla -->
+  <span class="sr-only">{words}</span>
+</div>
+
+<script>
+  function runTypewriter(el: HTMLElement) {
+    const words  = el.dataset.tgWords  ?? '';
+    const speed  = Number(el.dataset.tgSpeed) || 20;
+    const cursor = el.dataset.tgCursor ?? '_';
+
+    const textEl   = el.querySelector<HTMLElement>('[data-tg-text]')!;
+    const cursorEl = el.querySelector<HTMLElement>('[data-tg-cur]')!;
+    if (!textEl || !cursorEl) return;
+
+    // Con prefers-reduced-motion mostramos el texto completo inmediatamente
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      textEl.textContent = words;
+      cursorEl.style.display = 'none';
+      return;
+    }
+
+    let i = 0;
+    let cursorOn = true;
+
+    const blink = setInterval(() => {
+      cursorOn = !cursorOn;
+      cursorEl.style.opacity = cursorOn ? '1' : '0';
+    }, 400);
+
+    const type = setInterval(() => {
+      textEl.textContent = words.slice(0, ++i);
+      if (i >= words.length) clearInterval(type);
+    }, speed);
+
+    // Limpieza en navegación (View Transitions)
+    window.addEventListener('astro:before-preparation', () => {
+      clearInterval(blink);
+      clearInterval(type);
+    }, { once: true });
+  }
+
+  function init() {
+    const els = document.querySelectorAll<HTMLElement>('[data-tg]');
+    if (!els.length) return;
+
+    const io = new IntersectionObserver((entries) => {
+      for (const e of entries) {
+        if (!e.isIntersecting) continue;
+        io.unobserve(e.target);
+        // Resetear texto antes de animar (por si hubo navegación)
+        const t = (e.target as HTMLElement).querySelector<HTMLElement>('[data-tg-text]');
+        if (t) t.textContent = '';
+        runTypewriter(e.target as HTMLElement);
+      }
+    }, { threshold: 0.1 });
+
+    els.forEach(el => io.observe(el));
+  }
+
+  init();
+  document.addEventListener('astro:page-load', init);
+</script>

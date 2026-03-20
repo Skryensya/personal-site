@@ -6,7 +6,7 @@ export interface Props {
 const { class: className = '' } = Astro.props;
 ---
 
-<div role="none" class={className}>
+<div role="none" data-dropdown-content class={className}>
   <slot />
 </div>
 

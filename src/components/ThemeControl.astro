@@ -7,9 +7,10 @@ import themesData from '@/data/themes.json';
 
 interface Props {
   id?: string;
+  placement?: 'bottom-right' | 'bottom-left';
 }
 
-const { id = 'theme-control' } = Astro.props;
+const { id = 'theme-control', placement = 'bottom-right' } = Astro.props;
 const currentLocale = getLangFromUrl(Astro.url);
 const t = getTranslations(currentLocale);
 
@@ -26,6 +27,9 @@ const localizedThemeNames = Object.fromEntries(
     return [id, (typeof localized === 'string' && localized !== key) ? localized : id];
   })
 );
+
+const initialThemes = themesData.default;
+const getInitialThemeLabel = (theme: any) => localizedThemeNames[theme.id] || theme.name || theme.id;
 ---
 
 <DropdownButton
@@ -34,6 +38,7 @@ const localizedThemeNames = Object.fromEntries(
   dropdownClassName="max-w-[280px] lg:w-fit lg:max-w-[600px]"
   class="w-7 h-7 lg:w-full lg:h-8"
   id={id}
+  placement={placement}
 >
   <div class="flex items-center gap-2 w-full">
     <div
@@ -45,16 +50,66 @@ const localizedThemeNames = Object.fromEntries(
     </span>
   </div>
 
-  <DropdownContent slot="dropdown-content">
+  <DropdownContent slot="dropdown-content" class="lg:max-w-[200px]">
     <div data-theme-dropdown-content>
-      <!-- Desktop layout - dynamic columns -->
       <div class="hidden lg:block" data-theme-desktop-layout>
-        <!-- Content will be populated by JavaScript -->
+        <div class="flex gap-0 w-full max-w-[200px]">
+          <div class="w-full flex-shrink-0">
+            {initialThemes.map((theme: any) => (
+              <button
+                type="button"
+                data-theme-button
+                data-theme-id={theme.id}
+                data-selected="false"
+                class="w-full px-3 py-1 text-left block cursor-pointer relative focus-visible:z-[9999] ring-inset bg-secondary text-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary"
+                role="menuitem"
+                tabindex="-1"
+                style="min-height: 36px; outline-width: 1px; outline-offset: 1px; box-shadow: inset 0 0 0 2px var(--color-secondary);"
+              >
+                <div class="flex items-center gap-2 pointer-events-none">
+                  <div
+                    class="w-6 h-6 aspect-square flex-shrink-0 pointer-events-none"
+                    style={`background: linear-gradient(135deg, ${theme.colors.colorful} 50%, ${theme.colors.contrasty} 50%); border: 2px solid ${theme.colors.colorful};`}
+                  ></div>
+                  <span class="flex-1 px-1 py-1 font-grotesk text-sm font-semibold pointer-events-none select-none uppercase whitespace-nowrap">{getInitialThemeLabel(theme)}</span>
+                  <div class="w-4 h-4 flex items-center justify-center pointer-events-none">
+                    <svg class="w-4 h-4 pointer-events-none theme-checkmark" style="display:none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                      <polyline points="20,6 9,17 4,12" />
+                    </svg>
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
       
-      <!-- Mobile/tablet layout - single column -->
       <div class="lg:hidden" data-theme-mobile-layout>
-        <!-- Content will be populated by JavaScript -->
+        {initialThemes.map((theme: any) => (
+          <button
+            type="button"
+            data-theme-button
+            data-theme-id={theme.id}
+            data-selected="false"
+            class="w-full px-3 py-1 text-left block cursor-pointer relative focus-visible:z-[9999] ring-inset bg-secondary text-main hover:bg-main hover:text-secondary focus-visible:bg-main focus-visible:text-secondary"
+            role="menuitem"
+            tabindex="-1"
+            style="min-height: 36px; outline-width: 1px; outline-offset: 1px; box-shadow: inset 0 0 0 2px var(--color-secondary);"
+          >
+            <div class="flex items-center gap-2 pointer-events-none">
+              <div
+                class="w-6 h-6 aspect-square flex-shrink-0 pointer-events-none"
+                style={`background: linear-gradient(135deg, ${theme.colors.colorful} 50%, ${theme.colors.contrasty} 50%); border: 2px solid ${theme.colors.colorful};`}
+              ></div>
+              <span class="flex-1 px-1 py-1 font-grotesk text-sm font-semibold pointer-events-none select-none uppercase whitespace-nowrap">{getInitialThemeLabel(theme)}</span>
+              <div class="w-4 h-4 flex items-center justify-center pointer-events-none">
+                <svg class="w-4 h-4 pointer-events-none theme-checkmark" style="display:none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <polyline points="20,6 9,17 4,12" />
+                </svg>
+              </div>
+            </div>
+          </button>
+        ))}
       </div>
     </div>
   </DropdownContent>
@@ -65,6 +120,7 @@ const localizedThemeNames = Object.fromEntries(
 </script>
 
 <script>
+  // @ts-nocheck
   import { applyTheme, themes, getAvailableThemes } from '../data/themes.js';
   import { haptic, isExplicitPointerClick } from '@/utils/haptics';
 
@@ -442,7 +498,7 @@ const localizedThemeNames = Object.fromEntries(
           const elapsed = (performance.now() - w.__prismDropdownStart) / 1000;
           const cycleDurationSec = 20;
           const cycle = ((elapsed / cycleDurationSec) % 1 + 1) % 1;
-          const ease = (t) => 0.5 - 0.5 * Math.cos(Math.PI * t);
+          const ease = (t: number) => 0.5 - 0.5 * Math.cos(Math.PI * t);
 
           let baseHue;
           const coolSplit = 0.36;

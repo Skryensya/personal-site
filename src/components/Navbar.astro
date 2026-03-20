@@ -5,7 +5,6 @@ import LanguageControl from './LanguageControl.astro';
 import Button from './Button.astro';
 import { getLangFromUrl } from '@/i18n/utils';
 import { getTranslations } from '@/i18n/utils';
-import { themes } from '../data/themes.js';
 import { getHomeUrl } from '@/utils/localized-routes';
 
 const currentLocale = getLangFromUrl(Astro.url);
@@ -19,22 +18,6 @@ const t = getTranslations(currentLocale);
 const isHomePage = currentLocale === 'es' 
   ? currentPath === '/' 
   : (currentPath === `/${currentLocale}/` || currentPath === `/${currentLocale}`);
-
-// Prepare localized theme data for client-side JavaScript
-const themeNames = themes.reduce((acc, theme) => {
-  const key = `theme.${theme.id}`;
-  const localized = (t as any)(key);
-  acc[theme.id] = (typeof localized === 'string' && localized !== key) ? localized : theme.name;
-  return acc;
-}, {} as Record<string, string>);
-
-const themeColors = themes.reduce((acc, theme) => {
-  acc[theme.id] = {
-    colorful: theme.colorful,
-    contrasty: theme.contrasty
-  };
-  return acc;
-}, {} as Record<string, { colorful: string; contrasty: string }>);
 
 const projectsAnchor = currentLocale === 'es' ? 'proyectos' : (currentLocale === 'no' ? 'prosjekter' : 'projects');
 
@@ -57,8 +40,8 @@ const navItems = [
 ---
 
 
-<nav class="!fixed !top-0 !left-0 !right-0 z-[400] flex justify-center mx-auto max-w-[var(--max-w-size)]" style="--navbar-height: 96px; view-transition-name: navbar;">
-  <div class={`max-w-[1280px] w-full px-4 pt-2`}>
+<nav class="!fixed !top-1 !left-0 !right-0 z-[400] flex justify-center mx-auto max-w-[var(--max-w-size)]" style="--navbar-height: 96px; view-transition-name: navbar;">
+  <div class={`max-w-[1280px] w-full px-4 pt-0.5`}>
     <div class="relative flex items-start justify-between gap-2 p-2 lg:pl-0 diagonal-stripe overflow-hidden" >
       <!-- Desktop Navigation -->
       <div class="hidden lg:flex items-start gap-x-2 gap-y-1 flex-nowrap relative min-w-0">
@@ -132,7 +115,7 @@ const navItems = [
       <div class="hidden lg:flex items-center gap-x-2 gap-y-1 relative">
         <ThemeControl />
         <ModeControl />
-        <LanguageControl currentPath={Astro.url.pathname} initialLocale={currentLocale} />
+        <LanguageControl />
       </div>
     </div>
   </div>
@@ -272,10 +255,8 @@ const navItems = [
 
  
 
-<script is:inline define:vars={{ themeNames, themeColors }}>
-
-  // Expose localized theme names globally for ThemeControl and mobile label
-  window.__THEME_NAMES__ = themeNames;
+<script>
+  // @ts-nocheck
 
   // Skip to main content functionality
   function skipToMainContent() {
@@ -562,8 +543,7 @@ const navItems = [
       // Theme navigation
       const buildThemeShortcutEvent = (key) => {
         const ua = navigator.userAgent || '';
-        const platform = navigator.platform || '';
-        const isAppleDevice = /mac|iphone|ipad|ipod/i.test(`${platform} ${ua}`);
+        const isAppleDevice = /mac|iphone|ipad|ipod/i.test(ua);
         return new KeyboardEvent('keydown', {
           key,
           metaKey: isAppleDevice,
@@ -726,15 +706,16 @@ const navItems = [
         // Get current theme from localStorage
         const currentThemeId = localStorage.getItem('theme-id');
         if (currentThemeId) {
-          const localizedThemeNames = window.__THEME_NAMES__ || themeNames;
+          const localizedThemeNames = window.__THEME_NAMES__ || {};
           themeLabel.textContent = localizedThemeNames[currentThemeId] || currentThemeId.charAt(0).toUpperCase() + currentThemeId.slice(1);
-          
-          // Update mobile theme preview with theme's own colorful color border
-          const themePreviewContainer = document.querySelector('.mobile-theme-preview-container');
-          if (themePreview && themePreviewContainer && themeColors[currentThemeId]) {
-            const colors = themeColors[currentThemeId];
-            themePreview.style.background = `linear-gradient(135deg, ${colors.colorful} 50%, ${colors.contrasty} 50%)`;
-            themePreviewContainer.style.borderColor = colors.colorful;
+
+          const themePreviewContainer = document.querySelector<HTMLElement>('.mobile-theme-preview-container');
+          if (themePreview instanceof HTMLElement && themePreviewContainer) {
+            const rootStyles = getComputedStyle(document.documentElement);
+            const main = rootStyles.getPropertyValue('--color-main').trim() || 'var(--color-main)';
+            const secondary = rootStyles.getPropertyValue('--color-secondary').trim() || 'var(--color-secondary)';
+            themePreview.style.background = `linear-gradient(135deg, ${main} 50%, ${secondary} 50%)`;
+            themePreviewContainer.style.borderColor = main;
           }
         }
       }

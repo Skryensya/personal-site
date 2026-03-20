@@ -1,0 +1,20 @@
+---
+import spriteSheet from '../assets/avatar/tileset.svg?raw';
+
+const defsMatch = spriteSheet.match(/<defs[^>]*>([\s\S]*?)<\/defs>/i);
+const spriteMarkup = defsMatch?.[1]?.trim() ?? '';
+---
+
+<svg class="avatar-sprite-defs" aria-hidden="true" width="0" height="0" focusable="false" data-avatar-sprite-defs>
+  <defs set:html={spriteMarkup}></defs>
+</svg>
+
+<style>
+  .avatar-sprite-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+</style>

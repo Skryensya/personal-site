@@ -3,7 +3,7 @@
 // This file provides JavaScript utilities for theme management
 
 import themesData from './themes.json';
-import { debugLogger } from '../utils/debug-logger.ts';
+import { debugLogger } from '../utils/debug-lite.ts';
 import { startDynamicTheme, stopDynamicTheme } from '../utils/dynamicTheme.ts';
 
 // Flatten all themes into a single array for backwards compatibility
@@ -60,21 +60,16 @@ const getVisibilityState = () => {
             activeCompany
         };
 
-        // Debug logging (async import to avoid blocking)
-        import('@/utils/debug-logger.ts').then(({ debugLogger }) => {
-            debugLogger.log('📊 getVisibilityState result:', {
-                storageValue,
-                specialVisible,
-                activeCompany,
-                finalState: state
-            });
+        debugLogger.log('📊 getVisibilityState result:', {
+            storageValue,
+            specialVisible,
+            activeCompany,
+            finalState: state
         });
 
         return state;
     } catch (e) {
-        import('@/utils/debug-logger.ts').then(({ debugLogger }) => {
-            debugLogger.warn('❌ Error in getVisibilityState:', e);
-        });
+        debugLogger.warn('❌ Error in getVisibilityState:', e);
         return {
             specialVisible: false,
             activeCompany: null

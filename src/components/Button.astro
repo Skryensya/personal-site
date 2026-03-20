@@ -1,6 +1,5 @@
 ---
 import { cn } from '@/lib/utils';
-import { debugLogger } from '@/utils/debug-logger';
 
 export interface Props {
   href?: string;
@@ -136,8 +135,8 @@ const shadowClasses = cn(
     }
     return false;
   };
-  const log = (...args) => isDebug() && console.log(...args);
-  const warn = (...args) => isDebug() && console.warn(...args);
+  const log = (...args: unknown[]) => isDebug() && console.log(...args);
+  const warn = (...args: unknown[]) => isDebug() && console.warn(...args);
 
   log('🚀 Button script loaded');
 
@@ -149,7 +148,7 @@ const shadowClasses = cn(
 
     function getClickAudio() {
       if (clickAudio) return clickAudio;
-      clickAudio = new Audio('/buttonPress.wav');
+      clickAudio = new Audio('/buttonPress.mp3');
       clickAudio.volume = 0.25;
       clickAudio.preload = 'none';
       return clickAudio;

@@ -2,7 +2,7 @@
 import Layout from '@/layouts/Layout.astro';
 import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
-import { ProyectStack } from '@/components/ProyectStack.tsx';
+
 
 interface Props {
     lang?: Language;
@@ -30,6 +30,4 @@ const projectsDescription = {
     lang={lang}
 >
     <h1 class="mb-12 text-2xl leading-tight font-mono sm:mb-16 sm:text-4xl">{t('nav.projects')}</h1>
-
-    <ProyectStack client:visible ></ProyectStack>
 </Layout>

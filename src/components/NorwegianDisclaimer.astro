@@ -78,7 +78,7 @@ const disclaimerKey = lang === 'ja' ? 'disclaimer.japanese.compact' : 'disclaime
         const DISMISS_DURATION = 30 * 60 * 1000; // 30 minutes in milliseconds
         const BODY_CLASS = 'has-norwegian-disclaimer';
 
-        function setBodyOffset(enabled) {
+        function setBodyOffset(enabled: boolean) {
             if (!document.body) return;
             document.body.classList.toggle(BODY_CLASS, enabled);
         }

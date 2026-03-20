@@ -1,4 +1,16 @@
 ---
+/**
+ * ProjectCarousel — reemplaza Embla (8.4 KB gz) con CSS scroll-snap nativo.
+ *
+ * Comportamiento igual al anterior:
+ * - ≤ 3 proyectos → grid estático (sin carrusel)
+ * - > 3 proyectos → scroll horizontal con snap
+ *   · móvil: 1 columna, avanza 1 card
+ *   · tablet: 2 columnas, avanza 2 cards
+ *   · desktop: 3 columnas, avanza 3 cards
+ * - Botones prev/next con estado disabled
+ * - Controles ocultos cuando no hay scroll posible
+ */
 import Button from './Button.astro';
 
 interface Props {
@@ -7,34 +19,48 @@ interface Props {
 }
 
 const { projectCount, class: className = '' } = Astro.props;
-
-const carouselId = `carousel-${Math.random().toString(36).slice(2, 11)}`;
+const isCarousel = projectCount > 3;
 ---
 
-{projectCount <= 3 ? (
-  <div class:list={['grid', 'grid-cols-1', 'md:grid-cols-2', 'lg:grid-cols-3', 'gap-4', className]}>
+{!isCarousel ? (
+  <div class:list={['grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4', className]}>
     <slot />
   </div>
 ) : (
-  <div class:list={['relative', className]} data-carousel={carouselId}>
-    <div class="  relative" data-embla-viewport>
-      <div class="flex" data-embla-container>
+  <div class:list={['relative', className]} data-snap-carousel>
+    <!-- Viewport: scroll-snap container -->
+    <div class="snap-vp overflow-x-auto" data-snap-vp>
+      <div class="snap-track flex" data-snap-track>
         <slot />
       </div>
     </div>
 
-    <div class="flex justify-end items-center mt-8 gap-2" data-embla-controls>
-      <div data-embla-prev-wrapper class="opacity-30 cursor-not-allowed">
-        <Button type="button" filled={true} size="sm" class="carousel-control !w-12 !h-12 !p-0 flex items-center justify-center group pointer-events-none" disabled={true}>
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Controls -->
+    <div class="flex justify-end items-center mt-8 gap-2" data-snap-controls>
+      <div data-snap-prev-wrap class="opacity-30 cursor-not-allowed">
+        <Button
+          type="button" filled={true} size="sm"
+          class="!w-12 !h-12 !p-0 flex items-center justify-center pointer-events-none"
+          disabled={true}
+          data-snap-prev
+          aria-label="Anterior"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="m15 18-6-6 6-6"/>
           </svg>
         </Button>
       </div>
 
-      <div data-embla-next-wrapper>
-        <Button type="button" filled={true} size="sm" class="carousel-control !w-12 !h-12 !p-0 flex items-center justify-center group">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <div data-snap-next-wrap>
+        <Button
+          type="button" filled={true} size="sm"
+          class="!w-12 !h-12 !p-0 flex items-center justify-center"
+          data-snap-next
+          aria-label="Siguiente"
+        >
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="m9 18 6-6-6-6"/>
           </svg>
         </Button>
@@ -44,196 +70,74 @@ const carouselId = `carousel-${Math.random().toString(36).slice(2, 11)}`;
 )}
 
 <script>
-  import EmblaCarousel from 'embla-carousel';
+  function initCarousels() {
+    document.querySelectorAll<HTMLElement>('[data-snap-carousel]').forEach(el => {
+      if (el.dataset.scInit === '1') return;
+      el.dataset.scInit = '1';
 
-  class ProjectCarousel {
-    private emblaApi: any;
-    private viewport: HTMLElement;
-    private container: HTMLElement;
-    private prevButton: HTMLButtonElement;
-    private nextButton: HTMLButtonElement;
-    private slides: HTMLElement[] = [];
+      const vp       = el.querySelector<HTMLElement>('[data-snap-vp]')!;
+      const prevWrap = el.querySelector<HTMLElement>('[data-snap-prev-wrap]')!;
+      const nextWrap = el.querySelector<HTMLElement>('[data-snap-next-wrap]')!;
+      const prevBtn  = el.querySelector<HTMLButtonElement>('[data-snap-prev]')!;
+      const nextBtn  = el.querySelector<HTMLButtonElement>('[data-snap-next]')!;
+      const controls = el.querySelector<HTMLElement>('[data-snap-controls]')!;
+      if (!vp || !prevBtn || !nextBtn) return;
 
-    constructor(carouselElement: HTMLElement) {
-      this.viewport = carouselElement.querySelector('[data-embla-viewport]') as HTMLElement;
-      this.container = carouselElement.querySelector('[data-embla-container]') as HTMLElement;
-
-      const prevWrapper = carouselElement.querySelector('[data-embla-prev-wrapper]');
-      const nextWrapper = carouselElement.querySelector('[data-embla-next-wrapper]');
-
-      this.prevButton = prevWrapper?.querySelector('button') as HTMLButtonElement;
-      this.nextButton = nextWrapper?.querySelector('button') as HTMLButtonElement;
-
-      if (!this.viewport || !this.container || !this.prevButton || !this.nextButton) {
-        import('@/utils/debug-logger').then(({ debugLogger }) => {
-          debugLogger.error('ProjectCarousel: Required elements not found');
-        });
-        return;
-      }
-
-      this.init();
-    }
-
-    private init() {
-      this.setupSlides();
-      this.initEmbla();
-      this.bindEvents();
-    }
-
-    private setupSlides() {
-      this.slides = Array.from(this.container.children) as HTMLElement[];
-
-      this.slides.forEach((slide, index) => {
-        slide.classList.add('flex-shrink-0', 'px-2');
-        if (index === 0) slide.classList.add('pl-0');
-        if (index === this.slides.length - 1) slide.classList.add('pr-0');
-
-        slide.classList.add('w-full', 'md:w-1/2', 'lg:w-1/3');
-      });
-    }
-
-    private initEmbla() {
-      const options = {
-        loop: false,
-        align: 'start' as const,
-        slidesToScroll: 1,
-        containScroll: 'trimSnaps' as const,
-        breakpoints: {
-          '(min-width: 768px)': { slidesToScroll: 2 },
-          '(min-width: 1024px)': { slidesToScroll: 3 }
-        }
+      const setDisabled = (btn: HTMLButtonElement, wrap: HTMLElement, off: boolean) => {
+        btn.disabled = off;
+        wrap.classList.toggle('opacity-30', off);
+        wrap.classList.toggle('cursor-not-allowed', off);
+        btn.classList.toggle('pointer-events-none', off);
       };
 
-      this.emblaApi = EmblaCarousel(this.viewport, options);
+      const update = () => {
+        const atStart = vp.scrollLeft <= 2;
+        const atEnd   = vp.scrollLeft + vp.clientWidth >= vp.scrollWidth - 2;
+        setDisabled(prevBtn, prevWrap, atStart);
+        setDisabled(nextBtn, nextWrap, atEnd);
+        // Ocultar controles si no hay scroll en ninguna dirección
+        controls.classList.toggle('hidden', atStart && atEnd);
+      };
 
-      this.emblaApi.on('select', this.onSelect.bind(this));
-      this.emblaApi.on('init', this.onInit.bind(this));
-    }
+      prevBtn.addEventListener('click', () =>
+        vp.scrollBy({ left: -vp.clientWidth, behavior: 'smooth' }));
+      nextBtn.addEventListener('click', () =>
+        vp.scrollBy({ left:  vp.clientWidth, behavior: 'smooth' }));
 
-    private onInit() {
-      this.updateButtons();
-    }
-
-    private onSelect() {
-      this.updateButtons();
-    }
-
-    private updateButtons() {
-      const canScrollPrev = this.emblaApi.canScrollPrev();
-      const canScrollNext = this.emblaApi.canScrollNext();
-
-      this.prevButton.disabled = !canScrollPrev;
-      this.nextButton.disabled = !canScrollNext;
-
-      const prevWrapper = this.prevButton.closest('[data-embla-prev-wrapper]') as HTMLElement;
-      const nextWrapper = this.nextButton.closest('[data-embla-next-wrapper]') as HTMLElement;
-      const controlsContainer = this.prevButton.closest('[data-embla-controls]') as HTMLElement;
-
-      if (prevWrapper) {
-        if (canScrollPrev) {
-          prevWrapper.classList.remove('opacity-30', 'cursor-not-allowed');
-          this.prevButton.classList.remove('pointer-events-none');
-        } else {
-          prevWrapper.classList.add('opacity-30', 'cursor-not-allowed');
-          this.prevButton.classList.add('pointer-events-none');
-        }
-      }
-
-      if (nextWrapper) {
-        if (canScrollNext) {
-          nextWrapper.classList.remove('opacity-30', 'cursor-not-allowed');
-          this.nextButton.classList.remove('pointer-events-none');
-        } else {
-          nextWrapper.classList.add('opacity-30', 'cursor-not-allowed');
-          this.nextButton.classList.add('pointer-events-none');
-        }
-      }
-
-      if (controlsContainer) {
-        if (!canScrollPrev && !canScrollNext) {
-          controlsContainer.classList.add('hidden');
-        } else {
-          controlsContainer.classList.remove('hidden');
-        }
-      }
-    }
-
-    private bindEvents() {
-      this.prevButton.addEventListener('click', () => {
-        this.emblaApi.scrollPrev();
-      });
-
-      this.nextButton.addEventListener('click', () => {
-        this.emblaApi.scrollNext();
-      });
-
-      window.addEventListener('resize', () => {
-        this.emblaApi.reInit();
-        this.updateButtons();
-      });
-    }
-
-    public destroy() {
-      if (this.emblaApi) {
-        this.emblaApi.destroy();
-      }
-    }
-  }
-
-  function initCarousels() {
-    const carousels = document.querySelectorAll('[data-carousel]');
-    const carouselInstances: ProjectCarousel[] = [];
-
-    carousels.forEach(carousel => {
-      const instance = new ProjectCarousel(carousel as HTMLElement);
-      carouselInstances.push(instance);
-    });
-
-    window.addEventListener('beforeunload', () => {
-      carouselInstances.forEach(instance => instance.destroy());
+      vp.addEventListener('scroll', update, { passive: true });
+      new ResizeObserver(update).observe(vp);
+      update();
     });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initCarousels);
-  } else {
-    initCarousels();
-  }
-
+  initCarousels();
   document.addEventListener('astro:page-load', initCarousels);
 </script>
 
 <style>
- 
-
-  [data-embla-container] {
-    display: flex;
+  /* Ocultar scrollbar visual pero mantener scroll funcional */
+  .snap-vp {
+    scrollbar-width: none;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
   }
+  .snap-vp::-webkit-scrollbar { display: none; }
 
-  .carousel-control:disabled {
-    opacity: 0.3;
-    pointer-events: none;
+  /* Cada slide ocupa el ancho correcto según breakpoint */
+  .snap-track { display: flex; }
+  .snap-track > :global(*) {
+    flex: 0 0 100%;
+    scroll-snap-align: start;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
   }
+  .snap-track > :global(*:first-child) { padding-left: 0; }
+  .snap-track > :global(*:last-child)  { padding-right: 0; }
 
-  [data-embla-container] > * {
-    min-width: 0;
+  @media (min-width: 768px) {
+    .snap-track > :global(*) { flex: 0 0 50%; }
   }
-
-  @media (max-width: 767px) {
-    [data-embla-container] > * {
-      flex: 0 0 100%;
-    }
-  }
-
-  @media (min-width: 768px) and (max-width: 1023px) {
-    [data-embla-container] > * {
-      flex: 0 0 50%;
-    }
-  }
-
   @media (min-width: 1024px) {
-    [data-embla-container] > * {
-      flex: 0 0 33.333333%;
-    }
+    .snap-track > :global(*) { flex: 0 0 33.333333%; }
   }
 </style>

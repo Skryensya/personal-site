@@ -1,7 +1,6 @@
 import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
-import react from '@astrojs/react';
 import tailwindcss from '@tailwindcss/vite';
 
 // https://astro.build/config
@@ -28,14 +27,10 @@ export default defineConfig({
         defaultStrategy: 'hover'
     },
     build: {
-        inlineStylesheets: 'always',  // Inline crítico CSS para evitar render blocking
+        inlineStylesheets: 'auto',  // Inline solo hojas pequeñas; las grandes van a archivo externo
         assets: '_astro'  // Directorio para assets con hash (para caché inmutable)
     },
     integrations: [
-        react({
-            include: ['**/react/*', '**/tsx'],
-            experimentalReactChildren: true
-        }),
         mdx(),
         sitemap()
     ],
@@ -49,13 +44,9 @@ export default defineConfig({
             alias: {
                 '@': '/src'
             },
-            dedupe: ['react', 'react-dom']
-        },
+            },
         optimizeDeps: {
             include: [
-                'react',
-                'react-dom',
-                'react/jsx-runtime',
                 'embla-carousel',
                 'web-haptics',
                 'clsx',
@@ -72,10 +63,6 @@ export default defineConfig({
                 output: {
                     // Optimizar chunks para reducir dependencias en cadena
                     manualChunks: (id) => {
-                        // Core React - carga temprano
-                        if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) {
-                            return 'react-vendor';
-                        }
                         // Animations - lazy load
                         if (id.includes('framer-motion') || id.includes('gsap') || id.includes('lenis')) {
                             return 'animation-vendor';

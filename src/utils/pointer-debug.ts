@@ -1,5 +1,5 @@
 // Utilidad para testing de pointer capabilities en dev tools
-import { debugLogger } from '@/utils/debug-logger';
+import { debugLogger } from '@/utils/debug-lite';
 
 declare global {
     interface Window {
