@@ -12,9 +12,8 @@ export const spriteBundles = [
     sourceDir: path.join(projectRoot, 'src/assets/avatar/tiles'),
     outputDir: path.join(projectRoot, 'src/assets/avatar'),
     tileSize: 25,
-    columns: 6,
     padding: 0,
-    background: '#f6f6f6',
+    background: '#FF40FF',
   },
 ];
 

@@ -35,10 +35,12 @@ export const spriteBundles = [
     sourceDir: path.join(projectRoot, 'src/assets/avatar/tiles'),
     outputDir: path.join(projectRoot, 'src/generated/avatar'),
     tileSize: 25,
-    previewColumns: 6,
   },
 ];
 ```
+
+La preview visible del `tileset.svg` se empaqueta automáticamente en una grilla cuadrada,
+centrando filas incompletas para que siga siendo cómoda de inspeccionar incluso cuando crece.
 
 ## Cómo replicar el proceso
 
