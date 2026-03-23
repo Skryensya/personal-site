@@ -1,0 +1,49 @@
+---
+interface Props {
+    title?: string;
+    variant?: 'macos' | 'windows';
+    class?: string;
+}
+
+const {
+    title = '',
+    variant = 'macos',
+    class: className = ''
+} = Astro.props;
+---
+
+{variant === 'macos' && (
+    <div class={`window-chrome window-chrome-macos flex items-center gap-2 pb-3 border-b border-main/30 mb-3 ${className}`}>
+        <div class="flex gap-1.5">
+            <div class="w-2 h-2 bg-main rounded-full"></div>
+            <div class="w-2 h-2 bg-main rounded-full"></div>
+            <div class="w-2 h-2 bg-main rounded-full"></div>
+        </div>
+        {title && (
+            <span class="font-mono text-[10px] uppercase tracking-wider flex-1 text-center truncate">
+                {title}
+            </span>
+        )}
+    </div>
+)}
+
+{variant === 'windows' && (
+    <div class={`window-chrome window-chrome-windows flex items-center gap-2 pb-3 border-b border-main/30 mb-3 ${className}`}>
+        <div class="flex gap-1">
+            <div class="w-3 h-3 border border-main flex items-center justify-center">
+                <span class="text-[8px] leading-none mb-0.5">─</span>
+            </div>
+            <div class="w-3 h-3 border border-main flex items-center justify-center">
+                <span class="text-[8px] leading-none">□</span>
+            </div>
+            <div class="w-3 h-3 border border-main flex items-center justify-center">
+                <span class="text-[8px] leading-none">×</span>
+            </div>
+        </div>
+        {title && (
+            <span class="font-mono text-[10px] uppercase tracking-wider flex-1 text-center truncate">
+                {title}
+            </span>
+        )}
+    </div>
+)}

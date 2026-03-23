@@ -24,6 +24,33 @@
         --lh-normal: 1.5;
     }
 
+    /* Global scrollbar styling */
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--color-main);
+        opacity: 0.15;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--color-main);
+        opacity: 0.5;
+        border: 2px solid var(--color-secondary);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--color-main);
+        opacity: 0.8;
+    }
+
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: color-mix(in srgb, var(--color-main) 50%, transparent) color-mix(in srgb, var(--color-main) 15%, var(--color-secondary));
+    }
+
     /* Text selection styles */
     ::selection {
         background: var(--color-main);

@@ -1,9 +1,9 @@
 ---
 import { AstroFont } from 'astro-font';
 import BaseHead, { type Props as HeadProps } from '../components/BaseHead.astro';
-import Navbar from '../components/Navbar.astro';
+import PersistentSidebar from '../components/PersistentSidebar.astro';
+import MobileSidebarDrawer from '../components/MobileSidebarDrawer.astro';
 import Footer from "../components/Footer.astro"
-import WaveDivider from '../components/WaveDivider.astro';
 import NorwegianDisclaimer from '../components/NorwegianDisclaimer.astro';
 import PostHogAnalytics from '../components/PostHogAnalytics.astro';
 import ScrollProgress from '../components/ScrollProgress.astro';
@@ -425,6 +425,17 @@ declare global {
                 to { opacity: 1; transform: translateY(0); }
             }
 
+            /* Project card expand animation */
+            @keyframes vt-expand-out {
+                from { opacity: 1; transform: scale(1); }
+                to { opacity: 0; transform: scale(0.95); }
+            }
+
+            @keyframes vt-expand-in {
+                from { opacity: 0; transform: scale(1.05); }
+                to { opacity: 1; transform: scale(1); }
+            }
+
             :root {
                 view-transition-name: root;
                 --vt-multiplier: 1;
@@ -438,11 +449,13 @@ declare global {
                 animation: vt-fade-in calc(180ms * var(--vt-multiplier)) cubic-bezier(0.22, 1, 0.36, 1) both;
             }
 
-            /* Keep navbar stable during transitions */
-            ::view-transition-group(navbar),
-            ::view-transition-old(navbar),
-            ::view-transition-new(navbar) {
-                animation: none !important;
+            /* Named project-card transitions use expand animation */
+            ::view-transition-old(project-card-*) {
+                animation: vt-expand-out 250ms cubic-bezier(0.4, 0, 0.2, 1) both;
+            }
+
+            ::view-transition-new(project-card-*) {
+                animation: vt-expand-in 350ms cubic-bezier(0.22, 1, 0.36, 1) both;
             }
 
             @keyframes click-ray-burst {
@@ -505,25 +518,37 @@ declare global {
 
         </style>
     </head>
-    <body class="relative bg-main" id="app-body">
+    <body class="relative bg-main overflow-x-hidden" id="app-body">
         <ScrollProgress />
-        <div class="text-main bg-secondary">
 
-      
-        <div class="bg-main w-full h-2"></div> 
-        <div class="h-8 !z-100"> 
-            <WaveDivider />
-        </div>
-        <Navbar />
-        <NorwegianDisclaimer lang={lang} />
-        <div class="pt-24 mt-8 mx-auto max-w-[var(--max-w-size)] "> 
+        <!-- Skip to content link (visible on keyboard focus) -->
+        <a
+          href="#main-content"
+          class="fixed top-0 left-0 z-[9999] w-0 h-0 overflow-hidden opacity-0 border-0 bg-secondary text-main font-grotesk font-bold text-sm uppercase tracking-wide cursor-pointer border-double whitespace-nowrap flex items-center justify-center focus-visible:w-auto focus-visible:h-auto focus-visible:px-4 focus-visible:py-2 focus-visible:opacity-100 focus-visible:border-2 focus-visible:border-main focus-visible:shadow-[inset_0_0_0_2px_var(--color-secondary)] focus-visible:hover:bg-main focus-visible:hover:text-secondary lg:ml-[240px]"
+          style="view-transition-name: skip-link;"
+        >
+          {t('nav.skipToContentShort')}
+        </a>
+
+        <!-- Page wrapper that accounts for sidebar on desktop -->
+        <div class="text-main bg-secondary lg:pl-[220px]">
+          <!-- Mobile sidebar with hamburger trigger -->
+          <MobileSidebarDrawer lang={lang} />
+
+          <!-- Desktop persistent sidebar -->
+          <PersistentSidebar lang={lang} />
+
+          <NorwegianDisclaimer lang={lang} />
+
+          <!-- Main content area -->
+          <div class="pt-0 mt-0 mx-auto max-w-[var(--max-w-size)] lg:max-w-none lg:pr-4">
             <main class="text-left px-4" id="main-content" data-skip-target>
-                <slot />
+              <slot />
             </main>
-        </div> 
-        <Footer lang={lang} />
-         
-           </div>
+          </div>
+
+          <Footer lang={lang} />
+        </div>
 
 
  

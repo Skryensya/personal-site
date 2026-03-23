@@ -1,0 +1,129 @@
+---
+import Avatar from './Avatar.astro';
+import ThemeControl from './ThemeControl.astro';
+import ModeControl from './ModeControl.astro';
+import LanguageControl from './LanguageControl.astro';
+import { getLangFromUrl } from '@/i18n/utils';
+import { getTranslations } from '@/i18n/utils';
+import { getHomeUrl } from '@/utils/localized-routes';
+
+interface Props {
+  lang?: Language;
+}
+
+const { lang = 'es' } = Astro.props;
+const t = getTranslations(lang);
+
+// Navigation items
+const projectsAnchor = lang === 'es' ? 'proyectos' : lang === 'no' ? 'prosjekter' : 'projects';
+
+// CV path based on language
+const getCVPath = (locale: string) => {
+  if (locale === 'es') return '/curriculum.pdf';
+  return '/resume.pdf';
+};
+---
+
+<aside
+  class="fixed left-0 top-0 bottom-0 w-[220px] bg-secondary hidden lg:flex flex-col z-[500]"
+  style="view-transition-name: sidebar;"
+>
+  <!-- Profile Section -->
+  <div class="p-6 pb-4">
+    <a href={getHomeUrl(lang)} class="block mx-auto" style="width: 200px; height: 200px;">
+      <Avatar id="sidebar-avatar" className="size-full" alt="Allison Peña" />
+    </a>
+    <div class="mt-3 text-center">
+      <a href={getHomeUrl(lang)} class="font-grotesk font-bold text-main text-sm hover:text-secondary">
+        Allison Peña
+      </a>
+    </div>
+  </div>
+
+  <!-- Navigation Section -->
+  <nav class="px-4 flex flex-col gap-0.5 flex-1">
+    <a
+      href={getHomeUrl(lang)}
+      class="px-3 py-2 font-grotesk text-sm uppercase text-main hover:text-secondary"
+      data-nav-link
+    >
+      {t('nav.home')}
+    </a>
+    <a
+      href={`${getHomeUrl(lang)}#${projectsAnchor}`}
+      class="px-3 py-2 font-grotesk text-sm uppercase text-main hover:text-secondary"
+      data-nav-link
+    >
+      {t('nav.projects')}
+    </a>
+    <a
+      href={getCVPath(lang)}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="px-3 py-2 font-grotesk text-sm uppercase text-main hover:text-secondary"
+    >
+      {t('nav.cv')}
+    </a>
+  </nav>
+
+  <!-- Controls Section -->
+  <div class="p-4 flex flex-col gap-1">
+    <ThemeControl />
+    <ModeControl />
+    <LanguageControl />
+  </div>
+</aside>
+
+<script>
+  // Initialize sidebar navigation
+  function initSidebarNav() {
+    const navLinks = document.querySelectorAll('[data-nav-link]');
+    const currentPath = window.location.pathname;
+
+    navLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      if (!href) return;
+
+      // Check if this is the home link
+      const isHome = href === '/' || href === '/en/' || href === '/no/' || href === '/ja/';
+      const isCurrentPage = isHome
+        ? currentPath === href || (href !== '/' && currentPath.startsWith(href))
+        : currentPath.startsWith(href.split('#')[0]);
+
+      if (isCurrentPage) {
+        link.classList.add('font-bold');
+      }
+
+      link.addEventListener('click', (event) => {
+        const targetUrl = new URL(href, window.location.origin);
+        const samePath = targetUrl.pathname === window.location.pathname;
+        const hasHash = targetUrl.hash && targetUrl.hash !== '#';
+
+        if (samePath && !hasHash) {
+          event.preventDefault();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+
+        if (samePath && hasHash) {
+          event.preventDefault();
+          const targetElement = document.querySelector(targetUrl.hash);
+          if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            history.replaceState(null, '', `${targetUrl.pathname}${targetUrl.hash}`);
+          }
+          return;
+        }
+      });
+    });
+  }
+
+  // Run on initial load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initSidebarNav);
+  } else {
+    initSidebarNav();
+  }
+
+  document.addEventListener('astro:page-load', initSidebarNav);
+</script>

@@ -1,80 +1,355 @@
 ---
-import Button from '../Button.astro';
-import CornersWithCrosses from '../CornersWithCrosses.astro';
-import HeroCardsAstro from '../HeroCardsAstro.astro';
-import { getTranslations } from '@/i18n/utils';
+import { getCollection } from 'astro:content';
 import { defaultLang, type Language } from '@/i18n/ui';
 import { getLocalizedUrl } from '@/utils/localized-routes';
+import { getSlugFromId } from '@/utils/content-utils';
 
 interface Props { lang?: Language; }
 const { lang = defaultLang } = Astro.props;
-const t = getTranslations(lang);
-const japaneseName = 'アリソン';
-const heroHeading = t('hero.heading');
-const heroNameToken = 'Allison';
-const heroHeadingParts = lang === 'ja' && heroHeading.includes(heroNameToken)
-  ? heroHeading.split(heroNameToken)
-  : null;
 
-const getCVPath = (locale: Language) => {
-  if (locale === 'es') return '/curriculum.pdf';
-  return '/resume.pdf';
-};
+// Obtener proyectos featured o todos si no hay featured
+const allProjects = await getCollection('projects', ({ id }) => id.startsWith(`${lang}/`));
+const featuredProjects = allProjects.filter(p => p.data.isFeatured);
+const displayProjects = featuredProjects.length > 0 ? featuredProjects : allProjects;
 ---
 
-<section class="hero-section pt-2 mb-10 md:mb-12 relative">
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-0">
-    <CornersWithCrosses class="flex flex-col justify-center p-4 md:p-8 md:pr-16 min-h-[20rem] md:min-h-[24rem] lg:min-h-[450px] border-t border-l border-main/20">
-      <div class="space-y-3 md:space-y-4">
-        <h1 class="h1">
-          {lang === 'ja' && heroHeadingParts ? (
-            <>
-              {heroHeadingParts[0]}
-              <span class="relative inline-block align-baseline">
-                <span class="absolute left-1/2 -translate-x-1/2 -top-[1.1em] font-mono text-[0.30em] tracking-[0.04em] text-main/60 whitespace-nowrap leading-none pointer-events-none select-none">
-                  ({japaneseName})
-                </span>
-                <span class="inline-block ml-[-0.4em] mr-[-0.2em] tracking-[-0.005em]">{heroNameToken}</span>
-              </span>
-              {heroHeadingParts[1]}
-            </>
-          ) : (
-            heroHeading
-          )}
-        </h1>
-        <p class="mb-4 md:mb-8 md:text-lg text-main/70 max-w-2xl">
-          {t('hero.description')}
-        </p>
-        <div class="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-5">
-          <Button href={getLocalizedUrl(lang, 'projects')} id="projects-button">
-            {t('home.heroProjectsButton')}
-          </Button>
-          <Button href={getCVPath(lang)} filled elevated target="_blank" rel="noopener noreferrer" data-haptic="confirm">
-            {t('home.cvButton')}
-          </Button>
-        </div>
-      </div>
-    </CornersWithCrosses>
+<section class="relative min-h-[100dvh] flex flex-col overflow-hidden">
+  <!-- Brutalist background grid -->
+  <div class="absolute inset-0 diagonal-stripe opacity-30"></div>
 
-    <CornersWithCrosses class="flex items-center justify-center min-h-[20rem] md:min-h-[24rem] lg:min-h-[450px]" showLeft={false}>
-      <div class="overflow-hidden w-full h-full min-h-[20rem] md:min-h-[24rem] lg:min-h-[450px] relative border-b border-r border-main/20">
-        <div class="relative z-10 h-full">
-          <HeroCardsAstro
-            cardDistance={50}
-            verticalDistance={50}
-            delay={6000}
-            pauseOnHover={false}
-            width={400}
-            height={300}
-            frontendTitle={t('hero.cards.frontend.title')}
-            frontendDescription={t('hero.cards.frontend.description')}
-            backendTitle={t('hero.cards.backend.title')}
-            backendDescription={t('hero.cards.backend.description')}
-            designTitle={t('hero.cards.design.title')}
-            designDescription={t('hero.cards.design.description')}
-          />
-        </div>
+  <!-- Top section: Name and info -->
+  <div class="px-4 sm:px-6 relative w-full overflow-visible">
+    <h1 class="relative inline-block w-full" style="line-height: 0.85; margin: 0;">
+      <span
+        class="font-black block text-main"
+        style="font-family: var(--font-display); font-size: clamp(5rem, 22vw, 16rem); letter-spacing: -0.04em; clip-path: inset(0 0 15% 0);"
+      >
+        Allison Peña
+      </span>
+    </h1>
+
+    <p class="font-grotesk font-medium text-[clamp(0.75rem,2vw,1.125rem)] tracking-wide text-main mt-1">
+      Software Developer
+    </p>
+  </div>
+
+  <!-- Bottom section: Projects horizontal scroll -->
+  <div class="flex-1 flex items-center mt-4">
+    <div
+      id="projects-scroll-container"
+      class="hero-projects-container w-full cursor-grab active:cursor-grabbing select-none"
+    >
+      <div class="hero-projects-track inline-flex whitespace-nowrap px-4 sm:px-6 items-center">
+        {/* First set of projects */}
+        {displayProjects.map((project, index) => {
+          const projectUrl = getLocalizedUrl(lang, 'projects', getSlugFromId(project.id));
+          const totalCards = displayProjects.length;
+          const zIndex = totalCards - index;
+          return (
+            <a
+              href={projectUrl}
+              data-card-index={index}
+              class="hero-project-card flex-shrink-0 w-[520px] h-[320px] rounded-sm cursor-pointer no-underline group -ml-32 first:ml-0"
+              style={`transform: perspective(75em) rotateY(-40deg); transform-origin: center center; z-index: ${zIndex};`}
+            >
+              <div class="hero-card-inner h-full border border-main bg-secondary text-main flex flex-col overflow-hidden rounded-sm">
+                {/* macOS Window Title Bar */}
+                <div class="flex items-center gap-2 px-4 py-3 border-b border-main/20 bg-main/5">
+                  {/* Traffic lights */}
+                  <div class="flex gap-1.5">
+                    <div class="w-2.5 h-2.5 rounded-full bg-main/20"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-main/20"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-main/20"></div>
+                  </div>
+                  {/* Window title */}
+                  <span class="font-mono text-[10px] uppercase tracking-wider text-main/60 truncate flex-1 text-center">
+                    {project.data.name}
+                  </span>
+                </div>
+                {/* Hook content */}
+                <div class="flex-1 px-5 pt-4 overflow-hidden">
+                  <h3 class="text-lg font-bold text-main leading-snug line-clamp-3" transition:name={`project-card-${getSlugFromId(project.id)}`} transition:animate="morph">
+                    {project.data.hook}
+                  </h3>
+                </div>
+              </div>
+            </a>
+          );
+        })}
+        {/* Duplicate set for infinite marquee */}
+        {displayProjects.map((project, index) => {
+          const projectUrl = getLocalizedUrl(lang, 'projects', getSlugFromId(project.id));
+          const totalCards = displayProjects.length;
+          // Duplicate set gets unique indices (offset by totalCards) and higher z-index
+          const uniqueIndex = index + totalCards;
+          const zIndex = (totalCards - index) + totalCards + 10;
+          return (
+            <a
+              href={projectUrl}
+              data-card-index={uniqueIndex}
+              class="hero-project-card flex-shrink-0 w-[520px] h-[320px] rounded-sm cursor-pointer no-underline group -ml-32 first:ml-0"
+              style={`transform: perspective(75em) rotateY(-40deg); transform-origin: center center; z-index: ${zIndex};`}
+              aria-hidden="true"
+            >
+              <div class="hero-card-inner h-full border border-main bg-secondary text-main flex flex-col overflow-hidden rounded-sm">
+                {/* macOS Window Title Bar */}
+                <div class="flex items-center gap-2 px-4 py-3 border-b border-main/20 bg-main/5">
+                  {/* Traffic lights */}
+                  <div class="flex gap-1.5">
+                    <div class="w-2.5 h-2.5 rounded-full bg-main/20"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-main/20"></div>
+                    <div class="w-2.5 h-2.5 rounded-full bg-main/20"></div>
+                  </div>
+                  {/* Window title */}
+                  <span class="font-mono text-[10px] uppercase tracking-wider text-main/60 truncate flex-1 text-center">
+                    {project.data.name}
+                  </span>
+                </div>
+                {/* Hook content - NO transition:name for duplicate (aria-hidden) */}
+                <div class="flex-1 px-5 pt-4 overflow-hidden">
+                  <h3 class="text-lg font-bold text-main leading-snug line-clamp-3">
+                    {project.data.hook}
+                  </h3>
+                </div>
+              </div>
+            </a>
+          );
+        })}
       </div>
-    </CornersWithCrosses>
+    </div>
   </div>
 </section>
+
+<script>
+  function initProjectsScroll() {
+    const container = document.getElementById('projects-scroll-container');
+    const track = container?.querySelector('.hero-projects-track');
+    if (!container || !track) return;
+
+    // Marquee state
+    let position = 0;
+    let isDragging = false;
+    let isPaused = false;
+    let dragStartX = 0;
+    let dragStartPos = 0;
+    let lastMouseX = 0;
+    let velocity = 0;
+    const speed = 0.5; // pixels per frame
+
+    // Get track width (one set of cards, not duplicated)
+    const trackWidth = track.scrollWidth / 2;
+
+    // Marquee animation loop
+    function animate() {
+      if (!isDragging && !isPaused) {
+        position += speed;
+        // Loop back when we've scrolled one set
+        if (position >= trackWidth) {
+          position -= trackWidth;
+        }
+        track.style.transform = `translateX(-${position}px)`;
+      }
+      requestAnimationFrame(animate);
+    }
+
+    // Start animation
+    animate();
+
+    // Drag scroll
+    container.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      isPaused = true;
+      dragStartX = e.clientX;
+      dragStartPos = position;
+      lastMouseX = e.clientX;
+      velocity = 0;
+      container.classList.add('active');
+    });
+
+    container.addEventListener('mouseleave', () => {
+      if (isDragging) {
+        isDragging = false;
+        container.classList.remove('active');
+        // Apply momentum
+        setTimeout(() => { isPaused = false; }, 500);
+      }
+    });
+
+    container.addEventListener('mouseup', () => {
+      isDragging = false;
+      container.classList.remove('active');
+      // Resume marquee after a delay
+      setTimeout(() => { isPaused = false; }, 2000);
+    });
+
+    container.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+      const deltaX = dragStartX - e.clientX;
+      position = dragStartPos + deltaX;
+      // Keep position within bounds
+      if (position < 0) position = 0;
+      if (position > trackWidth) position = trackWidth;
+      velocity = lastMouseX - e.clientX;
+      lastMouseX = e.clientX;
+      track.style.transform = `translateX(-${position}px)`;
+    });
+
+    // Touch support
+    let touchStartX = 0;
+    let touchStartPos = 0;
+
+    container.addEventListener('touchstart', (e) => {
+      isDragging = true;
+      isPaused = true;
+      touchStartX = e.touches[0].clientX;
+      touchStartPos = position;
+    }, { passive: true });
+
+    container.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      const deltaX = touchStartX - e.touches[0].clientX;
+      position = touchStartPos + deltaX;
+      if (position < 0) position = 0;
+      if (position > trackWidth) position = trackWidth;
+      track.style.transform = `translateX(-${position}px)`;
+    }, { passive: true });
+
+    container.addEventListener('touchend', () => {
+      isDragging = false;
+      setTimeout(() => { isPaused = false; }, 2000);
+    });
+
+    // Pause on hover
+    container.addEventListener('mouseenter', () => {
+      isPaused = true;
+    });
+
+    container.addEventListener('mouseleave', () => {
+      if (!isDragging) {
+        setTimeout(() => { isPaused = false; }, 1000);
+      }
+    });
+
+    // Orchestrated hover animation
+    const cards = track.querySelectorAll('.hero-project-card');
+    const totalCards = cards.length;
+
+    cards.forEach((card) => {
+      const cardIndex = parseInt(card.getAttribute('data-card-index') || '0');
+      const baseZIndex = totalCards - cardIndex;
+
+      card.addEventListener('mouseenter', () => {
+        cards.forEach((c) => {
+          const idx = parseInt(c.getAttribute('data-card-index') || '0');
+          const inner = c.querySelector('.hero-card-inner');
+
+          if (idx === cardIndex) {
+            // Active card - rises, scales, straightens, and gets prominent shadow
+            c.style.transform = 'translateY(-50px) scale(1.12) rotateY(0deg)';
+            c.style.zIndex = '100';
+            c.style.transition = 'transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), z-index 0s';
+            if (inner) {
+              inner.style.boxShadow = '0 25px 50px -12px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(0,0,0,0.1)';
+              inner.style.transition = 'box-shadow 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            }
+          } else {
+            // Other cards - slightly push away and reduce opacity
+            const direction = idx < cardIndex ? -1 : 1;
+            const distance = Math.abs(idx - cardIndex);
+            const pushOffset = 15 + (distance * 8);
+            c.style.transform = `perspective(75em) rotateY(-40deg) translateX(${direction * pushOffset}px) scale(${1 - (distance * 0.03)})`;
+            c.style.zIndex = String(Math.max(1, baseZIndex - distance));
+            c.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.3s ease, z-index 0s';
+            c.style.opacity = String(1 - (distance * 0.08));
+          }
+        });
+      });
+
+      card.addEventListener('mouseleave', () => {
+        cards.forEach((c) => {
+          const idx = parseInt(c.getAttribute('data-card-index') || '0');
+          const originalZIndex = totalCards - idx;
+          const inner = c.querySelector('.hero-card-inner');
+          c.style.transform = 'perspective(75em) rotateY(-40deg)';
+          c.style.zIndex = String(originalZIndex);
+          c.style.opacity = '1';
+          c.style.transition = 'transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.4s ease, z-index 0.3s';
+          if (inner) {
+            inner.style.boxShadow = 'none';
+            inner.style.transition = 'box-shadow 0.4s ease';
+          }
+        });
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initProjectsScroll);
+  } else {
+    initProjectsScroll();
+  }
+  document.addEventListener('astro:page-load', initProjectsScroll);
+</script>
+
+<style>
+  .hero-projects-container {
+    height: 400px;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .hero-projects-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hero-projects-container::-webkit-scrollbar-track {
+    display: none;
+  }
+
+  .hero-projects-container::-webkit-scrollbar-thumb {
+    display: none;
+  }
+
+  .hero-projects-track {
+    padding-bottom: 60px;
+    animation: marquee 30s linear infinite;
+  }
+
+  .hero-projects-container:hover .hero-projects-track {
+    animation-play-state: paused;
+  }
+
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  .hero-project-card {
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), z-index 0s;
+    z-index: 1;
+  }
+
+  .hero-card-inner {
+    transition: box-shadow 0.4s ease, border-color 0.3s ease;
+    box-shadow: none;
+    border-radius: 6px;
+  }
+
+  .hero-project-card:hover .hero-card-inner {
+    border-color: var(--color-main);
+  }
+
+  @media (max-width: 640px) {
+    .hero-project-card {
+      width: 300px;
+      height: 190px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-project-card {
+      transition: none;
+    }
+  }
+</style>

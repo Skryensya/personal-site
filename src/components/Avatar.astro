@@ -42,7 +42,7 @@ const gridSizePercent = gridScale * 100;
   >
     <div
       class="avatar__grid"
-      style={`grid-template-columns: repeat(${avatarGridSize}, minmax(0, 1fr)); grid-template-rows: repeat(${avatarGridSize}, minmax(0, 1fr)); width:${gridSizePercent}%; height:${gridSizePercent}%; left:${gridOffsetLeft}%; top:${gridOffsetTop}%;`}
+      style={`grid-template-columns: repeat(${avatarGridSize}, minmax(0, 1fr)); grid-template-rows: repeat(${avatarGridSize}, minmax(0, 1fr)); gap: 0; width:${gridSizePercent}%; height:${gridSizePercent}%; left:${gridOffsetLeft}%; top:${gridOffsetTop}%;`}
       aria-hidden="true"
     >
       {avatarGrid.flat().map((name, i) => {
@@ -61,7 +61,12 @@ const gridSizePercent = gridScale * 100;
         const outfitClass = (avatarOutfitIndices as readonly number[]).includes(i) ? ' avatar__part--outfit' : '';
 
         return (
-          <svg class="avatar__tile" viewBox="0 0 25 25" aria-hidden="true" focusable="false">
+          <svg
+            class="avatar__tile"
+            viewBox="0 0 25 25"
+            aria-hidden="true"
+            focusable="false"
+          >
             <use class={`avatar__part${partClass}${outfitClass}`} href={`${spriteSheetUrl}#avatar-sprite-${name}`}></use>
             {hatClass && <use class={`avatar__part${hatClass}`} href={`${spriteSheetUrl}#avatar-sprite-hat-empty`}></use>}
           </svg>
@@ -139,18 +144,29 @@ const gridSizePercent = gridScale * 100;
     border: 0;
     padding: 0;
     background: var(--theme-colorful);
+    overflow: hidden;
   }
 
   .avatar__grid {
     position: absolute;
     display: grid;
+    gap: 0;
+    overflow: hidden;
   }
 
   .avatar__tile {
-    width: 100%;
-    height: 100%;
+    width: 100.5%;
+    height: 100.5%;
     display: block;
+    overflow: hidden;
     user-select: none;
     pointer-events: none;
+  }
+
+  .avatar__tile svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    shape-rendering: crispEdges;
   }
 </style>

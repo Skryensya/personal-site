@@ -6,9 +6,6 @@ import { getTranslations } from '@/i18n/utils';
 import { defaultLang, type Language } from '@/i18n/ui';
 import CircularTextAstro from '@/components/CircularTextAstro.astro';
 import FooterNavigationList from '@/components/FooterNavigationList.astro';
-import ThemeControl from '@/components/ThemeControl.astro';
-import ModeControl from '@/components/ModeControl.astro';
-import LanguageControl from '@/components/LanguageControl.astro';
 
 interface Props {
   lang?: Language;
@@ -48,9 +45,6 @@ const byAllisonText = t('footer.byAllison');
 const hasSignatureName = byAllisonText.includes(signatureName);
 const byAllisonPrefix = hasSignatureName ? byAllisonText.replace(signatureName, '').trim() : '';
 const byAllisonName = hasSignatureName ? signatureName : byAllisonText;
-const modeLabel = lang === 'es' ? 'Modo' : lang === 'no' ? 'Modus' : lang === 'ja' ? 'モード' : 'Mode';
-const themeLabel = lang === 'es' ? 'Tema' : lang === 'no' ? 'Tema' : lang === 'ja' ? 'テーマ' : 'Theme';
-const languageLabel = lang === 'es' ? 'Idioma' : lang === 'no' ? 'Språk' : lang === 'ja' ? '言語' : 'Language';
 ---
 
 <footer id="site-footer" class="bg-main border-t-double border-t-2 border-secondary selection-opposite">
@@ -58,53 +52,18 @@ const languageLabel = lang === 'es' ? 'Idioma' : lang === 'no' ? 'Språk' : lang
   <div class="mx-auto max-w-[var(--max-w-size)] px-4 pb-4">
     <div class="flex flex-col md:flex-row gap-4 mb-8">
       <div class="flex flex-col md:flex-row gap-4 md:gap-6 lg:gap-14 w-full lg:flex-1">
-        <div class="md:w-[33.33%] w-full">
+        <div class="md:w-[50%] w-full">
           <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-2 !mt-1 text-secondary scramble-text" data-text={t('footer.navigation')}>
             {t('footer.navigation')}
           </h3>
           <FooterNavigationList lang={lang} />
         </div>
 
-        <div class="md:w-[33.33%] w-full">
+        <div class="md:w-[50%] w-full">
           <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-2 !mt-1 text-secondary scramble-text" data-text={t('footer.connect')}>
             {t('footer.connect')}
           </h3>
           <FooterNavigationList lang={lang} links={connectLinks} />
-        </div>
-
-        <div class="md:w-[33.33%] w-full">
-          <nav class="space-y-1 relative min-h-[9.5rem] md:min-h-[10rem]">
-            <div class="block font-mono text-sm pt-0 pb-0">
-              <div class="relative text-secondary font-mono text-sm pr-20 md:pr-0">
-                <div class="md:hidden absolute right-0 top-[18px] scale-[1.1] origin-top-right" style="view-transition-name: none;">
-                  <CircularTextAstro text="ALLISON PEÑA * SKRYENSYA * " onHover="speedUp" spinDuration={20} />
-                </div>
-
-                <div class="mt-1 text-main space-y-2.5">
-                  <div class="pb-1">
-                    <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-0.5 !mt-0 text-secondary scramble-text" data-text={themeLabel}>
-                      {themeLabel}
-                    </h3>
-                    <ThemeControl id="footer-theme-control" placement="bottom-left" />
-                  </div>
-
-                  <div class="pb-1">
-                    <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-0.5 !mt-0 text-secondary scramble-text" data-text={modeLabel}>
-                      {modeLabel}
-                    </h3>
-                    <ModeControl id="footer-mode-control" />
-                  </div>
-
-                  <div class="pb-1">
-                    <h3 class="font-mono uppercase tracking-wider text-sm font-bold !mb-0.5 !mt-0 text-secondary scramble-text" data-text={languageLabel}>
-                      {languageLabel}
-                    </h3>
-                    <LanguageControl id="footer-language-control" placement="bottom-left" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </nav>
         </div>
       </div>
 
@@ -208,24 +167,6 @@ const languageLabel = lang === 'es' ? 'Idioma' : lang === 'no' ? 'Språk' : lang
       }
     }
 
-    const refreshFooterControls = () => {
-      requestAnimationFrame(() => {
-        const controlWindow = window as Window & {
-          __initializeDropdowns?: () => void;
-          __enhanceDropdownItems?: () => void;
-          modeControl?: { refresh?: () => void };
-          languageControl?: { refresh?: () => void };
-          themeControl?: { refresh?: () => void };
-        };
-
-        controlWindow.modeControl?.refresh?.();
-        controlWindow.languageControl?.refresh?.();
-        controlWindow.themeControl?.refresh?.();
-        controlWindow.__enhanceDropdownItems?.();
-        controlWindow.__initializeDropdowns?.();
-      });
-    };
-
     const runFooterScramble = (footerEl: Element) => {
       if (footerAnimated) return;
       footerAnimated = true;
@@ -252,8 +193,6 @@ const languageLabel = lang === 'es' ? 'Idioma' : lang === 'no' ? 'Språk' : lang
     if (footer) {
       scrambleObserver.observe(footer);
     }
-
-    refreshFooterControls();
 
     cleanupFns.push(() => {
       scrambleObserver.disconnect();

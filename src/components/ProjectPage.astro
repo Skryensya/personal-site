@@ -1,8 +1,9 @@
 ---
 import { type CollectionEntry, render } from 'astro:content';
-import Layout from '../layouts/Layout.astro';   
+import Layout from '../layouts/Layout.astro';
 import ContentPage from './ContentPage.astro';
 import SevenSegmentDisplay from '@/components/ui/seven-segment/SevenSegmentDisplay.astro';
+import WindowChrome from '@/components/ui/WindowChrome.astro';
 import { getLocalizedUrl, getHomeUrl } from '@/utils/localized-routes';
 import { getSlugFromId } from '@/utils/content-utils';
 
@@ -155,12 +156,15 @@ const breadcrumbJsonLd = {
             contentClassName="md:mb-8"
         >
                 <!-- Content with project header -->
-                <div class="py-8 px-2 lg:px-4 lg:py-4 flex flex-col items-center">
+                <div class="project-window border-2 border-main bg-secondary py-6 px-6 lg:py-6 lg:px-8 flex flex-col items-center mt-8 lg:mt-16">
+                    <!-- Window Chrome Header -->
+                    <WindowChrome title={name} variant="macos" class="w-full !pb-3 !border-b-2 !mb-4" />
+
                     <!-- Project Title and Hook - Part of Content -->
-                    <header class="pb-8 border-b border-dotted border-main/20 w-full" style={`max-width: var(--paragraph-max-width); view-transition-name: folder-body-${projectSlug}`}>
+                    <header class="pb-8 border-b border-dotted border-main/20 w-full" style="max-width: var(--paragraph-max-width)">
                         <!-- Project Name and Reading Time -->
                         <div class="flex justify-between items-center mb-8">
-                            <div class=" font-mono font-medium text-main opacity-60 uppercase tracking-wider" style={`view-transition-name: folder-tab-${projectSlug}`}>
+                            <div class="flex items-center gap-3 font-mono font-medium text-main opacity-60 uppercase tracking-wider">
                                 {name}
                             </div>
                             <div class="flex items-center gap-2 px-1 py-0.5">
@@ -173,16 +177,16 @@ const breadcrumbJsonLd = {
                                 <span class="text-[11px] font-mono font-medium text-main/60 uppercase tracking-[0.14em]">{readingTimeText}</span>
                             </div>
                         </div>
-                        
-                        <!-- Hook - Main Focus -->
+
+                        <!-- Hook - Main Focus with transition -->
                         {hook && (
-                            <h1 class="text-2xl sm:text-3xl lg:text-4xl leading-snug text-main font-bold mb-10 text-pretty" style="max-width: var(--paragraph-max-width)">
+                            <h1 class="text-2xl sm:text-3xl lg:text-4xl leading-snug text-main font-bold text-pretty" style="max-width: var(--paragraph-max-width)" transition:name={`project-card-${projectSlug}`} transition:animate="morph">
                                 {hook}
                             </h1>
                         )}
-                        
+
                     </header>
-                    
+
                     <!-- Article Content -->
                     <div class="prose w-full [&_p]:max-w-[75ch] [&_a]:inline-block [&_a]:whitespace-nowrap [&>p]: [&>p]:lg:text-lg [&>p]:leading-relaxed [&>p]:mb-6 [&>h1]:text-4xl [&>h1]:font-bold [&>h1]:mt-12 [&>h1]:mb-6 [&>h1]:scroll-mt-12 [&>h2]:text-3xl [&>h2]:font-bold [&>h2]:mt-10 [&>h2]:mb-4 [&>h2]:scroll-mt-12 [&>h3]:text-2xl [&>h3]:font-semibold [&>h3]:mt-8 [&>h3]:mb-3 [&>h3]:scroll-mt-12 [&>h4]:text-xl [&>h4]:font-semibold [&>h4]:mt-6 [&>h4]:mb-2 [&>h4]:scroll-mt-12 [&>h5]:scroll-mt-12 [&>h6]:scroll-mt-12" style="max-width: var(--paragraph-max-width)">
                         <Content />

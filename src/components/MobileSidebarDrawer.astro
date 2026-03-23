@@ -1,0 +1,222 @@
+---
+import Avatar from './Avatar.astro';
+import ThemeControl from './ThemeControl.astro';
+import ModeControl from './ModeControl.astro';
+import LanguageControl from './LanguageControl.astro';
+import { getLangFromUrl } from '@/i18n/utils';
+import { getTranslations } from '@/i18n/utils';
+import { getHomeUrl } from '@/utils/localized-routes';
+import type { Language } from '@/i18n/ui';
+
+interface Props {
+  lang?: Language;
+}
+
+const { lang = 'es' } = Astro.props;
+const t = getTranslations(lang);
+
+// Navigation items
+const projectsAnchor = lang === 'es' ? 'proyectos' : lang === 'no' ? 'prosjekter' : 'projects';
+
+// CV path based on language
+const getCVPath = (locale: string) => {
+  if (locale === 'es') return '/curriculum.pdf';
+  return '/resume.pdf';
+};
+---
+
+<!-- Hamburger trigger button -->
+<button
+  id="mobile-sidebar-trigger"
+  type="button"
+  aria-controls="mobile-sidebar"
+  aria-expanded="false"
+  aria-label={t('nav.menu')}
+  class="lg:hidden fixed top-3 left-3 z-[600] w-10 h-10 flex items-center justify-center bg-secondary text-main hover:bg-main hover:text-secondary"
+>
+  <svg id="sidebar-hamburger-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+    <line x1="4" x2="20" y1="12" y2="12"/>
+    <line x1="4" x2="20" y1="6" y2="6"/>
+    <line x1="4" x2="20" y1="18" y2="18"/>
+  </svg>
+  <svg id="sidebar-close-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+    <line x1="18" x2="6" y1="6" y2="18"/>
+    <line x1="6" x2="18" y1="6" y2="18"/>
+  </svg>
+</button>
+
+<!-- Mobile sidebar drawer -->
+<div
+  id="mobile-sidebar"
+  class="lg:hidden fixed z-[9999] opacity-0 pointer-events-none"
+>
+  <!-- Backdrop -->
+  <div
+    id="mobile-sidebar-backdrop"
+    class="fixed inset-0 bg-main/50"
+  ></div>
+
+  <!-- Sidebar panel -->
+  <div class="fixed left-0 top-0 bottom-0 w-[260px] max-w-[80vw] bg-secondary flex flex-col">
+    <!-- Header with avatar -->
+    <div class="p-6 pb-4 flex items-center gap-3">
+      <div class="flex-shrink-0" style="width: 200px; height: 200px;">
+        <Avatar id="mobile-sidebar-avatar" className="size-full" alt="Allison Peña" />
+      </div>
+      <div class="flex-1 min-w-0">
+        <a href={getHomeUrl(lang)} class="font-grotesk font-bold text-main text-lg hover:text-secondary block truncate">
+          Allison Peña
+        </a>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="px-4 flex flex-col gap-0.5 flex-1">
+      <a
+        href={getHomeUrl(lang)}
+        class="px-3 py-2 font-grotesk text-sm uppercase text-main hover:text-secondary"
+        data-mobile-nav-link
+      >
+        {t('nav.home')}
+      </a>
+      <a
+        href={`${getHomeUrl(lang)}#${projectsAnchor}`}
+        class="px-3 py-2 font-grotesk text-sm uppercase text-main hover:text-secondary"
+        data-mobile-nav-link
+      >
+        {t('nav.projects')}
+      </a>
+      <a
+        href={getCVPath(lang)}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="px-3 py-2 font-grotesk text-sm uppercase text-main hover:text-secondary"
+      >
+        {t('nav.cv')}
+      </a>
+    </nav>
+
+    <!-- Controls -->
+    <div class="p-4 flex flex-col gap-1">
+      <ThemeControl id="mobile-sidebar-theme-control" />
+      <ModeControl id="mobile-sidebar-mode-control" />
+      <LanguageControl id="mobile-sidebar-language-control" />
+    </div>
+  </div>
+</div>
+
+<script>
+  // Initialize mobile sidebar functionality
+  function initMobileSidebar() {
+    const trigger = document.getElementById('mobile-sidebar-trigger');
+    const sidebar = document.getElementById('mobile-sidebar');
+    const backdrop = document.getElementById('mobile-sidebar-backdrop');
+    const hamburgerIcon = document.getElementById('sidebar-hamburger-icon');
+    const closeIcon = document.getElementById('sidebar-close-icon');
+
+    if (!trigger || !sidebar || !backdrop) {
+      return;
+    }
+
+    let isOpen = false;
+
+    // Initialize all interactive elements with tabindex=-1 since drawer starts closed
+    const interactiveElements = sidebar.querySelectorAll('button, a');
+    interactiveElements.forEach(el => {
+      (el as HTMLElement).setAttribute('tabindex', '-1');
+    });
+
+    function closeDrawer() {
+      isOpen = false;
+      sidebar.style.opacity = '0';
+      sidebar.style.pointerEvents = 'none';
+      hamburgerIcon?.classList.remove('hidden');
+      closeIcon?.classList.add('hidden');
+      trigger.setAttribute('aria-expanded', 'false');
+
+      const interactiveElements = sidebar.querySelectorAll('button, a, [tabindex]');
+      interactiveElements.forEach(el => {
+        (el as HTMLElement).setAttribute('tabindex', '-1');
+      });
+    }
+
+    function openDrawer() {
+      isOpen = true;
+      sidebar.style.opacity = '1';
+      sidebar.style.pointerEvents = 'auto';
+      hamburgerIcon?.classList.add('hidden');
+      closeIcon?.classList.remove('hidden');
+      trigger.setAttribute('aria-expanded', 'true');
+
+      const interactiveElements = sidebar.querySelectorAll('button, a, [tabindex="-1"]');
+      interactiveElements.forEach(el => {
+        (el as HTMLElement).removeAttribute('tabindex');
+      });
+    }
+
+    trigger.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (isOpen) {
+        closeDrawer();
+      } else {
+        openDrawer();
+      }
+    });
+
+    backdrop.addEventListener('click', (e) => {
+      e.preventDefault();
+      closeDrawer();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (!isOpen) return;
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        closeDrawer();
+        trigger.focus({ preventScroll: true });
+      }
+    });
+
+    // Navigation links
+    const navLinks = sidebar.querySelectorAll('[data-mobile-nav-link]');
+    navLinks.forEach(link => {
+      const href = (link as HTMLAnchorElement).href;
+      if (!href) return;
+
+      link.addEventListener('click', (e) => {
+        const targetUrl = new URL(href);
+        const samePath = targetUrl.pathname === window.location.pathname;
+        const hasHash = targetUrl.hash && targetUrl.hash !== '#';
+
+        if (samePath && !hasHash) {
+          e.preventDefault();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          closeDrawer();
+          return;
+        }
+
+        if (samePath && hasHash) {
+          e.preventDefault();
+          const targetElement = document.querySelector(targetUrl.hash);
+          if (targetElement) {
+            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            history.replaceState(null, '', `${targetUrl.pathname}${targetUrl.hash}`);
+          }
+          closeDrawer();
+          return;
+        }
+
+        closeDrawer();
+      });
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initMobileSidebar);
+  } else {
+    initMobileSidebar();
+  }
+
+  document.addEventListener('astro:page-load', initMobileSidebar);
+</script>
