@@ -229,7 +229,7 @@ declare global {
         
     
  
-        
+
         <BaseHead {...head} lang={lang} />
 
         <!-- Static favicon kept in BaseHead for a faster first paint -->
@@ -410,11 +410,6 @@ declare global {
         </script>
 
         <style is:inline>
-            /* Cross-document View Transitions */
-            @view-transition {
-                navigation: auto;
-            }
-
             @keyframes vt-fade-out {
                 from { opacity: 1; transform: translateY(0); }
                 to { opacity: 0; transform: translateY(4px); }
@@ -425,19 +420,7 @@ declare global {
                 to { opacity: 1; transform: translateY(0); }
             }
 
-            /* Project card expand animation */
-            @keyframes vt-expand-out {
-                from { opacity: 1; transform: scale(1); }
-                to { opacity: 0; transform: scale(0.95); }
-            }
-
-            @keyframes vt-expand-in {
-                from { opacity: 0; transform: scale(1.05); }
-                to { opacity: 1; transform: scale(1); }
-            }
-
             :root {
-                view-transition-name: root;
                 --vt-multiplier: 1;
             }
 
@@ -447,15 +430,6 @@ declare global {
 
             ::view-transition-new(root) {
                 animation: vt-fade-in calc(180ms * var(--vt-multiplier)) cubic-bezier(0.22, 1, 0.36, 1) both;
-            }
-
-            /* Named project-card transitions use expand animation */
-            ::view-transition-old(project-card-*) {
-                animation: vt-expand-out 250ms cubic-bezier(0.4, 0, 0.2, 1) both;
-            }
-
-            ::view-transition-new(project-card-*) {
-                animation: vt-expand-in 350ms cubic-bezier(0.22, 1, 0.36, 1) both;
             }
 
             @keyframes click-ray-burst {

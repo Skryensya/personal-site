@@ -68,7 +68,7 @@ const displayProjects = featuredProjects.length > 0 ? featuredProjects : allProj
                 </div>
                 {/* Hook content */}
                 <div class="flex-1 px-5 pt-4 overflow-hidden">
-                  <h3 class="text-lg font-bold text-main leading-snug line-clamp-3" transition:name={`project-card-${getSlugFromId(project.id)}`} transition:animate="morph">
+                  <h3 class="text-lg font-bold text-main leading-snug line-clamp-3" transition:name={`project-card-${getSlugFromId(project.id)}`} transition:animate="fade">
                     {project.data.hook}
                   </h3>
                 </div>
