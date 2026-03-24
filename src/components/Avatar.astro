@@ -129,7 +129,7 @@ const gridSizePercent = gridScale * 100;
     --avatar-colorful-50: color-mix(in srgb, var(--theme-colorful) 25%, var(--theme-contrasty) 75%);
     contain: layout paint style;
     content-visibility: auto;
-    contain-intrinsic-size: 150px 150px;
+    contain-intrinsic-size: 200px 200px;
   }
 
   .avatar,
@@ -155,12 +155,14 @@ const gridSizePercent = gridScale * 100;
   }
 
   .avatar__tile {
-    width: 100.5%;
-    height: 100.5%;
+    width: 100%;
+    height: 100%;
     display: block;
     overflow: hidden;
     user-select: none;
     pointer-events: none;
+    transform: scale(1.02);
+    transform-origin: top left;
   }
 
   .avatar__tile svg {
