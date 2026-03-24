@@ -49,10 +49,10 @@ const displayProjects = featuredProjects.length > 0 ? featuredProjects : allProj
             <a
               href={projectUrl}
               data-card-index={index}
-              data-transition-name={`project-card-${getSlugFromId(project.id)}`}
               class="hero-project-card flex-shrink-0 w-[520px] h-[320px] rounded-sm cursor-pointer no-underline group -ml-32 first:ml-0"
               style={`transform: perspective(75em) rotateY(-40deg); transform-origin: center center; z-index: ${zIndex};`}
               transition:name={`project-card-${getSlugFromId(project.id)}`}
+              transition:animate="morph"
             >
               <div class="hero-card-inner h-full border border-main bg-secondary text-main flex flex-col overflow-hidden rounded-sm">
                 {/* macOS Window Title Bar */}
@@ -89,7 +89,6 @@ const displayProjects = featuredProjects.length > 0 ? featuredProjects : allProj
             <a
               href={projectUrl}
               data-card-index={uniqueIndex}
-              data-transition-name={`project-card-${getSlugFromId(project.id)}`}
               class="hero-project-card flex-shrink-0 w-[520px] h-[320px] rounded-sm cursor-pointer no-underline group -ml-32 first:ml-0"
               style={`transform: perspective(75em) rotateY(-40deg); transform-origin: center center; z-index: ${zIndex};`}
               aria-hidden="true"
