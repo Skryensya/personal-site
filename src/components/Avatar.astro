@@ -42,7 +42,7 @@ const gridSizePercent = gridScale * 100;
   >
     <div
       class="avatar__grid"
-      style={`grid-template-columns: repeat(${avatarGridSize}, minmax(0, 1fr)); grid-template-rows: repeat(${avatarGridSize}, minmax(0, 1fr)); gap: 0; width:${gridSizePercent}%; height:${gridSizePercent}%; left:${gridOffsetLeft}%; top:${gridOffsetTop}%;`}
+      style={`grid-template-columns: repeat(${avatarGridSize}, 25px); grid-template-rows: repeat(${avatarGridSize}, 25px); gap: 0; width: 200px; height: 200px; left: 0; top: 0;`}
       aria-hidden="true"
     >
       {avatarGrid.flat().map((name, i) => {
@@ -152,15 +152,13 @@ const gridSizePercent = gridScale * 100;
     display: grid;
     gap: 0;
     overflow: hidden;
-    width: 200px;
-    height: 200px;
   }
 
   .avatar__tile {
-    width: 26px;
-    height: 26px;
+    width: 25px;
+    height: 25px;
     display: block;
-    overflow: hidden;
+    overflow: visible;
     user-select: none;
     pointer-events: none;
   }
