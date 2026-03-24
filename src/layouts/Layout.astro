@@ -234,6 +234,25 @@ declare global {
         <BaseHead {...head} lang={lang} />
         <ClientRouter />
 
+        <script is:inline>
+            // Debug view transitions
+            document.addEventListener('astro:before-preparation', (e) => {
+                console.log('[VT Debug] astro:before-preparation', e);
+            });
+            document.addEventListener('astro:after-preparation', (e) => {
+                console.log('[VT Debug] astro:after-preparation', e);
+            });
+            document.addEventListener('astro:before-swap', (e) => {
+                console.log('[VT Debug] astro:before-swap', e);
+            });
+            document.addEventListener('astro:after-swap', (e) => {
+                console.log('[VT Debug] astro:after-swap', e);
+            });
+            document.addEventListener('astro:page-load', (e) => {
+                console.log('[VT Debug] astro:page-load', e);
+            });
+        </script>
+
         <!-- Static favicon kept in BaseHead for a faster first paint -->
 
         <!-- Dynamic favicon that follows theme + mode colors -->
