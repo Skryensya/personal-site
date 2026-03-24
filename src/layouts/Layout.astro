@@ -1,5 +1,6 @@
 ---
 import { AstroFont } from 'astro-font';
+import { ClientRouter } from 'astro:transitions';
 import BaseHead, { type Props as HeadProps } from '../components/BaseHead.astro';
 import PersistentSidebar from '../components/PersistentSidebar.astro';
 import MobileSidebarDrawer from '../components/MobileSidebarDrawer.astro';
@@ -231,6 +232,7 @@ declare global {
  
 
         <BaseHead {...head} lang={lang} />
+        <ClientRouter />
 
         <!-- Static favicon kept in BaseHead for a faster first paint -->
 

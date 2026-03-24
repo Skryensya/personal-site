@@ -30,19 +30,19 @@ const gridSizePercent = gridScale * 100;
 ---
 
 <div
-  class={`avatar relative size-full ${className}`}
+  class={`avatar relative ${className}`}
   data-avatar-id={id}
   data-avatar-sprite-url={spriteSheetUrl}
 >
   <button
     type="button"
-    class="avatar__button relative block size-full cursor-pointer overflow-hidden text-left focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-main focus-visible:outline-offset-4"
+    class="avatar__button relative block cursor-pointer text-left focus-visible:outline-2 focus-visible:outline-solid focus-visible:outline-main focus-visible:outline-offset-4"
     aria-label={alt}
     data-haptic="confirm"
   >
     <div
       class="avatar__grid"
-      style={`grid-template-columns: repeat(${avatarGridSize}, 25px); grid-template-rows: repeat(${avatarGridSize}, 25px); gap: 0; width: 200px; height: 200px; left: 0; top: 0;`}
+      style={`grid-template-columns: repeat(${avatarGridSize}, minmax(35px, 1fr)); grid-template-rows: repeat(${avatarGridSize}, minmax(35px, 1fr));`}
       aria-hidden="true"
     >
       {avatarGrid.flat().map((name, i) => {
@@ -129,7 +129,10 @@ const gridSizePercent = gridScale * 100;
     --avatar-colorful-50: color-mix(in srgb, var(--theme-colorful) 25%, var(--theme-contrasty) 75%);
     contain: layout paint style;
     content-visibility: auto;
-    contain-intrinsic-size: 200px 200px;
+    contain-intrinsic-size: auto;
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 1;
   }
 
   .avatar,
@@ -144,19 +147,19 @@ const gridSizePercent = gridScale * 100;
     border: 0;
     padding: 0;
     background: var(--theme-colorful);
-    overflow: hidden;
+    width: 100%;
+    height: 100%;
   }
 
   .avatar__grid {
-    position: absolute;
+    position: relative;
     display: grid;
     gap: 0;
-    overflow: hidden;
+    width: 100%;
+    height: 100%;
   }
 
   .avatar__tile {
-    width: 25px;
-    height: 25px;
     display: block;
     overflow: visible;
     user-select: none;
