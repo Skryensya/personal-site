@@ -145,7 +145,7 @@ const breadcrumbJsonLd = {
             contentClassName="md:mb-8"
         >
             <!-- Card container for entire page - this is the transition element -->
-            <div class="border border-main bg-secondary flex flex-col overflow-hidden rounded-sm" transition:name={`hero-card-${projectSlug}`} transition:animate="morph">
+            <div class="border border-main bg-secondary flex flex-col overflow-hidden rounded-sm mt-8 lg:mt-16" transition:name={`hero-card-${projectSlug}`} transition:animate="morph">
                 <!-- macOS Window Title Bar - identical to hero card -->
                 <div class="flex items-center gap-2 px-4 py-3 border-b border-main/20 bg-main/5">
                     <div class="flex gap-1.5">
@@ -162,7 +162,7 @@ const breadcrumbJsonLd = {
                 <div class="flex-1 overflow-y-auto">
                     <!-- Hook content -->
                     <div class="px-5 pt-4 pb-6 border-b border-dotted border-main/20">
-                        <h1 class="text-lg font-bold text-main leading-snug line-clamp-3">
+                        <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-main leading-snug">
                             {hook}
                         </h1>
                     </div>
