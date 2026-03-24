@@ -235,22 +235,35 @@ declare global {
         <ClientRouter />
 
         <script is:inline>
-            // Debug view transitions
-            document.addEventListener('astro:before-preparation', (e) => {
-                console.log('[VT Debug] astro:before-preparation', e);
+            // View transition helpers and Escape key navigation
+            document.addEventListener('astro:after-swap', () => {
+                // Re-bind keyboard handlers after page swap
+                initEscapeToHome();
             });
-            document.addEventListener('astro:after-preparation', (e) => {
-                console.log('[VT Debug] astro:after-preparation', e);
-            });
-            document.addEventListener('astro:before-swap', (e) => {
-                console.log('[VT Debug] astro:before-swap', e);
-            });
-            document.addEventListener('astro:after-swap', (e) => {
-                console.log('[VT Debug] astro:after-swap', e);
-            });
-            document.addEventListener('astro:page-load', (e) => {
-                console.log('[VT Debug] astro:page-load', e);
-            });
+
+            function initEscapeToHome() {
+                document.addEventListener('keydown', (e) => {
+                    // Escape key - go to home page
+                    if (e.key === 'Escape') {
+                        const isProjectPage = window.location.pathname.includes('/proyectos/') ||
+                                              window.location.pathname.includes('/projects/') ||
+                                              window.location.pathname.includes('/prosjekter/');
+                        if (isProjectPage) {
+                            e.preventDefault();
+                            // Extract language prefix if present
+                            const pathParts = window.location.pathname.split('/');
+                            let homePath = '/';
+                            if (pathParts[1] === 'en' || pathParts[1] === 'no' || pathParts[1] === 'ja') {
+                                homePath = '/' + pathParts[1];
+                            }
+                            window.location.href = homePath;
+                        }
+                    }
+                });
+            }
+
+            // Initialize on first load
+            initEscapeToHome();
         </script>
 
         <!-- Static favicon kept in BaseHead for a faster first paint -->
@@ -446,11 +459,28 @@ declare global {
             }
 
             ::view-transition-old(root) {
-                animation: vt-fade-out calc(300ms * var(--vt-multiplier)) cubic-bezier(0.22, 1, 0.36, 1) both;
+                animation: vt-fade-out calc(200ms * var(--vt-multiplier)) cubic-bezier(0.4, 0, 1, 1) both;
             }
 
             ::view-transition-new(root) {
-                animation: vt-fade-in calc(400ms * var(--vt-multiplier)) cubic-bezier(0.22, 1, 0.36, 1) both;
+                animation: vt-fade-in calc(300ms * var(--vt-multiplier)) cubic-bezier(0, 0, 0.2, 1) both;
+            }
+
+            /* Hero card transitions - smooth morph effect */
+            ::view-transition-group(hero-card) {
+                animation-duration: 450ms;
+                animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            /* Ensure smooth scrolling on html */
+            html {
+                scroll-behavior: smooth;
+            }
+
+            /* Back navigation hint on project pages */
+            [data-project-back]::after {
+                content: ' ←';
+                opacity: 0.5;
             }
 
             @keyframes click-ray-burst {
