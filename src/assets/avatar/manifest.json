@@ -1,7 +1,7 @@
 {
   "name": "avatar",
   "symbolPrefix": "avatar-sprite",
-  "generatedAt": "2026-03-24T14:37:55.205Z",
+  "generatedAt": "2026-03-24T15:01:09.933Z",
   "tileCount": 62,
   "sourceDir": "src/assets/avatar/tiles",
   "outputDir": "src/assets/avatar",

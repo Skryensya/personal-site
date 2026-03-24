@@ -139,39 +139,41 @@ const breadcrumbJsonLd = {
 
 <Layout title={seo?.title ?? name} description={seo?.description ?? hook} image={seo?.image} pageType="article" showHeader={true} lang={currentLocale} structuredData={[projectJsonLd, breadcrumbJsonLd]}>
     <article class="min-h-screen">
-        <ContentPage 
+        <ContentPage
             contentId="project-content"
             sidebarClassName="w-48"
             contentClassName="md:mb-8"
         >
-                <!-- Card identical to hero card - this is the transition element -->
-                <div class="border border-main bg-secondary flex flex-col overflow-hidden rounded-sm w-[520px] h-[320px]" transition:name={`hero-card-${projectSlug}`} transition:animate="morph">
-                    <!-- macOS Window Title Bar - identical to hero card -->
-                    <div class="flex items-center gap-2 px-4 py-3 border-b border-main/20 bg-main/5">
-                        <div class="flex gap-1.5">
-                            <div class="w-2.5 h-2.5 rounded-full bg-main/20"></div>
-                            <div class="w-2.5 h-2.5 rounded-full bg-main/20"></div>
-                            <div class="w-2.5 h-2.5 rounded-full bg-main/20"></div>
-                        </div>
-                        <span class="font-mono text-[10px] uppercase tracking-wider text-main/60 truncate flex-1 text-center">
-                            {name}
-                        </span>
+            <!-- Card container for entire page - this is the transition element -->
+            <div class="border border-main bg-secondary flex flex-col overflow-hidden rounded-sm" transition:name={`hero-card-${projectSlug}`} transition:animate="morph">
+                <!-- macOS Window Title Bar - identical to hero card -->
+                <div class="flex items-center gap-2 px-4 py-3 border-b border-main/20 bg-main/5">
+                    <div class="flex gap-1.5">
+                        <div class="w-2.5 h-2.5 rounded-full bg-main/20"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-main/20"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-main/20"></div>
                     </div>
+                    <span class="font-mono text-[10px] uppercase tracking-wider text-main/60 truncate flex-1 text-center">
+                        {name}
+                    </span>
+                </div>
+
+                <!-- Full page content inside the card -->
+                <div class="flex-1 overflow-y-auto">
                     <!-- Hook content -->
-                    <div class="flex-1 px-5 pt-4 overflow-hidden">
+                    <div class="px-5 pt-4 pb-6 border-b border-dotted border-main/20">
                         <h1 class="text-lg font-bold text-main leading-snug line-clamp-3">
                             {hook}
                         </h1>
                     </div>
-                </div>
 
                     <!-- Article Content -->
-                    <div class="prose w-full [&_p]:max-w-[75ch] [&_a]:inline-block [&_a]:whitespace-nowrap [&>p]: [&>p]:lg:text-lg [&>p]:leading-relaxed [&>p]:mb-6 [&>h1]:text-4xl [&>h1]:font-bold [&>h1]:mt-12 [&>h1]:mb-6 [&>h1]:scroll-mt-12 [&>h2]:text-3xl [&>h2]:font-bold [&>h2]:mt-10 [&>h2]:mb-4 [&>h2]:scroll-mt-12 [&>h3]:text-2xl [&>h3]:font-semibold [&>h3]:mt-8 [&>h3]:mb-3 [&>h3]:scroll-mt-12 [&>h4]:text-xl [&>h4]:font-semibold [&>h4]:mt-6 [&>h4]:mb-2 [&>h4]:scroll-mt-12 [&>h5]:scroll-mt-12 [&>h6]:scroll-mt-12" style="max-width: var(--paragraph-max-width)">
+                    <div class="px-5 py-6 prose w-full [&_p]:max-w-[75ch] [&_a]:inline-block [&_a]:whitespace-nowrap [&>p]:lg:text-lg [&>p]:leading-relaxed [&>p]:mb-6 [&>h1]:text-4xl [&>h1]:font-bold [&>h1]:mt-12 [&>h1]:mb-6 [&>h1]:scroll-mt-12 [&>h2]:text-3xl [&>h2]:font-bold [&>h2]:mt-10 [&>h2]:mb-4 [&>h2]:scroll-mt-12 [&>h3]:text-2xl [&>h3]:font-semibold [&>h3]:mt-8 [&>h3]:mb-3 [&>h3]:scroll-mt-12 [&>h4]:text-xl [&>h4]:font-semibold [&>h4]:mt-6 [&>h4]:mb-2 [&>h4]:scroll-mt-12 [&>h5]:scroll-mt-12 [&>h6]:scroll-mt-12">
                         <Content />
                     </div>
 
                     {navigationItems.length === 2 && (
-                        <section class="w-full mt-14 border-t border-dotted border-main/30 pt-8" style="max-width: var(--paragraph-max-width)" data-toc-ignore>
+                        <section class="px-5 py-6 border-t border-dotted border-main/30" data-toc-ignore>
                             <h2 class="font-grotesk text-base sm:text-lg font-semibold text-main mb-4">
                                 {navigationSummaryLabel[currentLocale]}
                             </h2>
@@ -192,6 +194,8 @@ const breadcrumbJsonLd = {
                             </nav>
                         </section>
                     )}
+                </div>
+            </div>
         </ContentPage>
 
         <style>
