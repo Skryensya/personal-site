@@ -34,6 +34,7 @@ npm run dev
 | Command | Description |
 | --- | --- |
 | `npm run dev` | Start the Astro dev server with hot module reload. |
+| `npm start` | Alias for `npm run dev`. |
 | `npm run build` | Generate the production build in `dist/`. |
 | `npm run preview` | Serve the built output locally for QA. |
 | `npm run astro check` | Run Astro + TypeScript diagnostics used in CI. |
