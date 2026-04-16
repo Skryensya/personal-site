@@ -26,6 +26,7 @@ npm install
 
 # start local development
 npm run dev
+# npm start is the same alias
 # open http://localhost:4321
 ```
 
