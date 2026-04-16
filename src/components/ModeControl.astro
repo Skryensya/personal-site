@@ -134,8 +134,8 @@ const modes = [
       localStorage.setItem('theme-mode', nextMode);
       
       // Apply theme manually
-      import('../data/themes.js').then(({ applyTheme }) => {
-        const savedThemeId = localStorage.getItem('theme-id') || 'obsidian';
+      import('../data/themes.js').then(({ applyTheme, getDefaultTheme }) => {
+        const savedThemeId = localStorage.getItem('theme-id') || getDefaultTheme().id;
         let resolvedMode = nextMode;
         if (nextMode === 'system') {
           resolvedMode = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';

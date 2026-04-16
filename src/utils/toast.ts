@@ -46,7 +46,7 @@ function ensureStyle() {
       background: var(--color-main);
       color: var(--color-secondary);
       font-family: var(--font-mono), monospace;
-      font-size: 13px;
+      font-size: 16px;
       font-weight: 700;
       line-height: 1.36;
       letter-spacing: 0.01em;
@@ -92,13 +92,13 @@ function ensureStyle() {
       background: color-mix(in srgb, var(--color-secondary) 10%, transparent);
       color: inherit;
       font-family: var(--font-mono), monospace;
-      font-size: 13px;
+      font-size: 16px;
       font-weight: 700;
       line-height: 1;
-      width: 22px;
-      height: 22px;
-      min-width: 22px;
-      min-height: 22px;
+      width: 26px;
+      height: 26px;
+      min-width: 26px;
+      min-height: 26px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -165,7 +165,7 @@ function ensureStyle() {
       }
 
       .app-toast {
-        font-size: 14px;
+        font-size: 16px;
         line-height: 1.4;
         padding: 12px 14px 14px;
         box-shadow: 4px 4px 0 color-mix(in srgb, var(--color-main) 42%, transparent);

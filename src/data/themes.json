@@ -1,6 +1,15 @@
 {
     "default": [
         {
+            "id": "indigo",
+            "name": "Indigo",
+            "description": "Deep indigo body with lime pulse accents",
+            "colors": {
+                "colorful": "#e3fcbd",
+                "contrasty": "#1f178a"
+            }
+        },
+        {
             "id": "obsidian",
             "name": "Obsidian",
             "description": "Dark terminal base with crisp off-white text",
@@ -25,15 +34,6 @@
             "colors": {
                 "colorful": "#ddcc9c",
                 "contrasty": "#0b1b1e"
-            }
-        },
-        {
-            "id": "indigo",
-            "name": "Indigo",
-            "description": "Deep indigo body with lime pulse accents",
-            "colors": {
-                "colorful": "#e3fcbd",
-                "contrasty": "#1f178a"
             }
         },
         {

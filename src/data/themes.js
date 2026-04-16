@@ -474,7 +474,7 @@ export function applyTheme(themeId, isDark = false) {
     
     // Get full theme object (with optional P3 values)
     const rawTheme = allThemes.find((t) => t.id === themeId) || allThemes[0];
-    const resolvedThemeId = rawTheme?.id || themes[0]?.id || 'obsidian';
+    const resolvedThemeId = rawTheme?.id || themes[0]?.id || getDefaultTheme().id;
     if (themeId !== resolvedThemeId) {
         debugLogger.warn(`Theme "${themeId}" not found. Falling back to "${resolvedThemeId}".`);
     }
@@ -565,7 +565,7 @@ export function loadThemeFromStorage() {
             
             // Validate saved theme exists in available theme list (respects exclusivity)
             const availableThemes = getAvailableThemes();
-            const fallbackThemeId = availableThemes[0]?.id || 'obsidian';
+            const fallbackThemeId = availableThemes[0]?.id || getDefaultTheme().id;
             const hasSavedTheme = availableThemes.some((t) => t.id === savedThemeId);
             const theme = hasSavedTheme ? savedThemeId : fallbackThemeId;
 
@@ -585,10 +585,10 @@ export function loadThemeFromStorage() {
         } else {
             // No saved theme, use first available theme
             const availableThemes = getAvailableThemes();
-            return { themeId: availableThemes[0]?.id || 'obsidian', isDark: false, mode: 'light' };
+            return { themeId: availableThemes[0]?.id || getDefaultTheme().id, isDark: false, mode: 'light' };
         }
     } catch (e) {
-        return { themeId: 'obsidian', isDark: false, mode: 'light' };
+        return { themeId: getDefaultTheme().id, isDark: false, mode: 'light' };
     }
 }
 
